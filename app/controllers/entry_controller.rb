@@ -1,7 +1,7 @@
 class EntryController < ApplicationController
   before_filter :login_required
 
-  NUM_DEFAULT = '30'
+  NUM_DEFAULT = '15'
 
   verify :only => :list,
           :method => :get,
