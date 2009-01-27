@@ -158,6 +158,5 @@ if $0 == __FILE__
   remote_key = ARGV.shift or raise
   client = FriendFeed::APIClient.new
   require 'pp'
-  #pp client.get_home_entries(name, remote_key)
-  pp client.get_rooms(name, remote_key)
+  pp client.get_home_entries(name, remote_key)
 end

@@ -1,7 +1,7 @@
 class EntryController < ApplicationController
   before_filter :login_required
 
-  NUM_DEFAULT = '15'
+  NUM_DEFAULT = '20'
 
   verify :only => :list,
           :method => :get,
@@ -107,10 +107,8 @@ class EntryController < ApplicationController
 
   def do_delete(id, comment = nil, undelete = false)
     if comment and !comment.empty?
-      logger.info([id, comment, undelete].inspect)
       ff_client.delete_comment(@auth.name, @auth.remote_key, id, comment, undelete)
     else
-      logger.info([id, comment, undelete].inspect)
       ff_client.delete(@auth.name, @auth.remote_key, id, undelete)
     end
   end
