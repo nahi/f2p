@@ -50,7 +50,9 @@ module EntryHelper
     end
     medias = v(entry, 'media')
     if medias and !medias.empty?
-      content += "<br/>\n" + content_with_media(title, medias)
+      # entries from Hatena contains 'enclosure' but no title and link for now.
+      with_media = content_with_media(title, medias)
+      content += "<br/>\n" + with_media unless with_media.empty?
     end
     content
   end
@@ -76,10 +78,10 @@ module EntryHelper
               :alt => h(media_title), :size => image_size(tb_width, tb_height))
           end
         }.join(' ')
-      else
+      elsif media_title
         safe_content = h(media_title)
       end
-      link_to(safe_content, media_link)
+      link_to(safe_content, media_link) if safe_content
     }.join(' ')
   end
 
