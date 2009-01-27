@@ -92,7 +92,7 @@ module ApplicationHelper
   end
 
   def q(str)
-    %Q["#{str}"]
+    h('"') + str + h('"')
   end
 
   def v(hash, *keywords)

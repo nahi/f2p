@@ -44,9 +44,9 @@ module EntryHelper
     title = v(entry, 'title')
     link = v(entry, 'link')
     if link and with_link?(v(entry, 'service'))
-      content = link_to(h(q(title)), link)
+      content = link_to(q(h(title)), link)
     else
-      content = h(q(title))
+      content = q(pickup_link(h(title)))
     end
     medias = v(entry, 'media')
     if medias and !medias.empty?
@@ -111,14 +111,16 @@ module EntryHelper
     end
   end
 
-  # TODO: uglish
   def twitter_content(common, entry)
-    common = common.sub(/\A&quot;(.*)&quot;\z/) { $1 }
-    common = common.gsub(/((?:http|https):\/\/\S+)/) { link_to(h($1), $1) }
-    common = common.gsub(/@([a-zA-Z0-9_]+)/) {
+    common.gsub(/@([a-zA-Z0-9_]+)/) {
       link_to('@' + $1, "http://twitter.com/#{$1}")
     }
-    '&quot;' + common + '&quot;'
+  end
+
+  def pickup_link(content)
+    if content
+      content.gsub(/((?:http|https):\/\/\S+)/) { link_to(h($1), $1) }
+    end
   end
 
   def via(entry)
@@ -154,7 +156,7 @@ module EntryHelper
   end
 
   def comment(comment)
-    h(v(comment, 'body'))
+    pickup_link(h(v(comment, 'body')))
   end
 
   def post_entry_form
