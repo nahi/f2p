@@ -26,9 +26,7 @@
       (@entry_fold ? fold(@entries) : @entries).each do |entry|
         if entry.respond_to?(:fold_entries)
       %>
-      <ul>
-        <li><%= link_to(h("#{entry.fold_entries} entrie(s) from same service"), list_opt(:action => 'list', :start => @start, :num => @num, :fold => 'no')) %></li>
-      </ul>
+      <li><%= link_to(h("#{entry.fold_entries} entry(es) from same service"), list_opt(:action => 'list', :start => @start, :num => @num, :fold => 'no')) %></li>
       <%
           next
         end

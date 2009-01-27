@@ -248,7 +248,7 @@ module EntryHelper
     seq = 0
     prev = nil
     entries.each do |entry|
-      pair = [v(entry, 'user', 'nickname'), v(entry, 'service', 'id')]
+      pair = [v(entry, 'user', 'nickname'), v(entry, 'service', 'id'), v(entry, 'room')]
       if pair == prev
         seq += 1
       else
