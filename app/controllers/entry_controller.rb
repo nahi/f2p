@@ -127,4 +127,32 @@ class EntryController < ApplicationController
     end
     redirect_to :action => 'list'
   end
+
+  verify :only => :like,
+          :method => :get,
+          :params => [:id],
+          :add_flash => {:error => 'verify failed'},
+          :redirect_to => {:action => 'list'}
+
+  def like
+    eid = params[:id]
+    if eid
+      ff_client.like(@auth.name, @auth.remote_key, eid)
+    end
+    redirect_to :action => 'list'
+  end
+
+  verify :only => :unlike,
+          :method => :get,
+          :params => [:id],
+          :add_flash => {:error => 'verify failed'},
+          :redirect_to => {:action => 'list'}
+
+  def unlike
+    eid = params[:id]
+    if eid
+      ff_client.unlike(@auth.name, @auth.remote_key, eid)
+    end
+    redirect_to :action => 'list'
+  end
 end

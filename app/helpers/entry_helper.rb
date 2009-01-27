@@ -217,7 +217,7 @@ module EntryHelper
     eid = v(entry, 'id')
     name = v(entry, 'user', 'nickname')
     if name == @auth.name
-      link_to(delete_icon, {:action => 'delete', :id => u(eid)}, :confirm => 'Are you sure?')
+      link_to(h('[delete]'), {:action => 'delete', :id => u(eid)}, :confirm => 'Are you sure?')
     end
   end
 
@@ -230,7 +230,20 @@ module EntryHelper
     cid = v(comment, 'id')
     name = v(comment, 'user', 'nickname')
     if name == @auth.name
-      link_to(delete_icon, {:action => 'delete', :id => u(eid), :comment => u(cid)}, :confirm => 'Are you sure?')
+      link_to(h('[delete]'), {:action => 'delete', :id => u(eid), :comment => u(cid)}, :confirm => 'Are you sure?')
+    end
+  end
+
+  def like_link(entry)
+    eid = v(entry, 'id')
+    name = v(entry, 'user', 'nickname')
+    if name != @auth.name
+      likes = v(entry, 'likes')
+      if likes and likes.find { |like| v(like, 'user', 'nickname') == @auth.name }
+        link_to(h('[un-like]'), :action => 'unlike', :id => u(eid))
+      else
+        link_to(h('[like]'), :action => 'like', :id => u(eid))
+      end
     end
   end
 

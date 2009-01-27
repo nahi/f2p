@@ -130,6 +130,22 @@ module FriendFeed
       end
     end
 
+    def like(name, remote_key, entry)
+      uri = uri("like")
+      query = {'entry' => entry}
+      client_sync(uri, name, remote_key) do |client|
+        client.post(uri, query)
+      end
+    end
+
+    def unlike(name, remote_key, entry)
+      uri = uri("like/delete")
+      query = {'entry' => entry}
+      client_sync(uri, name, remote_key) do |client|
+        client.post(uri, query)
+      end
+    end
+
   private
 
     def uri(part)
