@@ -286,4 +286,14 @@ module EntryHelper
     end
     result
   end
+
+  def fold_comments(comments)
+    if @compact and comments.size > 3
+      result = comments.values_at(0, -2, -1)
+      result[1, 0] = Fold.new(comments.size - 3)
+      result
+    else
+      comments
+    end
+  end
 end

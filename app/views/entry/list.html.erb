@@ -44,11 +44,15 @@
           <% comments = v(entry, 'comments') %>
           <% if comments and !comments.empty? %>
             <ul>
-              <% if @compact and comments.size > 4 %>
-                <li><%= link_to("#{comments.size - 3} more comment(s)", :action => 'show', :id => u(v(entry, 'id'))) %></li>
-                <% comments = comments[-3, 3] %>
-              <% end %>
-              <% comments.each do |c| %>
+              <%
+              fold_comments(comments).each do |c|
+                if c.respond_to?(:fold_entries)
+              %>
+                <li><%= link_to("#{c.fold_entries} more comment(s)", :action => 'show', :id => u(v(entry, 'id'))) %></li>
+              <%
+                  next
+                end
+              %>
                 <li>
                   <%= date(v(c, 'date'), @compact) %></a>
                   <%= comment(c) %>
