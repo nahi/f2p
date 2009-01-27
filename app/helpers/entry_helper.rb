@@ -69,20 +69,23 @@ module EntryHelper
       media_link = v(media, 'link')
       tbs = v(media, 'thumbnails')
       safe_content = nil
-      if tbs and !tbs.empty?
-        safe_content = tbs.collect { |tb|
-          tb_url = v(tb, 'url')
-          tb_width = v(tb, 'width')
-          tb_height = v(tb, 'height')
-          if tb_url
-            image_tag(tb_url,
-              :alt => h(media_title), :size => image_size(tb_width, tb_height))
-          end
-        }.join(' ')
+      if tbs and tbs.first
+        tb = tbs.first
+        tb_url = v(tb, 'url')
+        tb_width = v(tb, 'width')
+        tb_height = v(tb, 'height')
+        if tb_url
+          safe_content = image_tag(tb_url,
+            :alt => h(media_title), :size => image_size(tb_width, tb_height))
+        end
       elsif media_title
         safe_content = h(media_title)
       end
-      link_to(safe_content, media_link) if safe_content
+      if safe_content
+        link_to(safe_content, media_link)
+      elsif media_link
+        link_to(media_link)
+      end
     }.join(' ')
   end
 
