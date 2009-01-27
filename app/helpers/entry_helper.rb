@@ -96,7 +96,7 @@ module EntryHelper
       zoom = 13
       width = 160
       height = 80
-      tb = "http://maps.google.com/staticmap?zoom=#{u(zoom)}&size=#{image_size(width, height)}&maptype=mobile&markers=#{lat},#{long}"
+      tb = "http://maps.google.com/staticmap?zoom=#{h(zoom)}&size=#{image_size(width, height)}&maptype=mobile&markers=#{lat},#{long}&key=#{GOOGLE_MAPS_API_KEY}"
       title = v(entry, 'title')
       link = "http://maps.google.com/maps?q=#{lat},#{long}+%28#{u(title)}%29"
       content = link_to(image_tag(tb, :alt => h(title), :size => image_size(width, height)), link)
