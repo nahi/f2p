@@ -74,7 +74,7 @@ class EntryController < ApplicationController
     if body
       ff_client.post(@auth.name, @auth.remote_key, body, link, nil, nil, nil, room)
     end
-    redirect_to :action => 'list'
+    redirect_to :action => 'list', :room => room
   end
 
   verify :only => :delete,

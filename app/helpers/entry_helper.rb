@@ -157,7 +157,7 @@ module EntryHelper
     h(v(comment, 'body'))
   end
 
-  def post_comment_form
+  def post_entry_form
     str = ''
     room = (@room != '*') ? @room : nil
     if room
@@ -166,6 +166,10 @@ module EntryHelper
     str += text_field_tag('body') + submit_tag('post')
     str += ' ' + link_to(h('[extended]'), :action => 'new', :room => u(room))
     str
+  end
+
+  def post_comment_form
+    text_field_tag('body') + submit_tag('post')
   end
 
   def logout_link

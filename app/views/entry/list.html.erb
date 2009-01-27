@@ -17,7 +17,7 @@
     <% end %>
     <% if @post %>
       <% form_tag(:action => 'add') do %>
-        <p><%= post_comment_form %> <%= logout_link %></p>
+        <p><%= post_entry_form %> <%= logout_link %></p>
       <% end %>
     <% end %>
     <%= page_links %>
@@ -63,9 +63,7 @@
           <% end %>
           <% if @post_comment %>
             <% form_tag(:action => 'add_comment', :id => u(@eid)) do %>
-              <p>
-              <%= text_field_tag('body') %> <%= submit_tag('post') %>
-              </p>
+              <p><%= post_comment_form %></p>
             <% end %>
           <% end %>
         </li>
