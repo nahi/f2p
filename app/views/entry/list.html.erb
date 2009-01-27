@@ -17,7 +17,7 @@
     <% end %>
     <% if @post %>
       <% form_tag(:action => 'add') do %>
-        <p><%= post_comment_form %> <%= logout_link %></p>
+        <p><%= post_entry_form %> <%= logout_link %></p>
       <% end %>
     <% end %>
     <%= page_links %>
@@ -26,9 +26,7 @@
       (@entry_fold ? fold(@entries) : @entries).each do |entry|
         if entry.respond_to?(:fold_entries)
       %>
-      <ul>
-        <li><%= link_to(h("#{entry.fold_entries} entrie(s) from same service"), list_opt(:action => 'list', :start => @start, :num => @num, :fold => 'no')) %></li>
-      </ul>
+      <li><%= link_to(h("#{entry.fold_entries} entry(es) from same service"), list_opt(:action => 'list', :start => @start, :num => @num, :fold => 'no')) %></li>
       <%
           next
         end
@@ -42,14 +40,19 @@
           <%= via(entry) %>
           <%= likes(entry) %>
           <%= delete_link(entry) %>
+          <%= like_link(entry) %>
           <% comments = v(entry, 'comments') %>
           <% if comments and !comments.empty? %>
             <ul>
-              <% if @compact and comments.size > 4 %>
-                <li><%= link_to("#{comments.size - 3} more comment(s)", :action => 'show', :id => u(v(entry, 'id'))) %></li>
-                <% comments = comments[-3, 3] %>
-              <% end %>
-              <% comments.each do |c| %>
+              <%
+              fold_comments(comments).each do |c|
+                if c.respond_to?(:fold_entries)
+              %>
+                <li><%= link_to("#{c.fold_entries} more comment(s)", :action => 'show', :id => u(v(entry, 'id'))) %></li>
+              <%
+                  next
+                end
+              %>
                 <li>
                   <%= date(v(c, 'date'), @compact) %></a>
                   <%= comment(c) %>
@@ -65,9 +68,7 @@
           <% end %>
           <% if @post_comment %>
             <% form_tag(:action => 'add_comment', :id => u(@eid)) do %>
-              <p>
-              <%= text_field_tag('body') %> <%= submit_tag('post') %>
-              </p>
+              <p><%= post_comment_form %></p>
             <% end %>
           <% end %>
         </li>

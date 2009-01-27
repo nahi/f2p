@@ -1,7 +1,7 @@
 class EntryController < ApplicationController
   before_filter :login_required
 
-  NUM_DEFAULT = '15'
+  NUM_DEFAULT = '20'
 
   verify :only => :list,
           :method => :get,
@@ -74,7 +74,7 @@ class EntryController < ApplicationController
     if body
       ff_client.post(@auth.name, @auth.remote_key, body, link, nil, nil, nil, room)
     end
-    redirect_to :action => 'list'
+    redirect_to :action => 'list', :room => room
   end
 
   verify :only => :delete,
@@ -107,10 +107,8 @@ class EntryController < ApplicationController
 
   def do_delete(id, comment = nil, undelete = false)
     if comment and !comment.empty?
-      logger.info([id, comment, undelete].inspect)
       ff_client.delete_comment(@auth.name, @auth.remote_key, id, comment, undelete)
     else
-      logger.info([id, comment, undelete].inspect)
       ff_client.delete(@auth.name, @auth.remote_key, id, undelete)
     end
   end
@@ -126,6 +124,34 @@ class EntryController < ApplicationController
     body = params[:body]
     if eid and body
       ff_client.post_comment(@auth.name, @auth.remote_key, eid, body)
+    end
+    redirect_to :action => 'list'
+  end
+
+  verify :only => :like,
+          :method => :get,
+          :params => [:id],
+          :add_flash => {:error => 'verify failed'},
+          :redirect_to => {:action => 'list'}
+
+  def like
+    eid = params[:id]
+    if eid
+      ff_client.like(@auth.name, @auth.remote_key, eid)
+    end
+    redirect_to :action => 'list'
+  end
+
+  verify :only => :unlike,
+          :method => :get,
+          :params => [:id],
+          :add_flash => {:error => 'verify failed'},
+          :redirect_to => {:action => 'list'}
+
+  def unlike
+    eid = params[:id]
+    if eid
+      ff_client.unlike(@auth.name, @auth.remote_key, eid)
     end
     redirect_to :action => 'list'
   end

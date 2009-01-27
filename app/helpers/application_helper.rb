@@ -50,7 +50,7 @@ module ApplicationHelper
   end
 
   def image_size(width, height)
-    "#{h(width)}x#{h(height)}"
+    "#{width}x#{height}"
   end
 
   def date(time, compact = true)
@@ -92,7 +92,7 @@ module ApplicationHelper
   end
 
   def q(str)
-    %Q["#{str}"]
+    h('"') + str + h('"')
   end
 
   def v(hash, *keywords)

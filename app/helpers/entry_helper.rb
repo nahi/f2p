@@ -44,13 +44,15 @@ module EntryHelper
     title = v(entry, 'title')
     link = v(entry, 'link')
     if link and with_link?(v(entry, 'service'))
-      content = link_to(h(q(title)), link)
+      content = link_to(q(h(title)), link)
     else
-      content = h(q(title))
+      content = q(pickup_link(h(title)))
     end
     medias = v(entry, 'media')
     if medias and !medias.empty?
-      content += "<br/>\n" + content_with_media(title, medias)
+      # entries from Hatena contains 'enclosure' but no title and link for now.
+      with_media = content_with_media(title, medias)
+      content += "<br/>\n" + with_media unless with_media.empty?
     end
     content
   end
@@ -66,20 +68,24 @@ module EntryHelper
       media_title = v(media, 'title')
       media_link = v(media, 'link')
       tbs = v(media, 'thumbnails')
-      if tbs and !tbs.empty?
-        safe_content = tbs.collect { |tb|
-          tb_url = v(tb, 'url')
-          tb_width = v(tb, 'width')
-          tb_height = v(tb, 'height')
-          if tb_url
-            image_tag(tb_url,
-              :alt => h(media_title), :size => image_size(tb_width, tb_height))
-          end
-        }.join(' ')
-      else
+      safe_content = nil
+      if tbs and tbs.first
+        tb = tbs.first
+        tb_url = v(tb, 'url')
+        tb_width = v(tb, 'width')
+        tb_height = v(tb, 'height')
+        if tb_url
+          safe_content = image_tag(tb_url,
+            :alt => h(media_title), :size => image_size(tb_width, tb_height))
+        end
+      elsif media_title
         safe_content = h(media_title)
       end
-      link_to(safe_content, media_link)
+      if safe_content
+        link_to(safe_content, media_link)
+      elsif media_link
+        link_to(media_link)
+      end
     }.join(' ')
   end
 
@@ -105,14 +111,16 @@ module EntryHelper
     end
   end
 
-  # TODO: uglish
   def twitter_content(common, entry)
-    common = common.sub(/\A&quot;(.*)&quot;\z/) { $1 }
-    common = common.gsub(/((?:http|https):\/\/\S+)/) { link_to(h($1), $1) }
-    common = common.gsub(/@([a-zA-Z0-9_]+)/) {
+    common.gsub(/@([a-zA-Z0-9_]+)/) {
       link_to('@' + $1, "http://twitter.com/#{$1}")
     }
-    '&quot;' + common + '&quot;'
+  end
+
+  def pickup_link(content)
+    if content
+      content.gsub(/((?:http|https):\/\/\S+)/) { link_to(h($1), $1) }
+    end
   end
 
   def via(entry)
@@ -148,10 +156,10 @@ module EntryHelper
   end
 
   def comment(comment)
-    h(v(comment, 'body'))
+    pickup_link(h(v(comment, 'body')))
   end
 
-  def post_comment_form
+  def post_entry_form
     str = ''
     room = (@room != '*') ? @room : nil
     if room
@@ -160,6 +168,10 @@ module EntryHelper
     str += text_field_tag('body') + submit_tag('post')
     str += ' ' + link_to(h('[extended]'), :action => 'new', :room => u(room))
     str
+  end
+
+  def post_comment_form
+    text_field_tag('body') + submit_tag('post')
   end
 
   def logout_link
@@ -207,7 +219,7 @@ module EntryHelper
     eid = v(entry, 'id')
     name = v(entry, 'user', 'nickname')
     if name == @auth.name
-      link_to(delete_icon, {:action => 'delete', :id => u(eid)}, :confirm => 'Are you sure?')
+      link_to(h('[delete]'), {:action => 'delete', :id => u(eid)}, :confirm => 'Are you sure?')
     end
   end
 
@@ -220,7 +232,20 @@ module EntryHelper
     cid = v(comment, 'id')
     name = v(comment, 'user', 'nickname')
     if name == @auth.name
-      link_to(delete_icon, {:action => 'delete', :id => u(eid), :comment => u(cid)}, :confirm => 'Are you sure?')
+      link_to(h('[delete]'), {:action => 'delete', :id => u(eid), :comment => u(cid)}, :confirm => 'Are you sure?')
+    end
+  end
+
+  def like_link(entry)
+    eid = v(entry, 'id')
+    name = v(entry, 'user', 'nickname')
+    if name != @auth.name
+      likes = v(entry, 'likes')
+      if likes and likes.find { |like| v(like, 'user', 'nickname') == @auth.name }
+        link_to(h('[un-like]'), :action => 'unlike', :id => u(eid))
+      else
+        link_to(h('[like]'), :action => 'like', :id => u(eid))
+      end
     end
   end
 
@@ -245,7 +270,7 @@ module EntryHelper
     seq = 0
     prev = nil
     entries.each do |entry|
-      pair = [v(entry, 'user', 'nickname'), v(entry, 'service', 'id')]
+      pair = [v(entry, 'user', 'nickname'), v(entry, 'service', 'id'), v(entry, 'room')]
       if pair == prev
         seq += 1
       else
@@ -260,5 +285,15 @@ module EntryHelper
       end
     end
     result
+  end
+
+  def fold_comments(comments)
+    if @compact and comments.size > 3
+      result = comments.values_at(0, -2, -1)
+      result[1, 0] = Fold.new(comments.size - 3)
+      result
+    else
+      comments
+    end
   end
 end
