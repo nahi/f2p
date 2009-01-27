@@ -68,6 +68,7 @@ module EntryHelper
       media_title = v(media, 'title')
       media_link = v(media, 'link')
       tbs = v(media, 'thumbnails')
+      safe_content = nil
       if tbs and !tbs.empty?
         safe_content = tbs.collect { |tb|
           tb_url = v(tb, 'url')
