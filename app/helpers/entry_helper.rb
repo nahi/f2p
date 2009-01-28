@@ -4,6 +4,10 @@ module EntryHelper
   COMMENT_ICON_URL = FF_ICON_URL_BASE + 'comment-lighter.png'
   DELETE_ICON_URL = FF_ICON_URL_BASE + 'delete.png'
 
+  TUMBLR_TEXT_MAXLEN = 150
+  LIKES_THRESHOLD = 3
+  FOLD_THRESHOLD = 3
+
   def icon(entry)
     service_icon(v(entry, 'service'))
   end
@@ -35,6 +39,8 @@ module EntryHelper
       brightkite_content(common, entry)
     when 'twitter'
       twitter_content(common, entry)
+    when 'tumblr'
+      tumblr_content(common, entry)
     else
       common
     end
@@ -44,7 +50,7 @@ module EntryHelper
     title = v(entry, 'title')
     link = v(entry, 'link')
     if link and with_link?(v(entry, 'service'))
-      content = link_to(q(h(title)), link)
+      content = link_content(title, link, entry)
     else
       content = q(pickup_link(h(title)))
     end
@@ -55,6 +61,20 @@ module EntryHelper
       content += "<br/>\n" + with_media unless with_media.empty?
     end
     content
+  end
+
+  def link_content(title, link, entry)
+    base = link_to(h(title), link)
+    profile_url = uri(v(entry, 'service', 'profileUrl'))
+    link_url = uri(link)
+    if profile_url and link_url and (profile_url.host.downcase != link_url.host.downcase)
+      base += " (#{URI.parse(link).host})"
+    end
+    q(base)
+  end
+
+  def uri(str)
+    URI.parse(str) rescue nil
   end
 
   def with_link?(service)
@@ -83,8 +103,6 @@ module EntryHelper
       end
       if safe_content
         link_to(safe_content, media_link)
-      elsif media_link
-        link_to(media_link)
       end
     }.join(' ')
   end
@@ -113,8 +131,20 @@ module EntryHelper
 
   def twitter_content(common, entry)
     common.gsub(/@([a-zA-Z0-9_]+)/) {
-      link_to('@' + $1, "http://twitter.com/#{$1}")
+      '@' + link_to($1, "http://twitter.com/#{$1}")
     }
+  end
+
+  def tumblr_content(common, entry)
+    title = v(entry, 'title')
+    link = v(entry, 'link')
+    medias = v(entry, 'media')
+    if title.length > TUMBLR_TEXT_MAXLEN and (!medias or medias.empty?)
+      title = title[0, TUMBLR_TEXT_MAXLEN - 3] + '...'
+      link_content(title, link, entry)
+    else
+      common
+    end
   end
 
   def pickup_link(content)
@@ -127,10 +157,16 @@ module EntryHelper
     super(v(entry, 'via'))
   end
 
-  def likes(entry)
+  def likes(entry, compact)
     likes = v(entry, 'likes')
     if likes and !likes.empty?
-      like_icon + v(entry, 'likes').collect { |like| user(like) }.join(' ')
+      if compact and likes.size > LIKES_THRESHOLD + 1
+        msg = "... #{likes.size - LIKES_THRESHOLD} more likes"
+        like_icon + likes[0, LIKES_THRESHOLD].collect { |like| user(like) }.join(' ') +
+          ' ' + link_to(h(msg), :action => 'show', :id => u(v(entry, 'id')))
+      else
+        like_icon + likes.collect { |like| user(like) }.join(' ')
+      end
     end
   end
 
@@ -172,6 +208,15 @@ module EntryHelper
 
   def post_comment_form
     text_field_tag('body') + submit_tag('post')
+  end
+
+  def fold_link(entry)
+    msg = "#{entry.fold_entries} entries from same service"
+    link_to(h(msg), list_opt(:action => 'list', :start => @start, :num => @num, :fold => 'no'))
+  end
+
+  def fold_comment_link(entry, comment)
+    link_to(h("#{comment.fold_entries} more comments"), :action => 'show', :id => u(v(entry, 'id')))
   end
 
   def logout_link
@@ -257,38 +302,57 @@ module EntryHelper
     }.merge(hash)
   end
 
-  class Fold
+  class Fold < Hash
     attr_accessor :fold_entries
 
     def initialize(fold_entries)
+      super()
       @fold_entries = fold_entries
+      self[:__same_kinds] = true
     end
   end
 
-  def fold(entries)
-    result = []
-    seq = 0
+  def display_entries(entries, fold)
     prev = nil
     entries.each do |entry|
-      pair = [v(entry, 'user', 'nickname'), v(entry, 'service', 'id'), v(entry, 'room')]
-      if pair == prev
+      if prev and entry.identity == prev.identity
+        entry[:__same_kinds] = true
+      end
+      prev = entry
+    end
+    return entries unless fold
+    result = []
+    seq = 0
+    entries.each do |entry|
+      if entry[:__same_kinds]
         seq += 1
       else
-        if seq >= 2
-          result << Fold.new(seq - 1)
+        if item = fold_item(seq, prev)
+          result << item
         end
         seq = 0
       end
-      prev = pair
-      if seq < 2
+      if seq < FOLD_THRESHOLD
         result << entry
       end
+      prev = entry
+    end
+    if prev && item = fold_item(seq, prev)
+      result << item
     end
     result
   end
 
+  def fold_item(seq, entry)
+    if seq > FOLD_THRESHOLD
+      Fold.new(seq - FOLD_THRESHOLD + 1)
+    elsif seq == FOLD_THRESHOLD
+      entry
+    end
+  end
+
   def fold_comments(comments)
-    if @compact and comments.size > 3
+    if @compact and comments.size > FOLD_THRESHOLD + 2
       result = comments.values_at(0, -2, -1)
       result[1, 0] = Fold.new(comments.size - 3)
       result

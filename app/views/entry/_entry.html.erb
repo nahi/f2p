@@ -1,0 +1,17 @@
+<% if entry.respond_to?(:fold_entries) %>
+  <li><%= fold_link(entry) %></li>
+<% elsif !v(entry, 'hidden') %>
+  <li>
+    <%= icon(entry) %>
+    <%= published(entry, @compact) %>
+    <% unless cascade %>
+      <%= user(entry) %>@<%= service(entry) %>:
+    <% end %>
+    <%= content(entry) %>
+    <%= via(entry) %>
+    <%= likes(entry, @compact) %>
+    <%= delete_link(entry) %>
+    <%= like_link(entry) %>
+    <%= render :partial => 'comment', :locals => {:entry => entry} %>
+  </li>
+<% end %>

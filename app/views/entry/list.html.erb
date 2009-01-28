@@ -10,68 +10,30 @@
       .latest3 { color: #800000; }
     </style>
   </head>
-  <body>
+  <body onLoad="body.focus()">
     <h1><%= link_to(appname, :action => 'list') %> entries</h1>
     <% if flash[:deleted_id] %>
-      <p><%= undelete_link(flash[:deleted_id], flash[:deleted_comment]) %></p>
+    <p><%= undelete_link(flash[:deleted_id], flash[:deleted_comment]) %></p>
     <% end %>
     <% if @post %>
       <% form_tag(:action => 'add') do %>
-        <p><%= post_entry_form %> <%= logout_link %></p>
+      <p><%= post_entry_form %> <%= logout_link %></p>
       <% end %>
     <% end %>
     <%= page_links %>
     <ul>
-      <%
-      (@entry_fold ? fold(@entries) : @entries).each do |entry|
-        if entry.respond_to?(:fold_entries)
-      %>
-      <li><%= link_to(h("#{entry.fold_entries} entry(es) from same service"), list_opt(:action => 'list', :start => @start, :num => @num, :fold => 'no')) %></li>
-      <%
-          next
-        end
-        next if v(entry, 'hidden')
-      %>
-        <li>
-          <%= icon(entry) %>
-          <%= published(entry, @compact) %>
-          <%= user(entry) %>@<%= service(entry) %>:
-          <%= content(entry) %>
-          <%= via(entry) %>
-          <%= likes(entry) %>
-          <%= delete_link(entry) %>
-          <%= like_link(entry) %>
-          <% comments = v(entry, 'comments') %>
-          <% if comments and !comments.empty? %>
-            <ul>
-              <%
-              fold_comments(comments).each do |c|
-                if c.respond_to?(:fold_entries)
-              %>
-                <li><%= link_to("#{c.fold_entries} more comment(s)", :action => 'show', :id => u(v(entry, 'id'))) %></li>
-              <%
-                  next
-                end
-              %>
-                <li>
-                  <%= date(v(c, 'date'), @compact) %></a>
-                  <%= comment(c) %>
-                  by <%= user(c) %>
-                  <%= via(c) %>
-                  <%= delete_comment_link(entry, c) %>
-                  <%= post_comment_link(entry) if !@post_comment and c == comments.last %>
-                </li>
-              <% end %>
-            </ul>
-          <% else %>
-            <%= post_comment_link(entry) unless @post_comment %>
-          <% end %>
-          <% if @post_comment %>
-            <% form_tag(:action => 'add_comment', :id => u(@eid)) do %>
-              <p><%= post_comment_form %></p>
+      <% all = display_entries(@entries, @entry_fold) %>
+      <% while !all.empty? %>
+        <% entry = all.shift %>
+        <%= render :partial => 'entry', :locals => {:entry => entry, :cascade => false} %>
+        <% if v(all.first, :__same_kinds) %>
+          <ul>
+            <% while v(all.first, :__same_kinds) %>
+              <% child = all.shift %>
+              <%= render :partial => 'entry', :locals => {:entry => child, :cascade => true} %>
             <% end %>
-          <% end %>
-        </li>
+          </ul>
+        <% end %>
       <% end %>
     </ul>
     <%= page_links %>

@@ -14,8 +14,13 @@ module ApplicationHelper
   def service_icon(service)
     icon_url = v(service, 'iconUrl')
     name = v(service, 'name')
+    profile_url = v(service, 'profileUrl')
     if icon_url and name
-      image_tag(icon_url, :alt => h(name))
+      if profile_url
+        link_to(image_tag(icon_url, :alt => h("profile on #{name}")), profile_url)
+      else
+        image_tag(icon_url, :alt => h(name))
+      end
     end
   end
 
