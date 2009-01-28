@@ -1,16 +1,11 @@
-<html>
-  <head>
-    <title><%= appname %> new entry</title>
-  </head>
-  <body>
-    <h1><%= link_to(appname, :action => 'list') %> new entry</h1>
-    <% form_tag :action => 'add' do %>
-      <p>
-        message: <%= text_field_tag('body') %><br/>
-        link: <%= text_field_tag('link') %><br/>
-        room: <%= text_field_tag('room', @room) %><br/>
-        <%= submit_tag 'post' %>
-      </p>
-    <% end %>
-  </body>
-</html>
+<body>
+  <h1><%= link_to(appname, :action => 'list') %> new entry</h1>
+  <% form_tag :action => 'add' do %>
+    <p>
+      message: <%= text_field_tag('body') %><br/>
+      link: <%= text_field_tag('link') %><br/>
+      room: <%= text_field_tag('room', @room) %><br/>
+      <%= submit_tag 'post' %>
+    </p>
+  <% end %>
+</body>

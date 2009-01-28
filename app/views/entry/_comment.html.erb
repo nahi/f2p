@@ -6,6 +6,7 @@
         <li><%= fold_comment_link(entry, comment) %></li>
       <% else %>
         <li>
+          <%= comment_icon %>
           <%= date(v(comment, 'date'), @compact) %></a>
           <%= comment(comment) %>
           by <%= user(comment) %>

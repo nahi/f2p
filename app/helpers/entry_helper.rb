@@ -1,8 +1,9 @@
 module EntryHelper
   FF_ICON_URL_BASE = 'http://friendfeed.com/static/images/'
   LIKE_ICON_URL = FF_ICON_URL_BASE + 'smile.png'
-  COMMENT_ICON_URL = FF_ICON_URL_BASE + 'comment-lighter.png'
-  DELETE_ICON_URL = FF_ICON_URL_BASE + 'delete.png'
+  COMMENT_ICON_URL = FF_ICON_URL_BASE + 'comment-friend.png'
+  COMMENT_ADD_ICON_URL = FF_ICON_URL_BASE + 'comment-lighter.png'
+  DELETE_ICON_URL = FF_ICON_URL_BASE + 'delete-g.png'
 
   TUMBLR_TEXT_MAXLEN = 150
   LIKES_THRESHOLD = 3
@@ -187,6 +188,10 @@ module EntryHelper
     image_tag(COMMENT_ICON_URL, :alt => 'comment')
   end
 
+  def add_comment_icon
+    image_tag(COMMENT_ADD_ICON_URL, :alt => 'comment')
+  end
+
   def delete_icon
     image_tag(DELETE_ICON_URL, :alt => 'delete')
   end
@@ -263,14 +268,14 @@ module EntryHelper
 
   def post_comment_link(entry)
     eid = v(entry, 'id')
-    link_to(comment_icon, :action => 'show', :id => u(eid))
+    link_to(add_comment_icon, :action => 'show', :id => u(eid))
   end
 
   def delete_link(entry)
     eid = v(entry, 'id')
     name = v(entry, 'user', 'nickname')
     if name == @auth.name
-      link_to(h('[delete]'), {:action => 'delete', :id => u(eid)}, :confirm => 'Are you sure?')
+      link_to(delete_icon, {:action => 'delete', :id => u(eid)}, :confirm => 'Are you sure?')
     end
   end
 
@@ -283,7 +288,7 @@ module EntryHelper
     cid = v(comment, 'id')
     name = v(comment, 'user', 'nickname')
     if name == @auth.name
-      link_to(h('[delete]'), {:action => 'delete', :id => u(eid), :comment => u(cid)}, :confirm => 'Are you sure?')
+      link_to(delete_icon, {:action => 'delete', :id => u(eid), :comment => u(cid)}, :confirm => 'Are you sure?')
     end
   end
 

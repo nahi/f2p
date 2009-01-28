@@ -13,5 +13,13 @@
     <%= delete_link(entry) %>
     <%= like_link(entry) %>
     <%= render :partial => 'comment', :locals => {:entry => entry} %>
+    <% if rest and v(rest.first, :__same_kinds) %>
+      <ul>
+        <% while v(rest.first, :__same_kinds) %>
+          <% child = rest.shift %>
+          <%= render :partial => 'entry', :locals => {:entry => child, :rest => nil, :cascade => true} %>
+        <% end %>
+      </ul>
+    <% end %>
   </li>
 <% end %>
