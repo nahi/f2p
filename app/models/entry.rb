@@ -5,12 +5,14 @@ class Entry < Hash
       remote_key = arg[:remote_key]
       user = arg[:user]
       room = arg[:room]
+      likes = arg[:likes]
       id = arg[:id]
       opt = arg.dup
       opt.delete(:name)
       opt.delete(:remote_key)
       opt.delete(:user)
       opt.delete(:room)
+      opt.delete(:likes)
       opt.delete(:id)
       if id
         entries = ff_client.get_entry(name, remote_key, id)
@@ -19,6 +21,8 @@ class Entry < Hash
       elsif room
         room = nil if room == '*'
         entries = ff_client.get_room_entries(name, remote_key, room, opt)
+      elsif likes
+        entries = ff_client.get_likes(name, remote_key, opt)
       else
         entries = ff_client.get_home_entries(name, remote_key, opt)
       end

@@ -250,6 +250,12 @@ module EntryHelper
     else
       links << link_to(h(label), :action => 'list', :room => '*')
     end
+    label = '[likes]'
+    if @likes == 'only'
+      links << h(label)
+    else
+      links << link_to(h(label), :action => 'list', :likes => 'only')
+    end
     label = '[>]'
     links << link_to(h(label), list_opt(:action => 'list', :start => @start + @num, :num => @num))
     links.join(' ')
@@ -298,6 +304,7 @@ module EntryHelper
     {
       :room => @room,
       :user => @user,
+      :likes => @likes,
       :service => @service
     }.merge(hash)
   end

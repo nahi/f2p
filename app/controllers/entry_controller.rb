@@ -11,6 +11,7 @@ class EntryController < ApplicationController
   def list
     @room = params[:room]
     @user = params[:user]
+    @likes = params[:likes]
     @service = params[:service]
     @start = (params[:start] || '0').to_i
     @num = (params[:num] || NUM_DEFAULT).to_i
@@ -26,6 +27,8 @@ class EntryController < ApplicationController
       @entries = Entry.find(opt.merge(:user => @user))
     elsif @room
       @entries = Entry.find(opt.merge(:room => @room))
+    elsif @likes == 'only'
+      @entries = Entry.find(opt.merge(:likes => true))
     else
       @entries = Entry.find(opt)
     end
@@ -47,8 +50,12 @@ class EntryController < ApplicationController
 
   def show
     @eid = params[:id]
-    #@entries = ff_client.get_entry(@auth.name, @auth.remote_key, @eid)
-    @entries = Entry.find(:name => @auth.name, :remote_key => @auth.remote_key, :id => @eid)
+    opt = {
+      :name => @auth.name,
+      :remote_key => @auth.remote_key,
+      :id => @eid
+    }
+    @entries = Entry.find(opt)
     @compact = false
     @post = false
     @post_comment = true
@@ -74,9 +81,11 @@ class EntryController < ApplicationController
     room = nil if room and room.empty?
     if link
       title = capture_title(link)
-      ff_client.post(@auth.name, @auth.remote_key, title, link, body, nil, nil, room)
+      ff_client.post(@auth.name, @auth.remote_key,
+        title, link, body, nil, nil, room)
     elsif body
-      ff_client.post(@auth.name, @auth.remote_key, body, link, nil, nil, nil, room)
+      ff_client.post(@auth.name, @auth.remote_key,
+        body, link, nil, nil, nil, room)
     end
     redirect_to :action => 'list', :room => room
   end
