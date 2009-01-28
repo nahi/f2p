@@ -8,8 +8,3 @@ require 'rake/testtask'
 require 'rake/rdoctask'
 
 require 'tasks/rails'
-
-task 'tags' do
-  chdir 'app'
-  sh 'rtags --vi **/*.rb'
-end
