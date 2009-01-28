@@ -2,7 +2,7 @@ module EntryHelper
   FF_ICON_URL_BASE = 'http://friendfeed.com/static/images/'
   LIKE_ICON_URL = FF_ICON_URL_BASE + 'smile.png'
   COMMENT_ICON_URL = FF_ICON_URL_BASE + 'comment-friend.png'
-  COMMENT_ADD_ICON_URL = FF_ICON_URL_BASE + 'comment-lighter.png'
+  COMMENT_ADD_ICON_URL = FF_ICON_URL_BASE + 'email-pencil.png'
   DELETE_ICON_URL = FF_ICON_URL_BASE + 'delete-g.png'
 
   TUMBLR_TEXT_MAXLEN = 150
@@ -66,9 +66,7 @@ module EntryHelper
 
   def link_content(title, link, entry)
     base = link_to(h(title), link)
-    profile_url = uri(v(entry, 'service', 'profileUrl'))
-    link_url = uri(link)
-    if profile_url and link_url and (profile_url.host.downcase != link_url.host.downcase)
+    if with_domain_mark?(link, entry)
       base += " (#{URI.parse(link).host})"
     end
     q(base)
@@ -76,6 +74,16 @@ module EntryHelper
 
   def uri(str)
     URI.parse(str) rescue nil
+  end
+
+  def with_domain_mark?(link, entry)
+    link_url = uri(link)
+    service_id = v(entry, 'service', 'id')
+    profile_url = uri(v(entry, 'service', 'profileUrl'))
+    if profile_url and link_url
+      (profile_url.host.downcase != link_url.host.downcase) or
+        ['blog', 'feed'].include?(service_id)
+    end
   end
 
   def with_link?(service)
@@ -216,12 +224,13 @@ module EntryHelper
   end
 
   def fold_link(entry)
-    msg = "#{entry.fold_entries} entries from same service"
-    link_to(h(msg), list_opt(:action => 'list', :start => @start, :num => @num, :fold => 'no'))
+    msg = " #{entry.fold_entries} entries from same service"
+    link_to(h('>>'), list_opt(:action => 'list', :start => @start, :num => @num, :fold => 'no')) + h(msg)
   end
 
   def fold_comment_link(entry, comment)
-    link_to(h("#{comment.fold_entries} more comments"), :action => 'show', :id => u(v(entry, 'id')))
+    msg = " #{comment.fold_entries} more comments"
+    link_to(h('>>'), :action => 'show', :id => u(v(entry, 'id'))) + h(msg)
   end
 
   def logout_link
@@ -364,7 +373,7 @@ module EntryHelper
   end
 
   def fold_comments(comments)
-    if @compact and comments.size > FOLD_THRESHOLD + 2
+    if @compact and comments.size > 4
       result = comments.values_at(0, -2, -1)
       result[1, 0] = Fold.new(comments.size - 3)
       result
