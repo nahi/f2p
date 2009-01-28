@@ -224,7 +224,7 @@ module EntryHelper
   end
 
   def fold_link(entry)
-    msg = " #{entry.fold_entries} entries from same service"
+    msg = " #{entry.fold_entries} more entries"
     link_to(h('>>'), list_opt(:action => 'list', :start => @start, :num => @num, :fold => 'no')) + h(msg)
   end
 
