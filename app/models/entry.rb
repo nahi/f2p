@@ -26,7 +26,7 @@ class Entry < Hash
       else
         entries = ff_client.get_home_entries(name, remote_key, opt)
       end
-      sort_by_service(wrap(entries))
+      sort_by_service(wrap(entries || []))
     end
 
   private

@@ -8,6 +8,8 @@ module FriendFeed
   class APIClient
     URL_BASE = 'http://friendfeed.com/api/'
 
+    attr_reader :client
+
     def initialize
       @client = HTTPClient.new
       @client.extend(MonitorMixin)
@@ -154,8 +156,8 @@ module FriendFeed
 
     def client_sync(uri, name, remote_key)
       @client.synchronize do
-        @client.www_auth.basic_auth.challenge(uri, true)
         @client.set_auth(nil, name, remote_key)
+        @client.www_auth.basic_auth.challenge(uri, true)
         result = yield(@client)
         @client.set_auth(nil, nil, nil)
         result

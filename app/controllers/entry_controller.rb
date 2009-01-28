@@ -3,6 +3,16 @@ class EntryController < ApplicationController
 
   NUM_DEFAULT = '20'
 
+  class DebugLogger
+    def initialize(logger)
+      @logger = logger
+    end
+
+    def <<(str)
+      @logger.info(str)
+    end
+  end
+
   verify :only => :list,
           :method => :get,
           :add_flash => {:error => 'verify failed'},
