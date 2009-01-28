@@ -14,7 +14,7 @@
       <% all = display_entries(@entries, @entry_fold) %>
       <% while !all.empty? %>
         <% entry = all.shift %>
-        <%= render :partial => 'entry', :locals => {:entry => entry, :rest => all, :cascade => false} %>
+        <li><%= render :partial => 'entry', :locals => {:entry => entry, :rest => all, :cascade => false} %></li>
       <% end %>
     </ul>
   </div>
