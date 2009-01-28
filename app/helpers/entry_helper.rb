@@ -239,7 +239,7 @@ module EntryHelper
       links << h(label)
     end
     label = '[home]'
-    if @room or @user or @service
+    if @room or @likes or @user or @service
       links << link_to(h(label), :action => 'list')
     else
       links << h(label)
