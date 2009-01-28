@@ -29,6 +29,18 @@ class ApplicationController < ActionController::Base
     self.class.ff_client
   end
 
+  def self.http_client
+    @@http ||= HTTPClient.new
+  end
+
+  def self.http_client=(http_client)
+    @@http = http_client
+  end
+
+  def http_client
+    self.class.http_client
+  end
+
 private
 
   def login_required

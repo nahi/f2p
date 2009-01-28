@@ -27,10 +27,10 @@ module FriendFeed
       end
     end
 
-    def get_entry(name, remote_key, eid)
+    def get_entry(name, remote_key, eid, opt = {})
       uri = uri("feed/entry/#{eid}")
       client_sync(uri, name, remote_key) do |client|
-        get_feed(client, uri)
+        get_feed(client, uri, opt)
       end
     end
 

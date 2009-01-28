@@ -16,18 +16,18 @@ class EntryController < ApplicationController
     @num = (params[:num] || NUM_DEFAULT).to_i
     @entry_fold = (!@user and !@service and params[:fold] != 'no')
     opt = {
+      :name => @auth.name,
+      :remote_key => @auth.remote_key,
       :start => @start,
       :num => @num,
       :service => @service
     }
     if @user
-      @entries = ff_client.get_user_entries(@auth.name, @auth.remote_key, @user, opt)
+      @entries = Entry.find(opt.merge(:user => @user))
     elsif @room
-      room = @room
-      room = nil if room == '*'
-      @entries = ff_client.get_room_entries(@auth.name, @auth.remote_key, room, opt)
+      @entries = Entry.find(opt.merge(:room => @room))
     else
-      @entries = ff_client.get_home_entries(@auth.name, @auth.remote_key, opt)
+      @entries = Entry.find(opt)
     end
     @compact = true
     @post = true
@@ -47,7 +47,8 @@ class EntryController < ApplicationController
 
   def show
     @eid = params[:id]
-    @entries = ff_client.get_entry(@auth.name, @auth.remote_key, @eid)
+    #@entries = ff_client.get_entry(@auth.name, @auth.remote_key, @eid)
+    @entries = Entry.find(:name => @auth.name, :remote_key => @auth.remote_key, :id => @eid)
     @compact = false
     @post = false
     @post_comment = true
@@ -71,10 +72,28 @@ class EntryController < ApplicationController
     room = params[:room]
     link = nil if link and link.empty?
     room = nil if room and room.empty?
-    if body
+    if link
+      title = capture_title(link)
+      ff_client.post(@auth.name, @auth.remote_key, title, link, body, nil, nil, room)
+    elsif body
       ff_client.post(@auth.name, @auth.remote_key, body, link, nil, nil, nil, room)
     end
     redirect_to :action => 'list', :room => room
+  end
+
+  def capture_title(url)
+    begin
+      buf = ''
+      http_client.get_content(url) do |str|
+        buf += str.tr("\r\n", '')
+        if match = buf.match(/<title[^>]*>([^<]*)</i)
+          return match.captures[0]
+        end
+      end
+    rescue Exception
+      # ignore
+    end
+    '(unknown)'
   end
 
   verify :only => :delete,
