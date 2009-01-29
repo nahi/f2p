@@ -14,7 +14,8 @@
       <% all = display_entries(@entries, @entry_fold) %>
       <% while !all.empty? %>
         <% entry = all.shift %>
-        <li><%= render :partial => 'entry', :locals => {:entry => entry, :rest => all, :cascade => false} %></li>
+        <% is_chunk = v(all.first, :__same_kinds) %>
+        <li><%= render :partial => (is_chunk ? 'chunk_entry' : 'entry'), :locals => {:entry => entry, :rest => all, :cascade => false} %></li>
       <% end %>
     </ul>
   </div>

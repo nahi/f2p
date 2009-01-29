@@ -1,9 +1,13 @@
 <% if entry.respond_to?(:fold_entries) %>
   <%= fold_link(entry) %>
-<% elsif !v(entry, 'hidden') %>
-  <%= icon(entry) %>
-  <%= published(entry, @compact) %>
-  <% unless cascade %>
+<% elsif v(entry, 'hidden') %>
+  (hidden)
+<% else %>
+  <% if cascade %>
+    <%= published(entry, @compact) %>
+  <% else %>
+    <%= icon(entry) %>
+    <%= published(entry, @compact) %>
     <%= user(entry) %>@<%= service(entry) %>:
   <% end %>
   <%= content(entry) %>
@@ -12,14 +16,4 @@
   <%= delete_link(entry) %>
   <%= like_link(entry) %>
   <%= render :partial => 'comment', :locals => {:entry => entry} %>
-  <% if rest and v(rest.first, :__same_kinds) %>
-    <ul>
-      <% while v(rest.first, :__same_kinds) %>
-        <% child = rest.shift %>
-        <li><%= render :partial => 'entry', :locals => {:entry => child, :rest => nil, :cascade => true} %></li>
-      <% end %>
-    </ul>
-  <% end %>
-<% else %>
-  (hidden)
 <% end %>
