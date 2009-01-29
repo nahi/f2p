@@ -1,0 +1,22 @@
+<% if v(entry, 'hidden') %>
+  (hidden)
+<% else %>
+  <%= icon(entry) %>
+  <%= published(entry, @compact) %>
+  <%= user(entry) %>@<%= service(entry) %>
+  <ul>
+    <li>
+      <%= published(entry, @compact) %>
+      <%= content(entry) %>
+      <%= via(entry) %>
+      <%= likes(entry, @compact) %>
+      <%= delete_link(entry) %>
+      <%= like_link(entry) %>
+      <%= render :partial => 'comment', :locals => {:entry => entry} %>
+    </li>
+    <% while v(rest.first, :__same_kinds) %>
+      <% child = rest.shift %>
+      <li><%= render :partial => 'entry', :locals => {:entry => child, :rest => nil, :cascade => true} %></li>
+    <% end %>
+  </ul>
+<% end %>
