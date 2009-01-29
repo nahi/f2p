@@ -45,10 +45,11 @@ class Entry < Hash
       result = []
       buf = entries.dup
       while !buf.empty?
-        result << (entry = buf.shift)
+        group = [entry = buf.shift]
         kinds = buf.find_all { |e| entry.identity == e.identity }
-        result += kinds
+        group += kinds
         buf -= kinds
+        result += group
       end
       result
     end

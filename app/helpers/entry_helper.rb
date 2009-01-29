@@ -7,7 +7,7 @@ module EntryHelper
 
   TUMBLR_TEXT_MAXLEN = 150
   LIKES_THRESHOLD = 3
-  FOLD_THRESHOLD = 3
+  FOLD_THRESHOLD = 4
 
   def icon(entry)
     service_icon(v(entry, 'service'))
