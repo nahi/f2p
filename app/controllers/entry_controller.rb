@@ -1,7 +1,7 @@
 class EntryController < ApplicationController
   before_filter :login_required
 
-  NUM_DEFAULT = '20'
+  NUM_DEFAULT = '40'
 
   class DebugLogger
     def initialize(logger)
@@ -106,7 +106,7 @@ class EntryController < ApplicationController
       http_client.get_content(url) do |str|
         buf += str.tr("\r\n", '')
         if match = buf.match(/<title[^>]*>([^<]*)</i)
-          return match.captures[0]
+          return NKF.nkf('-wm0', match.captures[0])
         end
       end
     rescue Exception
