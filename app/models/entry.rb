@@ -78,7 +78,7 @@ class Entry < Hash
     if self.identity == rhs.identity
       same_origin?(rhs) or similar_title?(rhs)
     else
-      similar_title?(rhs)
+      same_link?(rhs) or similar_title?(rhs)
     end
   end
 
@@ -131,6 +131,10 @@ private
     t1 = self.title
     t2 = rhs.title
     t1 == t2 or part_of(t1, t2) or part_of(t2, t1)
+  end
+
+  def same_link?(rhs)
+    self.link and rhs.link and self.link == rhs.link
   end
 
   def part_of(base, part)
