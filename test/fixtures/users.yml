@@ -1,9 +1,0 @@
-# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
-first:
-  id: 1
-  name: nahi
-  remote_key: remote_key_can_be_the_same
-second:
-  id: 2
-  name: other
-  remote_key: remote_key_can_be_the_same
