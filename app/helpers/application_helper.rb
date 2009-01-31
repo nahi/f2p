@@ -5,7 +5,8 @@ require 'time'
 
 module ApplicationHelper
   APPNAME = 'ffp'
-  DATE_THRESHOLD = 24 - 8
+  DATE_THRESHOLD = (24 - 8).hours
+  YEAR_THRESHOLD = 1.year
 
   def appname
     h(APPNAME)
@@ -62,10 +63,15 @@ module ApplicationHelper
     end
     if !compact
       body = h(time.strftime("%Y/%m/%d %H:%M:%S"))
-    elsif Time.now - time < DATE_THRESHOLD.hour
-      body = h(time.strftime("%H:%M"))
     else
-      body = h(time.strftime("%m/%d"))
+      elapsed = Time.now - time
+      if elapsed > YEAR_THRESHOLD
+        body = h(time.strftime("%Y/%m/%d"))
+      elsif elapsed > DATE_THRESHOLD
+        body = h(time.strftime("%m/%d"))
+      else
+        body = h(time.strftime("%H:%M"))
+      end
     end
     latest(time, body)
   end
