@@ -45,18 +45,70 @@ class Entry < Hash
       result = []
       buf = entries.dup
       while !buf.empty?
-        group = [entry = buf.shift]
-        kinds = buf.find_all { |e| entry.identity == e.identity }
+        result << (entry = buf.shift)
+        group = []
+        kinds = []
+        buf.each do |e|
+          kinds << e if entry.similar?(e)
+        end
         group += kinds
         buf -= kinds
+        kinds.clear
+        buf.each do |e|
+          if entry.identity == e.identity
+            kinds << e
+            buf.each do |e2|
+              kinds << e2 if e.similar?(e2) and !kinds.include?(e2)
+            end
+          end
+        end
+        group += kinds
+        buf -= kinds
+        group.each do |e|
+          e.grouped = true
+        end
         result += group
       end
       result
     end
   end
 
+  def similar?(rhs)
+    self.user_id == rhs.user_id and
+      ((self.published_at - rhs.published_at).abs < 2.seconds or
+        (similar_title?(rhs) and self.medias.empty? and rhs.medias.empty?))
+  end
+
   def identity
     @identity ||= [v('user', 'nickname'), v('service', 'id'), v('room')]
+  end
+
+  def title
+    v('title')
+  end
+
+  def link
+    v('link')
+  end
+
+  def user_id
+    v('user', 'id')
+  end
+
+  def medias
+    v('media') || []
+  end
+
+  def published_at
+    Time.parse(v('published'))
+  end
+
+  def grouped
+    @grouped
+  end
+
+  def grouped=(grouped)
+    @grouped = true
   end
 
 private
@@ -65,5 +117,15 @@ private
     keywords.inject(self) { |r, k|
       r[k] if r
     }
+  end
+
+  def similar_title?(rhs)
+    t1 = self.title
+    t2 = rhs.title
+    t1 == t2 or part_of(t1, t2) or part_of(t2, t1)
+  end
+
+  def part_of(base, part)
+    base.index(part) and part.length > base.length / 2
   end
 end

@@ -10,6 +10,17 @@ RAILS_GEM_VERSION = '2.2.2' unless defined? RAILS_GEM_VERSION
 # Bootstrap the Rails environment, frameworks, and default configuration
 require File.join(File.dirname(__FILE__), 'boot')
 
+module FFP
+  module Config
+    class << self
+      attr_accessor :encryption_key
+      attr_accessor :cipher_algorithm
+      attr_accessor :cipher_block_size
+      attr_accessor :google_maps_api_key
+    end
+  end
+end
+
 Rails::Initializer.run do |config|
   # Settings in config/environments/* take precedence over those specified here.
   # Application configuration should go into files in config/initializers
@@ -72,4 +83,9 @@ Rails::Initializer.run do |config|
   # Activate observers that should always be running
   # Please note that observers generated using script/generate observer need to have an _observer suffix
   # config.active_record.observers = :cacher, :garbage_collector, :forum_observer
+
+  ::FFP::Config.cipher_algorithm = 'AES-256-CBC'
+  ::FFP::Config.cipher_block_size = 16 # must match with above alg.
+  ::FFP::Config.encryption_key = "]\023\312\203}\271i\244X\002\374O\241\221/\323\277\005\323HN\216\021\253\320W\314S\206m\a\221"
+  ::FFP::Config.google_maps_api_key = ''
 end

@@ -6,6 +6,7 @@
   <%= user(entry) %>@<%= service(entry) %>
   <ul>
     <li>
+      <%= icon(entry) %>
       <%= published(entry, @compact) %>
       <%= content(entry) %>
       <%= via(entry) %>
@@ -14,7 +15,7 @@
       <%= like_link(entry) %>
       <%= render :partial => 'comment', :locals => {:entry => entry} %>
     </li>
-    <% while v(rest.first, :__same_kinds) %>
+    <% while rest.first and rest.first.grouped %>
       <% child = rest.shift %>
       <li><%= render :partial => 'entry', :locals => {:entry => child, :rest => nil, :cascade => true} %></li>
     <% end %>

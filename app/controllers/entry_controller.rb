@@ -1,7 +1,7 @@
 class EntryController < ApplicationController
   before_filter :login_required
 
-  NUM_DEFAULT = '40'
+  NUM_DEFAULT = '30'
 
   class DebugLogger
     def initialize(logger)

@@ -1,11 +1,18 @@
 module EntryHelper
   FF_ICON_URL_BASE = 'http://friendfeed.com/static/images/'
-  LIKE_ICON_URL = FF_ICON_URL_BASE + 'smile.png'
-  COMMENT_ICON_URL = FF_ICON_URL_BASE + 'comment-friend.png'
-  COMMENT_ADD_ICON_URL = FF_ICON_URL_BASE + 'email-pencil.png'
-  DELETE_ICON_URL = FF_ICON_URL_BASE + 'delete-g.png'
+  ICON_NAME = {
+    'like' => 'smile.png',
+    'comment' => 'comment-friend.png',
+    'comment_add' => 'email-pencil.png',
+    'delete' => 'delete-g.png',
+    'more' => 'add.png',
+    # not used
+    'link' => 'world-link.png',
+    'check' => 'check.png',
+    'check_disabled' => 'check-disabled.png',
+  }
 
-  TUMBLR_TEXT_MAXLEN = 150
+  TUMBLR_TEXT_MAXLEN = 140
   LIKES_THRESHOLD = 3
   FOLD_THRESHOLD = 4
 
@@ -55,21 +62,20 @@ module EntryHelper
     else
       content = q(pickup_link(h(title)))
     end
-    medias = v(entry, 'media')
-    if medias and !medias.empty?
+    if !entry.medias.empty?
       # entries from Hatena contains 'enclosure' but no title and link for now.
-      with_media = content_with_media(title, medias)
+      with_media = content_with_media(title, entry.medias)
       content += "<br/>\n" + with_media unless with_media.empty?
     end
     content
   end
 
   def link_content(title, link, entry)
-    base = link_to(h(title), link)
     if with_domain_mark?(link, entry)
-      base += " (#{URI.parse(link).host})"
+      q(h(title) + ' ' + link_to(h("(#{URI.parse(link).host})"), link))
+    else
+      q(link_to(h(title), link))
     end
-    q(base)
   end
 
   def uri(str)
@@ -123,12 +129,11 @@ module EntryHelper
       zoom = 13
       width = 160
       height = 80
-      tb = "http://maps.google.com/staticmap?zoom=#{h(zoom)}&size=#{image_size(width, height)}&maptype=mobile&markers=#{lat},#{long}&key=#{GOOGLE_MAPS_API_KEY}"
+      tb = "http://maps.google.com/staticmap?zoom=#{h(zoom)}&size=#{image_size(width, height)}&maptype=mobile&markers=#{lat},#{long}&key=#{FFP::Config.google_maps_api_key}"
       title = v(entry, 'title')
       link = "http://maps.google.com/maps?q=#{lat},#{long}+%28#{u(title)}%29"
       content = link_to(image_tag(tb, :alt => h(title), :size => image_size(width, height)), link)
-      medias = v(entry, 'media')
-      if medias and !medias.empty?
+      if !entry.medias.empty?
         common + ' ' + content
       else
         common + "<br/>\n" + content
@@ -147,8 +152,7 @@ module EntryHelper
   def tumblr_content(common, entry)
     title = v(entry, 'title')
     link = v(entry, 'link')
-    medias = v(entry, 'media')
-    if title.length > TUMBLR_TEXT_MAXLEN and (!medias or medias.empty?)
+    if @entry_fold and title.length > TUMBLR_TEXT_MAXLEN and entry.medias.empty?
       title = title[0, TUMBLR_TEXT_MAXLEN - 3] + '...'
       link_content(title, link, entry)
     else
@@ -171,10 +175,10 @@ module EntryHelper
     if likes and !likes.empty?
       if compact and likes.size > LIKES_THRESHOLD + 1
         msg = "... #{likes.size - LIKES_THRESHOLD} more likes"
-        like_icon + likes[0, LIKES_THRESHOLD].collect { |like| user(like) }.join(' ') +
+        icon_tag(:like) + likes[0, LIKES_THRESHOLD].collect { |like| user(like) }.join(' ') +
           ' ' + link_to(h(msg), :action => 'show', :id => u(v(entry, 'id')))
       else
-        like_icon + likes.collect { |like| user(like) }.join(' ')
+        icon_tag(:like) + likes.collect { |like| user(like) }.join(' ')
       end
     end
   end
@@ -188,20 +192,10 @@ module EntryHelper
     super(v(entry, 'user'))
   end
 
-  def like_icon
-    image_tag(LIKE_ICON_URL, :alt => 'like')
-  end
-
-  def comment_icon
-    image_tag(COMMENT_ICON_URL, :alt => 'comment')
-  end
-
-  def add_comment_icon
-    image_tag(COMMENT_ADD_ICON_URL, :alt => 'comment')
-  end
-
-  def delete_icon
-    image_tag(DELETE_ICON_URL, :alt => 'delete')
+  def icon_tag(name, alt = nil)
+    name = name.to_s
+    url = FF_ICON_URL_BASE + ICON_NAME[name]
+    image_tag(url, :alt => alt || name)
   end
 
   def comment(comment)
@@ -224,13 +218,13 @@ module EntryHelper
   end
 
   def fold_link(entry)
-    msg = " #{entry.fold_entries} more entries"
-    link_to(h('>>'), list_opt(:action => 'list', :start => @start, :num => @num, :fold => 'no')) + h(msg)
+    msg = " (#{entry.fold_entries} more entries)"
+    link_to(icon_tag(:more), list_opt(:action => 'list', :start => @start, :num => @num, :fold => 'no')) + h(msg)
   end
 
   def fold_comment_link(entry, comment)
-    msg = " #{comment.fold_entries} more comments"
-    link_to(h('>>'), :action => 'show', :id => u(v(entry, 'id'))) + h(msg)
+    msg = " (#{comment.fold_entries} more comments)"
+    link_to(icon_tag(:more), :action => 'show', :id => u(v(entry, 'id'))) + h(msg)
   end
 
   def logout_link
@@ -277,14 +271,14 @@ module EntryHelper
 
   def post_comment_link(entry)
     eid = v(entry, 'id')
-    link_to(add_comment_icon, :action => 'show', :id => u(eid))
+    link_to(icon_tag(:comment_add, 'comment'), :action => 'show', :id => u(eid))
   end
 
   def delete_link(entry)
     eid = v(entry, 'id')
     name = v(entry, 'user', 'nickname')
     if name == @auth.name
-      link_to(delete_icon, {:action => 'delete', :id => u(eid)}, :confirm => 'Are you sure?')
+      link_to(icon_tag(:delete), {:action => 'delete', :id => u(eid)}, :confirm => 'Are you sure?')
     end
   end
 
@@ -297,7 +291,7 @@ module EntryHelper
     cid = v(comment, 'id')
     name = v(comment, 'user', 'nickname')
     if name == @auth.name
-      link_to(delete_icon, {:action => 'delete', :id => u(eid), :comment => u(cid)}, :confirm => 'Are you sure?')
+      link_to(icon_tag(:delete), {:action => 'delete', :id => u(eid), :comment => u(cid)}, :confirm => 'Are you sure?')
     end
   end
 
@@ -329,23 +323,20 @@ module EntryHelper
     def initialize(fold_entries)
       super()
       @fold_entries = fold_entries
-      self[:__same_kinds] = true
+    end
+
+    def grouped
+      true
     end
   end
 
   def display_entries(entries, fold)
     prev = nil
-    entries.each do |entry|
-      if prev and entry.identity == prev.identity
-        entry[:__same_kinds] = true
-      end
-      prev = entry
-    end
     return entries unless fold
     result = []
     seq = 0
     entries.each do |entry|
-      if entry[:__same_kinds]
+      if entry.grouped
         seq += 1
       else
         if item = fold_item(seq, prev)
@@ -353,7 +344,7 @@ module EntryHelper
         end
         seq = 0
       end
-      if seq < FOLD_THRESHOLD
+      if seq < FOLD_THRESHOLD - 1
         result << entry
       end
       prev = entry
@@ -365,9 +356,9 @@ module EntryHelper
   end
 
   def fold_item(seq, entry)
-    if seq > FOLD_THRESHOLD
-      Fold.new(seq - FOLD_THRESHOLD + 1)
-    elsif seq == FOLD_THRESHOLD
+    if seq >= FOLD_THRESHOLD
+      Fold.new(seq - (FOLD_THRESHOLD - 2))
+    elsif seq == FOLD_THRESHOLD - 1
       entry
     end
   end

@@ -6,7 +6,7 @@
         <li><%= fold_comment_link(entry, comment) %></li>
       <% else %>
         <li>
-          <%= comment_icon %>
+          <%= icon_tag(:comment) %>
           <%= date(v(comment, 'date'), @compact) %></a>
           <%= comment(comment) %>
           by <%= user(comment) %>
@@ -21,7 +21,10 @@
   <%= post_comment_link(entry) unless @post_comment %>
 <% end %>
 <% if @post_comment %>
-  <% form_tag(:action => 'add_comment', :id => u(@eid)) do %>
+  <% form_tag({:action => 'add_comment', :id => u(@eid)}, {:name => 'post'}) do %>
     <p><%= post_comment_form %></p>
+    <script type='text/javascript'><!--
+    post.body.focus();
+    //--></script>
   <% end %>
 <% end %>

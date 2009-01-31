@@ -1,12 +1,15 @@
-<body onLoad="body.focus()">
+<body>
   <h1><%= link_to(appname, :action => 'list') %> entries</h1>
   <% if flash[:deleted_id] %>
   <p><%= undelete_link(flash[:deleted_id], flash[:deleted_comment]) %></p>
   <% end %>
   <% if @post %>
-    <% form_tag(:action => 'add') do %>
+  <% form_tag({:action => 'add'}, {:name => 'post'}) do %>
     <p><%= post_entry_form %> <%= logout_link %></p>
     <% end %>
+    <script type='text/javascript'><!--
+    post.body.focus();
+    //--></script>
   <% end %>
   <p><%= page_links %></p>
   <div class="listings">
@@ -14,7 +17,7 @@
       <% all = display_entries(@entries, @entry_fold) %>
       <% while !all.empty? %>
         <% entry = all.shift %>
-        <% is_chunk = v(all.first, :__same_kinds) %>
+        <% is_chunk = (all.first and all.first.grouped) %>
         <li><%= render :partial => (is_chunk ? 'chunk_entry' : 'entry'), :locals => {:entry => entry, :rest => all, :cascade => false} %></li>
       <% end %>
     </ul>

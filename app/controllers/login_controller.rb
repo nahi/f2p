@@ -14,19 +14,21 @@ class LoginController < ApplicationController
   end
 
   def authenticate
-    name, remote_key = params[:name], params[:remote_key]
-    if ff_client.validate(name, remote_key)
-      user = User.new
-      user.name = name
-      user.remote_key = remote_key
-      unless user.save
-        flash[:error] = 'illegal auth credentials given'
-        redirect_to :action => 'index'
+    if request.method == :post
+      name, remote_key = params[:name], params[:remote_key]
+      if ff_client.validate(name, remote_key)
+        user = User.new
+        user.name = name
+        user.remote_key = remote_key
+        unless user.save
+          flash[:error] = 'illegal auth credentials given'
+          redirect_to :action => 'index'
+        end
+        set_user(user)
+        redirect_to :controller => 'entry'
+        return
       end
-      set_user(user)
-      redirect_to :controller => 'entry'
-    else
-      redirect_to :action => 'index'
     end
+    redirect_to :action => 'index'
   end
 end

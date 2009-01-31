@@ -52,7 +52,11 @@ private
   def ensure_login
     @user_id ||= session[:user_id]
     if @user_id
-      @auth = User.find(@user_id)
+      begin
+        @auth = User.find(@user_id)
+      rescue OpenSSL::OpenSSLError
+        @auth = nil
+      end
     end
   end
 
