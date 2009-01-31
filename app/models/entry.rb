@@ -1,19 +1,13 @@
 class Entry < Hash
   class << self
     def find(arg = {})
-      name = arg[:name]
-      remote_key = arg[:remote_key]
-      user = arg[:user]
-      room = arg[:room]
-      likes = arg[:likes]
-      id = arg[:id]
       opt = arg.dup
-      opt.delete(:name)
-      opt.delete(:remote_key)
-      opt.delete(:user)
-      opt.delete(:room)
-      opt.delete(:likes)
-      opt.delete(:id)
+      name = extract(opt, :name)
+      remote_key = extract(opt, :remote_key)
+      user = extract(opt, :user)
+      room = extract(opt, :room)
+      likes = extract(opt, :likes)
+      id = extract(opt, :id)
       if id
         entries = ff_client.get_entry(name, remote_key, id)
       elsif user
@@ -31,6 +25,12 @@ class Entry < Hash
 
   private
 
+    def extract(hash, key)
+      value = hash[key]
+      hash.delete(key)
+      value
+    end
+
     def ff_client
       ApplicationController.ff_client
     end
@@ -47,18 +47,15 @@ class Entry < Hash
       while !buf.empty?
         result << (entry = buf.shift)
         group = []
-        kinds = []
-        buf.each do |e|
-          kinds << e if entry.similar?(e)
-        end
+        kinds = similar_entries(buf, entry)
         group += kinds
         buf -= kinds
-        kinds.clear
+        kinds = []
         buf.each do |e|
           if entry.identity == e.identity
             kinds << e
-            buf.each do |e2|
-              kinds << e2 if e.similar?(e2) and !kinds.include?(e2)
+            similar_entries(buf, e).each do |e2|
+              kinds << e2 unless kinds.include?(e2)
             end
           end
         end
@@ -71,12 +68,18 @@ class Entry < Hash
       end
       result
     end
+
+    def similar_entries(collection, entry)
+      collection.find_all { |e| entry.similar?(e) }
+    end
   end
 
   def similar?(rhs)
-    self.user_id == rhs.user_id and
-      ((self.published_at - rhs.published_at).abs < 2.seconds or
-        (similar_title?(rhs) and self.medias.empty? and rhs.medias.empty?))
+    if self.identity == rhs.identity
+      same_origin?(rhs) or similar_title?(rhs)
+    else
+      similar_title?(rhs)
+    end
   end
 
   def identity
@@ -100,7 +103,7 @@ class Entry < Hash
   end
 
   def published_at
-    Time.parse(v('published'))
+    @published_at ||= Time.parse(v('published'))
   end
 
   def grouped
@@ -119,7 +122,12 @@ private
     }
   end
 
+  def same_origin?(rhs)
+    (self.published_at - rhs.published_at).abs < 2.seconds
+  end
+
   def similar_title?(rhs)
+    return false if !self.medias.empty? or !rhs.medias.empty?
     t1 = self.title
     t2 = rhs.title
     t1 == t2 or part_of(t1, t2) or part_of(t2, t1)

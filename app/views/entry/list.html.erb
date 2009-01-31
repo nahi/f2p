@@ -11,6 +11,12 @@
     post.body.focus();
     //--></script>
   <% end %>
+  <% if @user %>
+    <p><%= service_links %></p>
+  <% end %>
+  <% if @room == '*' %>
+    <p><%= room_links %></p>
+  <% end %>
   <p><%= page_links %></p>
   <div class="listings">
     <ul>

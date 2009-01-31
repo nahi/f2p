@@ -227,6 +227,22 @@ module EntryHelper
     link_to(h('[logout]'), :controller => 'login', :action => 'clear')
   end
 
+  def service_links
+    @auth.services.collect { |service|
+      label = "[#{v(service, 'name')}]"
+      id = v(service, 'id')
+      link_to(h(label), list_opt(:action => 'list', :user => @auth.name, :service => id))
+    }.join(' ')
+  end
+
+  def room_links
+    @auth.rooms.collect { |room|
+      label = "[#{v(room, 'name')}]"
+      nickname = "[#{v(room, 'nickname')}]"
+      link_to(h(label), list_opt(:action => 'list', :room => nickname))
+    }.join(' ')
+  end
+
   def page_links
     return unless defined?(@start)
     links = []
@@ -317,6 +333,10 @@ module EntryHelper
 
     def grouped
       true
+    end
+
+    def user_id
+      nil
     end
   end
 

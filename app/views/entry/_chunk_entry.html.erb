@@ -17,7 +17,8 @@
     </li>
     <% while rest.first and rest.first.grouped %>
       <% child = rest.shift %>
-      <li><%= render :partial => 'entry', :locals => {:entry => child, :rest => nil, :cascade => true} %></li>
+      <% cascade = (child.user_id == entry.user_id) %>
+      <li><%= render :partial => 'entry', :locals => {:entry => child, :rest => nil, :cascade => cascade} %></li>
     <% end %>
   </ul>
 <% end %>

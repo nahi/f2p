@@ -22,8 +22,8 @@ module FriendFeed
       end
     end
 
-    def get_profile(name, remote_key)
-      uri = uri("user/#{name}/profile")
+    def get_profile(name, remote_key, user = nil)
+      uri = uri("user/#{user || name}/profile")
       client_sync(uri, name, remote_key) do |client|
         JSON.parse(client.get(uri).content)
       end
