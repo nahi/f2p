@@ -248,7 +248,7 @@ module EntryHelper
     }
     User.rooms(arg).collect { |room|
       label = "[#{v(room, 'name')}]"
-      nickname = "[#{v(room, 'nickname')}]"
+      nickname = v(room, 'nickname')
       link_to(h(label), list_opt(:action => 'list', :room => nickname))
     }.join(' ')
   end
