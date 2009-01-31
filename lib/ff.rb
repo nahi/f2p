@@ -176,6 +176,5 @@ if $0 == __FILE__
   remote_key = ARGV.shift or raise
   client = FriendFeed::APIClient.new
   require 'pp'
-  #pp client.get_home_entries(name, remote_key)
-  pp client.get_user_entries(name, remote_key, 'tkudo', :num => 100)
+  pp client.get_home_entries(name, remote_key)
 end

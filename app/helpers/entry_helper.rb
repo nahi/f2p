@@ -27,14 +27,10 @@ module EntryHelper
     else
       name = v(entry, 'service', 'name')
       service_id = v(entry, 'service', 'id')
-      user = v(entry, 'user', 'nickname')
+      nickname = v(entry, 'user', 'nickname')
+      user_id = v(entry, 'user', 'id')
       if name and service_id
-        if user
-          link_to(h(name), :controller => 'entry', :action => 'list', :user => u(user), :service => u(service_id))
-        else
-          # pseudo friend!
-          h(name)
-        end
+        link_to(h(name), :controller => 'entry', :action => 'list', :user => u(nickname || user_id), :service => u(service_id))
       end
     end
   end
@@ -234,12 +230,6 @@ module EntryHelper
   def page_links
     return unless defined?(@start)
     links = []
-    label = '[<<]'
-    if @start - @num >= 0
-      links << link_to(h(label), list_opt(:action => 'list', :start => 0, :num => @num))
-    else
-      links << h(label)
-    end
     label = '[<]'
     if @start - @num >= 0
       links << link_to(h(label), list_opt(:action => 'list', :start => @start - @num, :num => @num))

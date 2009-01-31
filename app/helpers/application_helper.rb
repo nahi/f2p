@@ -35,12 +35,9 @@ module ApplicationHelper
   def user(user)
     nickname = v(user, 'nickname')
     name = v(user, 'name')
+    user_id = v(user, 'id')
     if name
-      if nickname
-        link_to(h(name), :controller => 'entry', :action => 'list', :user => u(nickname))
-      else
-        h(name)
-      end
+      link_to(h(name), :controller => 'entry', :action => 'list', :user => u(nickname || user_id))
     end
   end
 
