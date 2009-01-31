@@ -296,7 +296,7 @@ module EntryHelper
     eid = v(entry, 'id')
     cid = v(comment, 'id')
     name = v(comment, 'user', 'nickname')
-    if name == @auth.name
+    if name == @auth.name or @auth.name == v(entry, 'user', 'nickname')
       link_to(icon_tag(:delete), {:action => 'delete', :id => u(eid), :comment => u(cid)}, :confirm => 'Are you sure?')
     end
   end
