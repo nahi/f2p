@@ -52,7 +52,7 @@ class Entry < Hash
         buf -= kinds
         kinds = []
         buf.each do |e|
-          if entry.identity == e.identity
+          if entry.identity == e.identity and !kinds.include?(e)
             kinds << e
             similar_entries(buf, e).each do |e2|
               kinds << e2 unless kinds.include?(e2)
