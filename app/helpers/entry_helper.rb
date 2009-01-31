@@ -227,16 +227,26 @@ module EntryHelper
     link_to(h('[logout]'), :controller => 'login', :action => 'clear')
   end
 
-  def service_links
-    @auth.services.collect { |service|
+  def service_links(user)
+    arg = {
+      :name => @auth.name,
+      :remote_key => @auth.remote_key,
+      :user => user
+    }
+    User.services(arg).collect { |service|
       label = "[#{v(service, 'name')}]"
       id = v(service, 'id')
-      link_to(h(label), list_opt(:action => 'list', :user => @auth.name, :service => id))
+      link_to(h(label), list_opt(:action => 'list', :user => user, :service => id))
     }.join(' ')
   end
 
-  def room_links
-    @auth.rooms.collect { |room|
+  def room_links(user)
+    arg = {
+      :name => @auth.name,
+      :remote_key => @auth.remote_key,
+      :user => user
+    }
+    User.rooms(arg).collect { |room|
       label = "[#{v(room, 'name')}]"
       nickname = "[#{v(room, 'nickname')}]"
       link_to(h(label), list_opt(:action => 'list', :room => nickname))

@@ -10,21 +10,29 @@ class User < ActiveRecord::Base
 
   encrypt FFP::Config.encryption_key, :remote_key, :algorithm => FFP::Config.cipher_algorithm, :block_size => FFP::Config.cipher_block_size
 
-  def services
-    profile['services']
-  end
+  class << self
+    def services(arg)
+      name = arg[:name]
+      remote_key = arg[:remote_key]
+      user = arg[:user]
+      profile(name, remote_key, user)['services']
+    end
 
-  def rooms
-    profile['rooms']
-  end
+    def rooms(arg)
+      name = arg[:name]
+      remote_key = arg[:remote_key]
+      user = arg[:user] || name
+      profile(name, remote_key, user)['rooms']
+    end
 
-private
+  private
 
-  def profile
-    @profile ||= ff_client.get_profile(name, remote_key)
-  end
+    def profile(name, remote_key, user)
+      ff_client.get_profile(name, remote_key, user)
+    end
 
-  def ff_client
-    ApplicationController.ff_client
+    def ff_client
+      ApplicationController.ff_client
+    end
   end
 end
