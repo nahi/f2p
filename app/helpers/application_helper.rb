@@ -7,6 +7,7 @@ module ApplicationHelper
   APPNAME = 'ffp'
   DATE_THRESHOLD = (24 - 8).hours
   YEAR_THRESHOLD = 1.year
+  SELF_LABEL = 'You'
 
   def appname
     h(APPNAME)
@@ -38,6 +39,9 @@ module ApplicationHelper
     name = v(user, 'name')
     user_id = v(user, 'id')
     if name
+      if nickname == @auth.name
+        name = SELF_LABEL
+      end
       link_to(h(name), :controller => 'entry', :action => 'list', :user => u(nickname || user_id))
     end
   end
