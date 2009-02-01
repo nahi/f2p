@@ -10,6 +10,7 @@ module EntryHelper
     'link' => 'world-link.png',
     'check' => 'check.png',
     'check_disabled' => 'check-disabled.png',
+    'comment_lighter' => 'comment-lighter.png',
   }
 
   TUMBLR_TEXT_MAXLEN = 140
