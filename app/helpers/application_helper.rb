@@ -112,4 +112,8 @@ module ApplicationHelper
       r[k] if r
     }
   end
+
+  def fold_length(str, length)
+    str.scan(Regexp.new("^.{0,#{length}}", Regexp::MULTILINE, 'u'))[0]
+  end
 end

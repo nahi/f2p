@@ -13,6 +13,7 @@ module EntryHelper
     'comment_lighter' => 'comment-lighter.png',
   }
 
+  COMMENT_MAXLEN = 140
   TUMBLR_TEXT_MAXLEN = 140
   LIKES_THRESHOLD = 3
   FOLD_THRESHOLD = 4
@@ -57,7 +58,7 @@ module EntryHelper
     if link and with_link?(v(entry, 'service'))
       content = link_content(title, link, entry)
     else
-      content = q(pickup_link(h(title)))
+      content = q(escape_with_link(title))
     end
     if !entry.medias.empty?
       # entries from Hatena contains 'enclosure' but no title and link for now.
@@ -147,19 +148,33 @@ module EntryHelper
   end
 
   def tumblr_content(common, entry)
+    eid = v(entry, 'id')
     title = v(entry, 'title')
     link = v(entry, 'link')
-    if @entry_fold and title.length > TUMBLR_TEXT_MAXLEN and entry.medias.empty?
-      title = title[0, TUMBLR_TEXT_MAXLEN - 3] + '...'
-      link_content(title, link, entry)
+    fold = fold_length(title, TUMBLR_TEXT_MAXLEN - 3)
+    if @entry_fold and entry.medias.empty? and fold != title
+      link_content(fold + '...', link, entry)
     else
       common
     end
   end
 
-  def pickup_link(content)
+  def escape_with_link(content)
     if content
-      content.gsub(/((?:http|https):\/\/\S+)/) { link_to(h($1), $1) }
+      str = ''
+      m = nil
+      while content.match(URI.regexp)
+        m = $~
+        str += h(m.pre_match)
+        if m[0][-3, 3] == '...'
+          str += m[0]
+        else
+          str += link_to(h(m[0]), m[0])
+        end
+        content = m.post_match
+      end
+      str += h(content)
+      str
     end
   end
 
@@ -195,8 +210,15 @@ module EntryHelper
     image_tag(url, :alt => alt || name)
   end
 
-  def comment(comment)
-    pickup_link(h(v(comment, 'body')))
+  def comment(eid, comment)
+    body = v(comment, 'body')
+    if @entry_fold
+      fold = fold_length(body, COMMENT_MAXLEN - 3)
+      if body != fold
+        return escape_with_link(fold + '...') + link_to(icon_tag(:more), :action => 'show', :id => u(eid))
+      end
+    end
+    escape_with_link(body)
   end
 
   def post_entry_form

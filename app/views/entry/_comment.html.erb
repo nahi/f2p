@@ -8,7 +8,7 @@
         <li>
           <%= icon_tag(:comment) %>
           <%= date(v(comment, 'date'), @compact) %></a>
-          <%= comment(comment) %>
+          <%= comment(v(entry, 'id'), comment) %>
           by <%= user(comment) %>
           <%= via(comment) %>
           <%= delete_comment_link(entry, comment) %>
