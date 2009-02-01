@@ -76,7 +76,9 @@ class Entry < Hash
 
   def similar?(rhs)
     if self.identity == rhs.identity
-      same_origin?(rhs) or similar_title?(rhs)
+      similar_title?(rhs)
+    elsif self.user_id == rhs.user_id
+      same_origin?(rhs)
     else
       same_link?(rhs) or similar_title?(rhs)
     end
@@ -123,11 +125,10 @@ private
   end
 
   def same_origin?(rhs)
-    (self.published_at - rhs.published_at).abs < 2.seconds
+    (self.published_at - rhs.published_at).abs < 10.seconds
   end
 
   def similar_title?(rhs)
-    return false if !self.medias.empty? or !rhs.medias.empty?
     t1 = self.title
     t2 = rhs.title
     t1 == t2 or part_of(t1, t2) or part_of(t2, t1)
