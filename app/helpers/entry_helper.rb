@@ -28,19 +28,17 @@ module EntryHelper
       room(room)
     else
       name = v(entry, 'service', 'name')
-      service_id = v(entry, 'service', 'id')
+      service_id = entry.service_id
       nickname = v(entry, 'user', 'nickname')
-      user_id = v(entry, 'user', 'id')
       if name and service_id
-        link_to(h(name), :controller => 'entry', :action => 'list', :user => u(nickname || user_id), :service => u(service_id))
+        link_to(h(name), :controller => 'entry', :action => 'list', :user => u(nickname || entry.user_id), :service => u(service_id))
       end
     end
   end
 
   def content(entry)
     common = common_content(entry)
-    service_id = v(entry, 'service', 'id')
-    case service_id
+    case entry.service_id
     when 'brightkite'
       brightkite_content(common, entry)
     when 'twitter'
@@ -53,8 +51,8 @@ module EntryHelper
   end
 
   def common_content(entry)
-    title = v(entry, 'title')
-    link = v(entry, 'link')
+    title = entry.title
+    link = entry.link
     if link and with_link?(v(entry, 'service'))
       content = link_content(title, link, entry)
     else
@@ -62,7 +60,7 @@ module EntryHelper
     end
     if !entry.medias.empty?
       # entries from Hatena contains 'enclosure' but no title and link for now.
-      with_media = content_with_media(title, entry.medias)
+      with_media = content_with_media(entry)
       content += "<br/>\n" + with_media unless with_media.empty?
     end
     content
@@ -82,11 +80,10 @@ module EntryHelper
 
   def with_domain_mark?(link, entry)
     link_url = uri(link)
-    service_id = v(entry, 'service', 'id')
     profile_url = uri(v(entry, 'service', 'profileUrl'))
     if profile_url and link_url
       (profile_url.host.downcase != link_url.host.downcase) or
-        ['blog', 'feed'].include?(service_id)
+        ['blog', 'feed'].include?(entry.service_id)
     end
   end
 
@@ -96,10 +93,11 @@ module EntryHelper
     entry_type != 'message' and !['twitter'].include?(service_id)
   end
 
-  def content_with_media(title, medias)
+  def content_with_media(entry)
+    medias = entry.medias
     medias.collect { |media|
-      media_title = v(media, 'title')
-      media_link = v(media, 'link')
+      title = v(media, 'title')
+      link = v(media, 'link')
       tbs = v(media, 'thumbnails')
       safe_content = nil
       if tbs and tbs.first
@@ -109,15 +107,33 @@ module EntryHelper
         tb_height = v(tb, 'height')
         if tb_url
           safe_content = image_tag(tb_url,
-            :alt => h(media_title), :size => image_size(tb_width, tb_height))
+            :alt => h(title), :size => image_size(tb_width, tb_height))
         end
-      elsif media_title
-        safe_content = h(media_title)
+      elsif title
+        safe_content = h(title)
       end
       if safe_content
-        link_to(safe_content, media_link)
+        if link
+          link_to(safe_content, link)
+        else
+          safe_content
+        end
       end
     }.join(' ')
+  end
+
+  # not used: generally, original image is too big
+  def extract_first_media_link(media)
+    content = v(media, 'content')
+    enclosures = v(media, 'enclosures')
+    if content and content.first
+      link = v(content.first, 'url')
+    end
+    if enclosures and enclosures.first
+      link ||= v(enclosures.first, 'url')
+    end
+    link ||= v(media, 'link')
+    link
   end
 
   def brightkite_content(common, entry)
@@ -128,7 +144,7 @@ module EntryHelper
       width = 160
       height = 80
       tb = "http://maps.google.com/staticmap?zoom=#{h(zoom)}&size=#{image_size(width, height)}&maptype=mobile&markers=#{lat},#{long}&key=#{FFP::Config.google_maps_api_key}"
-      title = v(entry, 'title')
+      title = entry.title
       link = "http://maps.google.com/maps?q=#{lat},#{long}+%28#{u(title)}%29"
       content = link_to(image_tag(tb, :alt => h(title), :size => image_size(width, height)), link)
       if !entry.medias.empty?
@@ -148,9 +164,8 @@ module EntryHelper
   end
 
   def tumblr_content(common, entry)
-    eid = v(entry, 'id')
-    title = v(entry, 'title')
-    link = v(entry, 'link')
+    title = entry.title
+    link = entry.link
     fold = fold_length(title, TUMBLR_TEXT_MAXLEN - 3)
     if @entry_fold and entry.medias.empty? and fold != title
       link_content(fold + '...', link, entry)
@@ -166,7 +181,9 @@ module EntryHelper
       while content.match(URI.regexp)
         m = $~
         str += h(m.pre_match)
-        if m[0][-3, 3] == '...'
+        uri = uri(m[0])
+        # trailing '...' means folding.
+        if uri.nil? or !uri.is_a?(URI::HTTP) or m[0][-3, 3] == '...'
           str += m[0]
         else
           str += link_to(h(m[0]), m[0])
@@ -188,7 +205,7 @@ module EntryHelper
       if compact and likes.size > LIKES_THRESHOLD + 1
         msg = "... #{likes.size - LIKES_THRESHOLD} more likes"
         icon_tag(:like) + likes[0, LIKES_THRESHOLD].collect { |like| user(like) }.join(' ') +
-          ' ' + link_to(h(msg), :action => 'show', :id => u(v(entry, 'id')))
+          ' ' + link_to(h(msg), :action => 'show', :id => u(entry.id))
       else
         icon_tag(:like) + likes.collect { |like| user(like) }.join(' ')
       end
@@ -243,7 +260,7 @@ module EntryHelper
 
   def fold_comment_link(entry, comment)
     msg = " (#{comment.fold_entries} more comments)"
-    link_to(icon_tag(:more), :action => 'show', :id => u(v(entry, 'id'))) + h(msg)
+    link_to(icon_tag(:more), :action => 'show', :id => u(entry.id)) + h(msg)
   end
 
   def logout_link
@@ -309,15 +326,13 @@ module EntryHelper
   end
 
   def post_comment_link(entry)
-    eid = v(entry, 'id')
-    link_to(icon_tag(:comment_add, 'comment'), :action => 'show', :id => u(eid))
+    link_to(icon_tag(:comment_add, 'comment'), :action => 'show', :id => u(entry.id))
   end
 
   def delete_link(entry)
-    eid = v(entry, 'id')
     name = v(entry, 'user', 'nickname')
     if name == @auth.name
-      link_to(icon_tag(:delete), {:action => 'delete', :id => u(eid)}, :confirm => 'Are you sure?')
+      link_to(icon_tag(:delete), {:action => 'delete', :id => u(entry.id)}, :confirm => 'Are you sure?')
     end
   end
 
@@ -326,23 +341,21 @@ module EntryHelper
   end
 
   def delete_comment_link(entry, comment)
-    eid = v(entry, 'id')
     cid = v(comment, 'id')
     name = v(comment, 'user', 'nickname')
     if name == @auth.name or @auth.name == v(entry, 'user', 'nickname')
-      link_to(icon_tag(:delete), {:action => 'delete', :id => u(eid), :comment => u(cid)}, :confirm => 'Are you sure?')
+      link_to(icon_tag(:delete), {:action => 'delete', :id => u(entry.id), :comment => u(cid)}, :confirm => 'Are you sure?')
     end
   end
 
   def like_link(entry)
-    eid = v(entry, 'id')
     name = v(entry, 'user', 'nickname')
     if name != @auth.name
       likes = v(entry, 'likes')
       if likes and likes.find { |like| v(like, 'user', 'nickname') == @auth.name }
-        link_to(h('[un-like]'), :action => 'unlike', :id => u(eid))
+        link_to(h('[un-like]'), :action => 'unlike', :id => u(entry.id))
       else
-        link_to(h('[like]'), :action => 'like', :id => u(eid))
+        link_to(h('[like]'), :action => 'like', :id => u(entry.id))
       end
     end
   end

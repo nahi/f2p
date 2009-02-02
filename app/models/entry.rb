@@ -75,17 +75,19 @@ class Entry < Hash
   end
 
   def similar?(rhs)
-    if self.identity == rhs.identity
-      similar_title?(rhs)
-    elsif self.user_id == rhs.user_id
-      same_origin?(rhs)
-    else
-      same_link?(rhs) or similar_title?(rhs)
+    result = false
+    if self.user_id == rhs.user_id
+      result ||= same_origin?(rhs)
     end
+    result ||= same_link?(rhs) || similar_title?(rhs)
   end
 
   def identity
-    @identity ||= [v('user', 'nickname'), v('service', 'id'), v('room')]
+    @identity ||= [user_id, service_id, v('room')]
+  end
+
+  def id
+    v('id')
   end
 
   def title
@@ -94,10 +96,6 @@ class Entry < Hash
 
   def link
     v('link')
-  end
-
-  def user_id
-    v('user', 'id')
   end
 
   def medias
@@ -114,6 +112,14 @@ class Entry < Hash
 
   def grouped=(grouped)
     @grouped = true
+  end
+
+  def service_id
+    v('service', 'id')
+  end
+
+  def user_id
+    v('user', 'id')
   end
 
 private
