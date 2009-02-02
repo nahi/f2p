@@ -2,6 +2,8 @@ require 'httpclient'
 
 
 class LoginController < ApplicationController
+  filter_parameter_logging :remote_key
+
   def index
     if ensure_login
       redirect_to :controller => 'entry'
