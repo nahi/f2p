@@ -238,14 +238,32 @@ module EntryHelper
     escape_with_link(body)
   end
 
+  def search_form
+    str = ''
+    room = (@room != '*') ? @room : nil
+    if room
+      str += hidden_field_tag('room', room)
+    end
+    if @user
+      str += hidden_field_tag('user', @user)
+    end
+    if @service
+      str += hidden_field_tag('service', @service)
+    end
+    str += text_field_tag('query', @query) + submit_tag('search')
+    str += ' ' + link_to(h('[search]'), list_opt.merge(:action => 'search'))
+    str
+  end
+
   def post_entry_form
     str = ''
     room = (@room != '*') ? @room : nil
     if room
-      str = hidden_field_tag('room', room) + h(room) + ': '
+      str += hidden_field_tag('room', room) + h(room) + ': '
     end
     str += text_field_tag('body') + submit_tag('post')
     str += ' ' + link_to(h('[extended]'), :action => 'new', :room => u(room))
+    str += ' ' + link_to(h('[search]'), list_opt.merge(:action => 'search'))
     str
   end
 
@@ -294,13 +312,15 @@ module EntryHelper
   end
 
   def page_links
-    return unless defined?(@start)
+    no_page = (@start.nil? or @query)
     links = []
     label = '[<]'
-    if @start - @num >= 0
-      links << link_to(h(label), list_opt(:action => 'list', :start => @start - @num, :num => @num))
-    else
-      links << h(label)
+    unless no_page
+      if @start - @num >= 0
+        links << link_to(h(label), list_opt(:action => 'list', :start => @start - @num, :num => @num))
+      else
+        links << h(label)
+      end
     end
     label = '[home]'
     if @room or @likes or @user or @service
@@ -321,7 +341,9 @@ module EntryHelper
       links << link_to(h(label), :action => 'list', :likes => 'only')
     end
     label = '[>]'
-    links << link_to(h(label), list_opt(:action => 'list', :start => @start + @num, :num => @num))
+    unless no_page
+      links << link_to(h(label), list_opt(:action => 'list', :start => @start + @num, :num => @num))
+    end
     links.join(' ')
   end
 
@@ -365,7 +387,8 @@ module EntryHelper
       :room => @room,
       :user => @user,
       :likes => @likes,
-      :service => @service
+      :service => @service,
+      :query => @query
     }.merge(hash)
   end
 

@@ -75,6 +75,14 @@ module FriendFeed
       end
     end
 
+    def search_entries(name, remote_key, query, opt = {})
+      uri = uri("feed/search")
+      opt = opt.merge(:q => query)
+      client_sync(uri, name, remote_key) do |client|
+        get_feed(client, uri, opt)
+      end
+    end
+
     def post(name, remote_key, title, link = nil, comment = nil, images = nil, files = nil, room = nil)
       uri = uri("share")
       query = { 'title' => title }

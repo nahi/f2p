@@ -69,4 +69,9 @@ private
     @user_id = session[:user_id] = nil
     @auth = nil
   end
+
+  def param(key)
+    v = params[key]
+    (v and v.empty?) ? nil : v
+  end
 end

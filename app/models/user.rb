@@ -15,14 +15,14 @@ class User < ActiveRecord::Base
       name = arg[:name]
       remote_key = arg[:remote_key]
       user = arg[:user]
-      profile(name, remote_key, user)['services']
+      profile(name, remote_key, user)['services'] || []
     end
 
     def rooms(arg)
       name = arg[:name]
       remote_key = arg[:remote_key]
       user = arg[:user] || name
-      profile(name, remote_key, user)['rooms']
+      profile(name, remote_key, user)['rooms'] || []
     end
 
   private
