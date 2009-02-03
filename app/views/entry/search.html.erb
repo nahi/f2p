@@ -1,0 +1,15 @@
+<body>
+  <h1><%= link_to(appname, :action => 'list') %> search</h1>
+  <% form_tag({:action => 'list'}, {:name => 'search'}) do %>
+    <p>
+      keyword: <%= text_field_tag('query', @query) %><br/>
+      user: <%= text_field_tag('user', @user) %><br/>
+      room: <%= text_field_tag('room', @room) %><br/>
+      service: <%= text_field_tag('service', @service) %><br/>
+      <%= submit_tag 'search' %>
+    </p>
+  <% end %>
+  <script type='text/javascript'><!--
+  search.query.focus();
+  //--></script>
+</body>
