@@ -83,8 +83,7 @@ class Entry < Hash
       result = []
       buf = entries.dup
       while !buf.empty?
-        result << (entry = buf.shift)
-        group = []
+        group = [entry = buf.shift]
         kinds = similar_entries(buf, entry)
         group += kinds
         buf -= kinds
@@ -104,6 +103,7 @@ class Entry < Hash
         group.each do |e|
           e.grouped = true
         end
+        group.first.grouped = false
         result += group
       end
       result
@@ -157,7 +157,7 @@ class Entry < Hash
   end
 
   def grouped=(grouped)
-    @grouped = true
+    @grouped = grouped
   end
 
   def service_id
