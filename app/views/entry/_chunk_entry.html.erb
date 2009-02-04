@@ -4,6 +4,6 @@
 <%= user(entries.first) %>@<%= service(entries.first) %>
 <ul>
   <% fold_entries(entries).each do |entry| -%>
-    <li><%= render :partial => 'entry', :locals => {:entry => entry, :root_user => entry.user_id, :root_service => entry.service_identity} %></li>
+    <li><%= render :partial => 'entry', :locals => {:entry => entry, :root_user => entries.first.user_id, :root_service => entries.first.service_identity} %></li>
   <%- end %>
 </ul>

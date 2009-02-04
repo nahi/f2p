@@ -14,8 +14,8 @@
   <%- end -%>
   <%= content(entry) %>
   <%= via(entry) %>
-  <%= likes(entry, @compact) %>
-  <%= delete_link(entry) %>
+  <%= likes(entry, @compact) -%>
+  <%= delete_link(entry) -%>
   <%= like_link(entry) %>
   <%= render :partial => 'comment', :locals => {:entry => entry} %>
 <%- end -%>
