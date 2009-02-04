@@ -150,10 +150,11 @@ class EntryController < ApplicationController
       image_url = generator.staticmap_url(maptype, lat, long, :zoom => zoom, :width => width, :height => height)
       image_link = generator.link_url(lat, long, address)
       images = [[image_url, image_link]]
+      body += " (@#{address})"
     end
     if link
       title = capture_title(link)
-      ff_client.post(@auth.name, @auth.remote_key, title, link, body, nil, nil, room)
+      ff_client.post(@auth.name, @auth.remote_key, title, link, body, images, nil, room)
     elsif body
       ff_client.post(@auth.name, @auth.remote_key, body, link, nil, images, nil, room)
     end

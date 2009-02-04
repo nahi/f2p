@@ -143,7 +143,7 @@ module EntryHelper
     long = point.long
     address = point.address
     tb = generator.staticmap_url(maptype, lat, long, :zoom => zoom, :width => width, :height => height)
-    link = generator.link_url(lat, long, "(#{address})")
+    link = generator.link_url(lat, long, address)
     link_to(image_tag(tb, :alt => h(address), :size => image_size(width, height)), link)
   end
 

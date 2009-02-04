@@ -109,11 +109,21 @@ module GoogleMaps
 
     def link_url(lat, long, title = nil)
       if title
-        title = '+' + ERB::Util.u(title)
+        title = '+' + ERB::Util.u("(#{unwrap_title(title)})")
       else
         title = ''
       end
       "http://maps.google.com/maps?q=#{lat},#{long}#{title}"
+    end
+
+  private
+
+    def unwrap_title(title)
+      if /\((.+)\)/ =~ title
+        $1
+      else
+        title
+      end
     end
   end
 end
