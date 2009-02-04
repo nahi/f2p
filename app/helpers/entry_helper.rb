@@ -345,11 +345,7 @@ module EntryHelper
       end
     end
     label = '[home]'
-    if @room or @likes or @user or @service
-      links << link_to(h(label), :action => 'list')
-    else
-      links << h(label)
-    end
+    links << link_to(h(label), :action => 'list')
     if @user and @user != @auth.name
       label = '[friends]'
       if @friends
