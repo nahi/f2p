@@ -283,7 +283,9 @@ module EntryHelper
     end
     str += text_field_tag('body') + submit_tag('post')
     str += ' ' + link_to(h('[extended]'), :action => 'new', :room => u(room))
-    str += ' ' + link_to(h('[search]'), list_opt.merge(:action => 'search'))
+    search_opt = list_opt.merge(:action => 'search')
+    search_opt[:friends] = 'me' if @home
+    str += ' ' + link_to(h('[search]'), search_opt)
     str
   end
 

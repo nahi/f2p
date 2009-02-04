@@ -32,6 +32,7 @@ class EntryController < ApplicationController
     @start = (param(:start) || '0').to_i
     @num = (param(:num) || NUM_DEFAULT).to_i
     @entry_fold = (!@user and !@service and param(:fold) != 'no')
+    @home = false
     opt = {
       :name => @auth.name,
       :remote_key => @auth.remote_key,
@@ -51,7 +52,7 @@ class EntryController < ApplicationController
     elsif @likes == 'only'
       @entries = EntryThread.find(opt.merge(:likes => true))
     else
-      @friends = @auth.name # for search by myself
+      @home = true
       @entries = EntryThread.find(opt.merge(:merge_service => true))
     end
     @compact = true
@@ -82,6 +83,7 @@ class EntryController < ApplicationController
     @start = 0
     @num = 0
     @entry_fold = false
+    @home = false
     opt = {
       :name => @auth.name,
       :remote_key => @auth.remote_key,

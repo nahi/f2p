@@ -1,10 +1,10 @@
-<% comments = entry.comments %>
-<% unless comments.empty? %>
+<%- comments = entry.comments -%>
+<%- unless comments.empty? -%>
   <ul>
-    <% fold_comments(comments).each do |comment| %>
-      <% if comment.respond_to?(:fold_entries) %>
+    <%- fold_comments(comments).each do |comment| -%>
+      <%- if comment.respond_to?(:fold_entries) -%>
         <li><%= fold_comment_link(entry, comment) %></li>
-      <% else %>
+      <%- else -%>
         <li>
           <%= icon_tag(:comment) %>
           <%= date(v(comment, 'date'), @compact) %></a>
@@ -14,17 +14,17 @@
           <%= delete_comment_link(entry, comment) %>
           <%= post_comment_link(entry) if !@post_comment and comment == comments.last %>
         </li>
-      <% end %>
-    <% end %>
+      <%- end -%>
+    <%- end -%>
   </ul>
-<% else %>
+<%- else -%>
   <%= post_comment_link(entry) unless @post_comment %>
-<% end %>
-<% if @post_comment %>
-  <% form_tag({:action => 'add_comment', :id => u(@eid)}, {:name => 'post'}) do %>
+<%- end -%>
+<%- if @post_comment -%>
+  <%- form_tag({:action => 'add_comment', :id => u(@eid)}, {:name => 'post'}) do -%>
     <p><%= post_comment_form %></p>
     <script type='text/javascript'><!--
     post.body.focus();
     //--></script>
-  <% end %>
-<% end %>
+  <%- end -%>
+<%- end -%>

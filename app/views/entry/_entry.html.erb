@@ -1,21 +1,21 @@
-<% if entry.respond_to?(:fold_entries) %>
+<%- if entry.respond_to?(:fold_entries) -%>
   <%= fold_link(entry) %>
-<% elsif v(entry, 'hidden') %>
+<%- elsif v(entry, 'hidden') -%>
   (hidden)
-<% else %>
+<%- else -%>
   <%= icon(entry) %>
   <%= published(entry, @compact) %>
-  <% if root_user.nil? and root_service.nil? %>
+  <%- if root_user.nil? and root_service.nil? -%>
     <%= user(entry) %>@<%= service(entry) %>:
-  <% elsif root_user == entry.user_id and root_service != entry.service_identity %>
+  <%- elsif root_user == entry.user_id and root_service != entry.service_identity -%>
     <%= service(entry) %>:
-  <% elsif root_user != entry.user_id and root_service != entry.service_identity %>
+  <%- elsif root_user != entry.user_id and root_service != entry.service_identity -%>
     <%= user(entry) %>@<%= service(entry) %>:
-  <% end %>
+  <%- end -%>
   <%= content(entry) %>
   <%= via(entry) %>
   <%= likes(entry, @compact) %>
   <%= delete_link(entry) %>
   <%= like_link(entry) %>
   <%= render :partial => 'comment', :locals => {:entry => entry} %>
-<% end %>
+<%- end -%>

@@ -1,40 +1,38 @@
-<body>
-  <h1><%= link_to(appname, :action => 'list') %> entries</h1>
-  <% if flash[:deleted_id] %>
+<h1><%= link_to(appname, :action => 'list') %> entries</h1>
+<%- if flash[:deleted_id] -%>
   <p><%= undelete_link(flash[:deleted_id], flash[:deleted_comment]) %></p>
-  <% end %>
-  <% if @search %>
-    <% form_tag({:action => 'list'}, {:name => 'post'}) do %>
-      <p><%= search_form %> <%= logout_link %></p>
-    <% end %>
-    <script type='text/javascript'><!--
-    post.query.focus();
-    //--></script>
-  <% elsif @post %>
-    <% form_tag({:action => 'add'}, {:name => 'post'}) do %>
-      <p><%= post_entry_form %> <%= logout_link %></p>
-    <% end %>
-    <script type='text/javascript'><!--
-    post.body.focus();
-    //--></script>
-  <% end %>
-  <% if @post and @user %>
-    <p><%= service_links(@user) %></p>
-  <% end %>
-  <% if @post and @room == '*' %>
-    <p><%= room_links(@user) %></p>
-  <% end %>
-  <p><%= page_links %></p>
-  <div class="listings">
-    <ul>
-      <% @entries.each do |thread| %>
-        <% if thread.chunked? %>
-          <li><%= render :partial => 'chunk_entry', :locals => {:thread => thread, :root_user => nil, :root_service => nil} %></li>
-        <% else %>
-          <li><%= render :partial => 'entry', :locals => {:entry => thread.single_entry, :root_user => nil, :root_service => nil} %></li>
-        <% end %>
-      <% end %>
-    </ul>
-  </div>
-  <p><%= page_links %></p>
-</body>
+<%- end -%>
+<%- if @search -%>
+  <%- form_tag({:action => 'list'}, {:name => 'post'}) do -%>
+    <p><%= search_form %> <%= logout_link %></p>
+  <%- end -%>
+  <script type='text/javascript'><!--
+  post.query.focus();
+  //--></script>
+<%- elsif @post -%>
+  <%- form_tag({:action => 'add'}, {:name => 'post'}) do -%>
+    <p><%= post_entry_form %> <%= logout_link %></p>
+  <%- end -%>
+  <script type='text/javascript'><!--
+  post.body.focus();
+  //--></script>
+<%- end -%>
+<%- if @post and @user -%>
+  <p><%= service_links(@user) %></p>
+<%- end -%>
+<%- if @post and @room == '*' -%>
+  <p><%= room_links(@user) %></p>
+<%- end -%>
+<p><%= page_links %></p>
+<div class="listings">
+  <ul>
+    <%- @entries.each do |thread| -%>
+      <%- if thread.chunked? -%>
+        <li><%= render :partial => 'chunk_entry', :locals => {:thread => thread, :root_user => nil, :root_service => nil} %></li>
+      <%- else -%>
+        <li><%= render :partial => 'entry', :locals => {:entry => thread.single_entry, :root_user => nil, :root_service => nil} %></li>
+      <%- end -%>
+    <%- end -%>
+  </ul>
+</div>
+<p><%= page_links %></p>

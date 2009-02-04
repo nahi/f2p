@@ -1,33 +1,22 @@
-<html>
-  <head>
-    <title><%= appname %> login</title>
-    <style type="text/css">
-      body { font-size: 8pt; }
-      p.error { color: red; }
-    </style>
-  </head>
-  <body>
-    <h1><%= appname %> login</h1>
-    <% form_tag :action => 'authenticate' do %>
-    <% if flash[:error] %>
-      <p class="error"><%= flash[:error] %></p>
-    <% end %>
-    <p>
+<h1><%= appname %> login</h1>
+<%- form_tag :action => 'authenticate' do -%>
+  <%- if flash[:error] -%>
+    <p class="error"><%= flash[:error] %></p>
+  <%- end -%>
+  <p>
     FriendFeed user nickname: <%= text_field_tag 'name' %><br/>
     Remote key(NOT A PASSWORD): <%= password_field_tag 'remote_key' %><br/>
     <%= submit_tag 'login' %>
-    </p>
-    <% end %>
-    <hr/>
-    <p>Bear in mind...</p>
-    <ul>
-      <li>Do NOT enter your FriendFeed PASSWORD here.  You can check <%= link_to('your remote key', 'https://friendfeed.com/account/api') %> by yourself.</li>
-      <li>NO WARRANTY; This service is provided on an "AS IS" basis without warranty of any kind.</li>
-      <li>The pairs of nickname and remote key are stored in DB of this server for accessing FriendFeed API.</li>
-      <li>Your feed is NOT stored in the DB.</li>
-      <li>Let me know about any trouble on this service at <%= link_url('http://friendfeed.com/ffpd') %>.</li>
-    </ul>
-    <hr/>
-    <p>NAKAMURA, Hiroshi a.k.a. NaHi - <%= link_url('http://friendfeed.com/nahi') %></p>
-  </body>
-</html>
+  </p>
+<%- end -%>
+<hr/>
+<p>Bear in mind...</p>
+<ul>
+  <li>Do NOT enter your FriendFeed PASSWORD here.  You can check <%= link_to('your remote key', 'https://friendfeed.com/account/api') %> by yourself.</li>
+  <li>NO WARRANTY; This service is provided on an "AS IS" basis without warranty of any kind.</li>
+  <li>The pairs of nickname and remote key are stored in DB of this server for accessing FriendFeed API.</li>
+  <li>Your feed is NOT stored in the DB.</li>
+  <li>Let me know about any trouble on this service at <%= link_url('http://friendfeed.com/rooms/f2p') %>.</li>
+</ul>
+<hr/>
+<p>NAKAMURA, Hiroshi a.k.a. NaHi - <%= link_url('http://friendfeed.com/nahi') %></p>
