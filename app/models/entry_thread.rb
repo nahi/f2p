@@ -112,7 +112,7 @@ class EntryThread
     end
 
     def tag(entry, opt)
-      t = [entry.user_id]
+      t = [entry.user_id, entry.room]
       t << entry.service_id unless opt[:merge_service]
       t
     end
