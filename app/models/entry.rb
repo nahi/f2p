@@ -39,8 +39,21 @@ class Entry < Hash
     v('user', 'id')
   end
 
+  # can be nil for imaginary friend
+  def nickname
+    v('user', 'nickname')
+  end
+
   def room
     v('room')
+  end
+
+  def comments
+    v('comments') || []
+  end
+
+  def likes
+    v('likes') || []
   end
 
 private

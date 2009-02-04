@@ -1,4 +1,4 @@
-<% comments = v(entry, 'comments') || [] %>
+<% comments = entry.comments %>
 <% unless comments.empty? %>
   <ul>
     <% fold_comments(comments).each do |comment| %>

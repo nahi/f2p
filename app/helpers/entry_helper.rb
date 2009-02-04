@@ -23,15 +23,13 @@ module EntryHelper
   end
 
   def service(entry)
-    room = v(entry, 'room')
-    if room
-      room(room)
+    if entry.room
+      room(entry.room)
     else
       name = v(entry, 'service', 'name')
       service_id = entry.service_id
-      nickname = v(entry, 'user', 'nickname')
       if name and service_id
-        link_to(h(name), :controller => 'entry', :action => 'list', :user => u(nickname || entry.user_id), :service => u(service_id))
+        link_to(h(name), :controller => 'entry', :action => 'list', :user => u(entry.nickname || entry.user_id), :service => u(service_id))
       end
     end
   end
@@ -208,8 +206,9 @@ module EntryHelper
   end
 
   def likes(entry, compact)
-    likes = v(entry, 'likes')
-    if likes and !likes.empty?
+    me, rest = entry.likes.partition { |e| v(e, 'user', 'nickname') == @auth.name }
+    likes = me + rest
+    if !likes.empty?
       if compact and likes.size > LIKES_THRESHOLD + 1
         msg = "... #{likes.size - LIKES_THRESHOLD} more likes"
         icon_tag(:like) + likes[0, LIKES_THRESHOLD].collect { |like| user(like) }.join(' ') +
@@ -222,8 +221,8 @@ module EntryHelper
 
   def updated(entry, compact)
     updated = v(entry, 'updated')
-    comments = v(entry, 'comments') || []
-    likes = v(entry, 'likes') || []
+    comments = entry.comments
+    likes = entry.likes
     unless comments.empty?
       updated = [updated, v(comments.last, 'date')].max
     end
@@ -373,8 +372,7 @@ module EntryHelper
   end
 
   def delete_link(entry)
-    name = v(entry, 'user', 'nickname')
-    if name == @auth.name
+    if entry.nickname == @auth.name
       link_to(icon_tag(:delete), {:action => 'delete', :id => u(entry.id)}, :confirm => 'Are you sure?')
     end
   end
@@ -386,16 +384,14 @@ module EntryHelper
   def delete_comment_link(entry, comment)
     cid = v(comment, 'id')
     name = v(comment, 'user', 'nickname')
-    if name == @auth.name or @auth.name == v(entry, 'user', 'nickname')
+    if name == @auth.name or @auth.name == entry.nickname
       link_to(icon_tag(:delete), {:action => 'delete', :id => u(entry.id), :comment => u(cid)}, :confirm => 'Are you sure?')
     end
   end
 
   def like_link(entry)
-    name = v(entry, 'user', 'nickname')
-    if name != @auth.name
-      likes = v(entry, 'likes')
-      if likes and likes.find { |like| v(like, 'user', 'nickname') == @auth.name }
+    if entry.nickname != @auth.name
+      if entry.likes.find { |like| v(like, 'user', 'nickname') == @auth.name }
         link_to(h('[un-like]'), :action => 'unlike', :id => u(entry.id))
       else
         link_to(h('[like]'), :action => 'like', :id => u(entry.id))
