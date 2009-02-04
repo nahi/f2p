@@ -4,14 +4,16 @@ class EntryThread
   class << self
     def find(arg = {})
       opt = arg.dup
-      name = extract(opt, :name)
-      remote_key = extract(opt, :remote_key)
+      name = opt[:name]
+      remote_key = opt[:remote_key]
       if opt[:query]
         entries = search_entries(name, remote_key, opt)
       elsif opt[:id]
         entries = get_entry(name, remote_key, opt)
       elsif opt[:user]
         entries = get_user_entries(name, remote_key, opt)
+      elsif opt[:friends]
+        entries = get_friends_entries(name, remote_key, opt)
       elsif opt[:room]
         entries = get_room_entries(name, remote_key, opt)
       elsif opt[:likes]
@@ -25,48 +27,45 @@ class EntryThread
   private
 
     def search_entries(name, remote_key, opt)
-      query = extract(opt, :query)
-      ff_client.search_entries(name, remote_key, query, opt)
+      query = opt[:query]
+      ff_client.search_entries(name, remote_key, query, filter_opt(opt))
     end
 
     def get_home_entries(name, remote_key, opt)
-      opt.delete(:user)
-      opt.delete(:room)
-      opt.delete(:likes)
-      ff_client.get_home_entries(name, remote_key, opt)
+      ff_client.get_home_entries(name, remote_key, filter_opt(opt))
     end
 
     def get_user_entries(name, remote_key, opt)
-      user = extract(opt, :user)
-      opt.delete(:room)
-      opt.delete(:likes)
-      ff_client.get_user_entries(name, remote_key, user, opt)
+      user = opt[:user]
+      ff_client.get_user_entries(name, remote_key, user, filter_opt(opt))
+    end
+
+    def get_friends_entries(name, remote_key, opt)
+      friends = opt[:friends]
+      ff_client.get_friends_entries(name, remote_key, friends, filter_opt(opt))
     end
 
     def get_room_entries(name, remote_key, opt)
-      opt.delete(:user)
-      room = extract(opt, :room)
-      opt.delete(:likes)
+      room = opt[:room]
       room = nil if room == '*'
-      ff_client.get_room_entries(name, remote_key, room, opt)
+      ff_client.get_room_entries(name, remote_key, room, filter_opt(opt))
     end
 
     def get_likes(name, remote_key, opt)
-      opt.delete(:user)
-      opt.delete(:room)
-      opt.delete(:likes)
-      ff_client.get_likes(name, remote_key, opt)
+      ff_client.get_likes(name, remote_key, filter_opt(opt))
     end
 
     def get_entry(name, remote_key, opt)
-      id = extract(opt, :id)
+      id = opt[:id]
       ff_client.get_entry(name, remote_key, id)
     end
 
-    def extract(hash, key)
-      value = hash[key]
-      hash.delete(key)
-      value
+    def filter_opt(opt)
+      {
+        :service => opt[:service],
+        :start => opt[:start],
+        :num => opt[:num]
+      }
     end
 
     def ff_client

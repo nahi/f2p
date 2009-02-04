@@ -24,8 +24,9 @@ class EntryController < ApplicationController
   def list
     @eid = nil
     @query = param(:query)
-    @room = param(:room)
     @user = param(:user)
+    @friends = param(:friends)
+    @room = param(:room)
     @likes = param(:likes)
     @service = param(:service)
     @start = (param(:start) || '0').to_i
@@ -43,6 +44,8 @@ class EntryController < ApplicationController
       @entries = EntryThread.find(opt.merge(:query => @query, :room => @room, :who => @user, :service => @service))
     elsif @user
       @entries = EntryThread.find(opt.merge(:user => @user))
+    elsif @friends
+      @entries = EntryThread.find(opt.merge(:friends => @friends))
     elsif @room
       @entries = EntryThread.find(opt.merge(:room => @room))
     elsif @likes == 'only'
@@ -70,8 +73,9 @@ class EntryController < ApplicationController
   def show
     @eid = param(:id)
     @query = nil
-    @room = nil
     @user = nil
+    @friends = nil
+    @room = nil
     @likes = nil
     @service = nil
     @start = 0

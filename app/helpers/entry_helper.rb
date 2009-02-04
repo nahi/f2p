@@ -348,6 +348,14 @@ module EntryHelper
     else
       links << h(label)
     end
+    if @user and @user != @auth.name
+      label = '[friends]'
+      if @friends
+        links << h(label)
+      else
+        links << link_to(h(label), :action => 'list', :friends => @user)
+      end
+    end
     label = '[rooms]'
     if @room == '*'
       links << h(label)
@@ -401,11 +409,12 @@ module EntryHelper
 
   def list_opt(hash = {})
     {
-      :room => @room,
+      :query => @query,
       :user => @user,
+      :friends => @friends,
+      :room => @room,
       :likes => @likes,
-      :service => @service,
-      :query => @query
+      :service => @service
     }.merge(hash)
   end
 

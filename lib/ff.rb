@@ -50,6 +50,13 @@ module FriendFeed
       end
     end
 
+    def get_friends_entries(name, remote_key, user, opt = {})
+      uri = uri("feed/user/#{user}/friends")
+      client_sync(uri, name, remote_key) do |client|
+        get_feed(client, uri, opt)
+      end
+    end
+
     def get_room_entries(name, remote_key, room = nil, opt = {})
       if room.nil?
         uri = uri("feed/rooms")
