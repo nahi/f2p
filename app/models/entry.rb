@@ -110,7 +110,7 @@ class Entry < Hash
     end
 
     def tag(entry, opt)
-      t = [entry.user_id, entry.room]
+      t = [entry.user_id]
       t << entry.service_id unless opt[:merge_service]
       t
     end
@@ -128,8 +128,8 @@ class Entry < Hash
     result ||= same_link?(rhs) || similar_title?(rhs)
   end
 
-  def identity
-    @identity ||= [user_id, service_id, v('room')]
+  def service_identity
+    [service_id, room]
   end
 
   def id

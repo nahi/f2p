@@ -31,7 +31,7 @@
       <% while !all.empty? %>
         <% entry = all.shift %>
         <% is_chunk = (all.first and all.first.grouped) %>
-        <li><%= render :partial => (is_chunk ? 'chunk_entry' : 'entry'), :locals => {:entry => entry, :rest => all, :cascade => false} %></li>
+        <li><%= render :partial => (is_chunk ? 'chunk_entry' : 'entry'), :locals => {:entry => entry, :rest => all, :root_user => nil, :root_service => nil} %></li>
       <% end %>
     </ul>
   </div>
