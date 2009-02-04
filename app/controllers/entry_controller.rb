@@ -25,8 +25,8 @@ class EntryController < ApplicationController
     @eid = nil
     @query = param(:query)
     @user = param(:user)
-    @friends = param(:friends)
     @room = param(:room)
+    @friends = param(:friends)
     @likes = param(:likes)
     @service = param(:service)
     @start = (param(:start) || '0').to_i
@@ -41,7 +41,7 @@ class EntryController < ApplicationController
     }
     logger.info([:query, @query].inspect)
     if @query
-      @entries = EntryThread.find(opt.merge(:query => @query, :room => @room, :who => @user, :service => @service))
+      @entries = EntryThread.find(opt.merge(:query => @query, :user => @user, :room => @room, :friends => @friends, :service => @service))
     elsif @user
       @entries = EntryThread.find(opt.merge(:user => @user))
     elsif @friends
@@ -51,6 +51,7 @@ class EntryController < ApplicationController
     elsif @likes == 'only'
       @entries = EntryThread.find(opt.merge(:likes => true))
     else
+      @friends = @auth.name # for search by myself
       @entries = EntryThread.find(opt.merge(:merge_service => true))
     end
     @compact = true
@@ -74,8 +75,8 @@ class EntryController < ApplicationController
     @eid = param(:id)
     @query = nil
     @user = nil
-    @friends = nil
     @room = nil
+    @friends = nil
     @likes = nil
     @service = nil
     @start = 0
@@ -117,8 +118,9 @@ class EntryController < ApplicationController
 
   def search
     @query = param(:query)
-    @room = param(:room)
     @user = param(:user)
+    @room = param(:room)
+    @friends = param(:friends)
     @service = param(:service)
   end
 

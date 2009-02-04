@@ -411,8 +411,8 @@ module EntryHelper
     {
       :query => @query,
       :user => @user,
-      :friends => @friends,
       :room => @room,
+      :friends => @friends,
       :likes => @likes,
       :service => @service
     }.merge(hash)

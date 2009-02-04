@@ -12,10 +12,10 @@ class EntryThread
         entries = get_entry(name, remote_key, opt)
       elsif opt[:user]
         entries = get_user_entries(name, remote_key, opt)
-      elsif opt[:friends]
-        entries = get_friends_entries(name, remote_key, opt)
       elsif opt[:room]
         entries = get_room_entries(name, remote_key, opt)
+      elsif opt[:friends]
+        entries = get_friends_entries(name, remote_key, opt)
       elsif opt[:likes]
         entries = get_likes(name, remote_key, opt)
       else
@@ -28,7 +28,13 @@ class EntryThread
 
     def search_entries(name, remote_key, opt)
       query = opt[:query]
-      ff_client.search_entries(name, remote_key, query, filter_opt(opt))
+      search = {
+        :from => opt[:user],
+        :room => opt[:room],
+        :friends => opt[:friends],
+        :service => opt[:service]
+      }
+      ff_client.search_entries(name, remote_key, query, search)
     end
 
     def get_home_entries(name, remote_key, opt)
@@ -40,15 +46,15 @@ class EntryThread
       ff_client.get_user_entries(name, remote_key, user, filter_opt(opt))
     end
 
-    def get_friends_entries(name, remote_key, opt)
-      friends = opt[:friends]
-      ff_client.get_friends_entries(name, remote_key, friends, filter_opt(opt))
-    end
-
     def get_room_entries(name, remote_key, opt)
       room = opt[:room]
       room = nil if room == '*'
       ff_client.get_room_entries(name, remote_key, room, filter_opt(opt))
+    end
+
+    def get_friends_entries(name, remote_key, opt)
+      friends = opt[:friends]
+      ff_client.get_friends_entries(name, remote_key, friends, filter_opt(opt))
     end
 
     def get_likes(name, remote_key, opt)
