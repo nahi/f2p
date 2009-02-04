@@ -23,11 +23,11 @@ module EntryHelper
   end
 
   def service(entry)
-    if entry.room
+    service_id = entry.service_id
+    if service_id == 'internal' and entry.room
       room(entry.room)
     else
       name = v(entry, 'service', 'name')
-      service_id = entry.service_id
       if name and service_id
         link_to(h(name), :controller => 'entry', :action => 'list', :user => u(entry.nickname || entry.user_id), :service => u(service_id))
       end
