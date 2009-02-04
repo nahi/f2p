@@ -40,15 +40,15 @@ class EntryController < ApplicationController
     }
     logger.info([:query, @query].inspect)
     if @query
-      @entries = Entry.find(opt.merge(:query => @query, :room => @room, :who => @user, :service => @service))
+      @entries = EntryThread.find(opt.merge(:query => @query, :room => @room, :who => @user, :service => @service))
     elsif @user
-      @entries = Entry.find(opt.merge(:user => @user))
+      @entries = EntryThread.find(opt.merge(:user => @user))
     elsif @room
-      @entries = Entry.find(opt.merge(:room => @room))
+      @entries = EntryThread.find(opt.merge(:room => @room))
     elsif @likes == 'only'
-      @entries = Entry.find(opt.merge(:likes => true))
+      @entries = EntryThread.find(opt.merge(:likes => true))
     else
-      @entries = Entry.find(opt.merge(:merge_service => true))
+      @entries = EntryThread.find(opt.merge(:merge_service => true))
     end
     @compact = true
     @search = !!@query
@@ -82,7 +82,7 @@ class EntryController < ApplicationController
       :remote_key => @auth.remote_key,
       :id => @eid
     }
-    @entries = Entry.find(opt)
+    @entries = EntryThread.find(opt)
     @compact = false
     @search = false
     @post = false

@@ -16,7 +16,7 @@ module EntryHelper
   COMMENT_MAXLEN = 140
   TUMBLR_TEXT_MAXLEN = 140
   LIKES_THRESHOLD = 3
-  FOLD_THRESHOLD = 4
+  FOLD_THRESHOLD = 5
 
   def icon(entry)
     service_icon(v(entry, 'service'))
@@ -220,6 +220,19 @@ module EntryHelper
     end
   end
 
+  def updated(entry, compact)
+    updated = v(entry, 'updated')
+    comments = v(entry, 'comments') || []
+    likes = v(entry, 'likes') || []
+    unless comments.empty?
+      updated = [updated, v(comments.last, 'date')].max
+    end
+    unless likes.empty?
+      updated = [updated, v(likes.last, 'date')].max
+    end
+    date(updated, compact)
+  end
+
   def published(entry, compact)
     published = v(entry, 'published')
     date(published, compact)
@@ -408,55 +421,41 @@ module EntryHelper
       @fold_entries = fold_entries
     end
 
-    def grouped
-      true
+    def user_id
+      nil
     end
 
-    def user_id
+    def service_identity
       nil
     end
   end
 
-  def display_entries(entries, fold)
-    prev = nil
-    return entries unless fold
-    result = []
-    seq = 0
-    entries.each do |entry|
-      if entry.grouped
-        seq += 1
-      else
-        if item = fold_item(seq, prev)
-          result << item
-        end
-        seq = 0
-      end
-      if seq < FOLD_THRESHOLD - 1
-        result << entry
-      end
-      prev = entry
-    end
-    if prev && item = fold_item(seq, prev)
-      result << item
-    end
-    result
-  end
-
-  def fold_item(seq, entry)
-    if seq >= FOLD_THRESHOLD
-      Fold.new(seq - (FOLD_THRESHOLD - 2))
-    elsif seq == FOLD_THRESHOLD - 1
-      entry
+  def fold_entries(entries)
+    if @entry_fold
+      fold_items(entries.find_all { |e| !v(e, 'hidden') })
+    else
+      entries.dup
     end
   end
 
   def fold_comments(comments)
-    if @compact and comments.size > 4
-      result = comments.values_at(0, -2, -1)
-      result[1, 0] = Fold.new(comments.size - 3)
+    if @compact
+      fold_items(comments)
+    else
+      comments.dup
+    end
+  end
+
+  def fold_items(items)
+    if items.size > FOLD_THRESHOLD
+      result = []
+      result << items.first
+      result << Fold.new(items.size - (FOLD_THRESHOLD - 1))
+      last_size = FOLD_THRESHOLD - 2
+      result += items[-last_size, last_size]
       result
     else
-      comments
+      items.dup
     end
   end
 end
