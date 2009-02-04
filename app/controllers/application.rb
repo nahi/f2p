@@ -74,4 +74,10 @@ private
     v = params[key]
     (v and v.empty?) ? nil : v
   end
+
+  def v(hash, *keywords)
+    keywords.inject(hash) { |r, k|
+      r[k] if r
+    }
+  end
 end

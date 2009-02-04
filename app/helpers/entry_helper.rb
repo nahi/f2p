@@ -122,7 +122,6 @@ module EntryHelper
     }.join(' ')
   end
 
-  # not used: generally, original image is too big
   def extract_first_media_link(media)
     content = v(media, 'content')
     enclosures = v(media, 'enclosures')
@@ -136,17 +135,26 @@ module EntryHelper
     link
   end
 
+  def google_maps_link(point)
+    generator = GoogleMaps::URLGenerator.new(FFP::Config.google_maps_api_key)
+    zoom = 13
+    width = 160
+    height = 80
+    maptype = 'mobile'
+    lat = point.lat
+    long = point.long
+    address = point.address
+    tb = generator.staticmap_url(maptype, lat, long, :zoom => zoom, :width => width, :height => height)
+    link = generator.link_url(lat, long, "(#{address})")
+    link_to(image_tag(tb, :alt => h(address), :size => image_size(width, height)), link)
+  end
+
   def brightkite_content(common, entry)
     lat = v(entry, 'geo', 'lat')
     long = v(entry, 'geo', 'long')
     if lat and long
-      zoom = 13
-      width = 160
-      height = 80
-      tb = "http://maps.google.com/staticmap?zoom=#{h(zoom)}&size=#{image_size(width, height)}&maptype=mobile&markers=#{lat},#{long}&key=#{FFP::Config.google_maps_api_key}"
-      title = entry.title
-      link = "http://maps.google.com/maps?q=#{lat},#{long}+%28#{u(title)}%29"
-      content = link_to(image_tag(tb, :alt => h(title), :size => image_size(width, height)), link)
+      point = GoogleMaps::Point.new(entry.title, lat, long)
+      content = google_maps_link(point)
       if !entry.medias.empty?
         common + ' ' + content
       else

@@ -1,3 +1,6 @@
+require 'google_maps'
+
+
 class EntryController < ApplicationController
   before_filter :login_required
 
@@ -89,7 +92,23 @@ class EntryController < ApplicationController
   end
 
   def new
+    @body = param(:body)
+    @link = param(:link)
     @room = param(:room)
+    @title = param(:title)
+    @lat = param(:lat)
+    @long = param(:long)
+    @address = param(:address)
+    @placemark = nil
+    if @title
+      geocoder = GoogleMaps::GeocodingJpGeocoder.new(http_client)
+      @placemark = geocoder.search(@title)
+      if @placemark and !@placemark.ambiguous?
+        @address = @placemark.address
+        @lat = @placemark.lat
+        @long = @placemark.long
+      end
+    end
   end
 
   def search
@@ -109,15 +128,26 @@ class EntryController < ApplicationController
     body = param(:body)
     link = param(:link)
     room = param(:room)
-    link = nil if link and link.empty?
-    room = nil if room and room.empty?
+    lat = param(:lat)
+    long = param(:long)
+    title = param(:title)
+    address = param(:address)
+    images = nil
+    if lat and long and address
+      generator = GoogleMaps::URLGenerator.new
+      maptype = 'mobile'
+      zoom = 13
+      width = 160
+      height = 80
+      image_url = generator.staticmap_url(maptype, lat, long, :zoom => zoom, :width => width, :height => height)
+      image_link = generator.link_url(lat, long, address)
+      images = [[image_url, image_link]]
+    end
     if link
       title = capture_title(link)
-      ff_client.post(@auth.name, @auth.remote_key,
-        title, link, body, nil, nil, room)
+      ff_client.post(@auth.name, @auth.remote_key, title, link, body, nil, nil, room)
     elsif body
-      ff_client.post(@auth.name, @auth.remote_key,
-        body, link, nil, nil, nil, room)
+      ff_client.post(@auth.name, @auth.remote_key, body, link, nil, images, nil, room)
     end
     redirect_to :action => 'list', :room => room
   end

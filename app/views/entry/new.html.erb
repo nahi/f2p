@@ -2,13 +2,41 @@
   <h1><%= link_to(appname, :action => 'list') %> new entry</h1>
   <% form_tag({:action => 'add'}, {:name => 'post'}) do %>
     <p>
-      message: <%= text_field_tag('body') %><br/>
-      link: <%= text_field_tag('link') %><br/>
+      message: <%= text_field_tag('body', @body) %><br/>
+      link: <%= text_field_tag('link', @link) %><br/>
       room: <%= text_field_tag('room', @room) %><br/>
+      <%= hidden_field_tag('lat', @lat) %>
+      <%= hidden_field_tag('long', @long) %>
+      <%= hidden_field_tag('title', @title) %>
+      <%= hidden_field_tag('address', @address) %>
       <%= submit_tag 'post' %>
     </p>
   <% end %>
   <script type='text/javascript'><!--
   post.body.focus();
   //--></script>
+  <hr/>
+  <% form_tag(:action => 'new') do %>
+    <p>
+    Address: <%= text_field_tag('title', @title) %> <%= submit_tag 'search' %><br/>
+    <%= hidden_field_tag('body', @body) %>
+    <%= hidden_field_tag('link', @link) %>
+    <%= hidden_field_tag('room', @room) %>
+    </p>
+    <% if @placemark %>
+      <% if @placemark.ambiguous? %>
+        <p>Ambiguous:</p>
+        <ul>
+          <% @placemark.candidates.each do |cand| %>
+            <li><%= link_to(h(cand), :action => 'new', :body => @body, :link => @link, :room => @room, :title => cand) %></li>
+          <% end %>
+        </ul>
+      <% else %>
+        <dl>
+          <dt><%= h(@placemark.address) %></dt>
+          <dd><%= google_maps_link(@placemark) %></dd>
+        </dl>
+      <% end %>
+    <% end %>
+  <% end %>
 </body>
