@@ -28,12 +28,10 @@ class EntryThread
 
     def search_entries(name, remote_key, opt)
       query = opt[:query]
-      search = {
-        :from => opt[:user],
-        :room => opt[:room],
-        :friends => opt[:friends],
-        :service => opt[:service]
-      }
+      search = filter_opt(opt)
+      search[:from] = opt[:user]
+      search[:room] = opt[:room]
+      search[:friends] = opt[:friends]
       ff_client.search_entries(name, remote_key, query, search)
     end
 

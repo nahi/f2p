@@ -334,7 +334,7 @@ module EntryHelper
   end
 
   def page_links
-    no_page = (@start.nil? or @query)
+    no_page = @start.nil?
     links = []
     label = '[<]'
     unless no_page
