@@ -84,7 +84,7 @@ class EntryThread
 
     def sort_by_service(entries, opt = {})
       result = []
-      buf = entries.dup
+      buf = entries.sort_by { |entry| entry.thread_date }.reverse
       while !buf.empty?
         group = [entry = buf.shift]
         kinds = similar_entries(buf, entry)
@@ -103,7 +103,7 @@ class EntryThread
         end
         group += kinds
         buf -= kinds
-        result << (t = EntryThread.new)
+        result << (t = EntryThread.new(entry))
         group.reverse.each do |e|
           t.add(e)
         end
@@ -122,9 +122,12 @@ class EntryThread
     end
   end
 
+  # root is included in entries, too.
+  attr_reader :root
   attr_reader :entries
 
-  def initialize
+  def initialize(root)
+    @root = root
     @entries = []
   end
 

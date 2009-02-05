@@ -72,6 +72,17 @@ class Entry < Hash
     [service_id, room]
   end
 
+  def thread_date
+    updated = v('updated')
+    unless comments.empty?
+      updated = [updated, comments.last['date']].max
+    end
+    unless likes.empty?
+      updated = [updated, likes.last['date']].max
+    end
+    updated
+  end
+
   def id
     v('id')
   end

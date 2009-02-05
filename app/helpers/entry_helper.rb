@@ -220,16 +220,7 @@ module EntryHelper
   end
 
   def updated(entry, compact)
-    updated = v(entry, 'updated')
-    comments = entry.comments
-    likes = entry.likes
-    unless comments.empty?
-      updated = [updated, v(comments.last, 'date')].max
-    end
-    unless likes.empty?
-      updated = [updated, v(likes.last, 'date')].max
-    end
-    date(updated, compact)
+    date(entry.thread_date, compact)
   end
 
   def published(entry, compact)
