@@ -17,6 +17,16 @@ class ApplicationController < ActionController::Base
   # filter_parameter_logging :password
   session_options[:session_expires] = Time.mktime(2030, 12, 31)
 
+  class DebugLogger
+    def initialize(logger)
+      @logger = logger
+    end
+
+    def <<(str)
+      @logger.info(str)
+    end
+  end
+
   def self.ff_client
     @@ff ||= FriendFeed::APIClient.new
   end

@@ -19,7 +19,7 @@ class LoginController < ApplicationController
     if request.method == :post
       name = param(:name)
       remote_key = param(:remote_key)
-      if ff_client.validate(name, remote_key)
+      if User.validate(name, remote_key)
         user = User.new
         user.name = name
         user.remote_key = remote_key

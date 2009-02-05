@@ -11,6 +11,12 @@ class User < ActiveRecord::Base
   encrypt FFP::Config.encryption_key, :remote_key, :algorithm => FFP::Config.cipher_algorithm, :block_size => FFP::Config.cipher_block_size
 
   class << self
+    def validate(name, remote_key)
+      if name and remote_key
+        ff_client.validate(name, remote_key)
+      end
+    end
+
     def services(arg)
       name = arg[:name]
       remote_key = arg[:remote_key]

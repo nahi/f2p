@@ -5,16 +5,10 @@ class EntryController < ApplicationController
   before_filter :login_required
 
   NUM_DEFAULT = '30'
-
-  class DebugLogger
-    def initialize(logger)
-      @logger = logger
-    end
-
-    def <<(str)
-      @logger.info(str)
-    end
-  end
+  GOOGLEMAP_MAPTYPE = 'mobile'
+  GOOGLEMAP_ZOOM = 13
+  GOOGLEMAP_WIDTH = 160
+  GOOGLEMAP_HEIGHT = 80
 
   verify :only => :list,
           :method => [:get, :post],
@@ -33,13 +27,11 @@ class EntryController < ApplicationController
     @num = (param(:num) || NUM_DEFAULT).to_i
     @entry_fold = (!@user and !@service and param(:fold) != 'no')
     @home = false
-    opt = {
-      :name => @auth.name,
-      :remote_key => @auth.remote_key,
+    opt = create_opt(
       :start => @start,
       :num => @num,
       :service => @service
-    }
+    )
     logger.info([:query, @query].inspect)
     if @query
       @entries = EntryThread.find(opt.merge(:query => @query, :user => @user, :room => @room, :friends => @friends, :service => @service))
@@ -84,11 +76,7 @@ class EntryController < ApplicationController
     @num = 0
     @entry_fold = false
     @home = false
-    opt = {
-      :name => @auth.name,
-      :remote_key => @auth.remote_key,
-      :id => @eid
-    }
+    opt = create_opt(:id => @eid)
     @entries = EntryThread.find(opt)
     @compact = false
     @search = false
@@ -140,24 +128,23 @@ class EntryController < ApplicationController
     long = param(:long)
     title = param(:title)
     address = param(:address)
-    images = nil
+    opt = create_opt(:room => room)
     if lat and long and address
       generator = GoogleMaps::URLGenerator.new
-      maptype = 'mobile'
-      zoom = 13
-      width = 160
-      height = 80
-      image_url = generator.staticmap_url(maptype, lat, long, :zoom => zoom, :width => width, :height => height)
+      image_url = generator.staticmap_url(GOOGLEMAP_MAPTYPE, lat, long, :zoom => GOOGLEMAP_ZOOM, :width => GOOGLEMAP_WIDTH, :height => GOOGLEMAP_HEIGHT)
       image_link = generator.link_url(lat, long, address)
-      images = [[image_url, image_link]]
+      opt[:images] = [[image_url, image_link]]
       body += " (@#{address})"
     end
     if link
-      title = capture_title(link)
-      ff_client.post(@auth.name, @auth.remote_key, title, link, body, images, nil, room)
+      link_title = capture_title(link)
+      opt[:body] = link_title
+      opt[:link] = link
+      opt[:comment] = body
     elsif body
-      ff_client.post(@auth.name, @auth.remote_key, body, link, nil, images, nil, room)
+      opt[:body] = body
     end
+    Entry.create(opt)
     redirect_to :action => 'list', :room => room
   end
 
@@ -204,14 +191,6 @@ class EntryController < ApplicationController
     redirect_to :action => 'list'
   end
 
-  def do_delete(id, comment = nil, undelete = false)
-    if comment and !comment.empty?
-      ff_client.delete_comment(@auth.name, @auth.remote_key, id, comment, undelete)
-    else
-      ff_client.delete(@auth.name, @auth.remote_key, id, undelete)
-    end
-  end
-
   verify :only => :add_comment,
           :method => :post,
           :params => [:id, :body],
@@ -219,10 +198,10 @@ class EntryController < ApplicationController
           :redirect_to => {:action => 'list'}
 
   def add_comment
-    eid = param(:id)
+    id = param(:id)
     body = param(:body)
-    if eid and body
-      ff_client.post_comment(@auth.name, @auth.remote_key, eid, body)
+    if id and body
+      Entry.add_comment(create_opt(:id => id, :body => body))
     end
     redirect_to :action => 'list'
   end
@@ -234,9 +213,9 @@ class EntryController < ApplicationController
           :redirect_to => {:action => 'list'}
 
   def like
-    eid = param(:id)
-    if eid
-      ff_client.like(@auth.name, @auth.remote_key, eid)
+    id = param(:id)
+    if id
+      Entry.add_like(create_opt(:id => id))
     end
     redirect_to :action => 'list'
   end
@@ -248,10 +227,27 @@ class EntryController < ApplicationController
           :redirect_to => {:action => 'list'}
 
   def unlike
-    eid = param(:id)
-    if eid
-      ff_client.unlike(@auth.name, @auth.remote_key, eid)
+    id = param(:id)
+    if id
+      Entry.delete_like(create_opt(:id => id))
     end
     redirect_to :action => 'list'
+  end
+
+private
+
+  def create_opt(hash = {})
+    {
+      :name => @auth.name,
+      :remote_key => @auth.remote_key
+    }.merge(hash)
+  end
+
+  def do_delete(id, comment = nil, undelete = false)
+    if comment and !comment.empty?
+      Entry.delete_comment(create_opt(:id => id, :comment => comment, :undelete => undelete))
+    else
+      Entry.delete(create_opt(:id => id, :undelete => undelete))
+    end
   end
 end

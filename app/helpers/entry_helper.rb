@@ -17,6 +17,10 @@ module EntryHelper
   TUMBLR_TEXT_MAXLEN = 140
   LIKES_THRESHOLD = 3
   FOLD_THRESHOLD = 5
+  GOOGLEMAP_MAPTYPE = 'mobile'
+  GOOGLEMAP_ZOOM = 13
+  GOOGLEMAP_WIDTH = 160
+  GOOGLEMAP_HEIGHT = 80
 
   def icon(entry)
     service_icon(v(entry, 'service'))
@@ -135,16 +139,12 @@ module EntryHelper
 
   def google_maps_link(point)
     generator = GoogleMaps::URLGenerator.new(FFP::Config.google_maps_api_key)
-    zoom = 13
-    width = 160
-    height = 80
-    maptype = 'mobile'
     lat = point.lat
     long = point.long
     address = point.address
-    tb = generator.staticmap_url(maptype, lat, long, :zoom => zoom, :width => width, :height => height)
+    tb = generator.staticmap_url(GOOGLEMAP_MAPTYPE, lat, long, :zoom => GOOGLEMAP_ZOOM, :width => GOOGLEMAP_WIDTH, :height => GOOGLEMAP_HEIGHT)
     link = generator.link_url(lat, long, address)
-    link_to(image_tag(tb, :alt => h(address), :size => image_size(width, height)), link)
+    link_to(image_tag(tb, :alt => h(address), :size => image_size(GOOGLEMAP_WIDTH, GOOGLEMAP_HEIGHT)), link)
   end
 
   def brightkite_content(common, entry)

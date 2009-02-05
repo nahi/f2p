@@ -2,8 +2,7 @@ class EntryThread
   SERVICE_GROUPING_THRESHOLD = 1.5.hour
 
   class << self
-    def find(arg = {})
-      opt = arg.dup
+    def find(opt = {})
       name = opt[:name]
       remote_key = opt[:remote_key]
       if opt[:query]
