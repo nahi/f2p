@@ -13,9 +13,6 @@
   <%- form_tag({:action => 'add'}, {:name => 'post'}) do -%>
     <p><%= post_entry_form %> <%= logout_link %></p>
   <%- end -%>
-  <script type='text/javascript'><!--
-  post.body.focus();
-  //--></script>
 <%- end -%>
 <%- if @post and @user -%>
   <p><%= service_links(@user) %></p>
@@ -25,14 +22,17 @@
 <%- end -%>
 <p><%= page_links %></p>
 <div class="listings">
-  <ul>
+  <dl>
     <%- @entries.each do |thread| -%>
       <%- if thread.chunked? -%>
-        <li><%= render :partial => 'chunk_entry', :locals => {:thread => thread, :root_user => nil, :root_service => nil} %></li>
+        <%= render :partial => 'chunk_entry', :locals => {:thread => thread, :root_user => nil, :root_service => nil} %>
       <%- else -%>
-        <li><%= render :partial => 'entry', :locals => {:entry => thread.single_entry, :root_user => nil, :root_service => nil} %></li>
+        <dt>
+          <%= render :partial => 'entry', :locals => {:entry => thread.single_entry, :root_user => nil, :root_service => nil} %>
+        </dt>
+        <dd><ul><li/></ul></dd>
       <%- end -%>
     <%- end -%>
-  </ul>
+  </dl>
 </div>
 <p><%= page_links %></p>

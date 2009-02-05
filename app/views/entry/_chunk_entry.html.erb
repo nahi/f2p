@@ -1,9 +1,13 @@
 <% entries = fold_entries(thread.entries) -%>
-<%= icon(entries.first) %>
-<%= updated(entries.last, @compact) %>
-<%= user(entries.first) %>@<%= service(entries.first) %>
+<dt>
+  <%= icon(entries.first) %>
+  <%= updated(entries.last, @compact) %>
+  <%= user(entries.first) %>@<%= service(entries.first) %>
+</dt>
+<dd>
 <ul>
   <% fold_entries(entries).each do |entry| -%>
     <li><%= render :partial => 'entry', :locals => {:entry => entry, :root_user => entries.first.user_id, :root_service => entries.first.service_identity} %></li>
   <%- end %>
 </ul>
+</dd>

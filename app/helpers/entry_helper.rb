@@ -285,6 +285,7 @@ module EntryHelper
     str += ' ' + link_to(h('[extended]'), :action => 'new', :room => u(room))
     search_opt = list_opt.merge(:action => 'search')
     search_opt[:friends] = 'me' if @home
+    search_opt[:room] = nil if search_opt[:room] == '*'
     str += ' ' + link_to(h('[search]'), search_opt)
     str
   end
@@ -358,7 +359,7 @@ module EntryHelper
     if @room == '*'
       links << h(label)
     else
-      links << link_to(h(label), :action => 'list', :room => '*')
+      links << link_to(h(label), :action => 'list', :user => @user, :room => '*')
     end
     label = '[likes]'
     if @likes == 'only'
