@@ -43,14 +43,14 @@ class EntryController < ApplicationController
     logger.info([:query, @query].inspect)
     if @query
       @entries = EntryThread.find(opt.merge(:query => @query, :user => @user, :room => @room, :friends => @friends, :service => @service))
+    elsif @likes == 'only'
+      @entries = EntryThread.find(opt.merge(:likes => true, :user => @user))
     elsif @user
       @entries = EntryThread.find(opt.merge(:user => @user))
     elsif @friends
       @entries = EntryThread.find(opt.merge(:friends => @friends))
     elsif @room
       @entries = EntryThread.find(opt.merge(:room => @room))
-    elsif @likes == 'only'
-      @entries = EntryThread.find(opt.merge(:likes => true))
     else
       @home = true
       @entries = EntryThread.find(opt.merge(:merge_service => true))

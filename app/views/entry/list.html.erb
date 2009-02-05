@@ -22,17 +22,14 @@
 <%- end -%>
 <p><%= page_links %></p>
 <div class="listings">
-  <dl>
+  <ul>
     <%- @entries.each do |thread| -%>
       <%- if thread.chunked? -%>
-        <%= render :partial => 'chunk_entry', :locals => {:thread => thread, :root_user => nil, :root_service => nil} %>
+        <li><%= render :partial => 'chunk_entry', :locals => {:thread => thread, :root_user => nil, :root_service => nil} %></li>
       <%- else -%>
-        <dt>
-          <%= render :partial => 'entry', :locals => {:entry => thread.single_entry, :root_user => nil, :root_service => nil} %>
-        </dt>
-        <dd><ul><li/></ul></dd>
+        <li><%= render :partial => 'entry', :locals => {:entry => thread.single_entry, :root_user => nil, :root_service => nil} %></li>
       <%- end -%>
     <%- end -%>
-  </dl>
+  </ul>
 </div>
 <p><%= page_links %></p>

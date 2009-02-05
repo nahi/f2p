@@ -75,8 +75,8 @@ module FriendFeed
       end
     end
 
-    def get_likes(name, remote_key, opt = {})
-      uri = uri("feed/user/#{name}/likes")
+    def get_likes(name, remote_key, user, opt = {})
+      uri = uri("feed/user/#{user}/likes")
       client_sync(uri, name, remote_key) do |client|
         get_feed(client, uri, opt)
       end

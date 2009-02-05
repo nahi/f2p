@@ -356,16 +356,16 @@ module EntryHelper
       end
     end
     label = '[rooms]'
-    if @room == '*'
+    if @user or @room == '*'
       links << h(label)
     else
-      links << link_to(h(label), :action => 'list', :user => @user, :room => '*')
+      links << link_to(h(label), :action => 'list', :room => '*')
     end
     label = '[likes]'
     if @likes == 'only'
       links << h(label)
     else
-      links << link_to(h(label), :action => 'list', :likes => 'only')
+      links << link_to(h(label), :action => 'list', :likes => 'only', :user => @user)
     end
     label = '[>]'
     unless no_page

@@ -10,14 +10,14 @@ class EntryThread
         entries = search_entries(name, remote_key, opt)
       elsif opt[:id]
         entries = get_entry(name, remote_key, opt)
+      elsif opt[:likes]
+        entries = get_likes(name, remote_key, opt)
       elsif opt[:user]
         entries = get_user_entries(name, remote_key, opt)
       elsif opt[:room]
         entries = get_room_entries(name, remote_key, opt)
       elsif opt[:friends]
         entries = get_friends_entries(name, remote_key, opt)
-      elsif opt[:likes]
-        entries = get_likes(name, remote_key, opt)
       else
         entries = get_home_entries(name, remote_key, opt)
       end
@@ -56,7 +56,8 @@ class EntryThread
     end
 
     def get_likes(name, remote_key, opt)
-      ff_client.get_likes(name, remote_key, filter_opt(opt))
+      user = opt[:user]
+      ff_client.get_likes(name, remote_key, user, filter_opt(opt))
     end
 
     def get_entry(name, remote_key, opt)
