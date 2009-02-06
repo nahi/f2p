@@ -23,7 +23,7 @@ module EntryHelper
   GOOGLEMAP_HEIGHT = 80
 
   def icon(entry)
-    service_icon(v(entry, 'service'))
+    service_icon(v(entry, 'service'), entry.link)
   end
 
   def service(entry)
@@ -305,11 +305,14 @@ module EntryHelper
       :remote_key => @auth.remote_key,
       :user => user
     }
-    User.services(arg).collect { |service|
-      label = "[#{v(service, 'name')}]"
-      id = v(service, 'id')
+    map = User.services(arg).inject({}) { |r, e|
+      r[v(e, 'id')] = v(e, 'name')
+      r
+    }
+    links_if_exists('services: ', map.to_a.sort_by { |k, v| k }) { |id, name|
+      label = "[#{name}]"
       link_to(h(label), list_opt(:action => 'list', :user => user, :service => id))
-    }.join(' ')
+    }
   end
 
   def room_links(user)
@@ -318,11 +321,17 @@ module EntryHelper
       :remote_key => @auth.remote_key,
       :user => user
     }
-    User.rooms(arg).collect { |room|
+    links_if_exists('rooms: ', User.rooms(arg)) { |room|
       label = "[#{v(room, 'name')}]"
       nickname = v(room, 'nickname')
       link_to(h(label), list_opt(:action => 'list', :room => nickname))
-    }.join(' ')
+    }
+  end
+
+  def links_if_exists(label, enum, &block)
+    str = enum.collect { |v| yield(v) }.join(' ')
+    str = h(label) + str unless str.empty?
+    str
   end
 
   def page_links
