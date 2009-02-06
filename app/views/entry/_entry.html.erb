@@ -1,7 +1,5 @@
 <%- if entry.respond_to?(:fold_entries) -%>
   <%= fold_link(entry) %>
-<%- elsif v(entry, 'hidden') -%>
-  (hidden)
 <%- else -%>
   <%= icon(entry) %>
   <%= published(entry, @compact) %>

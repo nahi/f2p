@@ -128,6 +128,10 @@ class Entry < Hash
     v('likes') || []
   end
 
+  def hidden?
+    v('hidden') || false
+  end
+
 private
 
   def v(*keywords)

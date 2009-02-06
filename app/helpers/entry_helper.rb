@@ -427,7 +427,7 @@ module EntryHelper
 
   def fold_entries(entries)
     if @entry_fold
-      fold_items(entries.find_all { |e| !v(e, 'hidden') })
+      fold_items(entries)
     else
       entries.dup
     end

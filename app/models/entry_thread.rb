@@ -84,7 +84,7 @@ class EntryThread
 
     def sort_by_service(entries, opt = {})
       result = []
-      buf = entries.sort_by { |entry| entry.thread_date }.reverse
+      buf = entries.find_all { |e| !e.hidden? }.sort_by { |e| e.thread_date }.reverse
       while !buf.empty?
         group = [entry = buf.shift]
         kinds = similar_entries(buf, entry)
