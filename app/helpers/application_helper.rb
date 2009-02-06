@@ -4,7 +4,7 @@ require 'time'
 
 
 module ApplicationHelper
-  APPNAME = 'ffp'
+  APPNAME = 'f2p'
   DATE_THRESHOLD = (24 - 8).hours
   YEAR_THRESHOLD = 1.year
   SELF_LABEL = 'You'

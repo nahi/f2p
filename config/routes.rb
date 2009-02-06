@@ -1,7 +1,7 @@
 ActionController::Routing::Routes.draw do |map|
-  map.connect 'ffp/images', :controller => 'default', :action => 'default'
-  map.connect 'ffp/javascripts', :controller => 'default', :action => 'default'
-  map.connect 'ffp/:controller/:action/:id'
+  map.connect 'f2p/images', :controller => 'default', :action => 'default'
+  map.connect 'f2p/javascripts', :controller => 'default', :action => 'default'
+  map.connect 'f2p/:controller/:action/:id'
 
   # The priority is based upon order of creation: first created -> highest priority.
 

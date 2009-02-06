@@ -347,7 +347,7 @@ module EntryHelper
       end
     end
     label = '[rooms]'
-    if @user or @room == '*'
+    if (@user and @auth.name != @user) or @room == '*'
       links << h(label)
     else
       links << link_to(h(label), :action => 'list', :room => '*')
