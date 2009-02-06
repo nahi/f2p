@@ -73,8 +73,8 @@ class EntryController < ApplicationController
     @friends = nil
     @likes = nil
     @service = nil
-    @start = 0
-    @num = 0
+    @start = nil
+    @num = nil
     @entry_fold = false
     @home = false
     opt = create_opt(:id => @eid)
