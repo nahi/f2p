@@ -6,7 +6,7 @@ require 'monitor'
 
 module FriendFeed
   class APIClient
-    URL_BASE = 'http://friendfeed.com/api/'
+    URL_BASE = 'https://friendfeed.com/api/'
 
     attr_reader :client
 
