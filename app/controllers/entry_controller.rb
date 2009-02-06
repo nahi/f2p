@@ -36,7 +36,8 @@ class EntryController < ApplicationController
     if @query
       @entries = EntryThread.find(opt.merge(:query => @query, :user => @user, :room => @room, :friends => @friends, :service => @service))
     elsif @likes == 'only'
-      @entries = EntryThread.find(opt.merge(:likes => true, :user => @user))
+      user = @user || @auth.name
+      @entries = EntryThread.find(opt.merge(:likes => true, :user => user))
     elsif @user
       @entries = EntryThread.find(opt.merge(:user => @user))
     elsif @friends
