@@ -193,8 +193,12 @@ module FriendFeed
       res = client.get(uri, query, ext)
       enc = res.header['content-encoding']
       if enc and enc[0] and enc[0].downcase == 'gzip'
-        gz = Zlib::GzipReader.new(StringIO.new(res.content))
-        content = gz.read
+        begin
+          gz = Zlib::GzipReader.new(StringIO.new(res.content))
+          content = gz.read
+        ensure
+          gz.close
+        end
       else
         content = res.content
       end
