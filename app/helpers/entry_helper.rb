@@ -63,7 +63,7 @@ module EntryHelper
     if !entry.medias.empty?
       # entries from Hatena contains 'enclosure' but no title and link for now.
       with_media = content_with_media(entry)
-      content += "<br/>\n" + with_media unless with_media.empty?
+      content += "<br/>\n&nbsp;&nbsp;&nbsp;" + with_media unless with_media.empty?
     end
     content
   end
@@ -156,7 +156,7 @@ module EntryHelper
       if !entry.medias.empty?
         common + ' ' + content
       else
-        common + "<br/>\n" + content
+        common + "<br/>\n&nbsp;&nbsp;&nbsp;" + content
       end
     else
       common
