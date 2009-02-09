@@ -59,6 +59,7 @@ module GoogleMaps
         Candidates.new(choices)
       else
         address = v(result, 'google_maps')
+        address = nil if address.is_a?(SOAP::Mapping::Object)
         address = nil if address and address.empty?
         c = v(result, 'coordinate')
         lat = v(c, 'lat')
