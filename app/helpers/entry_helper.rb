@@ -251,17 +251,15 @@ module EntryHelper
 
   def search_form
     str = ''
+    str += hidden_field_tag('user', @user) if @user
+    str += hidden_field_tag('list', @list) if @list
     room = (@room != '*') ? @room : nil
-    if room
-      str += hidden_field_tag('room', room)
-    end
-    if @user
-      str += hidden_field_tag('user', @user)
-    end
+    str += hidden_field_tag('room', room) if room
+    str += hidden_field_tag('friends', @friends) if @friends
     if @service
       str += hidden_field_tag('service', @service)
     end
-    str += text_field_tag('query', @query) + submit_tag('search')
+    str += text_field_tag('query', @query, :accesskey => '2') + submit_tag('search')
     str += ' ' + link_to(h('[search]'), search_opt)
     str
   end
@@ -272,7 +270,7 @@ module EntryHelper
     if room
       str += hidden_field_tag('room', room) + h(room) + ': '
     end
-    str += text_field_tag('body') + submit_tag('post')
+    str += text_field_tag('body', nil, :accesskey => '2') + submit_tag('post')
     str += ' ' + link_to(h('[extended]'), :action => 'new', :room => u(room))
     str += ' ' + link_to(h('[search]'), search_opt)
     str
@@ -312,16 +310,46 @@ module EntryHelper
     }
   end
 
+  def list_links
+    arg = {
+      :name => @auth.name,
+      :remote_key => @auth.remote_key,
+      :user => @auth.name
+    }
+    links_if_exists('lists: ', User.lists(arg)) { |e|
+      label = "[#{v(e, 'name')}]"
+      nickname = v(e, 'nickname')
+      if @list == nickname
+        h(label)
+      else
+        link_to(h(label), list_opt(:action => 'list', :list => nickname))
+      end
+    }
+  end
+
   def room_links(user)
     arg = {
       :name => @auth.name,
       :remote_key => @auth.remote_key,
       :user => user
     }
-    links_if_exists('rooms: ', User.rooms(arg)) { |room|
-      label = "[#{v(room, 'name')}]"
-      nickname = v(room, 'nickname')
+    links_if_exists('rooms: ', User.rooms(arg)) { |e|
+      label = "[#{v(e, 'name')}]"
+      nickname = v(e, 'nickname')
       link_to(h(label), list_opt(:action => 'list', :room => nickname))
+    }
+  end
+
+  def user_links(user)
+    arg = {
+      :name => @auth.name,
+      :remote_key => @auth.remote_key,
+      :user => user
+    }
+    links_if_exists('', User.subscriptions(arg)) { |e|
+      label = "[#{v(e, 'name')}]"
+      nickname = v(e, 'nickname')
+      link_to(h(label), list_opt(:action => 'list', :user => nickname))
     }
   end
 
@@ -334,41 +362,43 @@ module EntryHelper
   def page_links
     no_page = @start.nil?
     links = []
-    label = '[<]'
     unless no_page
-      if @start - @num >= 0
-        links << link_to(h(label), list_opt(:action => 'list', :start => @start - @num, :num => @num))
-      else
-        links << h(label)
-      end
+      links << menu_link('[<]', list_opt(:action => 'list', :start => @start - @num, :num => @num), :accesskey => '4') {
+        @start - @num >= 0
+      }
     end
-    label = '[home]'
-    links << link_to(h(label), :action => 'list')
+    links << menu_link('[home]', :action => 'list') {
+      @query or @user or @list or @room or @friends or @likes
+    }
     if @user and @user != @auth.name
-      label = '[friends]'
-      if @friends
-        links << h(label)
-      else
-        links << link_to(h(label), :action => 'list', :friends => @user)
-      end
+      links << menu_link('[friends]', :action => 'list', :friends => @user) {
+        !@friends
+      }
     end
-    label = '[rooms]'
-    if (@user and @auth.name != @user) or @room == '*'
-      links << h(label)
-    else
-      links << link_to(h(label), :action => 'list', :room => '*')
+    links << menu_link('[lists]', :action => 'list', :list => 'favorite') {
+      !@list
+    }
+    links << menu_link('[rooms]', :action => 'list', :room => '*') {
+      !(@user and @auth.name != @user) and @room != '*'
+    }
+    links << menu_link('[likes]', :action => 'list', :likes => 'only', :user => @user) {
+      @likes != 'only'
+    }
+    if @post and @user
+      links << menu_link('[subscriptions]', '#subscriptions')
     end
-    label = '[likes]'
-    if @likes == 'only'
-      links << h(label)
-    else
-      links << link_to(h(label), :action => 'list', :likes => 'only', :user => @user)
-    end
-    label = '[>]'
     unless no_page
-      links << link_to(h(label), list_opt(:action => 'list', :start => @start + @num, :num => @num))
+      links << menu_link('[>]', list_opt(:action => 'list', :start => @start + @num, :num => @num), :accesskey => '6')
     end
     links.join(' ')
+  end
+
+  def menu_link(label, opt, html_opt = {}, &block)
+    if block.nil? or block.call
+      link_to(h(label), opt, html_opt)
+    else
+      h(label)
+    end
   end
 
   def post_comment_link(entry)
@@ -409,6 +439,7 @@ module EntryHelper
     {
       :query => @query,
       :user => @user,
+      :list => @list,
       :room => @room,
       :friends => @friends,
       :likes => @likes,

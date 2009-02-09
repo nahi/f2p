@@ -1,4 +1,4 @@
-<h1><%= link_to(appname, :action => 'list') %> entries</h1>
+<h1><%= link_to(appname, :action => 'list') %> entries</a></h1>
 <%- if flash[:deleted_id] -%>
   <p><%= undelete_link(flash[:deleted_id], flash[:deleted_comment]) %></p>
 <%- end -%>
@@ -17,8 +17,14 @@
 <%- if @post and @user -%>
   <p><%= service_links(@user) %></p>
 <%- end -%>
+<%- if @post and @list -%>
+  <p><%= list_links %></p>
+<%- end -%>
 <%- if @post and @room == '*' -%>
   <p><%= room_links(@user) %></p>
+<%- end -%>
+<%- if @post and @user -%>
+  <p>
 <%- end -%>
 <p><%= page_links %></p>
 <div class="listings">
@@ -33,3 +39,10 @@
   </ul>
 </div>
 <p><%= page_links %></p>
+<%- if @post and @user -%>
+  <hr/>
+  <p>
+    <a name="subscriptions" id="subscriptions"><%= h(@user) %>'s subscriptions:</a><br/>
+    <%= user_links(@user) %>
+  </p>
+<%- end -%>

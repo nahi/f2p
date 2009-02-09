@@ -3,6 +3,8 @@ require 'google_maps'
 
 class EntryController < ApplicationController
   before_filter :login_required
+  after_filter :strip_heading_spaces
+  after_filter :compress
 
   NUM_DEFAULT = 20
   GOOGLEMAP_MAPTYPE = 'mobile'
@@ -19,6 +21,7 @@ class EntryController < ApplicationController
     @eid = nil
     @query = param(:query)
     @user = param(:user)
+    @list = param(:list)
     @room = param(:room)
     @friends = param(:friends)
     @likes = param(:likes)
@@ -41,9 +44,11 @@ class EntryController < ApplicationController
     elsif @user
       @entries = EntryThread.find(opt.merge(:user => @user))
     elsif @friends
-      @entries = EntryThread.find(opt.merge(:friends => @friends))
+      @entries = EntryThread.find(opt.merge(:friends => @friends, :merge_service => true))
+    elsif @list
+      @entries = EntryThread.find(opt.merge(:list => @list, :merge_service => true))
     elsif @room
-      @entries = EntryThread.find(opt.merge(:room => @room))
+      @entries = EntryThread.find(opt.merge(:room => @room, :merge_service => true))
     else
       @home = true
       @entries = EntryThread.find(opt.merge(:merge_service => true))
@@ -69,6 +74,7 @@ class EntryController < ApplicationController
     @eid = param(:id)
     @query = nil
     @user = nil
+    @list = nil
     @room = nil
     @friends = nil
     @likes = nil

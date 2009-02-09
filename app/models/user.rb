@@ -24,11 +24,25 @@ class User < ActiveRecord::Base
       profile(name, remote_key, user)['services'] || []
     end
 
+    def lists(arg)
+      name = arg[:name]
+      remote_key = arg[:remote_key]
+      user = arg[:user] || name
+      profile(name, remote_key, user)['lists'] || []
+    end
+
     def rooms(arg)
       name = arg[:name]
       remote_key = arg[:remote_key]
       user = arg[:user] || name
       profile(name, remote_key, user)['rooms'] || []
+    end
+
+    def subscriptions(arg)
+      name = arg[:name]
+      remote_key = arg[:remote_key]
+      user = arg[:user] || name
+      profile(name, remote_key, user)['subscriptions'] || []
     end
 
   private
