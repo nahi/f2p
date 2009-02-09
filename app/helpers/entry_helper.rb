@@ -16,7 +16,7 @@ module EntryHelper
   COMMENT_MAXLEN = 140
   TUMBLR_TEXT_MAXLEN = 140
   LIKES_THRESHOLD = 3
-  FOLD_THRESHOLD = 5
+  FOLD_THRESHOLD = 4
   GOOGLEMAP_MAPTYPE = 'mobile'
   GOOGLEMAP_ZOOM = 13
   GOOGLEMAP_WIDTH = 160
@@ -262,7 +262,7 @@ module EntryHelper
       str += hidden_field_tag('service', @service)
     end
     str += text_field_tag('query', @query) + submit_tag('search')
-    str += ' ' + link_to(h('[search]'), list_opt.merge(:action => 'search'))
+    str += ' ' + link_to(h('[search]'), search_opt)
     str
   end
 
@@ -274,9 +274,6 @@ module EntryHelper
     end
     str += text_field_tag('body') + submit_tag('post')
     str += ' ' + link_to(h('[extended]'), :action => 'new', :room => u(room))
-    search_opt = list_opt.merge(:action => 'search')
-    search_opt[:friends] = 'me' if @home
-    search_opt[:room] = nil if search_opt[:room] == '*'
     str += ' ' + link_to(h('[search]'), search_opt)
     str
   end
@@ -415,6 +412,13 @@ module EntryHelper
       :likes => @likes,
       :service => @service
     }.merge(hash)
+  end
+
+  def search_opt(hash = {})
+    search_opt = list_opt.merge(:action => 'search')
+    search_opt[:friends] = 'me' if @home
+    search_opt[:room] = nil if search_opt[:room] == '*'
+    search_opt
   end
 
   class Fold < Hash
