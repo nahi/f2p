@@ -2,6 +2,8 @@
 # Likewise, all the methods added will be available for all controllers.
 
 require 'ff'
+require 'stringio'
+require 'zlib'
 
 
 class ApplicationController < ActionController::Base
@@ -56,6 +58,46 @@ private
   def login_required
     unless ensure_login
       redirect_to :controller => 'login', :action => 'index'
+    end
+  end
+
+  def strip_heading_spaces
+    response.body.gsub!(/^\s*/, '')
+  end
+
+  class ContentCoding
+    attr_reader :q
+    attr_reader :coding
+
+    def initialize(str)
+      @coding, rest = str.split(/;\s*/, 2)
+      @q = 1.0
+      if /q=(.*)/ =~ rest
+        @q = $1.to_f # fallbacks to 0.0
+      end
+    end
+  end
+
+  def compress
+    return if response.headers['content-encoding']
+    accepts = request.env['HTTP_ACCEPT_ENCODING'] || ''
+    return unless accepts
+    codings = accepts.split(/,\s*/).map { |e| ContentCoding.new(e) }
+    codings.sort_by { |coding| coding.q }.each do |coding|
+      next unless coding.q > 0.0
+      case coding.coding
+      when 'gzip', 'x-gzip'
+        ostream = StringIO.new
+        begin
+          gz = Zlib::GzipWriter.new(ostream)
+          gz.write(response.body)
+          response.body = ostream.string
+          response.headers['content-encoding'] = coding.coding
+          return
+        ensure
+          gz.close
+        end
+      end
     end
   end
 
