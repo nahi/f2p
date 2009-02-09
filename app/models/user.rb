@@ -21,34 +21,38 @@ class User < ActiveRecord::Base
       name = arg[:name]
       remote_key = arg[:remote_key]
       user = arg[:user]
-      profile(name, remote_key, user)['services'] || []
+      sort_by_name(profile(name, remote_key, user)['services'] || [])
     end
 
     def lists(arg)
       name = arg[:name]
       remote_key = arg[:remote_key]
       user = arg[:user] || name
-      profile(name, remote_key, user)['lists'] || []
+      sort_by_name(profile(name, remote_key, user)['lists'] || [])
     end
 
     def rooms(arg)
       name = arg[:name]
       remote_key = arg[:remote_key]
       user = arg[:user] || name
-      profile(name, remote_key, user)['rooms'] || []
+      sort_by_name(profile(name, remote_key, user)['rooms'] || [])
     end
 
     def subscriptions(arg)
       name = arg[:name]
       remote_key = arg[:remote_key]
       user = arg[:user] || name
-      profile(name, remote_key, user)['subscriptions'] || []
+      sort_by_name(profile(name, remote_key, user)['subscriptions'] || [])
     end
 
   private
 
     def profile(name, remote_key, user)
       ff_client.get_profile(name, remote_key, user)
+    end
+
+    def sort_by_name(lists)
+      lists.sort_by { |e| e['name'] }
     end
 
     def ff_client
