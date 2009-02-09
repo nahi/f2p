@@ -2,6 +2,8 @@ require 'httpclient'
 require 'uri'
 require 'json'
 require 'monitor'
+require 'stringio'
+require 'zlib'
 
 
 module FriendFeed
@@ -38,6 +40,13 @@ module FriendFeed
 
     def get_home_entries(name, remote_key, opt = {})
       uri = uri("feed/home")
+      client_sync(uri, name, remote_key) do |client|
+        get_feed(client, uri, opt)
+      end
+    end
+
+    def get_list_entries(name, remote_key, list, opt = {})
+      uri = uri("feed/list/#{list}")
       client_sync(uri, name, remote_key) do |client|
         get_feed(client, uri, opt)
       end
@@ -180,7 +189,16 @@ module FriendFeed
     end
 
     def get_feed(client, uri, query = {})
-      JSON.parse(client.get(uri, query).content)['entries']
+      ext = { 'Accept-Encoding' => 'gzip' }
+      res = client.get(uri, query, ext)
+      enc = res.header['content-encoding']
+      if enc and enc[0] and enc[0].downcase == 'gzip'
+        gz = Zlib::GzipReader.new(StringIO.new(res.content))
+        content = gz.read
+      else
+        content = res.content
+      end
+      JSON.parse(content)['entries']
     end
   end
 end
