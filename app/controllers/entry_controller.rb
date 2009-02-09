@@ -4,7 +4,7 @@ require 'google_maps'
 class EntryController < ApplicationController
   before_filter :login_required
 
-  NUM_DEFAULT = '30'
+  NUM_DEFAULT = 20
   GOOGLEMAP_MAPTYPE = 'mobile'
   GOOGLEMAP_ZOOM = 13
   GOOGLEMAP_WIDTH = 160
@@ -24,7 +24,7 @@ class EntryController < ApplicationController
     @likes = param(:likes)
     @service = param(:service)
     @start = (param(:start) || '0').to_i
-    @num = (param(:num) || NUM_DEFAULT).to_i
+    @num = (param(:num) || NUM_DEFAULT.to_s).to_i
     @entry_fold = (!@user and !@service and param(:fold) != 'no')
     @home = false
     opt = create_opt(
