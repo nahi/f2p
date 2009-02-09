@@ -386,10 +386,12 @@ module EntryHelper
   end
 
   def delete_comment_link(entry, comment)
-    cid = v(comment, 'id')
-    name = v(comment, 'user', 'nickname')
-    if name == @auth.name or @auth.name == entry.nickname
-      link_to(icon_tag(:delete), {:action => 'delete', :id => u(entry.id), :comment => u(cid)}, :confirm => 'Are you sure?')
+    unless @compact
+      cid = v(comment, 'id')
+      name = v(comment, 'user', 'nickname')
+      if name == @auth.name or @auth.name == entry.nickname
+        link_to(icon_tag(:delete), {:action => 'delete', :id => u(entry.id), :comment => u(cid)}, :confirm => 'Are you sure?')
+      end
     end
   end
 
