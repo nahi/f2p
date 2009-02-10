@@ -1,17 +1,20 @@
 <h1><%= link_to(appname, :action => 'list') %> entries</h1>
 <%- if flash[:deleted_id] -%>
-  <p><%= undelete_link(flash[:deleted_id], flash[:deleted_comment]) %></p>
+  <p class="message"><%= undelete_link(flash[:deleted_id], flash[:deleted_comment]) %></p>
+<%- end -%>
+<%- if flash[:message] -%>
+  <p class="message"><%=h flash[:message] %></p>
 <%- end -%>
 <%- if @search -%>
   <%- form_tag({:action => 'list'}, {:name => 'post'}) do -%>
-    <p><%= search_form %> <%= logout_link %></p>
+    <p><%= search_form %> <%= settings_link %> <%= logout_link %></p>
   <%- end -%>
   <script type='text/javascript'><!--
   post.query.focus();
   //--></script>
 <%- elsif @post -%>
   <%- form_tag({:action => 'add'}, {:name => 'post'}) do -%>
-    <p><%= post_entry_form %> <%= logout_link %></p>
+    <p><%= post_entry_form %> <%= settings_link %> <%= logout_link %></p>
   <%- end -%>
 <%- end -%>
 <%- if @post and @user -%>

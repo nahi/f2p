@@ -1,7 +1,7 @@
 <h1><%= appname %> login</h1>
 <%- form_tag :action => 'authenticate' do -%>
   <%- if flash[:error] -%>
-    <p class="error"><%= flash[:error] %></p>
+    <p class="message"><%= flash[:error] %></p>
   <%- end -%>
   <p>
     FriendFeed user nickname: <%= text_field_tag 'name' %><br/>

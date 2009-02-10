@@ -6,12 +6,6 @@ class EntryController < ApplicationController
   after_filter :strip_heading_spaces
   after_filter :compress
 
-  NUM_DEFAULT = 20
-  GOOGLEMAP_MAPTYPE = 'mobile'
-  GOOGLEMAP_ZOOM = 13
-  GOOGLEMAP_WIDTH = 160
-  GOOGLEMAP_HEIGHT = 80
-
   verify :only => :list,
           :method => [:get, :post],
           :add_flash => {:error => 'verify failed'},
@@ -27,7 +21,11 @@ class EntryController < ApplicationController
     @likes = param(:likes)
     @service = param(:service)
     @start = (param(:start) || '0').to_i
-    @num = (param(:num) || NUM_DEFAULT.to_s).to_i
+    if param(:num)
+      @num = param(:num).to_i
+    else
+      @num = @auth.profile.entries_in_page
+    end
     @entry_fold = (!@user and !@service and param(:fold) != 'no')
     @home = false
     opt = create_opt(
@@ -138,7 +136,7 @@ class EntryController < ApplicationController
     opt = create_opt(:room => room)
     if lat and long and address
       generator = GoogleMaps::URLGenerator.new
-      image_url = generator.staticmap_url(GOOGLEMAP_MAPTYPE, lat, long, :zoom => GOOGLEMAP_ZOOM, :width => GOOGLEMAP_WIDTH, :height => GOOGLEMAP_HEIGHT)
+      image_url = generator.staticmap_url(F2P::Config.google_maps_maptype, lat, long, :zoom => F2P::Config.google_maps_zoom, :width => F2P::Config.google_maps_width, :height => F2P::Config.google_maps_height)
       image_link = generator.link_url(lat, long, address)
       opt[:images] = [[image_url, image_link]]
       body += " (@#{address})"

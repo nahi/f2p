@@ -116,4 +116,20 @@ module ApplicationHelper
   def fold_length(str, length)
     str.scan(Regexp.new("^.{0,#{length}}", Regexp::MULTILINE, 'u'))[0] || ''
   end
+
+  def profile(name)
+    if @auth
+      @auth.profile.send(name.to_s)
+    else
+      F2P::Config.send('default_' + name.to_s)
+    end
+  end
+
+  def profile_font_size
+    profile(:font_size)
+  end
+
+  def profile_text_folding_size
+    profile(:text_folding_size)
+  end
 end

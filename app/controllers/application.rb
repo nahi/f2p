@@ -109,6 +109,7 @@ private
         @auth = nil
       end
     end
+    @auth
   end
 
   def set_user(user)

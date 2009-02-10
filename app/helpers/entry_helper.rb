@@ -13,14 +13,8 @@ module EntryHelper
     'comment_lighter' => 'comment-lighter.png',
   }
 
-  COMMENT_MAXLEN = 140
-  TUMBLR_TEXT_MAXLEN = 140
   LIKES_THRESHOLD = 3
   FOLD_THRESHOLD = 4
-  GOOGLEMAP_MAPTYPE = 'mobile'
-  GOOGLEMAP_ZOOM = 13
-  GOOGLEMAP_WIDTH = 160
-  GOOGLEMAP_HEIGHT = 80
 
   def icon(entry)
     service_icon(v(entry, 'service'), entry.link)
@@ -67,7 +61,7 @@ module EntryHelper
     if link and with_link?(v(entry, 'service'))
       content = link_content(title, link, entry)
     else
-      fold, str = escape_text(title, @entry_fold ? COMMENT_MAXLEN : nil)
+      fold, str = escape_text(title, @entry_fold ? profile_text_folding_size : nil)
       if fold
         str += link_to(icon_tag(:more), :action => 'show', :id => u(entry.id))
       end
@@ -164,13 +158,13 @@ module EntryHelper
   end
 
   def google_maps_link(point)
-    generator = GoogleMaps::URLGenerator.new(FFP::Config.google_maps_api_key)
+    generator = GoogleMaps::URLGenerator.new(F2P::Config.google_maps_api_key)
     lat = point.lat
     long = point.long
     address = point.address
-    tb = generator.staticmap_url(GOOGLEMAP_MAPTYPE, lat, long, :zoom => GOOGLEMAP_ZOOM, :width => GOOGLEMAP_WIDTH, :height => GOOGLEMAP_HEIGHT)
+    tb = generator.staticmap_url(F2P::Config.google_maps_maptype, lat, long, :zoom => F2P::Config.google_maps_zoom, :width => F2P::Config.google_maps_width, :height => F2P::Config.google_maps_height)
     link = generator.link_url(lat, long, address)
-    link_to(image_tag(tb, :alt => h(address), :size => image_size(GOOGLEMAP_WIDTH, GOOGLEMAP_HEIGHT)), link)
+    link_to(image_tag(tb, :alt => h(address), :size => image_size(F2P::Config.google_maps_width, F2P::Config.google_maps_height)), link)
   end
 
   def brightkite_content(common, entry)
@@ -197,7 +191,7 @@ module EntryHelper
 
   def tumblr_content(common, entry)
     title = entry.title
-    fold = fold_length(title, TUMBLR_TEXT_MAXLEN - 3)
+    fold = fold_length(title, profile_text_folding_size - 3)
     if @entry_fold and entry.medias.empty? and fold != title
       link_content(fold + '...', entry.link, entry) +
         link_to(icon_tag(:more), :action => 'show', :id => u(entry.id))
@@ -296,7 +290,7 @@ module EntryHelper
   end
 
   def comment(comment)
-    fold, str = escape_text(comment.body, @entry_fold ? COMMENT_MAXLEN : nil)
+    fold, str = escape_text(comment.body, @entry_fold ? profile_text_folding_size : nil)
     if fold
       str += link_to(icon_tag(:more), :action => 'show', :id => u(comment.entry.id))
     end
@@ -342,6 +336,10 @@ module EntryHelper
   def fold_comment_link(entry, comment)
     msg = " (#{comment.fold_entries} more comments)"
     link_to(icon_tag(:more), :action => 'show', :id => u(entry.id)) + h(msg)
+  end
+
+  def settings_link
+    link_to(h('[settings]'), :controller => 'setting', :action => 'index')
   end
 
   def logout_link

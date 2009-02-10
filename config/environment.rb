@@ -10,13 +10,22 @@ RAILS_GEM_VERSION = '2.2.2' unless defined? RAILS_GEM_VERSION
 # Bootstrap the Rails environment, frameworks, and default configuration
 require File.join(File.dirname(__FILE__), 'boot')
 
-module FFP
+module F2P
   module Config
     class << self
       attr_accessor :encryption_key
       attr_accessor :cipher_algorithm
       attr_accessor :cipher_block_size
       attr_accessor :google_maps_api_key
+
+      attr_accessor :google_maps_maptype
+      attr_accessor :google_maps_zoom
+      attr_accessor :google_maps_width
+      attr_accessor :google_maps_height
+
+      attr_accessor :default_font_size
+      attr_accessor :default_entries_in_page
+      attr_accessor :default_text_folding_size
     end
   end
 end
@@ -86,8 +95,17 @@ Rails::Initializer.run do |config|
   # Please note that observers generated using script/generate observer need to have an _observer suffix
   # config.active_record.observers = :cacher, :garbage_collector, :forum_observer
 
-  ::FFP::Config.cipher_algorithm = 'AES-256-CBC'
-  ::FFP::Config.cipher_block_size = 16 # must match with above alg.
-  ::FFP::Config.encryption_key = "]\023\312\203}\271i\244X\002\374O\241\221/\323\277\005\323HN\216\021\253\320W\314S\206m\a\221"
-  ::FFP::Config.google_maps_api_key = ''
+  F2P::Config.cipher_algorithm = 'AES-256-CBC'
+  F2P::Config.cipher_block_size = 16 # must match with above alg.
+  F2P::Config.encryption_key = "]\023\312\203}\271i\244X\002\374O\241\221/\323\277\005\323HN\216\021\253\320W\314S\206m\a\221"
+  F2P::Config.google_maps_api_key = ''
+
+  F2P::Config.google_maps_maptype = 'mobile'
+  F2P::Config.google_maps_zoom = 13
+  F2P::Config.google_maps_width = 160
+  F2P::Config.google_maps_height = 80
+
+  F2P::Config.default_font_size = 9
+  F2P::Config.default_entries_in_page = 20
+  F2P::Config.default_text_folding_size = 140
 end
