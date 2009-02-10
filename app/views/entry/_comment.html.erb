@@ -8,10 +8,10 @@
         <li>
           <%= icon_tag(:comment) %>
           <%= date(v(comment, 'date'), @compact) %></a>
-          <%= comment(entry.id, comment) %>
+          <%= comment(comment) %>
           by <%= user(comment) %>
           <%= via(comment) -%>
-          <%= delete_comment_link(entry, comment) -%>
+          <%= delete_comment_link(comment) -%>
           <%= post_comment_link(entry) if !@post_comment and comment == comments.last -%>
         </li>
       <%- end -%>

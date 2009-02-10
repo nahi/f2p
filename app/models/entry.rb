@@ -1,4 +1,8 @@
+require 'hash_utils'
+
+
 class Entry < Hash
+  include HashUtils
 
   class << self
     def create(opt)
@@ -57,7 +61,6 @@ class Entry < Hash
     def ff_client
       ApplicationController.ff_client
     end
-
   end
 
   def similar?(rhs)
@@ -133,12 +136,6 @@ class Entry < Hash
   end
 
 private
-
-  def v(*keywords)
-    keywords.inject(self) { |r, k|
-      r[k] if r
-    }
-  end
 
   def same_origin?(rhs)
     (self.published_at - rhs.published_at).abs < 10.seconds

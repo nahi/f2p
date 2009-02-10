@@ -1,7 +1,7 @@
 <% entries = fold_entries(thread.entries) -%>
 <%= icon(thread.root) %>
 <%= updated(entries.last, @compact) %>
-<%= user(thread.root) %>@<%= service(thread.root) %>
+<%= author_link(thread.root, true, true) %>
 <ul>
   <% fold_entries(entries).each do |entry| -%>
     <li><%= render :partial => 'entry', :locals => {:entry => entry, :root_user => thread.root.user_id, :root_service => thread.root.service_identity} %></li>

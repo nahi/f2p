@@ -81,7 +81,6 @@ private
   def compress
     return if response.headers['content-encoding']
     accepts = request.env['HTTP_ACCEPT_ENCODING'] || ''
-    return unless accepts
     codings = accepts.split(/,\s*/).map { |e| ContentCoding.new(e) }
     codings.sort_by { |coding| coding.q }.each do |coding|
       next unless coding.q > 0.0

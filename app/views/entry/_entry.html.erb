@@ -3,13 +3,7 @@
 <%- else -%>
   <%= icon(entry) %>
   <%= published(entry, @compact) %>
-  <%- if root_user.nil? and root_service.nil? -%>
-    <%= user(entry) %>@<%= service(entry) %>:
-  <%- elsif root_user == entry.user_id and root_service != entry.service_identity -%>
-    <%= service(entry) %>:
-  <%- elsif root_user != entry.user_id and root_service != entry.service_identity -%>
-    <%= user(entry) %>@<%= service(entry) %>:
-  <%- end -%>
+  <%= author_link(entry, (root_user.nil? or root_user != entry.user_id), (root_service.nil? or root_service != entry.service_identity)) %>
   <%= content(entry) %>
   <%= via(entry) %>
   <%= likes(entry, @compact) -%>

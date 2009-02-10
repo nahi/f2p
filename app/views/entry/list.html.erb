@@ -1,4 +1,4 @@
-<h1><%= link_to(appname, :action => 'list') %> entries</a></h1>
+<h1><%= link_to(appname, :action => 'list') %> entries</h1>
 <%- if flash[:deleted_id] -%>
   <p><%= undelete_link(flash[:deleted_id], flash[:deleted_comment]) %></p>
 <%- end -%>

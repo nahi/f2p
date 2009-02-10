@@ -33,7 +33,16 @@ module EntryHelper
     else
       name = v(entry, 'service', 'name')
       if name and service_id
-        link_to(h(name), :controller => 'entry', :action => 'list', :user => u(entry.nickname || entry.user_id), :service => u(service_id))
+        if @user
+          user = entry.nickname || entry.user_id
+        end
+        opt = {
+          :controller => 'entry',
+          :action => 'list',
+          :user => u(user),
+          :service => u(service_id)
+        }
+        link_to(h(name), opt)
       end
     end
   end
@@ -58,7 +67,11 @@ module EntryHelper
     if link and with_link?(v(entry, 'service'))
       content = link_content(title, link, entry)
     else
-      content = q(escape_with_link(title))
+      fold, str = escape_text(title, @entry_fold ? COMMENT_MAXLEN : nil)
+      if fold
+        str += link_to(icon_tag(:more), :action => 'show', :id => u(entry.id))
+      end
+      content = q(str)
     end
     if !entry.medias.empty?
       # entries from Hatena contains 'enclosure' but no title and link for now.
@@ -66,6 +79,19 @@ module EntryHelper
       content += "<br/>\n&nbsp;&nbsp;&nbsp;" + with_media unless with_media.empty?
     end
     content
+  end
+
+  def author_link(entry, show_user, show_service)
+    str = ''
+    if show_user
+      str += user(entry)
+    end
+    if show_service
+      str += '@' unless str.empty?
+      str += service(entry)
+    end
+    str += ':' unless str.empty?
+    str
   end
 
   def link_content(title, link, entry)
@@ -171,33 +197,64 @@ module EntryHelper
 
   def tumblr_content(common, entry)
     title = entry.title
-    link = entry.link
     fold = fold_length(title, TUMBLR_TEXT_MAXLEN - 3)
     if @entry_fold and entry.medias.empty? and fold != title
-      link_content(fold + '...', link, entry)
+      link_content(fold + '...', entry.link, entry) +
+        link_to(icon_tag(:more), :action => 'show', :id => u(entry.id))
     else
       common
     end
   end
 
-  def escape_with_link(content)
-    if content
-      str = ''
-      m = nil
-      while content.match(URI.regexp)
-        m = $~
-        str += h(m.pre_match)
-        uri = uri(m[0])
-        # trailing '...' means folding.
-        if uri.nil? or !uri.is_a?(URI::HTTP) or m[0][-3, 3] == '...'
-          str += m[0]
-        else
-          str += link_to(h(m[0]), m[0])
-        end
-        content = m.post_match
+  def escape_text(content, fold_size = nil)
+    str = ''
+    fold_size ||= content.length
+    org_size = 0
+    m = nil
+    while content.match(URI.regexp)
+      m = $~
+      added, part = fold_concat(m.pre_match, fold_size - org_size)
+      str += h(part)
+      if added
+        org_size += added
+      else
+        return true, str
       end
-      str += h(content)
-      str
+      uri = uri(m[0])
+      added, part = fold_concat(m[0], fold_size - org_size)
+      if uri.nil? or !uri.is_a?(URI::HTTP)
+        str += h(part)
+        if added
+          org_size += added
+        else
+          return true, str
+        end
+      else
+        if added
+          str += link_to(h(m[0]), m[0])
+          org_size += added
+        else
+          str += link_to(h(part), m[0])
+          return true, str
+        end
+      end
+      content = m.post_match
+    end
+    added, part = fold_concat(content, fold_size - org_size)
+    str += h(part)
+    unless added
+      return true, str
+    end
+    return false, str
+  end
+
+  def fold_concat(str, fold_size)
+    return 0, str if str.empty?
+    size = str.scan(/./u).size
+    if size > fold_size
+      return nil, fold_length(str, fold_size - 3) + '...'
+    else
+      return size, str
     end
   end
 
@@ -238,15 +295,12 @@ module EntryHelper
     image_tag(url, :alt => alt || name)
   end
 
-  def comment(eid, comment)
-    body = v(comment, 'body')
-    if @entry_fold
-      fold = fold_length(body, COMMENT_MAXLEN - 3)
-      if body != fold
-        return escape_with_link(fold + '...') + link_to(icon_tag(:more), :action => 'show', :id => u(eid))
-      end
+  def comment(comment)
+    fold, str = escape_text(comment.body, @entry_fold ? COMMENT_MAXLEN : nil)
+    if fold
+      str += link_to(icon_tag(:more), :action => 'show', :id => u(comment.entry.id))
     end
-    escape_with_link(body)
+    str
   end
 
   def search_form
@@ -277,7 +331,7 @@ module EntryHelper
   end
 
   def post_comment_form
-    text_field_tag('body') + submit_tag('post')
+    text_field_tag('body', nil, :accesskey => '8') + submit_tag('post')
   end
 
   def fold_link(entry)
@@ -415,12 +469,12 @@ module EntryHelper
     link_to(h('Deleted.  UNDO?'), :action => 'undelete', :id => u(id), :comment => u(comment))
   end
 
-  def delete_comment_link(entry, comment)
+  def delete_comment_link(comment)
     unless @compact
       cid = v(comment, 'id')
       name = v(comment, 'user', 'nickname')
-      if name == @auth.name or @auth.name == entry.nickname
-        link_to(icon_tag(:delete), {:action => 'delete', :id => u(entry.id), :comment => u(cid)}, :confirm => 'Are you sure?')
+      if name == @auth.name or @auth.name == comment.entry.nickname
+        link_to(icon_tag(:delete), {:action => 'delete', :id => u(comment.entry.id), :comment => u(cid)}, :confirm => 'Are you sure?')
       end
     end
   end

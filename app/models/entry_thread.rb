@@ -84,8 +84,14 @@ class EntryThread
     end
 
     def wrap(entries)
-      entries.map { |entry|
-        Entry[entry]
+      entries.map { |hash|
+        entry = Entry[hash]
+        entry['comments'] = entry['comments'].map { |hash|
+          comment = Comment[hash]
+          comment.entry = entry
+          comment
+        }
+        entry
       }
     end
 
