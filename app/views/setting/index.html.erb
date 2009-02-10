@@ -1,0 +1,12 @@
+<h1><%= link_to(appname, :controller => 'entry', :action => 'list') %> settings</h1>
+<%- form_tag({:action => 'update'}, {:name => 'post'}) do -%>
+  <p>
+    font size: <%= text_field_tag('font_size', @font_size) %><br/>
+    entries in page: <%= text_field_tag('entries_in_page', @entries_in_page) %><br/>
+    text folding size: <%= text_field_tag('text_folding_size', @text_folding_size) %><br/>
+    <%= submit_tag 'update' %>
+  </p>
+<%- end -%>
+<script type='text/javascript'><!--
+post.font_size.focus();
+//--></script>

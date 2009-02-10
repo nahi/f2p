@@ -1,0 +1,24 @@
+<html>
+  <head>
+    <title><%= appname %> settings</title>
+    <style type="text/css">
+      body {
+        font-family: Arial, sans-serif;
+        font-size: <%=h profile_font_size %>pt;
+      }
+      h1 { font-size: 110%; }
+      a img { border: none; }
+      p.error { color: red; }
+      .latest1 { color: #FF0000; }
+      .latest2 { color: #C00000; }
+      .latest3 { color: #800000; }
+      ul {
+        list-style-type: none;
+        margin-bottom: 0.8ex;
+      }
+    </style>
+  </head>
+  <body>
+    <%= yield %>
+  </body>
+</html>
