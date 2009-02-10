@@ -9,6 +9,12 @@ module ApplicationHelper
   YEAR_THRESHOLD = 1.year
   SELF_LABEL = 'You'
 
+  def u(arg)
+    if arg
+      super(arg)
+    end
+  end
+
   def appname
     h(APPNAME)
   end

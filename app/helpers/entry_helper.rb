@@ -80,7 +80,7 @@ module EntryHelper
     if show_user
       str += user(entry)
     end
-    if show_service
+    if show_service and !@room
       str += '@' unless str.empty?
       str += service(entry)
     end
@@ -358,7 +358,7 @@ module EntryHelper
     }
     links_if_exists('services: ', map.to_a.sort_by { |k, v| k }) { |id, name|
       label = "[#{name}]"
-      link_to(h(label), list_opt(:action => 'list', :user => user, :service => id))
+      link_to(h(label), list_opt(:action => 'list', :user => u(user), :service => u(id)))
     }
   end
 
@@ -374,7 +374,7 @@ module EntryHelper
       if @list == nickname
         h(label)
       else
-        link_to(h(label), list_opt(:action => 'list', :list => nickname))
+        link_to(h(label), list_opt(:action => 'list', :list => u(nickname)))
       end
     }
   end
@@ -388,7 +388,7 @@ module EntryHelper
     links_if_exists('rooms: ', User.rooms(arg)) { |e|
       label = "[#{v(e, 'name')}]"
       nickname = v(e, 'nickname')
-      link_to(h(label), list_opt(:action => 'list', :room => nickname))
+      link_to(h(label), list_opt(:action => 'list', :room => u(nickname)))
     }
   end
 
@@ -401,7 +401,7 @@ module EntryHelper
     links_if_exists('', User.subscriptions(arg)) { |e|
       label = "[#{v(e, 'name')}]"
       nickname = v(e, 'nickname')
-      link_to(h(label), list_opt(:action => 'list', :user => nickname))
+      link_to(h(label), list_opt(:action => 'list', :user => u(nickname)))
     }
   end
 
