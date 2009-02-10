@@ -105,7 +105,8 @@ private
     if @user_id
       begin
         @auth = User.find(@user_id)
-      rescue OpenSSL::OpenSSLError
+      rescue Exception
+        logger.warn($!)
         @auth = nil
       end
     end
