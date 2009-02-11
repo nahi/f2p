@@ -33,11 +33,7 @@ module ApplicationHelper
   end
 
   def room(room)
-    name = v(room, 'name')
-    nickname = v(room, 'nickname')
-    if name and nickname
-      link_to(h(name), :controller => 'entry', :action => 'list', :room => u(nickname))
-    end
+    link_to(h(room.name), :controller => 'entry', :action => 'list', :room => u(room.nickname))
   end
 
   def user(user)

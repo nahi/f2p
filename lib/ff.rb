@@ -31,6 +31,13 @@ module FriendFeed
       end
     end
 
+    def get_room_profile(name, remote_key, room)
+      uri = uri("room/#{room}/profile")
+      client_sync(uri, name, remote_key) do |client|
+        JSON.parse(client.get(uri).content)
+      end
+    end
+
     def get_entry(name, remote_key, eid, opt = {})
       uri = uri("feed/entry/#{eid}")
       client_sync(uri, name, remote_key) do |client|

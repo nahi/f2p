@@ -392,6 +392,19 @@ module EntryHelper
     }
   end
 
+  def member_links(room)
+    arg = {
+      :name => @auth.name,
+      :remote_key => @auth.remote_key,
+      :room => room
+    }
+    links_if_exists('members: ', Room.members(arg)) { |e|
+      label = "[#{v(e, 'name')}]"
+      nickname = v(e, 'nickname')
+      link_to(h(label), list_opt(:action => 'list', :user => u(nickname)))
+    }
+  end
+
   def user_links(user)
     arg = {
       :name => @auth.name,

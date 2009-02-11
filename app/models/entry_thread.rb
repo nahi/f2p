@@ -91,6 +91,7 @@ class EntryThread
           comment.entry = entry
           comment
         }
+        entry['room'] = Room[entry['room']] if entry['room']
         entry
       }
     end

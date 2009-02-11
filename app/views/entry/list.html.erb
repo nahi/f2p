@@ -17,17 +17,18 @@
     <p><%= post_entry_form %> <%= settings_link %> <%= logout_link %></p>
   <%- end -%>
 <%- end -%>
-<%- if @post and @user -%>
-  <p><%= service_links(@user) %></p>
-<%- end -%>
-<%- if @post and @list -%>
-  <p><%= list_links %></p>
-<%- end -%>
-<%- if @post and @room == '*' -%>
-  <p><%= room_links(@user) %></p>
-<%- end -%>
-<%- if @post and @user -%>
-  <p>
+<%- if @post -%>
+  <%- if @user -%>
+    <p><%= service_links(@user) %></p>
+  <%- end -%>
+  <%- if @list -%>
+    <p><%= list_links %></p>
+  <%- end -%>
+  <%- if @room == '*' -%>
+    <p><%= room_links(@user) %></p>
+  <%- elsif @room -%>
+    <p><%= member_links(@room) %></p>
+  <%- end -%>
 <%- end -%>
 <p><%= page_links %></p>
 <div class="listings">
