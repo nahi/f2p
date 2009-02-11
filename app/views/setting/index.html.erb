@@ -1,4 +1,7 @@
 <h1><%= link_to(appname, :controller => 'entry', :action => 'list') %> settings</h1>
+<%- if flash[:error] -%>
+  <%= error_messages_for 'profile' %>
+<%- end -%>
 <%- form_tag({:action => 'update'}, {:name => 'post'}) do -%>
   <p>
     font size: <%= text_field_tag('font_size', @font_size) %><br/>

@@ -28,7 +28,7 @@ class LoginController < ApplicationController
         user.remote_key = remote_key
         unless user.save
           flash[:error] = 'illegal auth credentials given'
-          redirect_to :action => 'index'
+          render :action => 'index'
         end
         set_user(user)
         redirect_to :controller => 'entry'
