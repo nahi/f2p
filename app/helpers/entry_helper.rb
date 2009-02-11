@@ -420,7 +420,7 @@ module EntryHelper
       }
     end
     links << menu_link('[home]', :action => 'list') {
-      @query or @user or @list or @room or @friends or @likes
+      @eid or @query or @user or @list or @room or @friends or @likes
     }
     if @user and @user != @auth.name
       links << menu_link('[friends]', :action => 'list', :friends => @user) {
