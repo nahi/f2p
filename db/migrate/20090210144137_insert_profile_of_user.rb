@@ -3,9 +3,9 @@ class InsertProfileOfUser < ActiveRecord::Migration
     User.find(:all).each do |user|
       if user.profile.nil?
         user.profile = Profile.new
-        user.profile.font_size = F2P::Config.default_font_size
-        user.profile.entries_in_page = F2P::Config.default_entries_in_page
-        user.profile.text_folding_size = F2P::Config.default_text_folding_size
+        user.profile.font_size = F2P::Config.font_size
+        user.profile.entries_in_page = F2P::Config.entries_in_page
+        user.profile.text_folding_size = F2P::Config.text_folding_size
         raise unless user.profile.save
       end
     end

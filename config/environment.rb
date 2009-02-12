@@ -23,9 +23,12 @@ module F2P
       attr_accessor :google_maps_width
       attr_accessor :google_maps_height
 
-      attr_accessor :default_font_size
-      attr_accessor :default_entries_in_page
-      attr_accessor :default_text_folding_size
+      attr_accessor :font_size
+      attr_accessor :entries_in_page
+      attr_accessor :text_folding_size
+      attr_accessor :entries_in_thread
+      attr_accessor :likes_in_page
+      attr_accessor :service_grouping_threashold
     end
   end
 end
@@ -105,7 +108,10 @@ Rails::Initializer.run do |config|
   F2P::Config.google_maps_width = 160
   F2P::Config.google_maps_height = 80
 
-  F2P::Config.default_font_size = 9
-  F2P::Config.default_entries_in_page = 20
-  F2P::Config.default_text_folding_size = 140
+  F2P::Config.font_size = 9
+  F2P::Config.entries_in_page = 20
+  F2P::Config.text_folding_size = 140
+  F2P::Config.entries_in_thread = 4
+  F2P::Config.likes_in_page = 3
+  F2P::Config.service_grouping_threashold = 1.5.hour
 end

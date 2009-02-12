@@ -13,9 +13,6 @@ module EntryHelper
     'comment_lighter' => 'comment-lighter.png',
   }
 
-  LIKES_THRESHOLD = 3
-  FOLD_THRESHOLD = 4
-
   def icon(entry)
     service_icon(v(entry, 'service'), entry.link)
   end
@@ -260,9 +257,9 @@ module EntryHelper
     me, rest = entry.likes.partition { |e| v(e, 'user', 'nickname') == @auth.name }
     likes = me + rest
     if !likes.empty?
-      if compact and likes.size > LIKES_THRESHOLD + 1
-        msg = "... #{likes.size - LIKES_THRESHOLD} more likes"
-        icon_tag(:like) + likes[0, LIKES_THRESHOLD].collect { |like| user(like) }.join(' ') +
+      if compact and likes.size > F2P::Config.likes_in_page + 1
+        msg = "... #{likes.size - F2P::Config.likes_in_page} more likes"
+        icon_tag(:like) + likes[0, F2P::Config.likes_in_page].collect { |like| user(like) }.join(' ') +
           ' ' + link_to(h(msg), :action => 'show', :id => u(entry.id))
       else
         icon_tag(:like) + likes.collect { |like| user(like) }.join(' ')
@@ -561,11 +558,11 @@ module EntryHelper
   end
 
   def fold_items(items)
-    if items.size > FOLD_THRESHOLD
+    if items.size > profile_entries_in_thread
       result = []
       result << items.first
-      result << Fold.new(items.size - (FOLD_THRESHOLD - 1))
-      last_size = FOLD_THRESHOLD - 2
+      result << Fold.new(items.size - (profile_entries_in_thread - 1))
+      last_size = profile_entries_in_thread - 2
       result += items[-last_size, last_size]
       result
     else

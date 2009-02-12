@@ -6,13 +6,14 @@ class SettingController < ApplicationController
   def index
     @font_size = param(:font_size) || @auth.profile.font_size
     @entries_in_page = param(:entries_in_page) || @auth.profile.entries_in_page
+    @entries_in_thread = param(:entries_in_thread) || @auth.profile.entries_in_thread
     @text_folding_size = param(:text_folding_size) || @auth.profile.text_folding_size
   end
 
   def update
     updated = false
     original_value = {}
-    [:font_size, :entries_in_page, :text_folding_size].each do |key|
+    [:font_size, :entries_in_page, :entries_in_thread, :text_folding_size].each do |key|
       if param(key)
         instance_variable_set('@' + key.to_s, param(key))
         original_value[key] = @auth.profile.send(key)

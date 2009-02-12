@@ -121,14 +121,18 @@ module ApplicationHelper
 
   def profile(name)
     if @auth
-      @auth.profile.send(name.to_s)
+      @auth.profile.send(name)
     else
-      F2P::Config.send('default_' + name.to_s)
+      F2P::Config.send(name)
     end
   end
 
   def profile_font_size
     profile(:font_size)
+  end
+
+  def profile_entries_in_thread
+    profile(:entries_in_thread)
   end
 
   def profile_text_folding_size

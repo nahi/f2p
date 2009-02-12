@@ -1,6 +1,4 @@
 class EntryThread
-  SERVICE_GROUPING_THRESHOLD = 1.5.hour
-
   class << self
     def find(opt = {})
       name = opt[:name]
@@ -108,7 +106,7 @@ class EntryThread
         pre = entry
         entry_tag = tag(entry, opt)
         buf.each do |e|
-          if entry_tag == tag(e, opt) and ((e.published_at - pre.published_at).abs < SERVICE_GROUPING_THRESHOLD) and !kinds.include?(e)
+          if entry_tag == tag(e, opt) and ((e.published_at - pre.published_at).abs < F2P::Config.service_grouping_threashold) and !kinds.include?(e)
             kinds << (pre = e)
             similar_entries(buf, e).each do |e2|
               kinds << e2 unless kinds.include?(e2)
