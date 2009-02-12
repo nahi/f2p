@@ -1,6 +1,6 @@
 module EntryHelper
   ICON_NAME = {
-    'like' => 'emoticon_smile.png',
+    'like' => 'star.png',
     'comment' => 'comment.png',
     'comment_add' => 'comment_add.png',
     'delete' => 'delete.png',
@@ -11,6 +11,7 @@ module EntryHelper
     'logout' => 'user_delete.png',
     'previous' => 'resultset_previous.png',
     'next' => 'resultset_next.png',
+    'url' => 'world_link.png',
   }
 
   def icon(entry)
@@ -474,6 +475,12 @@ module EntryHelper
     link_to(icon_tag(:comment_add, 'comment'), :action => 'show', :id => u(entry.id))
   end
 
+  def url_link(entry)
+    if !@link and with_link?(v(entry, 'service'))
+      link_to(icon_tag(:url), :action => 'list', :link => entry.link)
+    end
+  end
+
   def delete_link(entry)
     if entry.nickname == @auth.name
       link_to(icon_tag(:delete), {:action => 'delete', :id => u(entry.id)}, :confirm => 'Are you sure?')
@@ -512,6 +519,7 @@ module EntryHelper
       :room => @room,
       :friends => @friends,
       :likes => @likes,
+      :link => @link,
       :service => @service,
       :fold => @entry_fold ? nil : 'no'
     }.merge(hash)

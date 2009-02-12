@@ -19,6 +19,7 @@ class EntryController < ApplicationController
     @room = param(:room)
     @friends = param(:friends)
     @likes = param(:likes)
+    @link = param(:link)
     @service = param(:service)
     @start = (param(:start) || '0').to_i
     if param(:num)
@@ -46,6 +47,8 @@ class EntryController < ApplicationController
       @entries = EntryThread.find(opt.merge(:list => @list, :merge_service => true))
     elsif @room
       @entries = EntryThread.find(opt.merge(:room => @room, :merge_service => true))
+    elsif @link
+      @entries = EntryThread.find(opt.merge(:link => @link, :merge_service => true))
     else
       @home = true
       @entries = EntryThread.find(opt.merge(:merge_service => true))
@@ -75,6 +78,7 @@ class EntryController < ApplicationController
     @room = nil
     @friends = nil
     @likes = nil
+    @link = nil
     @service = nil
     @start = nil
     @num = nil

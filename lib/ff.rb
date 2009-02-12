@@ -105,6 +105,14 @@ module FriendFeed
       end
     end
 
+    def get_url_entries(name, remote_key, url, opt = {})
+      uri = uri("feed/url")
+      query = opt.merge(:url => url)
+      client_sync(uri, name, remote_key) do |client|
+        get_feed(client, uri, query)
+      end
+    end
+
     def search_entries(name, remote_key, query, opt = {})
       uri = uri("feed/search")
       opt = opt.merge(:q => query)

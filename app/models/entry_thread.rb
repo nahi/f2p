@@ -17,6 +17,8 @@ class EntryThread
         entries = get_room_entries(name, remote_key, opt)
       elsif opt[:friends]
         entries = get_friends_entries(name, remote_key, opt)
+      elsif opt[:link]
+        entries = get_link_entries(name, remote_key, opt)
       else
         entries = get_home_entries(name, remote_key, opt)
       end
@@ -57,6 +59,11 @@ class EntryThread
     def get_friends_entries(name, remote_key, opt)
       friends = opt[:friends]
       ff_client.get_friends_entries(name, remote_key, friends, filter_opt(opt))
+    end
+
+    def get_link_entries(name, remote_key, opt)
+      link = opt[:link]
+      ff_client.get_url_entries(name, remote_key, link, filter_opt(opt))
     end
 
     def get_likes(name, remote_key, opt)
