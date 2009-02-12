@@ -17,6 +17,7 @@ module F2P
       attr_accessor :cipher_algorithm
       attr_accessor :cipher_block_size
       attr_accessor :google_maps_api_key
+      attr_accessor :icon_url_base
 
       attr_accessor :google_maps_maptype
       attr_accessor :google_maps_zoom
@@ -102,6 +103,7 @@ Rails::Initializer.run do |config|
   F2P::Config.cipher_block_size = 16 # must match with above alg.
   F2P::Config.encryption_key = "]\023\312\203}\271i\244X\002\374O\241\221/\323\277\005\323HN\216\021\253\320W\314S\206m\a\221"
   F2P::Config.google_maps_api_key = ''
+  F2P::Config.icon_url_base = '/images/icons/'
 
   F2P::Config.google_maps_maptype = 'mobile'
   F2P::Config.google_maps_zoom = 13

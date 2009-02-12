@@ -1,16 +1,16 @@
 module EntryHelper
-  FF_ICON_URL_BASE = 'http://friendfeed.com/static/images/'
   ICON_NAME = {
-    'like' => 'smile.png',
-    'comment' => 'comment-friend.png',
-    'comment_add' => 'email-pencil.png',
-    'delete' => 'delete-g.png',
+    'like' => 'emoticon_smile.png',
+    'comment' => 'comment.png',
+    'comment_add' => 'comment_add.png',
+    'delete' => 'delete.png',
     'more' => 'add.png',
-    # not used
-    'link' => 'world-link.png',
-    'check' => 'check.png',
-    'check_disabled' => 'check-disabled.png',
-    'comment_lighter' => 'comment-lighter.png',
+    'write' => 'pencil_add.png',
+    'settings' => 'cog_edit.png',
+    'search' => 'find.png',
+    'logout' => 'user_delete.png',
+    'previous' => 'resultset_previous.png',
+    'next' => 'resultset_next.png',
   }
 
   def icon(entry)
@@ -282,8 +282,8 @@ module EntryHelper
 
   def icon_tag(name, alt = nil)
     name = name.to_s
-    url = FF_ICON_URL_BASE + ICON_NAME[name]
-    image_tag(url, :alt => alt || name)
+    url = F2P::Config.icon_url_base + ICON_NAME[name]
+    image_tag(url, :alt => alt || name, :size => '16x16')
   end
 
   def comment(comment)
@@ -305,7 +305,7 @@ module EntryHelper
       str += hidden_field_tag('service', @service)
     end
     str += text_field_tag('query', @query, :accesskey => '2') + submit_tag('search')
-    str += ' ' + link_to(h('[search]'), search_opt)
+    str += ' ' + link_to(icon_tag(:search), search_opt)
     str
   end
 
@@ -316,8 +316,8 @@ module EntryHelper
       str += hidden_field_tag('room', room) + h(room) + ': '
     end
     str += text_field_tag('body', nil, :accesskey => '2') + submit_tag('post')
-    str += ' ' + link_to(h('[extended]'), :action => 'new', :room => u(room))
-    str += ' ' + link_to(h('[search]'), search_opt)
+    str += ' ' + link_to(icon_tag(:write), :action => 'new', :room => u(room))
+    str += ' ' + link_to(icon_tag(:search), search_opt)
     str
   end
 
@@ -336,11 +336,11 @@ module EntryHelper
   end
 
   def settings_link
-    link_to(h('[settings]'), :controller => 'setting', :action => 'index')
+    link_to(icon_tag(:settings), :controller => 'setting', :action => 'index')
   end
 
   def logout_link
-    link_to(h('[logout]'), :controller => 'login', :action => 'clear')
+    link_to(icon_tag(:logout), :controller => 'login', :action => 'clear')
   end
 
   def service_links(user)
@@ -431,42 +431,42 @@ module EntryHelper
     no_page = @start.nil?
     links = []
     unless no_page
-      links << menu_link('[<]', list_opt(:action => 'list', :start => @start - @num, :num => @num), :accesskey => '4') {
+      links << menu_link(icon_tag(:previous), list_opt(:action => 'list', :start => @start - @num, :num => @num), :accesskey => '4') {
         @start - @num >= 0
       }
     end
-    links << menu_link('[home]', :action => 'list')
+    links << menu_link(h('[home]'), :action => 'list')
     if @user and @user != @auth.name
-      links << menu_link('[friends]', :action => 'list', :friends => @user) {
+      links << menu_link(h('[friends]'), :action => 'list', :friends => @user) {
         !@friends
       }
     end
-    links << menu_link('[lists]', :action => 'list', :list => 'favorite') {
+    links << menu_link(h('[lists]'), :action => 'list', :list => 'favorite') {
       !@list
     }
-    links << menu_link('[rooms]', :action => 'list', :room => '*') {
+    links << menu_link(h('[rooms]'), :action => 'list', :room => '*') {
       !(@user and @auth.name != @user) and @room != '*'
     }
-    links << menu_link('[likes]', :action => 'list', :likes => 'only', :user => @user) {
+    links << menu_link(h('[likes]'), :action => 'list', :likes => 'only', :user => @user) {
       @likes != 'only'
     }
     if @post and @user
-      links << menu_link('[subscriptions]', '#subscriptions')
+      links << menu_link(h('[subscriptions]'), '#subscriptions')
     end
     if @room and @room != '*'
-      links << menu_link('[members]', '#members')
+      links << menu_link(h('[members]'), '#members')
     end
     unless no_page
-      links << menu_link('[>]', list_opt(:action => 'list', :start => @start + @num, :num => @num), :accesskey => '6')
+      links << menu_link(icon_tag(:next), list_opt(:action => 'list', :start => @start + @num, :num => @num), :accesskey => '6')
     end
     links.join(' ')
   end
 
   def menu_link(label, opt, html_opt = {}, &block)
     if block.nil? or block.call
-      link_to(h(label), opt, html_opt)
+      link_to(label, opt, html_opt)
     else
-      h(label)
+      label
     end
   end
 
