@@ -11,8 +11,15 @@ module FriendFeed
     URL_BASE = 'https://friendfeed.com/api/'
 
     attr_reader :client
+    attr_accessor :logger
 
-    def initialize
+    class NullLogger
+      def method_missing(msg_id, *a, &b)
+      end
+    end
+
+    def initialize(logger = nil)
+      @logger = logger || NullLogger.new
       @client = HTTPClient.new
       @client.extend(MonitorMixin)
     end
@@ -186,13 +193,28 @@ module FriendFeed
     end
 
     def client_sync(uri, name, remote_key)
+      logger.info("APIClient is accessing to #{uri.to_s}")
       @client.synchronize do
-        @client.set_auth(nil, name, remote_key)
-        @client.www_auth.basic_auth.challenge(uri, true)
-        result = yield(@client)
-        @client.set_auth(nil, nil, nil)
-        result
+        httpclient_error_protect do
+          @client.set_auth(nil, name, remote_key)
+          @client.www_auth.basic_auth.challenge(uri, true)
+          result = yield(@client)
+          @client.set_auth(nil, nil, nil)
+          result
+        end
       end
+    end
+
+    def httpclient_error_protect(&block)
+      result = nil
+      begin
+        result = yield
+      rescue HTTPClient::BadResponseError => e
+        logger.error(e)
+      rescue HTTPClient::TimeoutError => e
+        logger.error(e)
+      end
+      result
     end
 
     def get_feed(client, uri, query = {})

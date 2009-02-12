@@ -30,7 +30,7 @@ class ApplicationController < ActionController::Base
   end
 
   def self.ff_client
-    @@ff ||= FriendFeed::APIClient.new
+    @@ff ||= FriendFeed::APIClient.new(logger)
   end
 
   def self.ff_client=(ff_client)
