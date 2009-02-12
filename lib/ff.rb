@@ -195,7 +195,7 @@ module FriendFeed
     def client_sync(uri, name, remote_key)
       logger.info("APIClient is accessing to #{uri.to_s}")
       @client.synchronize do
-        httpclient_error_protect do
+        httpclient_protect do
           @client.set_auth(nil, name, remote_key)
           @client.www_auth.basic_auth.challenge(uri, true)
           result = yield(@client)
@@ -205,8 +205,9 @@ module FriendFeed
       end
     end
 
-    def httpclient_error_protect(&block)
+    def httpclient_protect(&block)
       result = nil
+      start = Time.now
       begin
         result = yield
       rescue HTTPClient::BadResponseError => e
@@ -214,6 +215,7 @@ module FriendFeed
       rescue HTTPClient::TimeoutError => e
         logger.error(e)
       end
+      logger.info("APIClient elapsed: #{Time.now - start} [sec]")
       result
     end
 
