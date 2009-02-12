@@ -1,6 +1,7 @@
 module EntryHelper
   ICON_NAME = {
-    'like' => 'star.png',
+    'star' => 'star.png',
+    'like' => 'thumb_up.png',
     'comment' => 'comment.png',
     'comment_add' => 'comment_add.png',
     'delete' => 'delete.png',
@@ -258,12 +259,16 @@ module EntryHelper
     me, rest = entry.likes.partition { |e| v(e, 'user', 'nickname') == @auth.name }
     likes = me + rest
     if !likes.empty?
+      icon = icon_tag(:star)
+      if liked?(entry)
+        icon = link_to(icon, :action => 'unlike', :id => u(entry.id))
+      end
       if compact and likes.size > F2P::Config.likes_in_page + 1
         msg = "... #{likes.size - F2P::Config.likes_in_page} more likes"
-        icon_tag(:like) + likes[0, F2P::Config.likes_in_page].collect { |like| user(like) }.join(' ') +
+        icon + likes[0, F2P::Config.likes_in_page].collect { |like| user(like) }.join(' ') +
           ' ' + link_to(h(msg), :action => 'show', :id => u(entry.id))
       else
-        icon_tag(:like) + likes.collect { |like| user(like) }.join(' ')
+        icon + likes.collect { |like| user(like) }.join(' ')
       end
     end
   end
@@ -503,12 +508,14 @@ module EntryHelper
 
   def like_link(entry)
     if entry.nickname != @auth.name
-      if entry.likes.find { |like| v(like, 'user', 'nickname') == @auth.name }
-        link_to(h('[un-like]'), :action => 'unlike', :id => u(entry.id))
-      else
-        link_to(h('[like]'), :action => 'like', :id => u(entry.id))
+      unless liked?(entry)
+        link_to(icon_tag(:like), :action => 'like', :id => u(entry.id))
       end
     end
+  end
+
+  def liked?(entry)
+    entry.likes.find { |like| v(like, 'user', 'nickname') == @auth.name }
   end
 
   def list_opt(hash = {})

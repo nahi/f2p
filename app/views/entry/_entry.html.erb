@@ -6,9 +6,9 @@
   <%= author_link(entry, (root_user.nil? or root_user != entry.user_id), (root_service.nil? or root_service != entry.service_identity)) %>
   <%= content(entry) %>
   <%= via(entry) %>
-  <%= likes(entry, @compact) -%>
-  <%= url_link(entry) -%>
   <%= delete_link(entry) -%>
   <%= like_link(entry) %>
+  <%= url_link(entry) -%>
+  <%= likes(entry, @compact) -%>
   <%= render :partial => 'comment', :locals => {:entry => entry} %>
 <%- end -%>
