@@ -438,9 +438,7 @@ module EntryHelper
         @start - @num >= 0
       }
     end
-    links << menu_link('[home]', :action => 'list') {
-      @eid or @query or @user or @list or @room or @friends or @likes
-    }
+    links << menu_link('[home]', :action => 'list')
     if @user and @user != @auth.name
       links << menu_link('[friends]', :action => 'list', :friends => @user) {
         !@friends
@@ -517,7 +515,8 @@ module EntryHelper
       :room => @room,
       :friends => @friends,
       :likes => @likes,
-      :service => @service
+      :service => @service,
+      :fold => @entry_fold ? nil : 'no'
     }.merge(hash)
   end
 
