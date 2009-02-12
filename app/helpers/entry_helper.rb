@@ -392,29 +392,35 @@ module EntryHelper
     }
   end
 
-  def member_links(room)
-    arg = {
-      :name => @auth.name,
-      :remote_key => @auth.remote_key,
-      :room => room
-    }
-    links_if_exists('members: ', Room.members(arg)) { |e|
-      label = "[#{v(e, 'name')}]"
-      nickname = v(e, 'nickname')
-      link_to(h(label), list_opt(:action => 'list', :user => u(nickname)))
-    }
-  end
-
   def user_links(user)
     arg = {
       :name => @auth.name,
       :remote_key => @auth.remote_key,
       :user => user
     }
-    links_if_exists('', User.subscriptions(arg)) { |e|
+    users = User.subscriptions(arg)
+    links_if_exists("(#{users.size} subscriptions) ", users) { |e|
       label = "[#{v(e, 'name')}]"
       nickname = v(e, 'nickname')
-      link_to(h(label), list_opt(:action => 'list', :user => u(nickname)))
+      if nickname
+        link_to(h(label), list_opt(:action => 'list', :user => u(nickname)))
+      end
+    }
+  end
+
+  def member_links(room)
+    arg = {
+      :name => @auth.name,
+      :remote_key => @auth.remote_key,
+      :room => room
+    }
+    members = Room.members(arg)
+    links_if_exists("(#{members.size} members) ", members) { |e|
+      label = "[#{v(e, 'name')}]"
+      nickname = v(e, 'nickname')
+      if nickname
+        link_to(h(label), list_opt(:action => 'list', :user => u(nickname)))
+      end
     }
   end
 
@@ -451,6 +457,9 @@ module EntryHelper
     }
     if @post and @user
       links << menu_link('[subscriptions]', '#subscriptions')
+    end
+    if @room and @room != '*'
+      links << menu_link('[members]', '#members')
     end
     unless no_page
       links << menu_link('[>]', list_opt(:action => 'list', :start => @start + @num, :num => @num), :accesskey => '6')

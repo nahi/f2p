@@ -26,8 +26,6 @@
   <%- end -%>
   <%- if @room == '*' -%>
     <p><%= room_links(@user) %></p>
-  <%- elsif @room -%>
-    <p><%= member_links(@room) %></p>
   <%- end -%>
 <%- end -%>
 <p><%= page_links %></p>
@@ -48,5 +46,12 @@
   <p>
     <a name="subscriptions" id="subscriptions"><%= h(@user) %>'s subscriptions:</a><br/>
     <%= user_links(@user) %>
+  </p>
+<%- end -%>
+<%- if @room and @room != '*' -%>
+  <hr/>
+  <p>
+    <a name="members" id="members"><%= h(@room)%> members:</a><br/>
+    <%= member_links(@room) %>
   </p>
 <%- end -%>
