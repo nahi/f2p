@@ -35,7 +35,7 @@
       <%- if thread.chunked? -%>
         <li><%= render :partial => 'chunk_entry', :locals => {:thread => thread, :root_user => nil, :root_service => nil} %></li>
       <%- else -%>
-        <li><%= render :partial => 'entry', :locals => {:entry => thread.single_entry, :root_user => nil, :root_service => nil} %></li>
+        <li><%= render :partial => 'entry', :locals => {:entry => thread.root, :root_user => nil, :root_service => nil} %></li>
       <%- end -%>
     <%- end -%>
   </ul>

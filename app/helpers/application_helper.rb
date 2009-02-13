@@ -25,9 +25,10 @@ module ApplicationHelper
     link ||= v(service, 'profileUrl')
     if icon_url and name
       if link
-        link_to(image_tag(icon_url, :alt => h("profile on #{name}")), link)
+        label = "profile on #{name}"
+        link_to(image_tag(icon_url, :alt => h(name), :title => h(label)), link)
       else
-        image_tag(icon_url, :alt => h(name))
+        image_tag(icon_url, :alt => h(name), :title => h(name))
       end
     end
   end
@@ -36,16 +37,27 @@ module ApplicationHelper
     link_to(h(room.name), :controller => 'entry', :action => 'list', :room => u(room.nickname))
   end
 
-  def user(user)
+  def user_picture(user)
+    user_id = v(user, 'id')
     nickname = v(user, 'nickname')
     name = v(user, 'name')
-    user_id = v(user, 'id')
-    if name
-      if nickname == @auth.name
-        name = SELF_LABEL
-      end
-      link_to(h(name), :controller => 'entry', :action => 'list', :user => u(nickname || user_id))
+    if nickname == @auth.name
+      name = SELF_LABEL
     end
+    if nickname
+      url = ff_client.get_picture_url(nickname, 'small')
+      link_to(image_tag(url, :alt => h(name), :title => h(name), :size => image_size(25, 25)), :controller => 'entry', :action => 'list', :user => u(nickname || user_id))
+    end
+  end
+
+  def user(user)
+    user_id = v(user, 'id')
+    nickname = v(user, 'nickname')
+    name = v(user, 'name')
+    if nickname == @auth.name
+      name = SELF_LABEL
+    end
+    link_to(h(name), :controller => 'entry', :action => 'list', :user => u(nickname || user_id))
   end
 
   def via(via)
@@ -91,7 +103,7 @@ module ApplicationHelper
     when 0..6.hour
       %Q[<span class="latest3">#{body}</span>]
     else
-      body
+      %Q[<span class="older">#{body}</span>]
     end
   end
 
@@ -137,5 +149,11 @@ module ApplicationHelper
 
   def profile_text_folding_size
     profile(:text_folding_size)
+  end
+
+private
+
+  def ff_client
+    ApplicationController.ff_client
   end
 end

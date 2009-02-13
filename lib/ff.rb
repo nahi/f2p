@@ -7,16 +7,14 @@ require 'zlib'
 
 
 module FriendFeed
-  class APIClient
-    URL_BASE = 'https://friendfeed.com/api/'
+  class NullLogger
+    def method_missing(msg_id, *a, &b)
+    end
+  end
 
+  class BaseClient
     attr_reader :client
     attr_accessor :logger
-
-    class NullLogger
-      def method_missing(msg_id, *a, &b)
-      end
-    end
 
     def initialize(logger = nil)
       @logger = logger || NullLogger.new
@@ -24,11 +22,73 @@ module FriendFeed
       @client.extend(MonitorMixin)
     end
 
+  private
+
+    def client_sync(uri, name, remote_key)
+      logger.info("#{self.class} is accessing to #{uri.to_s}")
+      @client.synchronize do
+        httpclient_protect do
+          @client.set_auth(nil, name, remote_key)
+          @client.www_auth.basic_auth.challenge(uri, true)
+          result = yield(@client)
+          @client.set_auth(nil, nil, nil)
+          result
+        end
+      end
+    end
+
+    def httpclient_protect(&block)
+      result = nil
+      start = Time.now
+      begin
+        result = yield
+      rescue HTTPClient::BadResponseError => e
+        logger.error(e)
+      rescue HTTPClient::TimeoutError => e
+        logger.error(e)
+      end
+      logger.info("elapsed: #{Time.now - start} [sec]")
+      result
+    end
+  end
+
+  class ChannelClient < BaseClient
+    URL_BASE = 'http://chan.friendfeed.com/api/'
+
+    def get_token
+      uri = uri("updates")
+      query = { :format => 'json', :timeout => 0 }
+      JSON.parse(client.get(uri, query).content)['update']['token']
+    end
+
+    def get_home_entries(name, remote_key, token, opt = {})
+      uri = uri("updates/home")
+      query = opt.merge(:token => token, :format => 'json')
+      client_sync(uri, name, remote_key) do |client|
+        JSON.parse(client.get(uri, query).content)
+      end
+    end
+
+  private
+
+    def uri(part)
+      uri = URI.parse(File.join(URL_BASE, part))
+    end
+  end
+
+  class APIClient < BaseClient
+    URL_BASE = 'https://friendfeed.com/api/'
+
     def validate(name, remote_key)
       uri = uri('validate')
       client_sync(uri, name, remote_key) do |client|
         client.get(uri).status == 200
       end
+    end
+
+    # size: small, medium, or large.
+    def get_picture_url(name, size = 'small')
+      "http://friendfeed.com/#{name}/picture?size=#{size}"
     end
 
     def get_profile(name, remote_key, user = nil)
@@ -198,33 +258,6 @@ module FriendFeed
 
     def uri(part)
       uri = URI.parse(File.join(URL_BASE, part))
-    end
-
-    def client_sync(uri, name, remote_key)
-      logger.info("APIClient is accessing to #{uri.to_s}")
-      @client.synchronize do
-        httpclient_protect do
-          @client.set_auth(nil, name, remote_key)
-          @client.www_auth.basic_auth.challenge(uri, true)
-          result = yield(@client)
-          @client.set_auth(nil, nil, nil)
-          result
-        end
-      end
-    end
-
-    def httpclient_protect(&block)
-      result = nil
-      start = Time.now
-      begin
-        result = yield
-      rescue HTTPClient::BadResponseError => e
-        logger.error(e)
-      rescue HTTPClient::TimeoutError => e
-        logger.error(e)
-      end
-      logger.info("APIClient elapsed: #{Time.now - start} [sec]")
-      result
     end
 
     def get_feed(client, uri, query = {})

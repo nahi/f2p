@@ -1,4 +1,5 @@
 module EntryHelper
+  VIEW_LINKS_TAG = 'view_links'
   ICON_NAME = {
     'star' => 'star.png',
     'like' => 'thumb_up.png',
@@ -60,7 +61,8 @@ module EntryHelper
     if link and with_link?(v(entry, 'service'))
       content = link_content(title, link, entry)
     else
-      fold, str = escape_text(title, @entry_fold ? profile_text_folding_size : nil)
+      fold, str, links = escape_text(title, @entry_fold ? profile_text_folding_size : nil)
+      entry[VIEW_LINKS_TAG] = links
       if fold
         str += link_to(icon_tag(:more), :action => 'show', :id => u(entry.id))
       end
@@ -127,8 +129,8 @@ module EntryHelper
         tb_width = v(tb, 'width')
         tb_height = v(tb, 'height')
         if tb_url
-          safe_content = image_tag(tb_url,
-            :alt => h(title), :size => image_size(tb_width, tb_height))
+          label = title || entry.title
+          safe_content = image_tag(tb_url, :alt => h(label), :title => h(label), :size => image_size(tb_width, tb_height))
         end
       elsif title
         safe_content = h(title)
@@ -163,7 +165,7 @@ module EntryHelper
     address = point.address
     tb = generator.staticmap_url(F2P::Config.google_maps_maptype, lat, long, :zoom => F2P::Config.google_maps_zoom, :width => F2P::Config.google_maps_width, :height => F2P::Config.google_maps_height)
     link = generator.link_url(lat, long, address)
-    link_to(image_tag(tb, :alt => h(address), :size => image_size(F2P::Config.google_maps_width, F2P::Config.google_maps_height)), link)
+    link_to(image_tag(tb, :alt => h(address), :title => h(address), :size => image_size(F2P::Config.google_maps_width, F2P::Config.google_maps_height)), link)
   end
 
   def brightkite_content(common, entry)
@@ -204,6 +206,7 @@ module EntryHelper
     fold_size ||= content.length
     org_size = 0
     m = nil
+    links = []
     while content.match(URI.regexp)
       m = $~
       added, part = fold_concat(m.pre_match, fold_size - org_size)
@@ -211,7 +214,7 @@ module EntryHelper
       if added
         org_size += added
       else
-        return true, str
+        return true, str, links
       end
       uri = uri(m[0])
       added, part = fold_concat(m[0], fold_size - org_size)
@@ -220,15 +223,16 @@ module EntryHelper
         if added
           org_size += added
         else
-          return true, str
+          return true, str, links
         end
       else
+        links << m[0]
         if added
           str += link_to(h(m[0]), m[0])
           org_size += added
         else
           str += link_to(h(part), m[0])
-          return true, str
+          return true, str, links
         end
       end
       content = m.post_match
@@ -236,9 +240,9 @@ module EntryHelper
     added, part = fold_concat(content, fold_size - org_size)
     str += h(part)
     unless added
-      return true, str
+      return true, str, links
     end
-    return false, str
+    return false, str, links
   end
 
   def fold_concat(str, fold_size)
@@ -289,11 +293,13 @@ module EntryHelper
   def icon_tag(name, alt = nil)
     name = name.to_s
     url = F2P::Config.icon_url_base + ICON_NAME[name]
-    image_tag(url, :alt => alt || name, :size => '16x16')
+    label = alt || name
+    image_tag(url, :alt => h(label), :title => h(label), :size => '16x16')
   end
 
   def comment(comment)
-    fold, str = escape_text(comment.body, @entry_fold ? profile_text_folding_size : nil)
+    fold, str, links = escape_text(comment.body, @entry_fold ? profile_text_folding_size : nil)
+    comment[VIEW_LINKS_TAG] = links
     if fold
       str += link_to(icon_tag(:more), :action => 'show', :id => u(comment.entry.id))
     end
@@ -481,8 +487,17 @@ module EntryHelper
   end
 
   def url_link(entry)
-    if !@link and with_link?(v(entry, 'service'))
-      link_to(icon_tag(:url), :action => 'list', :link => entry.link)
+    link = entry.link if with_link?(v(entry, 'service'))
+    link ||= v(entry, VIEW_LINKS_TAG, 0)
+    if link and @link != link
+      link_to(icon_tag(:url), :action => 'list', :link => link)
+    end
+  end
+
+  def comment_url_link(comment)
+    link = v(comment, VIEW_LINKS_TAG, 0)
+    if link and @link != link
+      link_to(icon_tag(:url), :action => 'list', :link => link)
     end
   end
 

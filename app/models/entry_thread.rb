@@ -157,10 +157,4 @@ class EntryThread
   def chunked?
     @entries.size > 1
   end
-
-  def single_entry
-    unless chunked?
-      @entries.first
-    end
-  end
 end
