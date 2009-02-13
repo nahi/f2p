@@ -50,7 +50,8 @@ class User < ActiveRecord::Base
   private
 
     def ff_profile(name, remote_key, user)
-      ff_client.get_profile(name, remote_key, user)
+      @profile_cache ||= {}
+      @profile_cache[user] ||= ff_client.get_profile(name, remote_key, user)
     end
 
     def sort_by_name(lists)
