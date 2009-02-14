@@ -115,5 +115,5 @@ Rails::Initializer.run do |config|
   F2P::Config.text_folding_size = 140
   F2P::Config.entries_in_thread = 4
   F2P::Config.likes_in_page = 3
-  F2P::Config.service_grouping_threashold = 1.5.hour
+  F2P::Config.service_grouping_threashold = 5400
 end
