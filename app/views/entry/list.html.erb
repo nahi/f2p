@@ -1,4 +1,4 @@
-<h1><%= link_to(appname, :action => 'list') %> entries</h1>
+<h1><%= link_to(appname, :action => 'list') %> entries at <%= date(Time.now) %></h1>
 <%- if flash[:deleted_id] -%>
   <p class="message"><%= undelete_link(flash[:deleted_id], flash[:deleted_comment]) %></p>
 <%- end -%>
@@ -37,6 +37,9 @@
       <%- else -%>
         <li><%= render :partial => 'entry', :locals => {:entry => thread.root, :root_user => nil, :root_service => nil} %></li>
       <%- end -%>
+    <%- end -%>
+    <%- if @entries.size == 0 -%>
+      <li>No feed is good feed.</li>
     <%- end -%>
   </ul>
 </div>
