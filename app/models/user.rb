@@ -27,27 +27,26 @@ class User < ActiveRecord::Base
 
     def lists(arg)
       auth = arg[:auth]
-      user = arg[:user] || name
+      user = arg[:user] || auth.name
       sort_by_name(ff_profile(auth, user)['lists'] || [])
     end
 
     def rooms(arg)
       auth = arg[:auth]
-      user = arg[:user] || name
+      user = arg[:user] || auth.name
       sort_by_name(ff_profile(auth, user)['rooms'] || [])
     end
 
     def subscriptions(arg)
       auth = arg[:auth]
-      user = arg[:user] || name
+      user = arg[:user] || auth.name
       sort_by_name(ff_profile(auth, user)['subscriptions'] || [])
     end
 
   private
 
     def ff_profile(auth, user)
-      @profile_cache ||= {}
-      @profile_cache[user] ||= ff_client.get_profile(auth.name, auth.remote_key, user)
+      ff_client.get_profile(auth.name, auth.remote_key, user)
     end
 
     def sort_by_name(lists)

@@ -121,6 +121,7 @@ private
   def logout
     @user_id = session[:user_id] = nil
     @auth = nil
+    reset_session
   end
 
   def param(key)

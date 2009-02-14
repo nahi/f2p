@@ -360,7 +360,8 @@ module EntryHelper
       :auth => @auth,
       :user => user
     }
-    map = User.services(arg).inject({}) { |r, e|
+    session[:services] ||= User.services(arg)
+    map = session[:services].inject({}) { |r, e|
       r[v(e, 'id')] = v(e, 'name')
       r
     }
@@ -375,7 +376,8 @@ module EntryHelper
       :auth => @auth,
       :user => @auth.name
     }
-    links_if_exists('lists: ', User.lists(arg)) { |e|
+    session[:lists] ||= User.lists(arg)
+    links_if_exists('lists: ', session[:lists]) { |e|
       label = "[#{v(e, 'name')}]"
       nickname = v(e, 'nickname')
       if @list == nickname
@@ -391,7 +393,8 @@ module EntryHelper
       :auth => @auth,
       :user => user
     }
-    links_if_exists('rooms: ', User.rooms(arg)) { |e|
+    session[:rooms] ||= User.rooms(arg)
+    links_if_exists('rooms: ', session[:rooms]) { |e|
       label = "[#{v(e, 'name')}]"
       nickname = v(e, 'nickname')
       link_to(h(label), list_opt(:action => 'list', :room => u(nickname)))
@@ -403,8 +406,8 @@ module EntryHelper
       :auth => @auth,
       :user => user
     }
-    users = User.subscriptions(arg)
-    links_if_exists("(#{users.size} subscriptions) ", users) { |e|
+    session[:subscriptions] ||= User.subscriptions(arg)
+    links_if_exists("(#{users.size} subscriptions) ", session[:subscriptions]) { |e|
       label = "[#{v(e, 'name')}]"
       nickname = v(e, 'nickname')
       if nickname
