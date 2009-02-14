@@ -1,8 +1,10 @@
 module EntryHelper
   VIEW_LINKS_TAG = 'view_links'
+  LIKE_LABEL = 'love'
   ICON_NAME = {
-    'star' => 'star.png',
-    'like' => 'thumb_up.png',
+    #'star' => 'star.png',
+    'star' => 'heart.png', # for special 2/14 configuration!
+    LIKE_LABEL => 'thumb_up.png',
     'comment' => 'comment.png',
     'comment_add' => 'comment_add.png',
     'delete' => 'delete.png',
@@ -268,7 +270,7 @@ module EntryHelper
         icon = link_to(icon, :action => 'unlike', :id => u(entry.id))
       end
       if compact and likes.size > F2P::Config.likes_in_page + 1
-        msg = "... #{likes.size - F2P::Config.likes_in_page} more likes"
+        msg = "... #{likes.size - F2P::Config.likes_in_page} more #{LIKE_LABEL}s"
         icon + likes[0, F2P::Config.likes_in_page].collect { |like| user(like) }.join(' ') +
           ' ' + link_to(h(msg), :action => 'show', :id => u(entry.id))
       else
@@ -458,7 +460,7 @@ module EntryHelper
     links << menu_link(h('[rooms]'), :action => 'list', :room => '*') {
       !(@user and @auth.name != @user) and @room != '*'
     }
-    links << menu_link(h('[likes]'), :action => 'list', :likes => 'only', :user => @user) {
+    links << menu_link(h("[#{LIKE_LABEL}s]"), :action => 'list', :likes => 'only', :user => @user) {
       @likes != 'only'
     }
     if @post and @user
@@ -523,7 +525,7 @@ module EntryHelper
   def like_link(entry)
     if entry.nickname != @auth.name
       unless liked?(entry)
-        link_to(icon_tag(:like), :action => 'like', :id => u(entry.id))
+        link_to(icon_tag(LIKE_LABEL), :action => LIKE_LABEL, :id => u(entry.id))
       end
     end
   end
