@@ -20,38 +20,34 @@ class User < ActiveRecord::Base
     end
 
     def services(arg)
-      name = arg[:name]
-      remote_key = arg[:remote_key]
+      auth = arg[:auth]
       user = arg[:user]
-      sort_by_name(ff_profile(name, remote_key, user)['services'] || [])
+      sort_by_name(ff_profile(auth, user)['services'] || [])
     end
 
     def lists(arg)
-      name = arg[:name]
-      remote_key = arg[:remote_key]
+      auth = arg[:auth]
       user = arg[:user] || name
-      sort_by_name(ff_profile(name, remote_key, user)['lists'] || [])
+      sort_by_name(ff_profile(auth, user)['lists'] || [])
     end
 
     def rooms(arg)
-      name = arg[:name]
-      remote_key = arg[:remote_key]
+      auth = arg[:auth]
       user = arg[:user] || name
-      sort_by_name(ff_profile(name, remote_key, user)['rooms'] || [])
+      sort_by_name(ff_profile(auth, user)['rooms'] || [])
     end
 
     def subscriptions(arg)
-      name = arg[:name]
-      remote_key = arg[:remote_key]
+      auth = arg[:auth]
       user = arg[:user] || name
-      sort_by_name(ff_profile(name, remote_key, user)['subscriptions'] || [])
+      sort_by_name(ff_profile(auth, user)['subscriptions'] || [])
     end
 
   private
 
-    def ff_profile(name, remote_key, user)
+    def ff_profile(auth, user)
       @profile_cache ||= {}
-      @profile_cache[user] ||= ff_client.get_profile(name, remote_key, user)
+      @profile_cache[user] ||= ff_client.get_profile(auth.name, auth.remote_key, user)
     end
 
     def sort_by_name(lists)

@@ -61,7 +61,7 @@ module EntryHelper
     if link and with_link?(v(entry, 'service'))
       content = link_content(title, link, entry)
     else
-      fold, str, links = escape_text(title, @entry_fold ? profile_text_folding_size : nil)
+      fold, str, links = escape_text(title, @fold ? profile_text_folding_size : nil)
       entry[VIEW_LINKS_TAG] = links
       if fold
         str += link_to(icon_tag(:more), :action => 'show', :id => u(entry.id))
@@ -193,7 +193,7 @@ module EntryHelper
   def tumblr_content(common, entry)
     title = entry.title
     fold = fold_length(title, profile_text_folding_size - 3)
-    if @entry_fold and entry.medias.empty? and fold != title
+    if @fold and entry.medias.empty? and fold != title
       link_content(fold + '...', entry.link, entry) +
         link_to(icon_tag(:more), :action => 'show', :id => u(entry.id))
     else
@@ -278,7 +278,7 @@ module EntryHelper
   end
 
   def updated(entry, compact)
-    date(entry.thread_date, compact)
+    date(entry.modified, compact)
   end
 
   def published(entry, compact)
@@ -298,7 +298,7 @@ module EntryHelper
   end
 
   def comment(comment)
-    fold, str, links = escape_text(comment.body, @entry_fold ? profile_text_folding_size : nil)
+    fold, str, links = escape_text(comment.body, @fold ? profile_text_folding_size : nil)
     comment[VIEW_LINKS_TAG] = links
     if fold
       str += link_to(icon_tag(:more), :action => 'show', :id => u(comment.entry.id))
@@ -357,8 +357,7 @@ module EntryHelper
 
   def service_links(user)
     arg = {
-      :name => @auth.name,
-      :remote_key => @auth.remote_key,
+      :auth => @auth,
       :user => user
     }
     map = User.services(arg).inject({}) { |r, e|
@@ -373,8 +372,7 @@ module EntryHelper
 
   def list_links
     arg = {
-      :name => @auth.name,
-      :remote_key => @auth.remote_key,
+      :auth => @auth,
       :user => @auth.name
     }
     links_if_exists('lists: ', User.lists(arg)) { |e|
@@ -390,8 +388,7 @@ module EntryHelper
 
   def room_links(user)
     arg = {
-      :name => @auth.name,
-      :remote_key => @auth.remote_key,
+      :auth => @auth,
       :user => user
     }
     links_if_exists('rooms: ', User.rooms(arg)) { |e|
@@ -403,8 +400,7 @@ module EntryHelper
 
   def user_links(user)
     arg = {
-      :name => @auth.name,
-      :remote_key => @auth.remote_key,
+      :auth => @auth,
       :user => user
     }
     users = User.subscriptions(arg)
@@ -419,8 +415,7 @@ module EntryHelper
 
   def member_links(room)
     arg = {
-      :name => @auth.name,
-      :remote_key => @auth.remote_key,
+      :auth => @auth,
       :room => room
     }
     members = Room.members(arg)
@@ -447,6 +442,7 @@ module EntryHelper
         @start - @num >= 0
       }
     end
+    links << menu_link(h('[updated]'), :action => 'updated')
     links << menu_link(h('[home]'), :action => 'list')
     if @user and @user != @auth.name
       links << menu_link(h('[friends]'), :action => 'list', :friends => @user) {
@@ -543,7 +539,7 @@ module EntryHelper
       :likes => @likes,
       :link => @link,
       :service => @service,
-      :fold => @entry_fold ? nil : 'no'
+      :fold => @fold ? nil : 'no'
     }.merge(hash)
   end
 
@@ -572,7 +568,7 @@ module EntryHelper
   end
 
   def fold_entries(entries)
-    if @entry_fold
+    if @fold
       fold_items(entries)
     else
       entries.dup
@@ -580,7 +576,7 @@ module EntryHelper
   end
 
   def fold_comments(comments)
-    if @compact
+    if @fold
       fold_items(comments)
     else
       comments.dup

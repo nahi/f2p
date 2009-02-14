@@ -1,79 +1,122 @@
 class EntryThread
   class << self
     def find(opt = {})
-      name = opt[:name]
-      remote_key = opt[:remote_key]
+      auth = opt[:auth]
+      return nil unless auth
       if opt[:query]
-        entries = search_entries(name, remote_key, opt)
+        entries = search_entries(auth, opt)
       elsif opt[:id]
-        entries = get_entry(name, remote_key, opt)
+        entries = get_entry(auth, opt)
       elsif opt[:likes]
-        entries = get_likes(name, remote_key, opt)
+        entries = get_likes(auth, opt)
       elsif opt[:user]
-        entries = get_user_entries(name, remote_key, opt)
+        entries = get_user_entries(auth, opt)
       elsif opt[:list]
-        entries = get_list_entries(name, remote_key, opt)
+        entries = get_list_entries(auth, opt)
       elsif opt[:room]
-        entries = get_room_entries(name, remote_key, opt)
+        entries = get_room_entries(auth, opt)
       elsif opt[:friends]
-        entries = get_friends_entries(name, remote_key, opt)
+        entries = get_friends_entries(auth, opt)
       elsif opt[:link]
-        entries = get_link_entries(name, remote_key, opt)
+        entries = get_link_entries(auth, opt)
       else
-        entries = get_home_entries(name, remote_key, opt)
+        entries = get_home_entries(auth, opt)
       end
-      sort_by_service(wrap(entries || []), opt)
+      wrapped = wrap(entries || [])
+      if opt[:updated]
+        wrapped = filter_checked_entries(auth, wrapped)
+      end
+      sort_by_service(wrapped, opt)
     end
 
   private
 
-    def search_entries(name, remote_key, opt)
+    def record_last_modified(entries)
+      found = LastModified.find_all_by_eid(entries.map { |e| e.id })
+      entries.each do |entry|
+        if m = found.find { |e| entry.id == e.eid }
+          m.date = Time.parse(entry.modified)
+          raise unless m.save
+        else
+          m = LastModified.new
+          m.eid = entry.id
+          m.date = Time.parse(entry.modified)
+          raise unless m.save
+        end
+      end
+    end
+
+    def filter_checked_entries(auth, entries)
+      record_last_modified(entries)
+      checked = CheckedModified.find_all_by_user_id(auth.id, :include => 'last_modified')
+      entries.find_all { |entry|
+        if c = checked.find { |e| e.last_modified.eid == entry.id }
+          if c.checked >= c.last_modified.date
+            false
+          else
+            c.checked = c.last_modified.date
+            raise unless c.save
+            true
+          end
+        else
+          c = CheckedModified.new
+          c.user = auth
+          c.last_modified = LastModified.find_by_eid(entry.id)
+          raise if c.last_modified.nil?
+          c.checked = c.last_modified.date
+          raise unless c.save
+          true
+        end
+      }
+    end
+
+    def search_entries(auth, opt)
       query = opt[:query]
       search = filter_opt(opt)
       search[:from] = opt[:user]
       search[:room] = opt[:room]
       search[:friends] = opt[:friends]
-      ff_client.search_entries(name, remote_key, query, search)
+      ff_client.search_entries(auth.name, auth.remote_key, query, search)
     end
 
-    def get_home_entries(name, remote_key, opt)
-      ff_client.get_home_entries(name, remote_key, filter_opt(opt))
+    def get_home_entries(auth, opt)
+      ff_client.get_home_entries(auth.name, auth.remote_key, filter_opt(opt))
     end
 
-    def get_user_entries(name, remote_key, opt)
+    def get_user_entries(auth, opt)
       user = opt[:user]
-      ff_client.get_user_entries(name, remote_key, user, filter_opt(opt))
+      ff_client.get_user_entries(auth.name, auth.remote_key, user, filter_opt(opt))
     end
 
-    def get_list_entries(name, remote_key, opt)
+    def get_list_entries(auth, opt)
       list = opt[:list]
-      ff_client.get_list_entries(name, remote_key, list, filter_opt(opt))
+      ff_client.get_list_entries(auth.name, auth.remote_key, list, filter_opt(opt))
     end
 
-    def get_room_entries(name, remote_key, opt)
+    def get_room_entries(auth, opt)
       room = opt[:room]
       room = nil if room == '*'
-      ff_client.get_room_entries(name, remote_key, room, filter_opt(opt))
+      ff_client.get_room_entries(auth.name, auth.remote_key, room, filter_opt(opt))
     end
 
-    def get_friends_entries(name, remote_key, opt)
+    def get_friends_entries(auth, opt)
       friends = opt[:friends]
-      ff_client.get_friends_entries(name, remote_key, friends, filter_opt(opt))
+      ff_client.get_friends_entries(auth.name, auth.remote_key, friends, filter_opt(opt))
     end
 
-    def get_link_entries(name, remote_key, opt)
+    def get_link_entries(auth, opt)
       link = opt[:link]
-      ff_client.get_url_entries(name, remote_key, link, filter_opt(opt))
+      ff_client.get_url_entries(auth.name, auth.remote_key, link, filter_opt(opt))
     end
 
-    def get_likes(name, remote_key, opt)
+    def get_likes(auth, opt)
       user = opt[:user]
-      ff_client.get_likes(name, remote_key, user, filter_opt(opt))
+      ff_client.get_likes(auth.name, auth.remote_key, user, filter_opt(opt))
     end
 
-    def get_entry(name, remote_key, opt)
+    def get_entry(auth, opt)
       id = opt[:id]
-      ff_client.get_entry(name, remote_key, id)
+      ff_client.get_entry(auth.name, auth.remote_key, id)
     end
 
     def filter_opt(opt)
@@ -103,7 +146,7 @@ class EntryThread
 
     def sort_by_service(entries, opt = {})
       result = []
-      buf = entries.find_all { |e| !e.hidden? }.sort_by { |e| e.thread_date }.reverse
+      buf = entries.find_all { |e| !e.hidden? }.sort_by { |e| e.modified }.reverse
       while !buf.empty?
         group = [entry = buf.shift]
         kinds = similar_entries(buf, entry)

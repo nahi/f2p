@@ -6,54 +6,48 @@ class Entry < Hash
 
   class << self
     def create(opt)
-      name = opt[:name]
-      remote_key = opt[:remote_key]
+      auth = opt[:auth]
       body = opt[:body]
       link = opt[:link]
       comment = opt[:comment]
       images = opt[:images]
       files = opt[:files]
       room = opt[:room]
-      ff_client.post(name, remote_key, body, link, comment, images, files, room)
+      ff_client.post(auth.name, auth.remote_key, body, link, comment, images, files, room)
     end
 
     def delete(opt)
-      name = opt[:name]
-      remote_key = opt[:remote_key]
+      auth = opt[:auth]
       id = opt[:id]
       undelete = opt[:undelete]
-      ff_client.delete(name, remote_key, id, undelete)
+      ff_client.delete(auth.name, auth.remote_key, id, undelete)
     end
 
     def add_comment(opt)
-      name = opt[:name]
-      remote_key = opt[:remote_key]
+      auth = opt[:auth]
       id = opt[:id]
       body = opt[:body]
-      ff_client.post_comment(name, remote_key, id, body)
+      ff_client.post_comment(auth.name, auth.remote_key, id, body)
     end
 
     def delete_comment(opt)
-      name = opt[:name]
-      remote_key = opt[:remote_key]
+      auth = opt[:auth]
       id = opt[:id]
       comment = opt[:comment]
       undelete = opt[:undelete]
-      ff_client.delete_comment(name, remote_key, id, comment, undelete)
+      ff_client.delete_comment(auth.name, auth.remote_key, id, comment, undelete)
     end
 
     def add_like(opt)
-      name = opt[:name]
-      remote_key = opt[:remote_key]
+      auth = opt[:auth]
       id = opt[:id]
-      ff_client.like(name, remote_key, id)
+      ff_client.like(auth.name, auth.remote_key, id)
     end
 
     def delete_like(opt)
-      name = opt[:name]
-      remote_key = opt[:remote_key]
+      auth = opt[:auth]
       id = opt[:id]
-      ff_client.unlike(name, remote_key, id)
+      ff_client.unlike(auth.name, auth.remote_key, id)
     end
 
   private
@@ -75,7 +69,7 @@ class Entry < Hash
     [service_id, room]
   end
 
-  def thread_date
+  def modified
     updated = v('updated')
     unless comments.empty?
       updated = [updated, comments.last['date']].max

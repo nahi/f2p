@@ -27,7 +27,7 @@ class EntryController < ApplicationController
     else
       @num = @auth.profile.entries_in_page
     end
-    @entry_fold = (!@user and !@service and param(:fold) != 'no')
+    @fold = (!@user and !@service and param(:fold) != 'no')
     @home = false
     opt = create_opt(
       :start => @start,
@@ -64,6 +64,42 @@ class EntryController < ApplicationController
     redirect_to :action => 'list'
   end
 
+  verify :only => :updated,
+          :method => [:get, :post],
+          :add_flash => {:error => 'verify failed'},
+          :redirect_to => {:action => 'list'}
+
+  def updated
+    @eid = nil
+    @query = nil
+    @user = nil
+    @list = nil
+    @room = nil
+    @friends = nil
+    @likes = nil
+    @link = nil
+    @service = nil
+    @start = nil
+    if param(:num)
+      @num = param(:num).to_i
+    else
+      @num = @auth.profile.entries_in_page
+    end
+    @fold = false
+    @home = true
+    opt = create_opt(
+      :start => @start,
+      :num => @num
+    )
+    @entries = EntryThread.find(opt.merge(:updated => true, :merge_service => true))
+    @compact = true
+    @search = false
+    @post = !@search
+    @post_comment = false
+    @entries ||= []
+    render :action => 'list'
+  end
+
   verify :only => :show,
           :method => :get,
           :params => [:id],
@@ -82,7 +118,7 @@ class EntryController < ApplicationController
     @service = nil
     @start = nil
     @num = nil
-    @entry_fold = false
+    @fold = false
     @home = false
     opt = create_opt(:id => @eid)
     @entries = EntryThread.find(opt)
@@ -246,8 +282,7 @@ private
 
   def create_opt(hash = {})
     {
-      :name => @auth.name,
-      :remote_key => @auth.remote_key
+      :auth => @auth
     }.merge(hash)
   end
 

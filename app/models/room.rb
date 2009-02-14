@@ -6,16 +6,15 @@ class Room < Hash
 
   class << self
     def members(arg)
-      name = arg[:name]
-      remote_key = arg[:remote_key]
+      auth = arg[:auth]
       room = arg[:room]
-      sort_by_name(ff_profile(name, remote_key, room)['members'] || [])
+      sort_by_name(ff_profile(auth, room)['members'] || [])
     end
 
   private
 
-    def ff_profile(name, remote_key, room)
-      ff_client.get_room_profile(name, remote_key, room)
+    def ff_profile(auth, room)
+      ff_client.get_room_profile(auth.name, auth.remote_key, room)
     end
 
     def sort_by_name(lists)
