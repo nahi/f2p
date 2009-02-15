@@ -1,9 +1,9 @@
 module EntryHelper
   VIEW_LINKS_TAG = 'view_links'
-  LIKE_LABEL = 'love'
+  LIKE_LABEL = 'like'
   ICON_NAME = {
-    #'star' => 'star.png',
-    'star' => 'heart.png', # for special 2/14 configuration!
+    'star' => 'star.png',
+    #'star' => 'heart.png', # for special 2/14 configuration!
     LIKE_LABEL => 'thumb_up.png',
     'comment' => 'comment.png',
     'comment_add' => 'comment_add.png',
