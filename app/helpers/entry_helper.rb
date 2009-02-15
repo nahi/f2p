@@ -362,8 +362,7 @@ module EntryHelper
       :auth => @auth,
       :user => user
     }
-    # services = (session[:services] ||= {})[user] ||= User.services(arg)
-    services = User.services(arg)
+    services = (session[:services] ||= {})[user] ||= User.services(arg)
     map = services.inject({}) { |r, e|
       r[v(e, 'id')] = v(e, 'name')
       r
@@ -379,8 +378,7 @@ module EntryHelper
       :auth => @auth,
       :user => @auth.name
     }
-    #lists = session[:lists] ||= User.lists(arg)
-    lists = User.lists(arg)
+    lists = session[:lists] ||= User.lists(arg)
     links_if_exists('lists: ', lists) { |e|
       label = "[#{v(e, 'name')}]"
       nickname = v(e, 'nickname')
@@ -397,8 +395,7 @@ module EntryHelper
       :auth => @auth,
       :user => user
     }
-    #rooms = (session[:rooms] ||= {})[user] ||= User.rooms(arg)
-    rooms = User.rooms(arg)
+    rooms = (session[:rooms] ||= {})[user] ||= User.rooms(arg)
     links_if_exists('rooms: ', rooms) { |e|
       label = "[#{v(e, 'name')}]"
       nickname = v(e, 'nickname')
@@ -411,8 +408,7 @@ module EntryHelper
       :auth => @auth,
       :user => user
     }
-    #users = (session[:subscriptions] ||= {})[user] ||= User.subscriptions(arg)
-    users = User.subscriptions(arg)
+    users = (session[:subscriptions] ||= {})[user] ||= User.subscriptions(arg)
     links_if_exists("(#{users.size} subscriptions) ", users) { |e|
       label = "[#{v(e, 'name')}]"
       nickname = v(e, 'nickname')
@@ -458,15 +454,17 @@ module EntryHelper
         !@friends
       }
     end
-    links << menu_link(h('[lists]'), :action => 'list', :list => 'favorite') {
-      !@list
-    }
-    links << menu_link(h('[rooms]'), :action => 'list', :room => '*') {
-      !(@user and @auth.name != @user) and @room != '*'
-    }
     links << menu_link(h("[#{LIKE_LABEL}s]"), :action => 'list', :likes => 'only', :user => @user) {
       @likes != 'only'
     }
+    if !@user or @auth.name == @user
+      links << menu_link(h('[lists]'), :action => 'list', :list => 'favorite') {
+        !@list
+      }
+      links << menu_link(h('[rooms]'), :action => 'list', :room => '*') {
+        @room != '*'
+      }
+    end
     if @post and @user
       links << menu_link(h('[subscriptions]'), '#subscriptions')
     end
