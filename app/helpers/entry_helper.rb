@@ -529,7 +529,7 @@ module EntryHelper
   def like_link(entry)
     if entry.nickname != @auth.name
       unless liked?(entry)
-        link_to(icon_tag(LIKE_LABEL), :action => LIKE_LABEL, :id => u(entry.id))
+        link_to(icon_tag(LIKE_LABEL), :action => 'like', :id => u(entry.id))
       end
     end
   end
