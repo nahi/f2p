@@ -150,6 +150,23 @@ class EntryController < ApplicationController
     end
   end
 
+  def reshare
+    eid = param(:eid)
+    opt = create_opt(:id => eid)
+    t = EntryThread.find(opt).first
+    if t.nil?
+      redirect_to :action => 'list'
+      return
+    end
+    entry = t.root
+    if entry.nil?
+      redirect_to :action => 'list'
+      return
+    end
+    @link = entry.link
+    @link_title = entry.title
+  end
+
   def search
     @query = param(:query)
     @user = param(:user)
@@ -166,6 +183,7 @@ class EntryController < ApplicationController
 
   def add
     body = param(:body)
+    link_title = param(:link_title)
     link = param(:link)
     room = param(:room)
     lat = param(:lat)
@@ -181,7 +199,7 @@ class EntryController < ApplicationController
       body += " (@#{address})"
     end
     if link
-      link_title = capture_title(link)
+      link_title ||= capture_title(link)
       opt[:body] = link_title
       opt[:link] = link
       opt[:comment] = body

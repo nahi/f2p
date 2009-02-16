@@ -16,6 +16,7 @@ module EntryHelper
     'previous' => 'resultset_previous.png',
     'next' => 'resultset_next.png',
     'url' => 'world_link.png',
+    'reshare' => 'pencil_go.png',
   }
 
   def icon(entry)
@@ -529,6 +530,16 @@ module EntryHelper
       unless liked?(entry)
         link_to(icon_tag(LIKE_LABEL), :action => 'like', :id => u(entry.id))
       end
+    end
+  end
+
+  def reshare_link(entry)
+    if entry.link
+      opt = {
+        :action => 'reshare',
+        :eid => u(entry.id),
+      }
+      link_to(icon_tag(:reshare), opt)
     end
   end
 

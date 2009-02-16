@@ -11,8 +11,8 @@
           <%= comment(comment) %>
           by <%= user(comment) %>
           <%= via(comment) -%>
-          <%= delete_comment_link(comment) -%>
           <%= comment_url_link(comment) -%>
+          <%= delete_comment_link(comment) -%>
           <%= post_comment_link(entry) if !@post_comment and comment == comments.last -%>
         </li>
       <%- end -%>
