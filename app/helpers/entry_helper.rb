@@ -93,7 +93,7 @@ module EntryHelper
   end
 
   def link_content(title, link, entry)
-    if with_domain_mark?(link, entry)
+    if unknown_where_to_go?(link, entry)
       q(h(title) + ' ' + link_to(h("(#{URI.parse(link).host})"), link))
     else
       q(link_to(h(title), link))
@@ -104,12 +104,12 @@ module EntryHelper
     URI.parse(str) rescue nil
   end
 
-  def with_domain_mark?(link, entry)
+  def unknown_where_to_go?(link, entry)
     link_url = uri(link)
     profile_url = uri(v(entry, 'service', 'profileUrl'))
     if profile_url and link_url
       (profile_url.host.downcase != link_url.host.downcase) or
-        ['blog', 'feed'].include?(entry.service_id)
+        ['internal', 'blog', 'feed'].include?(entry.service_id)
     end
   end
 
