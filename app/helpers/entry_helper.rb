@@ -448,7 +448,7 @@ module EntryHelper
         @start - @num >= 0
       }
     end
-    links << menu_link(h('[updated]'), :action => 'updated')
+    links << menu_link(h('[updated]'), {:action => 'updated'}, {:accesskey => 0})
     links << menu_link(h('[home]'), :action => 'list')
     if @user and @user != @auth.name
       links << menu_link(h('[friends]'), :action => 'list', :friends => @user) {
