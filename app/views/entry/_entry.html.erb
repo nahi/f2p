@@ -5,11 +5,28 @@
   <%= published(entry, @compact) %>
   <%= author_link(entry, (root_user.nil? or root_user != entry.user_id), (root_service.nil? or root_service != entry.service_identity)) %>
   <%= content(entry) %>
+  <%- if entry.self_comment_only? -%>
+    -- <%= comment(entry.comments.first) %>
+  <%- end -%>
   <%= via(entry) %>
   <%= url_link(entry) -%>
   <%= likes(entry, @compact) -%>
   <%= delete_link(entry) -%>
   <%= like_link(entry) -%>
   <%= reshare_link(entry) -%>
-  <%= render :partial => 'comment', :locals => {:entry => entry} %>
+  <%- if entry.comments.empty? or entry.self_comment_only? -%>
+    <%= post_comment_link(entry) unless @post_comment %>
+  <%- else -%>
+    <ul>
+      <%= render :partial => 'comment', :locals => {:entry => entry} %>
+    </ul>
+  <%- end -%>
+  <%- if @post_comment -%>
+    <%- form_tag({:action => 'add_comment', :id => u(@eid)}, {:name => 'post'}) do -%>
+      <p><%= post_comment_form %></p>
+      <script type='text/javascript'><!--
+      post.body.focus();
+      //--></script>
+    <%- end -%>
+  <%- end -%>
 <%- end -%>

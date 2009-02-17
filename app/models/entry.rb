@@ -129,6 +129,11 @@ class Entry < Hash
     v('hidden') || false
   end
 
+  def self_comment_only?
+    cs = comments
+    cs.size == 1 and self.user_id == cs.first.user_id
+  end
+
 private
 
   def same_origin?(rhs)
