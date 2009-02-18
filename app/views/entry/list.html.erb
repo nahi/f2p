@@ -30,18 +30,28 @@
 <%- end -%>
 <p><%= page_links %></p>
 <div class="listings">
-  <ul>
-    <%- @entries.each do |thread| -%>
+  <%- @entries.each do |thread| -%>
+    <div class="<%= cycle('thread1', 'thread2') %>">
       <%- if thread.chunked? -%>
-        <li><%= render :partial => 'chunk_entry', :locals => {:thread => thread, :root_user => nil, :root_service => nil} %></li>
+        <p>
+          <%= icon(thread.root) %>
+          <%= updated(thread.entries.last, @compact) %>
+          <%= author_link(thread.root, true, true) %>
+          <%= thread.entries.size %> entries
+        </p>
+        <ul>
+          <% fold_entries(thread.entries).each do |entry| -%>
+            <li><%= render :partial => 'entry', :locals => {:entry => entry, :root_user => thread.root.user_id, :root_service => thread.root.service_identity} %></li>
+          <%- end %>
+        </ul>
       <%- else -%>
-        <li><%= render :partial => 'entry', :locals => {:entry => thread.root, :root_user => nil, :root_service => nil} %></li>
+        <p><%= render :partial => 'entry', :locals => {:entry => thread.root, :root_user => nil, :root_service => nil} %></p>
       <%- end -%>
-    <%- end -%>
-    <%- if @entries.size == 0 -%>
-      <li>No feed is good feed.</li>
-    <%- end -%>
-  </ul>
+    </div>
+  <%- end -%>
+  <%- if @entries.size == 0 -%>
+    <p>No feed is good feed.</p>
+  <%- end -%>
 </div>
 <p><%= page_links %></p>
 <%- if @post and @user -%>

@@ -193,7 +193,7 @@ class EntryController < ApplicationController
     long = param(:long)
     title = param(:title)
     address = param(:address)
-    back_to = param(:back_to)
+    back_to = param(:back_to) || 'list'
     opt = create_opt(:room => room)
     if lat and long and address
       generator = GoogleMaps::URLGenerator.new
@@ -211,7 +211,7 @@ class EntryController < ApplicationController
       opt[:body] = body
     end
     Entry.create(opt)
-    redirect_to :action => back_to || 'list', :room => room
+    redirect_to :action => back_to, :room => room
   end
 
   def capture_title(url)
