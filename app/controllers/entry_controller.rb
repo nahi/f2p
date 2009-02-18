@@ -54,6 +54,7 @@ class EntryController < ApplicationController
       @entries = EntryThread.find(opt.merge(:merge_service => true))
     end
     @compact = true
+    @updated = false
     @search = !!@query
     @post = !@search
     @post_comment = false
@@ -93,6 +94,7 @@ class EntryController < ApplicationController
     )
     @entries = EntryThread.find(opt.merge(:updated => true, :merge_service => true))
     @compact = true
+    @updated = true
     @search = false
     @post = !@search
     @post_comment = false
@@ -123,6 +125,7 @@ class EntryController < ApplicationController
     opt = create_opt(:id => @eid)
     @entries = EntryThread.find(opt)
     @compact = false
+    @updated = false
     @search = false
     @post = false
     @post_comment = true
@@ -190,6 +193,7 @@ class EntryController < ApplicationController
     long = param(:long)
     title = param(:title)
     address = param(:address)
+    back_to = param(:back_to)
     opt = create_opt(:room => room)
     if lat and long and address
       generator = GoogleMaps::URLGenerator.new
@@ -207,7 +211,7 @@ class EntryController < ApplicationController
       opt[:body] = body
     end
     Entry.create(opt)
-    redirect_to :action => 'list', :room => room
+    redirect_to :action => back_to || 'list', :room => room
   end
 
   def capture_title(url)

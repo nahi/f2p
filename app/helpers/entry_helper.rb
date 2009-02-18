@@ -326,6 +326,11 @@ module EntryHelper
 
   def post_entry_form
     str = ''
+    if @updated
+      str += hidden_field_tag('back_to', 'updated')
+    else
+      str += hidden_field_tag('back_to', 'list')
+    end
     room = (@room != '*') ? @room : nil
     if room
       str += hidden_field_tag('room', room) + h(room) + ': '
