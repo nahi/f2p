@@ -200,7 +200,7 @@ class EntryController < ApplicationController
       image_url = generator.staticmap_url(F2P::Config.google_maps_maptype, lat, long, :zoom => F2P::Config.google_maps_zoom, :width => F2P::Config.google_maps_width, :height => F2P::Config.google_maps_height)
       image_link = generator.link_url(lat, long, address)
       opt[:images] = [[image_url, image_link]]
-      body += " (#{address})"
+      body += " ([map] #{address})"
     end
     if link
       link_title ||= capture_title(link)
