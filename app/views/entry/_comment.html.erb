@@ -1,16 +1,12 @@
-  <%- fold_comments(entry.comments).each do |comment| -%>
-    <%- if comment.respond_to?(:fold_entries) -%>
-      <li><%= fold_comment_link(entry, comment) %></li>
-    <%- else -%>
-      <li>
-        <%= icon_tag(:comment) %>
-        <%= date(v(comment, 'date'), @compact) %>
-        <%= comment(comment) %>
-        by <%= user(comment) %>
-        <%= via(comment) -%>
-        <%= comment_url_link(comment) -%>
-        <%= delete_comment_link(comment) -%>
-        <%= post_comment_link(entry) if !@post_comment and comment == entry.comments.last -%>
-      </li>
-    <%- end -%>
-  <%- end -%>
+<%- if comment.respond_to?(:fold_entries) -%>
+  <%= fold_comment_link(comment) %>
+<%- else -%>
+  <%= icon_tag(:comment) %>
+  <%= date(v(comment, 'date'), @compact) %>
+  <%= comment(comment) %>
+  by <%= user(comment) %>
+  <%= via(comment) -%>
+  <%= comment_url_link(comment) -%>
+  <%= delete_comment_link(comment) -%>
+  <%= post_comment_link(comment.entry) if !@post_comment and comment == comment.entry.comments.last -%>
+<%- end -%>

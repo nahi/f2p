@@ -32,20 +32,13 @@
 <div class="listings">
   <%- @entries.each do |thread| -%>
     <div class="<%= cycle('thread1', 'thread2') %>">
+      <p><%= render :partial => 'entry', :locals => {:entry => thread.root, :root_user => nil, :root_service => nil} %></p>
       <%- if thread.chunked? -%>
-        <p>
-          <%= icon(thread.root) %>
-          <%= updated(thread.entries.last, @compact) %>
-          <%= author_link(thread.root, true, true) %>
-          <%= thread.entries.size %> entries
-        </p>
         <ul>
-          <% fold_entries(thread.entries).each do |entry| -%>
+          <% fold_entries(thread.related_entries).each do |entry| -%>
             <li><%= render :partial => 'entry', :locals => {:entry => entry, :root_user => thread.root.user_id, :root_service => thread.root.service_identity} %></li>
           <%- end %>
         </ul>
-      <%- else -%>
-        <p><%= render :partial => 'entry', :locals => {:entry => thread.root, :root_user => nil, :root_service => nil} %></p>
       <%- end -%>
     </div>
   <%- end -%>

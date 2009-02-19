@@ -79,18 +79,24 @@ module ApplicationHelper
     unless time.is_a?(Time)
       time = Time.parse(time.to_s).localtime
     end
+    elapsed = Time.now - time
+    format = nil
     if !compact
-      body = h(time.strftime("%Y/%m/%d %H:%M:%S"))
-    else
-      elapsed = Time.now - time
       if elapsed > YEAR_THRESHOLD
-        body = h(time.strftime("%Y/%m/%d"))
-      elsif elapsed > DATE_THRESHOLD
-        body = h(time.strftime("%m/%d"))
+        format = "[%y/%m/%d %H:%M]"
       else
-        body = h(time.strftime("%H:%M"))
+        format = "[%m/%d %H:%M]"
+      end
+    else
+      if elapsed > YEAR_THRESHOLD
+        format = "%y/%m/%d"
+      elsif elapsed > DATE_THRESHOLD
+        format = "%m/%d"
+      else
+        format = "%H:%M"
       end
     end
+    body = h(time.strftime(format))
     latest(time, body)
   end
 

@@ -284,9 +284,19 @@ module EntryHelper
     date(entry.modified, compact)
   end
 
-  def published(entry, compact)
+  def published(entry, compact = false)
     published = v(entry, 'published')
     date(published, compact)
+  end
+
+  def modified_if(entry, compact)
+    if compact
+      pub = published(entry, compact)
+      mod = date(entry.modified, compact)
+      if pub != mod
+        "(#{mod} up)"
+      end
+    end
   end
 
   def user(entry)
@@ -350,9 +360,9 @@ module EntryHelper
     link_to(icon_tag(:more), list_opt(:action => 'list', :start => @start, :num => @num, :fold => 'no')) + h(msg)
   end
 
-  def fold_comment_link(entry, comment)
-    msg = " (#{comment.fold_entries} more comments)"
-    link_to(icon_tag(:more), :action => 'show', :id => u(entry.id)) + h(msg)
+  def fold_comment_link(fold)
+    msg = " (#{fold.fold_entries} more comments)"
+    link_to(icon_tag(:more), :action => 'show', :id => u(fold.entry_id)) + h(msg)
   end
 
   def settings_link
@@ -574,10 +584,12 @@ module EntryHelper
   end
 
   class Fold < Hash
-    attr_accessor :fold_entries
+    attr_reader :entry_id
+    attr_reader :fold_entries
 
-    def initialize(fold_entries)
+    def initialize(entry_id, fold_entries)
       super()
+      @entry_id = entry_id
       @fold_entries = fold_entries
     end
 
@@ -592,7 +604,7 @@ module EntryHelper
 
   def fold_entries(entries)
     if @fold
-      fold_items(entries)
+      fold_items(entries.first.id, entries)
     else
       entries.dup
     end
@@ -600,22 +612,26 @@ module EntryHelper
 
   def fold_comments(comments)
     if @fold
-      fold_items(comments)
+      fold_items(comments.first.entry.id, comments)
     else
       comments.dup
     end
   end
 
-  def fold_items(items)
+  def fold_items(entry_id, items)
     if items.size > profile_entries_in_thread
-      result = []
-      result << items.first
-      result << Fold.new(items.size - (profile_entries_in_thread - 1))
+      head_size = 1
+      result = items[0, head_size]
+      result << Fold.new(entry_id, items.size - (profile_entries_in_thread - 1))
       last_size = profile_entries_in_thread - 2
       result += items[-last_size, last_size]
       result
     else
       items.dup
     end
+  end
+
+  def comment_inline?(entry)
+    !@eid and entry.self_comment_only?
   end
 end

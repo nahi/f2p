@@ -148,7 +148,9 @@ class EntryThread
       result = []
       buf = entries.find_all { |e| !e.hidden? }.sort_by { |e| e.modified }.reverse
       while !buf.empty?
-        group = [entry = buf.shift]
+        entry = buf.shift
+        result << (t = EntryThread.new(entry))
+        group = [entry]
         kinds = similar_entries(buf, entry)
         group += kinds
         buf -= kinds
@@ -165,10 +167,8 @@ class EntryThread
         end
         group += kinds
         buf -= kinds
-        result << (t = EntryThread.new(entry))
-        group.reverse.each do |e|
-          t.add(e)
-        end
+        t.add(group.shift)
+        t.add(*group.reverse)
       end
       result
     end
@@ -193,8 +193,12 @@ class EntryThread
     @entries = []
   end
 
-  def add(entry)
-    @entries << entry
+  def related_entries
+    entries - [root]
+  end
+
+  def add(*entries)
+    @entries += entries
   end
 
   def chunked?

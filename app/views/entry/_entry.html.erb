@@ -5,7 +5,7 @@
   <%= published(entry, @compact) %>
   <%= author_link(entry, (root_user.nil? or root_user != entry.user_id), (root_service.nil? or root_service != entry.service_identity)) %>
   <%= content(entry) %>
-  <%- if entry.self_comment_only? -%>
+  <%- if comment_inline?(entry) -%>
     -- <%= comment(entry.comments.first) %>
   <%- end -%>
   <%= via(entry) %>
@@ -14,11 +14,18 @@
   <%= delete_link(entry) -%>
   <%= like_link(entry) -%>
   <%= reshare_link(entry) -%>
-  <%- if entry.comments.empty? or entry.self_comment_only? -%>
+  <%- if entry.comments.empty? or comment_inline?(entry) -%>
     <%= post_comment_link(entry) unless @post_comment %>
+  <%- elsif @eid -%>
+    <br/>
+    <%- fold_comments(entry.comments).each do |comment| -%>
+      <%= render :partial => 'comment', :locals => {:comment => comment} %><br/>
+    <%- end -%>
   <%- else -%>
     <ul>
-      <%= render :partial => 'comment', :locals => {:entry => entry} %>
+      <%- fold_comments(entry.comments).each do |comment| -%>
+        <li><%= render :partial => 'comment', :locals => {:comment => comment} %></li>
+      <%- end -%>
     </ul>
   <%- end -%>
   <%- if @post_comment -%>
