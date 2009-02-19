@@ -53,11 +53,7 @@ class EntryController < ApplicationController
       @home = true
       @entries = EntryThread.find(opt.merge(:merge_service => true))
     end
-    @compact = true
     @updated = false
-    @search = !!@query
-    @post = !@search
-    @post_comment = false
     @entries ||= []
   end
 
@@ -93,11 +89,7 @@ class EntryController < ApplicationController
       :num => @num
     )
     @entries = EntryThread.find(opt.merge(:updated => true, :merge_service => true))
-    @compact = true
     @updated = true
-    @search = false
-    @post = !@search
-    @post_comment = false
     @entries ||= []
     render :action => 'list'
   end
@@ -124,11 +116,7 @@ class EntryController < ApplicationController
     @home = false
     opt = create_opt(:id => @eid)
     @entries = EntryThread.find(opt)
-    @compact = false
     @updated = false
-    @search = false
-    @post = false
-    @post_comment = true
     @entries ||= []
     render :action => 'list'
   end

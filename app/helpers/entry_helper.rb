@@ -481,7 +481,7 @@ module EntryHelper
         @room != '*'
       }
     end
-    if @post and @user
+    if !@eid and @user
       links << menu_link(h('[subscriptions]'), '#subscriptions')
     end
     if @room and @room != '*'
@@ -531,7 +531,7 @@ module EntryHelper
   end
 
   def delete_comment_link(comment)
-    unless @compact
+    if @eid
       cid = v(comment, 'id')
       name = v(comment, 'user', 'nickname')
       if name == @auth.name or @auth.name == comment.entry.nickname

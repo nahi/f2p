@@ -2,7 +2,7 @@
   <%= fold_link(entry) %>
 <%- else -%>
   <%= icon(entry) %>
-  <%= published(entry, @compact) %>
+  <%= published(entry, !@eid) %>
   <%= author_link(entry, (root_user.nil? or root_user != entry.user_id), (root_service.nil? or root_service != entry.service_identity)) %>
   <%= content(entry) %>
   <%- if comment_inline?(entry) -%>
@@ -10,12 +10,12 @@
   <%- end -%>
   <%= via(entry) %>
   <%= url_link(entry) -%>
-  <%= likes(entry, @compact) -%>
+  <%= likes(entry, !@eid) -%>
   <%= delete_link(entry) -%>
   <%= like_link(entry) -%>
   <%= reshare_link(entry) -%>
   <%- if entry.comments.empty? or comment_inline?(entry) -%>
-    <%= post_comment_link(entry) unless @post_comment %>
+    <%= post_comment_link(entry) if !@eid %>
   <%- elsif @eid -%>
     <br/>
     <%- fold_comments(entry.comments).each do |comment| -%>
@@ -28,7 +28,7 @@
       <%- end -%>
     </ul>
   <%- end -%>
-  <%- if @post_comment -%>
+  <%- if @eid -%>
     <%- form_tag({:action => 'add_comment', :id => u(@eid)}, {:name => 'post'}) do -%>
       <p><%= post_comment_form %></p>
       <script type='text/javascript'><!--

@@ -5,19 +5,19 @@
 <%- if flash[:message] -%>
   <p class="message"><%=h flash[:message] %></p>
 <%- end -%>
-<%- if @search -%>
+<%- if @query -%>
   <%- form_tag({:action => 'list'}, {:name => 'post'}) do -%>
     <p><%= search_form %> <%= settings_link %> <%= logout_link %></p>
   <%- end -%>
   <script type='text/javascript'><!--
   post.query.focus();
   //--></script>
-<%- elsif @post -%>
+<%- elsif !@eid -%>
   <%- form_tag({:action => 'add'}, {:name => 'post'}) do -%>
     <p><%= post_entry_form %> <%= settings_link %> <%= logout_link %></p>
   <%- end -%>
 <%- end -%>
-<%- if @post -%>
+<%- if !@eid -%>
   <%- if @user -%>
     <p><%= service_links(@user) %></p>
   <%- end -%>
@@ -47,7 +47,7 @@
   <%- end -%>
 </div>
 <p><%= page_links %></p>
-<%- if @post and @user -%>
+<%- if !@eid and @user -%>
   <hr/>
   <p>
     <a name="subscriptions" id="subscriptions"><%= h(@user) %>'s subscriptions:</a><br/>
