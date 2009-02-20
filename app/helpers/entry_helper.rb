@@ -484,8 +484,11 @@ module EntryHelper
         !@friends
       }
     end
-    links << menu_link(h("[#{LIKE_LABEL}s]"), :action => 'list', :likes => 'only', :user => @user) {
-      @likes != 'only'
+    links << menu_link(h("[#{LIKE_LABEL}s]"), :action => 'list', :like => 'likes', :user => @user) {
+      @like != 'likes'
+    }
+    links << menu_link(h("[#{LIKE_LABEL}d]"), :action => 'list', :like => 'liked', :user => @user) {
+      @like != 'liked'
     }
     if !@user or @auth.name == @user
       links << menu_link(h('[lists]'), :action => 'list', :list => 'favorite') {
@@ -583,7 +586,7 @@ module EntryHelper
       :list => @list,
       :room => @room,
       :friends => @friends,
-      :likes => @likes,
+      :like => @like,
       :link => @link,
       :service => @service,
       :fold => @fold ? nil : 'no'

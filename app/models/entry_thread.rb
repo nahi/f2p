@@ -7,8 +7,10 @@ class EntryThread
         entries = search_entries(auth, opt)
       elsif opt[:id]
         entries = get_entry(auth, opt)
-      elsif opt[:likes]
+      elsif opt[:like] == 'likes'
         entries = get_likes(auth, opt)
+      elsif opt[:like] == 'liked'
+        entries = get_liked(auth, opt)
       elsif opt[:user]
         entries = get_user_entries(auth, opt)
       elsif opt[:list]
@@ -112,6 +114,12 @@ class EntryThread
     def get_likes(auth, opt)
       user = opt[:user]
       ff_client.get_likes(auth.name, auth.remote_key, user, filter_opt(opt))
+    end
+
+    def get_liked(auth, opt)
+      user = opt[:user]
+      opt = { :from => user, :likes => 1 }
+      ff_client.search_entries(auth.name, auth.remote_key, nil, opt)
     end
 
     def get_entry(auth, opt)
