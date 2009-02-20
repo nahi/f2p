@@ -19,7 +19,6 @@
     <%= post_comment_link(entry) if !@eid %>
   <%- elsif @eid -%>
     <br/>
-    (<%= entry.comments.size %> comments)<br/>
     <%- entry.comments.each do |comment| -%>
       <%= render :partial => 'comment', :locals => {:comment => comment} %><br/>
     <%- end -%>
