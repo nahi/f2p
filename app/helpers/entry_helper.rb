@@ -20,27 +20,34 @@ module EntryHelper
   }
 
   def icon(entry)
-    service_icon(v(entry, 'service'), entry.link)
+    service_id = entry.service_id
+    name = v(entry, 'service', 'name')
+    if @user
+      user = entry.nickname || entry.user_id
+    end
+    if entry.room
+      room = entry.room.nickname
+    end
+    opt = {
+      :controller => 'entry',
+      :action => 'list',
+      :user => u(user),
+      :room => u(room),
+      :service => u(service_id)
+    }
+    service_icon(v(entry, 'service'), opt)
   end
 
   def service(entry)
-    service_id = entry.service_id
-    if service_id == 'internal' and entry.room
-      room(entry.room)
+    name = v(entry, 'service', 'name')
+    if entry.room
+      name ||= entry.room.nickname
+    end
+    link = entry.link
+    if link
+      link_to(h(name), link)
     else
-      name = v(entry, 'service', 'name')
-      if name and service_id
-        if @user
-          user = entry.nickname || entry.user_id
-        end
-        opt = {
-          :controller => 'entry',
-          :action => 'list',
-          :user => u(user),
-          :service => u(service_id)
-        }
-        link_to(h(name), opt)
-      end
+      h(name)
     end
   end
 
