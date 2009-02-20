@@ -35,6 +35,7 @@
       <p><%= render :partial => 'entry', :locals => {:entry => thread.root, :root_user => nil, :root_service => nil} %></p>
       <%- if thread.chunked? -%>
         <ul>
+          <li><%= icon_tag(:related) %> <%= thread.related_entries.size %> related entries</li>
           <% fold_entries(thread.related_entries).each do |entry| -%>
             <li><%= render :partial => 'entry', :locals => {:entry => entry, :root_user => thread.root.user_id, :root_service => thread.root.service_identity} %></li>
           <%- end %>

@@ -11,6 +11,7 @@
   <%= via(entry) %>
   <%= url_link(entry) -%>
   <%= likes(entry, !@eid) -%>
+  <%= comments(entry, !@eid) -%>
   <%= delete_link(entry) -%>
   <%= like_link(entry) -%>
   <%= reshare_link(entry) -%>
@@ -18,7 +19,8 @@
     <%= post_comment_link(entry) if !@eid %>
   <%- elsif @eid -%>
     <br/>
-    <%- fold_comments(entry.comments).each do |comment| -%>
+    (<%= entry.comments.size %> comments)<br/>
+    <%- entry.comments.each do |comment| -%>
       <%= render :partial => 'comment', :locals => {:comment => comment} %><br/>
     <%- end -%>
   <%- else -%>

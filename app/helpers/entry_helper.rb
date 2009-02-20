@@ -17,6 +17,7 @@ module EntryHelper
     'next' => 'resultset_next.png',
     'url' => 'world_link.png',
     'reshare' => 'pencil_go.png',
+    'related' => 'link.png',
   }
 
   def icon(entry)
@@ -282,8 +283,14 @@ module EntryHelper
         icon + likes[0, F2P::Config.likes_in_page].collect { |like| user(like) }.join(' ') +
           ' ' + link_to(h(msg), :action => 'show', :id => u(entry.id))
       else
-        icon + likes.collect { |like| user(like) }.join(' ')
+        icon + "#{likes.size.to_s}(#{likes.collect { |like| user(like) }.join(' ')})"
       end
+    end
+  end
+
+  def comments(entry, compact)
+    unless entry.comments.empty?
+      link_to(icon_tag(:comment), :action => 'show', :id => u(entry.id)) + entry.comments.size.to_s
     end
   end
 
