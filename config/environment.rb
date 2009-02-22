@@ -30,6 +30,8 @@ module F2P
       attr_accessor :entries_in_thread
       attr_accessor :likes_in_page
       attr_accessor :service_grouping_threashold
+      attr_accessor :link_open_new_window
+      attr_accessor :link_type # nil or 'gwt'
     end
   end
 end
@@ -116,4 +118,6 @@ Rails::Initializer.run do |config|
   F2P::Config.entries_in_thread = 4
   F2P::Config.likes_in_page = 3
   F2P::Config.service_grouping_threashold = 5400
+  F2P::Config.link_open_new_window = false
+  F2P::Config.link_type = 'gwt'
 end

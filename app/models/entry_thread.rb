@@ -118,8 +118,11 @@ class EntryThread
 
     def get_liked(auth, opt)
       user = opt[:user]
-      opt = { :from => user, :likes => 1 }
-      ff_client.search_entries(auth.name, auth.remote_key, nil, opt)
+      search = filter_opt(opt)
+      search.delete(:user)
+      search[:from] = user
+      search[:likes] = 1
+      ff_client.search_entries(auth.name, auth.remote_key, '', search)
     end
 
     def get_entry(auth, opt)

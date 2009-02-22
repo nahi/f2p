@@ -8,6 +8,9 @@ require 'zlib'
 
 module FriendFeed
   class NullLogger
+    def <<(*arg)
+    end
+
     def method_missing(msg_id, *a, &b)
     end
   end
@@ -15,6 +18,20 @@ module FriendFeed
   class BaseClient
     attr_reader :client
     attr_accessor :logger
+
+    class LShiftLogger
+      def initialize(logger)
+        @logger = logger
+      end
+
+      def <<(*arg)
+        @logger.info(*arg)
+      end
+
+      def method_missing(msg_id, *a, &b)
+        @logger.send(msg_id, *a, &b)
+      end
+    end
 
     def initialize(logger = nil)
       @logger = logger || NullLogger.new
@@ -261,16 +278,12 @@ module FriendFeed
     end
 
     def get_feed(client, uri, query = {})
+      logger.info("getting entries with query: " + query.inspect)
       ext = { 'Accept-Encoding' => 'gzip' }
       res = client.get(uri, query, ext)
       enc = res.header['content-encoding']
       if enc and enc[0] and enc[0].downcase == 'gzip'
-        begin
-          gz = Zlib::GzipReader.new(StringIO.new(res.content))
-          content = gz.read
-        ensure
-          gz.close
-        end
+        content = Zlib::GzipReader.wrap(StringIO.new(res.content)) { |gz| gz.read }
       else
         content = res.content
       end

@@ -8,6 +8,7 @@ module ApplicationHelper
   DATE_THRESHOLD = (24 - 8).hours
   YEAR_THRESHOLD = 1.year
   SELF_LABEL = 'You'
+  GWT_URL_BASE = 'http://www.google.com/gwt/n?u='
 
   def u(arg)
     if arg
@@ -119,6 +120,20 @@ module ApplicationHelper
     end
   end
 
+  # not enabled for now; need to be configurable to use this or not
+  def link_to(markup, *rest)
+    if rest.size == 1 and rest.first.is_a?(String)
+      opt = {}
+      opt[:target] = '_blank' if @setting.link_open_new_window
+      if @setting.link_type == 'gwt'
+        return super(markup, GWT_URL_BASE + u(rest.first), opt)
+      else
+        return super(markup, rest.first, opt)
+      end
+    end
+    super
+  end
+
   def link_url(url)
     link_to(h(url), url)
   end
@@ -135,26 +150,6 @@ module ApplicationHelper
 
   def fold_length(str, length)
     str.scan(Regexp.new("^.{0,#{length}}", Regexp::MULTILINE, 'u'))[0] || ''
-  end
-
-  def profile(name)
-    if @auth
-      @auth.profile.send(name)
-    else
-      F2P::Config.send(name)
-    end
-  end
-
-  def profile_font_size
-    profile(:font_size)
-  end
-
-  def profile_entries_in_thread
-    profile(:entries_in_thread)
-  end
-
-  def profile_text_folding_size
-    profile(:text_folding_size)
   end
 
 private

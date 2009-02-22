@@ -57,13 +57,4 @@ class User < ActiveRecord::Base
       ApplicationController.ff_client
     end
   end
-
-  def initialize
-    super
-    self.profile = Profile.new
-    self.profile.font_size = F2P::Config.font_size
-    self.profile.entries_in_page = F2P::Config.entries_in_page
-    self.profile.entries_in_thread = F2P::Config.entries_in_thread
-    self.profile.text_folding_size = F2P::Config.text_folding_size
-  end
 end

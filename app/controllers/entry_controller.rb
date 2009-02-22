@@ -25,7 +25,7 @@ class EntryController < ApplicationController
     if param(:num)
       @num = param(:num).to_i
     else
-      @num = @auth.profile.entries_in_page
+      @num = @setting.entries_in_page
     end
     @fold = (!@user and !@service and param(:fold) != 'no')
     @home = false
@@ -80,7 +80,7 @@ class EntryController < ApplicationController
     if param(:num)
       @num = param(:num).to_i
     else
-      @num = @auth.profile.entries_in_page
+      @num = @setting.entries_in_page
     end
     @fold = false
     @home = true

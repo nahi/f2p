@@ -72,7 +72,7 @@ module EntryHelper
     if link and with_link?(v(entry, 'service'))
       content = link_content(title, link, entry)
     else
-      fold, str, links = escape_text(title, @fold ? profile_text_folding_size : nil)
+      fold, str, links = escape_text(title, @fold ? @setting.text_folding_size : nil)
       entry[VIEW_LINKS_TAG] = links
       if fold
         str += link_to(icon_tag(:more), :action => 'show', :id => u(entry.id))
@@ -203,7 +203,7 @@ module EntryHelper
 
   def tumblr_content(common, entry)
     title = entry.title
-    fold = fold_length(title, profile_text_folding_size - 3)
+    fold = fold_length(title, @setting.text_folding_size - 3)
     if @fold and entry.medias.empty? and fold != title
       link_content(fold + '...', entry.link, entry) +
         link_to(icon_tag(:more), :action => 'show', :id => u(entry.id))
@@ -325,7 +325,7 @@ module EntryHelper
   end
 
   def comment(comment)
-    fold, str, links = escape_text(comment.body, @fold ? profile_text_folding_size : nil)
+    fold, str, links = escape_text(comment.body, @fold ? @setting.text_folding_size : nil)
     comment[VIEW_LINKS_TAG] = links
     if fold
       str += link_to(icon_tag(:more), :action => 'show', :id => u(comment.entry.id))
@@ -636,11 +636,11 @@ module EntryHelper
   end
 
   def fold_items(entry_id, items)
-    if items.size > profile_entries_in_thread
+    if items.size > @setting.entries_in_thread
       head_size = 1
       result = items[0, head_size]
-      result << Fold.new(entry_id, items.size - (profile_entries_in_thread - 1))
-      last_size = profile_entries_in_thread - 2
+      result << Fold.new(entry_id, items.size - (@setting.entries_in_thread - 1))
+      last_size = @setting.entries_in_thread - 2
       result += items[-last_size, last_size]
       result
     else
