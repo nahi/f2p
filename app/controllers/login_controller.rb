@@ -23,9 +23,14 @@ class LoginController < ApplicationController
       name = param(:name)
       remote_key = param(:remote_key)
       if User.validate(name, remote_key)
-        user = User.new
-        user.name = name
-        user.remote_key = remote_key
+        # TODO: protect it with transaction
+        if user = User.find_by_name(name)
+          user.remote_key = remote_key
+        else
+          user = User.new
+          user.name = name
+          user.remote_key = remote_key
+        end
         unless user.save
           flash[:error] = 'illegal auth credentials given'
           render :action => 'index'

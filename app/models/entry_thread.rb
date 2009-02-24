@@ -52,7 +52,7 @@ class EntryThread
       record_last_modified(entries)
       checked = CheckedModified.find_all_by_user_id(auth.id, :include => 'last_modified')
       entries.find_all { |entry|
-        if c = checked.find { |e| e.last_modified.eid == entry.id }
+        if c = checked.find { |e| e.last_modified && e.last_modified.eid == entry.id }
           if c.checked >= c.last_modified.date
             false
           else
