@@ -1,4 +1,4 @@
-<h1><%= link_to(appname, :action => 'list') %> entries at <%= date(Time.now) %></h1>
+<h1><%= link_to(appname, :action => 'list') %> entries at <a name="top"><%= date(Time.now) %></a></h1>
 <%- if flash[:deleted_id] -%>
   <p class="message"><%= undelete_link(flash[:deleted_id], flash[:deleted_comment]) %></p>
 <%- end -%>
@@ -28,7 +28,7 @@
     <p><%= room_links(@user) %></p>
   <%- end -%>
 <%- end -%>
-<p><%= page_links %></p>
+<p><%= page_links(:with_bottom => true) %></p>
 <div class="listings">
   <%- @entries.each do |thread| -%>
     <div class="<%= cycle('thread1', 'thread2') %>">
@@ -47,7 +47,7 @@
     <p>No feed is good feed.</p>
   <%- end -%>
 </div>
-<p><%= page_links %></p>
+<p><a name="bottom"></a><%= page_links(:with_top => true) %></p>
 <%- if !@eid and @user -%>
   <hr/>
   <p>

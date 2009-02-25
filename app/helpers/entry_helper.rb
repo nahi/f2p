@@ -344,7 +344,7 @@ module EntryHelper
     if @service
       str += hidden_field_tag('service', @service)
     end
-    str += text_field_tag('query', @query, :accesskey => '2') + submit_tag('search')
+    str += text_field_tag('query', @query) + submit_tag('search')
     str += ' ' + link_to(icon_tag(:search), search_opt)
     str
   end
@@ -360,14 +360,14 @@ module EntryHelper
     if room
       str += hidden_field_tag('room', room) + h(room) + ': '
     end
-    str += text_field_tag('body', nil, :accesskey => '2') + submit_tag('post')
+    str += text_field_tag('body') + submit_tag('post')
     str += ' ' + link_to(icon_tag(:write), :action => 'new', :room => u(room))
     str += ' ' + link_to(icon_tag(:search), search_opt)
     str
   end
 
   def post_comment_form
-    text_field_tag('body', nil, :accesskey => '8') + submit_tag('post')
+    text_field_tag('body') + submit_tag('post')
   end
 
   def fold_link(entry)
@@ -470,7 +470,7 @@ module EntryHelper
     str
   end
 
-  def page_links
+  def page_links(opt = {})
     no_page = @start.nil?
     links = []
     unless no_page
@@ -478,8 +478,11 @@ module EntryHelper
         @start - @num >= 0
       }
     end
-    links << menu_link(h('[updated]'), {:action => 'updated'}, {:accesskey => 0})
-    links << menu_link(h('[home]'), {:action => 'list'}, {:accesskey => 1})
+    if opt[:with_top]
+      links << menu_link(h('[top]'), '#top', :accesskey => '2')
+    end
+    links << menu_link(h('[updated]'), {:action => 'updated'}, {:accesskey => '0'})
+    links << menu_link(h('[home]'), {:action => 'list'}, {:accesskey => '1'})
     if @user and @user != @auth.name
       links << menu_link(h('[friends]'), :action => 'list', :friends => @user) {
         !@friends
@@ -504,6 +507,9 @@ module EntryHelper
     end
     if @room and @room != '*'
       links << menu_link(h('[members]'), '#members')
+    end
+    if opt[:with_bottom]
+      links << menu_link(h('[bottom]'), '#bottom', :accesskey => '8')
     end
     unless no_page
       links << menu_link(icon_tag(:next), list_opt(:action => 'list', :start => @start + @num, :num => @num), :accesskey => '6')
