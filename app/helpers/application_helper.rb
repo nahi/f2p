@@ -26,7 +26,7 @@ module ApplicationHelper
     link ||= v(service, 'profileUrl')
     if icon_url and name
       if link
-        label = "profile on #{name}"
+        label = "filter by #{name}"
         link_to(image_tag(icon_url, :alt => h(name), :title => h(label)), link)
       else
         image_tag(icon_url, :alt => h(name), :title => h(name))
