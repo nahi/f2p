@@ -35,24 +35,31 @@ class EntryThread
 
     def record_last_modified(entries)
       found = LastModified.find_all_by_eid(entries.map { |e| e.id })
-      entries.each do |entry|
+      entries.collect { |entry|
         if m = found.find { |e| entry.id == e.eid }
           m.date = Time.parse(entry.modified)
           raise unless m.save
+          m
         else
           m = LastModified.new
           m.eid = entry.id
           m.date = Time.parse(entry.modified)
           raise unless m.save
+          m
         end
-      end
+      }
     end
 
     def filter_checked_entries(auth, entries)
-      record_last_modified(entries)
-      checked = CheckedModified.find_all_by_user_id(auth.id, :include => 'last_modified')
+      mods = record_last_modified(entries)
+      cond = [
+        'user_id = ? and last_modifieds.eid in (?)',
+        auth.id,
+        entries.map { |e| e.id }
+      ]
+      checked = CheckedModified.find(:all, :conditions => cond, :include => 'last_modified')
       entries.find_all { |entry|
-        if c = checked.find { |e| e.last_modified && e.last_modified.eid == entry.id }
+        if c = checked.find { |e| e.last_modified.eid == entry.id }
           if c.checked >= c.last_modified.date
             false
           else
@@ -61,9 +68,11 @@ class EntryThread
             true
           end
         else
+          m = mods.find { |e| e.eid == entry.id }
+          raise unless m
           c = CheckedModified.new
           c.user = auth
-          c.last_modified = LastModified.find_by_eid(entry.id)
+          c.last_modified = m
           raise if c.last_modified.nil?
           c.checked = c.last_modified.date
           raise unless c.save

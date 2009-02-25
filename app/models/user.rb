@@ -4,8 +4,6 @@ require 'encrypt'
 class User < ActiveRecord::Base
   extend Encrypt
 
-  has_one :profile
-
   TEXT_MAXLEN = 255
   validates_length_of :name, :in => 1..TEXT_MAXLEN
   validates_length_of :remote_key, :in => 1..TEXT_MAXLEN
