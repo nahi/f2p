@@ -27,7 +27,7 @@ class EntryController < ApplicationController
     else
       @num = @setting.entries_in_page
     end
-    @fold = (!@user and !@service and param(:fold) != 'no')
+    @fold = (!@user and !@service and !@link and param(:fold) != 'no')
     @home = false
     opt = create_opt(
       :start => @start,
