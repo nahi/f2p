@@ -6,9 +6,10 @@
   <%= author_link(entry, (root_user.nil? or root_user != entry.user_id), (root_service.nil? or root_service != entry.service_identity)) %>
   <%= content(entry) %>
   <%- if comment_inline?(entry) -%>
-    -- <%= comment(entry.comments.first) %>
+    -- <%= comment(entry.comments.first) -%>
   <%- end -%>
-  <%= via(entry) %>
+  <%= via(entry) -%>
+  <%= original_link(entry) -%>
   <%= url_link(entry) -%>
   <%= likes(entry, !@eid) -%>
   <%= comments(entry, !@eid) -%>

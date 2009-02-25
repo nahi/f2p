@@ -18,6 +18,7 @@ module EntryHelper
     'url' => 'world_link.png',
     'reshare' => 'pencil_go.png',
     'related' => 'link.png',
+    'go' => 'page_white_world.png',
   }
 
   def icon(entry)
@@ -37,20 +38,6 @@ module EntryHelper
       :service => u(service_id)
     }
     service_icon(v(entry, 'service'), opt)
-  end
-
-  def service(entry)
-    if entry.room
-      name = entry.room.nickname
-    else
-      name = v(entry, 'service', 'name')
-    end
-    link = entry.link
-    if link
-      link_to(h(name), link)
-    else
-      h(name)
-    end
   end
 
   def content(entry)
@@ -89,16 +76,29 @@ module EntryHelper
   end
 
   def author_link(entry, show_user, show_service)
-    str = ''
+    user_str = service_str = ''
     if show_user
-      str += user(entry)
+      user_str += user(entry)
     end
-    if show_service and !@room
-      str += '@' unless str.empty?
-      str += service(entry)
+    if show_service and (!@room or @room == '*')
+      if entry.room
+        name = entry.room.nickname
+      elsif ['blog', 'feed'].include?(entry.service_id)
+        name = v(entry, 'service', 'name')
+      end
+      if name
+        service_str = h("(#{name})")
+      end
     end
+    str = user_str + service_str
     str += ':' unless str.empty?
     str
+  end
+
+  def original_link(entry)
+    if entry.link
+      link_to(icon_tag(:go), entry.link)
+    end
   end
 
   def link_content(title, link, entry)
