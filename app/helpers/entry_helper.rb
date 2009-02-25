@@ -40,9 +40,10 @@ module EntryHelper
   end
 
   def service(entry)
-    name = v(entry, 'service', 'name')
     if entry.room
-      name ||= entry.room.nickname
+      name = entry.room.nickname
+    else
+      name = v(entry, 'service', 'name')
     end
     link = entry.link
     if link
