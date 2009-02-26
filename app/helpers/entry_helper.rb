@@ -486,12 +486,12 @@ module EntryHelper
 
   def page_links(opt = {})
     no_page = @start.nil?
+    start = @start || 0
+    num = @num || 0
     links = []
-    unless no_page
-      links << menu_link(icon_tag(:previous), list_opt(:action => 'list', :start => @start - @num, :num => @num), :accesskey => '4') {
-        @start - @num >= 0
-      }
-    end
+    links << menu_link(icon_tag(:previous), list_opt(:action => 'list', :start => start - num, :num => num), :accesskey => '4') {
+      !no_page and start - num >= 0
+    }
     links << menu_link(menu_label('updated', '0'), {:action => 'updated'}, {:accesskey => '0'})
     links << menu_link(menu_label('home', '1'), {:action => 'list'}, {:accesskey => '1'})
     if @user and @user != @auth.name
@@ -525,9 +525,7 @@ module EntryHelper
     if @room and @room != '*'
       links << menu_link(menu_label('members'), '#members')
     end
-    unless no_page
-      links << menu_link(icon_tag(:next), list_opt(:action => 'list', :start => @start + @num, :num => @num), :accesskey => '6')
-    end
+    links << menu_link(icon_tag(:next), list_opt(:action => 'list', :start => start + num, :num => num), :accesskey => '6') { !no_page }
     links.join(' ')
   end
 
