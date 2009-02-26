@@ -17,4 +17,10 @@ class Comment < Hash
   def user_id
     v('user', 'id')
   end
+
+  def by_self?
+    if entry
+      user_id == entry.user_id
+    end
+  end
 end

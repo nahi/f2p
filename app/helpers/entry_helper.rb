@@ -6,6 +6,7 @@ module EntryHelper
     #'star' => 'heart.png', # for special 2/14 configuration!
     LIKE_LABEL => 'thumb_up.png',
     'comment' => 'comment.png',
+    'friend_comment' => 'user_comment.png',
     'comment_add' => 'comment_add.png',
     'delete' => 'delete.png',
     'more' => 'add.png',
@@ -334,7 +335,7 @@ module EntryHelper
   def icon_tag(name, alt = nil)
     name = name.to_s
     url = F2P::Config.icon_url_base + ICON_NAME[name]
-    label = alt || name
+    label = alt || name.gsub(/_/, ' ')
     image_tag(url, :alt => h(label), :title => h(label), :size => '16x16')
   end
 
