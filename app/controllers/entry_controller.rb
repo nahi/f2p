@@ -173,33 +173,45 @@ class EntryController < ApplicationController
           :redirect_to => {:action => 'list'}
 
   def add
-    body = param(:body)
+    @body = param(:body)
     link_title = param(:link_title)
-    link = param(:link)
-    room = param(:room)
-    lat = param(:lat)
-    long = param(:long)
-    title = param(:title)
-    address = param(:address)
+    @link = param(:link)
+    @room = param(:room)
+    file = param(:file)
+    @lat = param(:lat)
+    @long = param(:long)
+    @title = param(:title)
+    @address = param(:address)
     back_to = param(:back_to) || 'list'
-    opt = create_opt(:room => room)
-    if lat and long and address
+    opt = create_opt(:room => @room)
+    if @lat and @long and @address
       generator = GoogleMaps::URLGenerator.new
-      image_url = generator.staticmap_url(F2P::Config.google_maps_maptype, lat, long, :zoom => F2P::Config.google_maps_zoom, :width => F2P::Config.google_maps_width, :height => F2P::Config.google_maps_height)
-      image_link = generator.link_url(lat, long, address)
-      opt[:images] = [[image_url, image_link]]
-      body += " ([map] #{address})"
+      image_url = generator.staticmap_url(F2P::Config.google_maps_maptype, @lat, @long, :zoom => F2P::Config.google_maps_zoom, :width => F2P::Config.google_maps_width, :height => F2P::Config.google_maps_height)
+      image_link = generator.link_url(@lat, @long, @address)
+      (opt[:images] ||= []) << [image_url, image_link]
+      @body += " ([map] #{@address})"
     end
-    if link
-      link_title ||= capture_title(link)
+    if @link
+      link_title ||= capture_title(@link)
       opt[:body] = link_title
-      opt[:link] = link
-      opt[:comment] = body
-    elsif body
-      opt[:body] = body
+      opt[:link] = @link
+      opt[:comment] = @body
+    elsif @body
+      opt[:body] = @body
+    end
+    if file
+      if !file.content_type or /\Aimage\//i !~ file.content_type
+        render :action => 'new'
+        return
+      end
+      (opt[:files] ||= []) << [file]
+    end
+    unless opt[:body]
+      render :action => 'new'
+      return
     end
     Entry.create(opt)
-    redirect_to :action => back_to, :room => room
+    redirect_to :action => back_to, :room => @room
   end
 
   def capture_title(url)

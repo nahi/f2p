@@ -127,7 +127,7 @@ private
 
   def param(key)
     v = params[key]
-    (v and v.empty?) ? nil : v
+    (v and v.respond_to?(:empty?) and v.empty?) ? nil : v
   end
 
   def v(hash, *keywords)
