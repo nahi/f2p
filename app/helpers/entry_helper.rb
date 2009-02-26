@@ -492,22 +492,13 @@ module EntryHelper
         @start - @num >= 0
       }
     end
-    if opt[:with_top]
-      links << menu_link(h('[top]'), '#top', :accesskey => '2')
-    end
-    links << menu_link(h('[updated]'), {:action => 'updated'}, {:accesskey => '0'})
-    links << menu_link(h('[home]'), {:action => 'list'}, {:accesskey => '1'})
+    links << menu_link(h('[0.updated]'), {:action => 'updated'}, {:accesskey => '0'})
+    links << menu_link(h('[1.home]'), {:action => 'list'}, {:accesskey => '1'})
     if @user and @user != @auth.name
       links << menu_link(h('[friends]'), :action => 'list', :friends => @user) {
         !@friends
       }
     end
-    links << menu_link(h("[#{LIKE_LABEL}s]"), :action => 'list', :like => 'likes', :user => @user) {
-      @like != 'likes'
-    }
-    links << menu_link(h("[#{LIKE_LABEL}d]"), :action => 'list', :like => 'liked', :user => @user) {
-      @like != 'liked'
-    }
     if !@user or @auth.name == @user
       links << menu_link(h('[lists]'), :action => 'list', :list => 'favorite') {
         !@list
@@ -516,14 +507,23 @@ module EntryHelper
         @room != '*'
       }
     end
+    links << menu_link(h("[#{LIKE_LABEL}s]"), :action => 'list', :like => 'likes', :user => @user) {
+      @like != 'likes'
+    }
+    links << menu_link(h("[#{LIKE_LABEL}d]"), :action => 'list', :like => 'liked', :user => @user) {
+      @like != 'liked'
+    }
+    if opt[:with_top]
+      links << menu_link(h('[2.top]'), '#top', :accesskey => '2')
+    end
+    if opt[:with_bottom]
+      links << menu_link(h('[8.bottom]'), '#bottom', :accesskey => '8')
+    end
     if !@eid and @user
       links << menu_link(h('[subscriptions]'), '#subscriptions')
     end
     if @room and @room != '*'
       links << menu_link(h('[members]'), '#members')
-    end
-    if opt[:with_bottom]
-      links << menu_link(h('[bottom]'), '#bottom', :accesskey => '8')
     end
     unless no_page
       links << menu_link(icon_tag(:next), list_opt(:action => 'list', :start => @start + @num, :num => @num), :accesskey => '6')
