@@ -79,11 +79,15 @@ module EntryHelper
     if show_user
       user_str += user(entry)
     end
-    if show_service and (!@room or @room == '*')
-      if entry.room
-        name = entry.room.nickname
-      elsif ['blog', 'feed'].include?(entry.service_id)
+    if show_service
+      if @room and @room != '*'
         name = v(entry, 'service', 'name')
+      else
+        if entry.room
+          name = entry.room.nickname
+        elsif ['blog', 'feed'].include?(entry.service_id)
+          name = v(entry, 'service', 'name')
+        end
       end
       if name
         service_str = h("(#{name})")
@@ -283,9 +287,10 @@ module EntryHelper
     me, rest = entry.likes.partition { |e| v(e, 'user', 'nickname') == @auth.name }
     likes = me + rest
     if !likes.empty?
-      icon = icon_tag(:star)
       if liked?(entry)
-        icon = link_to(icon, :action => 'unlike', :id => u(entry.id))
+        icon = link_to(icon_tag(:star, 'un-like'), :action => 'unlike', :id => u(entry.id))
+      else
+        icon = icon_tag(:star)
       end
       if compact and likes.size > F2P::Config.likes_in_page + 1
         msg = "... #{likes.size - F2P::Config.likes_in_page} more #{LIKE_LABEL}s"
@@ -575,7 +580,7 @@ module EntryHelper
   end
 
   def like_link(entry)
-    if entry.nickname != @auth.name
+    if entry.nickname != @auth.name or entry.room
       unless liked?(entry)
         link_to(icon_tag(LIKE_LABEL), :action => 'like', :id => u(entry.id))
       end
