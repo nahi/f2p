@@ -105,11 +105,12 @@ module EntryHelper
 
   def original_link(entry)
     if entry.link
-      str = link_to(icon_tag(:go), entry.link)
       if with_link?(v(entry, 'service')) and unknown_where_to_go?(entry)
-        str += h("(#{URI.parse(entry.link).host})")
+        link_content = icon_tag(:go) + h("(#{URI.parse(entry.link).host})")
+      else
+        link_content = icon_tag(:go)
       end
-      str
+      link_to(link_content, entry.link)
     end
   end
 
