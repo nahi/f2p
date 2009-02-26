@@ -398,7 +398,7 @@ module EntryHelper
 
   def write_new_link
     room = (@room != '*') ? @room : nil
-    link_to(icon_tag(:write), :action => 'new', :room => u(room))
+    link_to(icon_tag(:write), :controller => 'entry', :action => 'new', :room => u(room))
   end
 
   def search_link
@@ -633,7 +633,7 @@ module EntryHelper
   end
 
   def search_opt(hash = {})
-    search_opt = list_opt.merge(:action => 'search')
+    search_opt = list_opt.merge(:controller => 'entry', :action => 'search')
     search_opt[:friends] = 'me' if @home
     search_opt[:room] = nil if search_opt[:room] == '*'
     search_opt
