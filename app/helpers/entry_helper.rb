@@ -532,15 +532,17 @@ module EntryHelper
   def url_link(entry)
     link = entry.link if with_link?(v(entry, 'service'))
     link ||= v(entry, VIEW_LINKS_TAG, 0)
-    if link and @link != link
-      link_to(icon_tag(:url), :action => 'list', :link => link)
-    end
+    url_link_to(link)
   end
 
   def comment_url_link(comment)
     link = v(comment, VIEW_LINKS_TAG, 0)
+    url_link_to(link)
+  end
+
+  def url_link_to(link)
     if link and @link != link
-      link_to(icon_tag(:url), :action => 'list', :link => link)
+      link_to(icon_tag(:url, 'related'), :action => 'list', :link => link)
     end
   end
 
