@@ -56,9 +56,8 @@ module EntryHelper
 
   def common_content(entry)
     title = entry.title
-    link = entry.link
-    if link and with_link?(v(entry, 'service'))
-      content = link_content(title, link, entry)
+    if entry.link and with_link?(v(entry, 'service'))
+      content = link_content_without_link(title, entry)
     else
       fold, str, links = escape_text(title, @fold ? @setting.text_folding_size : nil)
       entry[VIEW_LINKS_TAG] = links
@@ -101,11 +100,20 @@ module EntryHelper
     end
   end
 
-  def link_content(title, link, entry)
-    if unknown_where_to_go?(link, entry)
+  def link_content(title, entry)
+    link = entry.link
+    if unknown_where_to_go?(entry)
       q(h(title) + ' ' + link_to(h("(#{URI.parse(link).host})"), link))
     else
       q(link_to(h(title), link))
+    end
+  end
+
+  def link_content_without_link(title, entry)
+    if unknown_where_to_go?(entry)
+      q(h(title) + ' ' + h("(#{URI.parse(entry.link).host})"))
+    else
+      q(h(title))
     end
   end
 
@@ -113,8 +121,8 @@ module EntryHelper
     URI.parse(str) rescue nil
   end
 
-  def unknown_where_to_go?(link, entry)
-    link_url = uri(link)
+  def unknown_where_to_go?(entry)
+    link_url = uri(entry.link)
     profile_url = uri(v(entry, 'service', 'profileUrl'))
     if profile_url and link_url
       (profile_url.host.downcase != link_url.host.downcase) or
@@ -206,7 +214,7 @@ module EntryHelper
     title = entry.title
     fold = fold_length(title, @setting.text_folding_size - 3)
     if @fold and entry.medias.empty? and fold != title
-      link_content(fold + '...', entry.link, entry) +
+      link_content_without_link(fold + '...', entry) +
         link_to(icon_tag(:more), :action => 'show', :id => u(entry.id))
     else
       common
