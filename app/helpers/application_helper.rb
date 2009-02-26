@@ -90,11 +90,11 @@ module ApplicationHelper
       end
     else
       if elapsed > YEAR_THRESHOLD
-        format = "%y/%m/%d"
+        format = "(%y/%m/%d)"
       elsif elapsed > DATE_THRESHOLD
-        format = "%m/%d"
+        format = "(%m/%d)"
       else
-        format = "%H:%M"
+        format = "(%H:%M)"
       end
     end
     body = h(time.strftime(format))

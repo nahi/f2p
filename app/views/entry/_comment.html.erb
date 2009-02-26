@@ -2,10 +2,11 @@
   <%= fold_comment_link(comment) %>
 <%- else -%>
   <%= icon_tag(:comment) %>
-  <%= date(v(comment, 'date'), !@eid) %>
+  <%= date(v(comment, 'date'), false) if @eid %>
   <%= comment(comment) %>
   by <%= user(comment) %>
   <%= via(comment) -%>
+  <%= date(v(comment, 'date'), true) unless @eid %>
   <%= comment_url_link(comment) -%>
   <%= delete_comment_link(comment) -%>
   <%= post_comment_link(comment.entry) if !@eid and comment == comment.entry.comments.last -%>

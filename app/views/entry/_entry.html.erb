@@ -2,13 +2,14 @@
   <%= fold_link(entry) %>
 <%- else -%>
   <%= icon(entry) %>
-  <%= published(entry, !@eid) %>
+  <%= published(entry, false) if @eid -%>
   <%= author_link(entry, (root_user.nil? or root_user != entry.user_id), (root_service.nil? or root_service != entry.service_identity)) %>
   <%= content(entry) %>
   <%- if comment_inline?(entry) -%>
     -- <%= comment(entry.comments.first) -%>
   <%- end -%>
   <%= via(entry) -%>
+  <%= published(entry, true) unless @eid -%>
   <%= original_link(entry) -%>
   <%= url_link(entry) -%>
   <%= likes(entry, !@eid) -%>
