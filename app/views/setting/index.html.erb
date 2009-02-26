@@ -8,7 +8,7 @@
     entries in page: <%= text_field_tag('entries_in_page', @entries_in_page) %><br/>
     entries in thread: <%= text_field_tag('entries_in_thread', @entries_in_thread) %><br/>
     text folding size: <%= text_field_tag('text_folding_size', @text_folding_size) %><br/>
-    open link in new window: <%= check_box_tag('link_open_new_window', 'checked', @link_open_new_window) %><br/>
+    open links in new window: <%= check_box_tag('link_open_new_window', 'checked', @link_open_new_window) %><br/>
     open links via mobile proxy(gwt): <%= check_box_tag('link_type_gwt', 'checked', @link_type == 'gwt') %><br/>
     <%= submit_tag 'update' %>
   </p>
