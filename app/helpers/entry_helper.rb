@@ -492,18 +492,18 @@ module EntryHelper
         @start - @num >= 0
       }
     end
-    links << menu_link(h('[0.updated]'), {:action => 'updated'}, {:accesskey => '0'})
-    links << menu_link(h('[1.home]'), {:action => 'list'}, {:accesskey => '1'})
+    links << menu_link(menu_label('updated', '0'), {:action => 'updated'}, {:accesskey => '0'})
+    links << menu_link(menu_label('home', '1'), {:action => 'list'}, {:accesskey => '1'})
     if @user and @user != @auth.name
-      links << menu_link(h('[friends]'), :action => 'list', :friends => @user) {
+      links << menu_link(menu_label('friends'), :action => 'list', :friends => @user) {
         !@friends
       }
     end
     if !@user or @auth.name == @user
-      links << menu_link(h('[lists]'), :action => 'list', :list => 'favorite') {
+      links << menu_link(menu_label('lists'), :action => 'list', :list => 'favorite') {
         !@list
       }
-      links << menu_link(h('[rooms]'), :action => 'list', :room => '*') {
+      links << menu_link(menu_label('rooms'), :action => 'list', :room => '*') {
         @room != '*'
       }
     end
@@ -514,21 +514,28 @@ module EntryHelper
       @like != 'liked'
     }
     if opt[:with_top]
-      links << menu_link(h('[2.top]'), '#top', :accesskey => '2')
+      links << menu_link(menu_label('top', '2'), '#top', :accesskey => '2')
     end
     if opt[:with_bottom]
-      links << menu_link(h('[8.bottom]'), '#bottom', :accesskey => '8')
+      links << menu_link(menu_label('bottom', '8'), '#bottom', :accesskey => '8')
     end
     if !@eid and @user
-      links << menu_link(h('[subscriptions]'), '#subscriptions')
+      links << menu_link(menu_label('subscriptions'), '#subscriptions')
     end
     if @room and @room != '*'
-      links << menu_link(h('[members]'), '#members')
+      links << menu_link(menu_label('members'), '#members')
     end
     unless no_page
       links << menu_link(icon_tag(:next), list_opt(:action => 'list', :start => @start + @num, :num => @num), :accesskey => '6')
     end
     links.join(' ')
+  end
+
+  def menu_label(label, accesskey = nil)
+    if accesskey and @setting.link_type == 'gwt'
+      label = accesskey + '.' + label
+    end
+    h("[#{label}]")
   end
 
   def menu_link(label, opt, html_opt = {}, &block)
