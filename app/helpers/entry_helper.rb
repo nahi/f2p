@@ -22,6 +22,10 @@ module EntryHelper
     'go' => 'page_white_world.png',
   }
 
+  def viewname
+    @viewname
+  end
+
   def icon(entry)
     service_id = entry.service_id
     name = v(entry, 'service', 'name')
@@ -359,7 +363,6 @@ module EntryHelper
       str += hidden_field_tag('service', @service)
     end
     str += text_field_tag('query', @query) + submit_tag('search')
-    str += ' ' + link_to(icon_tag(:search), search_opt)
     str
   end
 
@@ -375,8 +378,6 @@ module EntryHelper
       str += hidden_field_tag('room', room) + h(room) + ': '
     end
     str += text_field_tag('body') + submit_tag('post')
-    str += ' ' + link_to(icon_tag(:write), :action => 'new', :room => u(room))
-    str += ' ' + link_to(icon_tag(:search), search_opt)
     str
   end
 
@@ -392,6 +393,15 @@ module EntryHelper
   def fold_comment_link(fold)
     msg = " (#{fold.fold_entries} more comments)"
     link_to(icon_tag(:more), :action => 'show', :id => u(fold.entry_id)) + h(msg)
+  end
+
+  def write_new_link
+    room = (@room != '*') ? @room : nil
+    link_to(icon_tag(:write), :action => 'new', :room => u(room))
+  end
+
+  def search_link
+    link_to(icon_tag(:search), search_opt)
   end
 
   def settings_link

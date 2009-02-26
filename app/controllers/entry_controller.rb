@@ -6,12 +6,18 @@ class EntryController < ApplicationController
   after_filter :strip_heading_spaces
   after_filter :compress
 
+  def initialize
+    super
+    @viewname = 'entries'
+  end
+
   verify :only => :list,
           :method => [:get, :post],
           :add_flash => {:error => 'verify failed'},
           :redirect_to => {:action => 'list'}
 
   def list
+    @viewname = 'entries'
     @eid = nil
     @query = param(:query)
     @user = param(:user)
@@ -67,6 +73,7 @@ class EntryController < ApplicationController
           :redirect_to => {:action => 'list'}
 
   def updated
+    @viewname = 'updated entries'
     @eid = nil
     @query = nil
     @user = nil
@@ -101,6 +108,7 @@ class EntryController < ApplicationController
           :redirect_to => {:action => 'list'}
 
   def show
+    @viewname = 'entry'
     @eid = param(:id)
     @query = nil
     @user = nil
@@ -122,6 +130,7 @@ class EntryController < ApplicationController
   end
 
   def new
+    @viewname = 'post new entry'
     @body = param(:body)
     @link = param(:link)
     @room = param(:room)
@@ -142,6 +151,7 @@ class EntryController < ApplicationController
   end
 
   def reshare
+    @viewname = 'reshare entry'
     eid = param(:eid)
     opt = create_opt(:id => eid)
     t = EntryThread.find(opt).first
@@ -159,6 +169,7 @@ class EntryController < ApplicationController
   end
 
   def search
+    @viewname = 'search entries'
     @query = param(:query)
     @user = param(:user)
     @room = param(:room)
@@ -212,21 +223,6 @@ class EntryController < ApplicationController
     end
     Entry.create(opt)
     redirect_to :action => back_to, :room => @room
-  end
-
-  def capture_title(url)
-    begin
-      buf = ''
-      http_client.get_content(url) do |str|
-        buf += str.tr("\r\n", '')
-        if match = buf.match(/<title[^>]*>([^<]*)</i)
-          return NKF.nkf('-wm0', match.captures[0])
-        end
-      end
-    rescue Exception
-      # ignore
-    end
-    '(unknown)'
   end
 
   verify :only => :delete,
@@ -301,6 +297,21 @@ class EntryController < ApplicationController
   end
 
 private
+
+  def capture_title(url)
+    begin
+      buf = ''
+      http_client.get_content(url) do |str|
+        buf += str.tr("\r\n", '')
+        if match = buf.match(/<title[^>]*>([^<]*)</i)
+          return NKF.nkf('-wm0', match.captures[0])
+        end
+      end
+    rescue Exception
+      # ignore
+    end
+    '(unknown)'
+  end
 
   def create_opt(hash = {})
     {

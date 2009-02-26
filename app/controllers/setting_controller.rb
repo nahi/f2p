@@ -3,6 +3,11 @@ class SettingController < ApplicationController
   after_filter :strip_heading_spaces
   after_filter :compress
 
+  def initialize
+    super
+    @viewname = 'session settings'
+  end
+
   def index
     @font_size = (param(:font_size) || @setting.font_size).to_i
     @entries_in_page = (param(:entries_in_page) || @setting.entries_in_page).to_i

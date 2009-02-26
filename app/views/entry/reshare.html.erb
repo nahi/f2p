@@ -1,4 +1,3 @@
-<h1><%= link_to(appname, :action => 'list') %> reshare entry</h1>
 <%- form_tag({:action => 'add'}, {:name => 'post'}) do -%>
   <p>
     title: <%= text_field_tag('link_title', @link_title) %><br/>

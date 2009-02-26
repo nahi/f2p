@@ -1,4 +1,3 @@
-<h1><%= link_to(appname, :action => 'list') %> search</h1>
 <%- form_tag({:action => 'list'}, {:name => 'search'}) do -%>
   <p>
     keyword: <%= text_field_tag('query', @query) %><br/>

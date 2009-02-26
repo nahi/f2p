@@ -1,4 +1,3 @@
-<h1><%= link_to(appname, :action => 'list') %> entries at <a name="top"><%= date(Time.now) %></a></h1>
 <%- if flash[:deleted_id] -%>
   <p class="message"><%= undelete_link(flash[:deleted_id], flash[:deleted_comment]) %></p>
 <%- end -%>
@@ -7,14 +6,14 @@
 <%- end -%>
 <%- if @query -%>
   <%- form_tag({:action => 'list'}, {:name => 'post'}) do -%>
-    <p><%= search_form %> <%= settings_link %> <%= logout_link %></p>
+    <p><%= search_form %></p>
   <%- end -%>
   <script type='text/javascript'><!--
   post.query.focus();
   //--></script>
 <%- elsif !@eid -%>
   <%- form_tag({:action => 'add'}, {:name => 'post'}) do -%>
-    <p><%= post_entry_form %> <%= settings_link %> <%= logout_link %></p>
+    <p><%= post_entry_form %></p>
   <%- end -%>
 <%- end -%>
 <%- if !@eid -%>

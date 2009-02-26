@@ -31,6 +31,7 @@
     </style>
   </head>
   <body>
+    <h1><%= link_to(h(appname), :controller => 'entry', :action => 'list') %> <%= h(viewname) %> at <a name="top"><%= date(Time.now) %></a> <%= write_new_link %> <%= search_link %> <%= settings_link %> <%= logout_link %></h1>
     <%= yield %>
   </body>
 </html>

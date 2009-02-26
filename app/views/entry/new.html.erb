@@ -1,4 +1,3 @@
-<h1><%= link_to(appname, :action => 'list') %> new entry</h1>
 <%- form_tag({:action => 'add'}, {:name => 'post', :multipart => true}) do -%>
   <p>
     message: <%= text_field_tag('body', @body) %><br/>
