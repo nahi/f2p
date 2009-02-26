@@ -8,6 +8,6 @@
   <%= via(comment) -%>
   <%= date(v(comment, 'date'), true) unless @eid %>
   <%= comment_url_link(comment) -%>
-  <%= delete_comment_link(comment) -%>
-  <%= post_comment_link(comment.entry) if !@eid and comment == comment.entry.comments.last -%>
+<%= delete_comment_link(comment) -%>
+<%= post_comment_link(comment.entry) if !@eid and comment == comment.entry.comments.last -%>
 <%- end -%>

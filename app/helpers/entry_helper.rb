@@ -555,7 +555,7 @@ module EntryHelper
   end
 
   def delete_link(entry)
-    if entry.nickname == @auth.name
+    if @eid and entry.nickname == @auth.name
       link_to(icon_tag(:delete), {:action => 'delete', :id => u(entry.id)}, :confirm => 'Are you sure?')
     end
   end
@@ -583,7 +583,7 @@ module EntryHelper
   end
 
   def reshare_link(entry)
-    if entry.link
+    if @eid and entry.link
       opt = {
         :action => 'reshare',
         :eid => u(entry.id),
