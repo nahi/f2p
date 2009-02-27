@@ -25,6 +25,7 @@ post.body.focus();
   <%= hidden_field_tag('body', @body) %>
   <%= hidden_field_tag('link', @link) %>
   <%= hidden_field_tag('room', ctx.room) %>
+  <%= hidden_field_tag('with_form', @with_form) %><br/>
   </p>
   <%- if @placemark -%>
     <%- if @placemark.ambiguous? -%>
