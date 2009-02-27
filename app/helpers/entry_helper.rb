@@ -342,11 +342,6 @@ module EntryHelper
 
   def post_entry_form
     str = ''
-    if ctx.updated
-      str += hidden_field_tag('back_to', 'updated')
-    else
-      str += hidden_field_tag('back_to', 'list')
-    end
     str += hidden_field_tag('room', ctx.room_id) + h(ctx.room_id) + ': ' if ctx.room_id
     str += text_field_tag('body') + submit_tag('post')
     str
@@ -556,7 +551,7 @@ module EntryHelper
   end
 
   def like_link(entry)
-    if entry.nickname != auth.name or entry.room
+    if entry.nickname != auth.name or (entry.room and entry.service_id != 'internal')
       unless liked?(entry)
         link_to(icon_tag(:like), :action => 'like', :id => u(entry.id))
       end
@@ -578,7 +573,7 @@ module EntryHelper
   end
 
   def list_opt(hash = {})
-    ctx.opt.merge(hash)
+    ctx.list_opt.merge(hash)
   end
 
   def search_opt(hash = {})

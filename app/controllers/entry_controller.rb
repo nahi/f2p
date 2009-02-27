@@ -7,7 +7,6 @@ class EntryController < ApplicationController
   after_filter :compress
 
   class EntryContext
-    attr_accessor :viewname
     attr_accessor :eid
     attr_accessor :query
     attr_accessor :user
@@ -23,13 +22,48 @@ class EntryController < ApplicationController
     attr_accessor :updated
     attr_accessor :home
 
-    def initialize
-      @viewname = 'entries'
+    def initialize(auth)
+      @auth = auth
+      @viewname = nil
       @eid = @query = @user = @list = @room = @friends = @like = @link = @service = @start = @num = nil
       @fold = false
       @updated = false
       @home = true
       @param = nil
+    end
+
+    def viewname=(viewname)
+      @viewname = viewname
+    end
+
+    def viewname
+      if @eid
+        'entry'
+      elsif @query
+        'search results'
+      elsif @like == 'likes'
+        "entries #{@user || @auth.name} likes"
+      elsif @like == 'liked'
+        "#{@user || @auth.name}'s liked entries"
+      elsif @user
+        "#{@user}'s entries"
+      elsif @friends
+        "#{@friends}'s friends entries"
+      elsif @list
+        "'#{@list}' entries"
+      elsif @room
+        if @room == '*'
+          'rooms entries'
+        else
+          "'#{@room}' entries"
+        end
+      elsif @link
+        'related entries'
+      elsif @updated
+        'updated entries'
+      else
+        'home entries'
+      end
     end
 
     def parse(param, setting)
@@ -55,7 +89,49 @@ class EntryController < ApplicationController
       @home = !(@query or @like or @user or @friends or @list or @room or @link)
     end
 
-    def opt
+    def find_opt
+      opt = {
+        :auth => @auth,
+        :start => @start,
+        :num => @num,
+        :service => @service
+      }
+      if @eid
+        {:auth => @auth, :id => @eid}
+      elsif @query
+        opt.merge(:query => @query, :user => @user, :room => @room, :friends => @friends, :service => @service)
+      elsif @like
+        opt.merge(:like => @like, :user => @user || @auth.name)
+      elsif @user
+        opt.merge(:user => @user)
+      elsif @friends
+        opt.merge(:friends => @friends, :merge_service => true)
+      elsif @list
+        opt.merge(:list => @list, :merge_service => true)
+      elsif @room
+        opt.merge(:room => @room, :merge_service => true)
+      elsif @link
+        opt.merge(:link => @link, :merge_service => true)
+      elsif @updated
+        opt.merge(:updated => true, :merge_service => true)
+      else
+        opt.merge(:merge_service => true)
+      end
+    end
+
+    def reset_pagination(setting)
+      @eid = nil
+      @start = 0
+      @num = setting.entries_in_page
+    end
+
+    def reset_for_new
+      # keep @room
+      @eid = @query = @user = @list = @friends = @like = @link = @service = nil
+      @fold = true
+    end
+
+    def list_opt
       {
         :query => @query,
         :user => @user,
@@ -73,6 +149,17 @@ class EntryController < ApplicationController
       (@room != '*') ? @room : nil
     end
 
+    def redirect_to
+      if @eid
+        action = 'show'
+      elsif @updated
+        action = 'updated'
+      else
+        action = 'list'
+      end
+      {:action => action}
+    end
+
   private
 
     def param(key)
@@ -87,36 +174,14 @@ class EntryController < ApplicationController
           :redirect_to => {:action => 'list'}
 
   def list
-    @ctx = EntryContext.new
-    @ctx.parse(params, @setting)
-    opt = create_opt(
-      :start => @ctx.start,
-      :num => @ctx.num,
-      :service => @ctx.service
-    )
-    if @ctx.query
-      @entries = EntryThread.find(opt.merge(:query => @ctx.query, :user => @ctx.user, :room => @ctx.room, :friends => @ctx.friends, :service => @ctx.service))
-    elsif @ctx.like
-      user = @ctx.user || @auth.name
-      @entries = EntryThread.find(opt.merge(:like => @ctx.like, :user => user))
-    elsif @ctx.user
-      @entries = EntryThread.find(opt.merge(:user => @ctx.user))
-    elsif @ctx.friends
-      @entries = EntryThread.find(opt.merge(:friends => @ctx.friends, :merge_service => true))
-    elsif @ctx.list
-      @entries = EntryThread.find(opt.merge(:list => @ctx.list, :merge_service => true))
-    elsif @ctx.room
-      @entries = EntryThread.find(opt.merge(:room => @ctx.room, :merge_service => true))
-    elsif @ctx.link
-      @entries = EntryThread.find(opt.merge(:link => @ctx.link, :merge_service => true))
-    else
-      @entries = EntryThread.find(opt.merge(:merge_service => true))
-    end
-    @entries ||= []
+    @ctx = restore_ctx { |ctx|
+      ctx.parse(params, @setting)
+    }
+    @entries = EntryThread.find(@ctx.find_opt) || []
   end
 
   def index
-    redirect_to :action => 'list'
+    redirect_to_list
   end
 
   verify :only => :updated,
@@ -125,20 +190,15 @@ class EntryController < ApplicationController
           :redirect_to => {:action => 'list'}
 
   def updated
-    @ctx = EntryContext.new
-    @ctx.viewname = 'updated entries'
-    if param(:num)
-      @ctx.num = param(:num).to_i
-    else
-      @ctx.num = @setting.entries_in_page
-    end
-    @ctx.updated = true
-    opt = create_opt(
-      :start => @ctx.start,
-      :num => @ctx.num
-    )
-    @entries = EntryThread.find(opt.merge(:updated => true, :merge_service => true))
-    @entries ||= []
+    @ctx = restore_ctx { |ctx|
+      if param(:num)
+        ctx.num = param(:num).to_i
+      else
+        ctx.num = @setting.entries_in_page
+      end
+      ctx.updated = true
+    }
+    @entries = EntryThread.find(@ctx.find_opt) || []
     render :action => 'list'
   end
 
@@ -149,18 +209,15 @@ class EntryController < ApplicationController
           :redirect_to => {:action => 'list'}
 
   def show
-    @ctx = EntryContext.new
-    @ctx.viewname = 'entry'
+    @ctx = EntryContext.new(@auth)
     @ctx.eid = param(:id)
     @ctx.home = false
-    opt = create_opt(:id => @ctx.eid)
-    @entries = EntryThread.find(opt)
-    @entries ||= []
+    @entries = EntryThread.find(@ctx.find_opt) || []
     render :action => 'list'
   end
 
   def new
-    @ctx = EntryContext.new
+    @ctx = EntryContext.new(@auth)
     @ctx.viewname = 'post new entry'
     @ctx.room = param(:room)
     @body = param(:body)
@@ -182,19 +239,19 @@ class EntryController < ApplicationController
   end
 
   def reshare
-    @ctx = EntryContext.new
+    @ctx = EntryContext.new(@auth)
     @ctx.viewname = 'reshare entry'
     @ctx.room = param(:room)
     eid = param(:eid)
     opt = create_opt(:id => eid)
     t = EntryThread.find(opt).first
     if t.nil?
-      redirect_to :action => 'list'
+      redirect_to_list
       return
     end
     entry = t.root
     if entry.nil?
-      redirect_to :action => 'list'
+      redirect_to_list
       return
     end
     @link = entry.link
@@ -202,7 +259,7 @@ class EntryController < ApplicationController
   end
 
   def search
-    @ctx = EntryContext.new
+    @ctx = EntryContext.new(@auth)
     @ctx.viewname = 'search entries'
     @ctx.parse(params, @setting)
   end
@@ -223,7 +280,6 @@ class EntryController < ApplicationController
     @long = param(:long)
     @title = param(:title)
     @address = param(:address)
-    back_to = param(:back_to) || 'list'
     opt = create_opt(:room => @room)
     if @lat and @long and @address
       generator = GoogleMaps::URLGenerator.new
@@ -252,7 +308,11 @@ class EntryController < ApplicationController
       return
     end
     Entry.create(opt)
-    redirect_to :action => back_to, :room => @room
+    flash[:keep_ctx] = true
+    if session[:ctx]
+      session[:ctx].reset_for_new
+    end
+    redirect_to_list
   end
 
   verify :only => :delete,
@@ -267,7 +327,8 @@ class EntryController < ApplicationController
     do_delete(id, comment, false)
     flash[:deleted_id] = id
     flash[:deleted_comment] = comment
-    redirect_to :action => 'list'
+    flash[:keep_ctx] = true
+    redirect_to_list
   end
 
   verify :only => :undelete,
@@ -280,7 +341,8 @@ class EntryController < ApplicationController
     id = param(:id)
     comment = param(:comment)
     do_delete(id, comment, true)
-    redirect_to :action => 'list'
+    flash[:keep_ctx] = true
+    redirect_to_list
   end
 
   verify :only => :add_comment,
@@ -295,7 +357,8 @@ class EntryController < ApplicationController
     if id and body
       Entry.add_comment(create_opt(:id => id, :body => body))
     end
-    redirect_to :action => 'list'
+    flash[:keep_ctx] = true
+    redirect_to_list
   end
 
   verify :only => :like,
@@ -309,7 +372,8 @@ class EntryController < ApplicationController
     if id
       Entry.add_like(create_opt(:id => id))
     end
-    redirect_to :action => 'list'
+    flash[:keep_ctx] = true
+    redirect_to_list
   end
 
   verify :only => :unlike,
@@ -323,7 +387,8 @@ class EntryController < ApplicationController
     if id
       Entry.delete_like(create_opt(:id => id))
     end
-    redirect_to :action => 'list'
+    flash[:keep_ctx] = true
+    redirect_to_list
   end
 
 private
@@ -354,6 +419,26 @@ private
       Entry.delete_comment(create_opt(:id => id, :comment => comment, :undelete => undelete))
     else
       Entry.delete(create_opt(:id => id, :undelete => undelete))
+    end
+  end
+
+  def restore_ctx
+    if flash[:keep_ctx] and session[:ctx]
+      ctx = session[:ctx]
+      ctx.reset_pagination(@setting)
+    else
+      ctx = EntryContext.new(@auth)
+      yield(ctx)
+      session[:ctx] = ctx
+    end
+    ctx
+  end
+
+  def redirect_to_list
+    if ctx = @ctx || session[:ctx]
+      redirect_to ctx.redirect_to
+    else
+      redirect_to :action => 'list'
     end
   end
 end
