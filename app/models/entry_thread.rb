@@ -1,4 +1,6 @@
 class EntryThread
+  MODEL_LAST_MODIFIED_TAG = '__model_last_modified'
+
   class << self
     def find(opt = {})
       auth = opt[:auth]
@@ -31,6 +33,30 @@ class EntryThread
       sort_by_service(wrapped, opt)
     end
 
+    def update_checked_modified(auth, hash)
+      cond = [
+        'user_id = ? and last_modifieds.eid in (?)',
+        auth.id,
+        hash.keys
+      ]
+      checked = CheckedModified.find(:all, :conditions => cond, :include => 'last_modified')
+      hash.each do |eid, checked_modified|
+        if c = checked.find { |e| e.last_modified.eid == eid }
+          c.checked = Time.parse(checked_modified)
+          raise unless c.save
+        else
+          m = LastModified.find_by_eid(eid)
+          if m
+            c = CheckedModified.new
+            c.user = auth
+            c.last_modified = m
+            c.checked = Time.parse(checked_modified)
+            raise unless c.save
+          end
+        end
+      end
+    end
+
   private
 
     def record_last_modified(entries)
@@ -51,7 +77,7 @@ class EntryThread
     end
 
     def filter_checked_entries(auth, entries)
-      mods = record_last_modified(entries)
+      record_last_modified(entries)
       cond = [
         'user_id = ? and last_modifieds.eid in (?)',
         auth.id,
@@ -59,6 +85,14 @@ class EntryThread
       ]
       checked = CheckedModified.find(:all, :conditions => cond, :include => 'last_modified')
       entries.find_all { |entry|
+        if c = checked.find { |e| e.last_modified.eid == entry.id }
+          entry[MODEL_LAST_MODIFIED_TAG] = entry.modified
+          c.checked < c.last_modified.date
+        else
+          entry[MODEL_LAST_MODIFIED_TAG] = entry.modified
+          true
+        end
+=begin
         if c = checked.find { |e| e.last_modified.eid == entry.id }
           if c.checked >= c.last_modified.date
             false
@@ -78,6 +112,7 @@ class EntryThread
           raise unless c.save
           true
         end
+=end
       }
     end
 

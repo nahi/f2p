@@ -1,5 +1,5 @@
 module EntryHelper
-  VIEW_LINKS_TAG = 'view_links'
+  VIEW_LINKS_TAG = '__view_links'
 
   def viewname
     ctx.viewname

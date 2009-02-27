@@ -198,7 +198,17 @@ class EntryController < ApplicationController
       end
       ctx.updated = true
     }
+    store = session[:checked] ||= {}
+    unless flash[:redirect]
+      EntryThread.update_checked_modified(@auth, store)
+      store = session[:checked] = {}
+    end
     @entries = EntryThread.find(@ctx.find_opt) || []
+    @entries.each do |t|
+      t.entries.each do |e|
+        store[e.id] = e[EntryThread::MODEL_LAST_MODIFIED_TAG]
+      end
+    end
     render :action => 'list'
   end
 
@@ -435,6 +445,7 @@ private
   end
 
   def redirect_to_list
+    flash[:redirect] = true
     if ctx = @ctx || session[:ctx]
       redirect_to ctx.redirect_to
     else
