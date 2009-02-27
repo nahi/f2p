@@ -33,7 +33,7 @@
   <%- end -%>
   <%- if ctx.eid -%>
     <%- form_tag({:action => 'add_comment', :id => u(ctx.eid)}, {:name => 'post'}) do -%>
-      <p><%= post_comment_form %></p>
+      <p><%= comment_icon(v(entry, 'user', 'nickname') == auth.name) %> <%= post_comment_form %></p>
       <script type='text/javascript'><!--
       post.body.focus();
       //--></script>

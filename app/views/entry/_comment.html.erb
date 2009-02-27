@@ -1,7 +1,7 @@
 <%- if comment.respond_to?(:fold_entries) -%>
   <%= fold_comment_link(comment) %>
 <%- else -%>
-  <%= comment.by_self? ? icon_tag(:comment) : icon_tag(:friend_comment) %>
+  <%= comment_icon(comment.by_user(v(comment.entry, 'user', 'nickname'))) %>
   <%= date(v(comment, 'date'), false) if ctx.eid %>
   <%= comment(comment) %>
   by <%= user(comment) %>

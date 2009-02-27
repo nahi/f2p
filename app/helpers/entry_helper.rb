@@ -320,6 +320,10 @@ module EntryHelper
     super(v(entry, 'user'))
   end
 
+  def comment_icon(by_self = false)
+    by_self ? icon_tag(:comment) : icon_tag(:friend_comment)
+  end
+
   def comment(comment)
     fold, str, links = escape_text(comment.body, ctx.fold ? setting.text_folding_size : nil)
     comment[VIEW_LINKS_TAG] = links
