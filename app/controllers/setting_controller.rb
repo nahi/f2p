@@ -5,7 +5,6 @@ class SettingController < ApplicationController
 
   def initialize
     super
-    @viewname = 'session settings'
   end
 
   def index

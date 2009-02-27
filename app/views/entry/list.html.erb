@@ -4,27 +4,27 @@
 <%- if flash[:message] -%>
   <p class="message"><%=h flash[:message] %></p>
 <%- end -%>
-<%- if @query -%>
+<%- if ctx.query -%>
   <%- form_tag({:action => 'list'}, {:name => 'post'}) do -%>
     <p><%= search_form %></p>
   <%- end -%>
   <script type='text/javascript'><!--
   post.query.focus();
   //--></script>
-<%- elsif !@eid -%>
+<%- elsif !ctx.eid -%>
   <%- form_tag({:action => 'add'}, {:name => 'post'}) do -%>
     <p><%= post_entry_form %></p>
   <%- end -%>
 <%- end -%>
-<%- if !@eid -%>
-  <%- if @user -%>
-    <p><%= service_links(@user) %></p>
+<%- if !ctx.eid -%>
+  <%- if ctx.user -%>
+    <p><%= service_links(ctx.user) %></p>
   <%- end -%>
-  <%- if @list -%>
+  <%- if ctx.list -%>
     <p><%= list_links %></p>
   <%- end -%>
-  <%- if @room == '*' -%>
-    <p><%= room_links(@user) %></p>
+  <%- if ctx.room == '*' -%>
+    <p><%= room_links(ctx.user) %></p>
   <%- end -%>
 <%- end -%>
 <p><%= page_links(:with_bottom => true) %></p>
@@ -47,17 +47,17 @@
   <%- end -%>
 </div>
 <p><a name="bottom"></a><%= page_links(:with_top => true) %></p>
-<%- if !@eid and @user -%>
+<%- if !ctx.eid and ctx.user -%>
   <hr/>
   <p>
-    <a name="subscriptions" id="subscriptions"><%= h(@user) %>'s subscriptions:</a><br/>
-    <%= user_links(@user) %>
+    <a name="subscriptions" id="subscriptions"><%= h(ctx.user) %>'s subscriptions:</a><br/>
+    <%= user_links(ctx.user) %>
   </p>
 <%- end -%>
-<%- if @room and @room != '*' -%>
+<%- if ctx.room and ctx.room != '*' -%>
   <hr/>
   <p>
-    <a name="members" id="members"><%= h(@room)%> members:</a><br/>
-    <%= member_links(@room) %>
+    <a name="members" id="members"><%= h(ctx.room)%> members:</a><br/>
+    <%= member_links(ctx.room) %>
   </p>
 <%- end -%>

@@ -6,9 +6,79 @@ class EntryController < ApplicationController
   after_filter :strip_heading_spaces
   after_filter :compress
 
-  def initialize
-    super
-    @viewname = 'entries'
+  class EntryContext
+    attr_accessor :viewname
+    attr_accessor :eid
+    attr_accessor :query
+    attr_accessor :user
+    attr_accessor :list
+    attr_accessor :room
+    attr_accessor :friends
+    attr_accessor :like
+    attr_accessor :link
+    attr_accessor :service
+    attr_accessor :start
+    attr_accessor :num
+    attr_accessor :fold
+    attr_accessor :updated
+    attr_accessor :home
+
+    def initialize
+      @viewname = 'entries'
+      @eid = @query = @user = @list = @room = @friends = @like = @link = @service = @start = @num = nil
+      @fold = false
+      @updated = false
+      @home = true
+      @param = nil
+    end
+
+    def parse(param, setting)
+      return unless param
+      @param = param
+      @eid = param(:id)
+      @query = param(:query)
+      @user = param(:user)
+      @list = param(:list)
+      @room = param(:room)
+      @friends = param(:friends)
+      @like = param(:like)
+      @link = param(:link)
+      @service = param(:service)
+      @start = (param(:start) || '0').to_i
+      if param(:num)
+        @num = param(:num).to_i
+      else
+        @num = setting.entries_in_page
+      end
+      @fold = (!@user and !@service and !@link and param(:fold) != 'no')
+      @updated = false
+      @home = !(@query or @like or @user or @friends or @list or @room or @link)
+    end
+
+    def opt
+      {
+        :query => @query,
+        :user => @user,
+        :list => @list,
+        :room => @room,
+        :friends => @friends,
+        :like => @like,
+        :link => @link,
+        :service => @service,
+        :fold => @fold ? nil : 'no'
+      }
+    end
+
+    def room_id
+      (@room != '*') ? @room : nil
+    end
+
+  private
+
+    def param(key)
+      v = @param[key]
+      (v and v.respond_to?(:empty?) and v.empty?) ? nil : v
+    end
   end
 
   verify :only => :list,
@@ -17,49 +87,31 @@ class EntryController < ApplicationController
           :redirect_to => {:action => 'list'}
 
   def list
-    @viewname = 'entries'
-    @eid = nil
-    @query = param(:query)
-    @user = param(:user)
-    @list = param(:list)
-    @room = param(:room)
-    @friends = param(:friends)
-    @like = param(:like)
-    @link = param(:link)
-    @service = param(:service)
-    @start = (param(:start) || '0').to_i
-    if param(:num)
-      @num = param(:num).to_i
-    else
-      @num = @setting.entries_in_page
-    end
-    @fold = (!@user and !@service and !@link and param(:fold) != 'no')
-    @home = false
+    @ctx = EntryContext.new
+    @ctx.parse(params, @setting)
     opt = create_opt(
-      :start => @start,
-      :num => @num,
-      :service => @service
+      :start => @ctx.start,
+      :num => @ctx.num,
+      :service => @ctx.service
     )
-    if @query
-      @entries = EntryThread.find(opt.merge(:query => @query, :user => @user, :room => @room, :friends => @friends, :service => @service))
-    elsif @like
-      user = @user || @auth.name
-      @entries = EntryThread.find(opt.merge(:like => @like, :user => user))
-    elsif @user
-      @entries = EntryThread.find(opt.merge(:user => @user))
-    elsif @friends
-      @entries = EntryThread.find(opt.merge(:friends => @friends, :merge_service => true))
-    elsif @list
-      @entries = EntryThread.find(opt.merge(:list => @list, :merge_service => true))
-    elsif @room
-      @entries = EntryThread.find(opt.merge(:room => @room, :merge_service => true))
-    elsif @link
-      @entries = EntryThread.find(opt.merge(:link => @link, :merge_service => true))
+    if @ctx.query
+      @entries = EntryThread.find(opt.merge(:query => @ctx.query, :user => @ctx.user, :room => @ctx.room, :friends => @ctx.friends, :service => @ctx.service))
+    elsif @ctx.like
+      user = @ctx.user || @auth.name
+      @entries = EntryThread.find(opt.merge(:like => @ctx.like, :user => user))
+    elsif @ctx.user
+      @entries = EntryThread.find(opt.merge(:user => @ctx.user))
+    elsif @ctx.friends
+      @entries = EntryThread.find(opt.merge(:friends => @ctx.friends, :merge_service => true))
+    elsif @ctx.list
+      @entries = EntryThread.find(opt.merge(:list => @ctx.list, :merge_service => true))
+    elsif @ctx.room
+      @entries = EntryThread.find(opt.merge(:room => @ctx.room, :merge_service => true))
+    elsif @ctx.link
+      @entries = EntryThread.find(opt.merge(:link => @ctx.link, :merge_service => true))
     else
-      @home = true
       @entries = EntryThread.find(opt.merge(:merge_service => true))
     end
-    @updated = false
     @entries ||= []
   end
 
@@ -73,30 +125,19 @@ class EntryController < ApplicationController
           :redirect_to => {:action => 'list'}
 
   def updated
-    @viewname = 'updated entries'
-    @eid = nil
-    @query = nil
-    @user = nil
-    @list = nil
-    @room = nil
-    @friends = nil
-    @like = nil
-    @link = nil
-    @service = nil
-    @start = nil
+    @ctx = EntryContext.new
+    @ctx.viewname = 'updated entries'
     if param(:num)
-      @num = param(:num).to_i
+      @ctx.num = param(:num).to_i
     else
-      @num = @setting.entries_in_page
+      @ctx.num = @setting.entries_in_page
     end
-    @fold = false
-    @home = true
+    @ctx.updated = true
     opt = create_opt(
-      :start => @start,
-      :num => @num
+      :start => @ctx.start,
+      :num => @ctx.num
     )
     @entries = EntryThread.find(opt.merge(:updated => true, :merge_service => true))
-    @updated = true
     @entries ||= []
     render :action => 'list'
   end
@@ -108,32 +149,22 @@ class EntryController < ApplicationController
           :redirect_to => {:action => 'list'}
 
   def show
-    @viewname = 'entry'
-    @eid = param(:id)
-    @query = nil
-    @user = nil
-    @list = nil
-    @room = nil
-    @friends = nil
-    @like = nil
-    @link = nil
-    @service = nil
-    @start = nil
-    @num = nil
-    @fold = false
-    @home = false
-    opt = create_opt(:id => @eid)
+    @ctx = EntryContext.new
+    @ctx.viewname = 'entry'
+    @ctx.eid = param(:id)
+    @ctx.home = false
+    opt = create_opt(:id => @ctx.eid)
     @entries = EntryThread.find(opt)
-    @updated = false
     @entries ||= []
     render :action => 'list'
   end
 
   def new
-    @viewname = 'post new entry'
+    @ctx = EntryContext.new
+    @ctx.viewname = 'post new entry'
+    @ctx.room = param(:room)
     @body = param(:body)
     @link = param(:link)
-    @room = param(:room)
     @title = param(:title)
     @lat = param(:lat)
     @long = param(:long)
@@ -151,7 +182,9 @@ class EntryController < ApplicationController
   end
 
   def reshare
-    @viewname = 'reshare entry'
+    @ctx = EntryContext.new
+    @ctx.viewname = 'reshare entry'
+    @ctx.room = param(:room)
     eid = param(:eid)
     opt = create_opt(:id => eid)
     t = EntryThread.find(opt).first
@@ -169,12 +202,9 @@ class EntryController < ApplicationController
   end
 
   def search
-    @viewname = 'search entries'
-    @query = param(:query)
-    @user = param(:user)
-    @room = param(:room)
-    @friends = param(:friends)
-    @service = param(:service)
+    @ctx = EntryContext.new
+    @ctx.viewname = 'search entries'
+    @ctx.parse(params, @setting)
   end
 
   verify :only => :add,

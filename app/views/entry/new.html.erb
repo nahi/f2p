@@ -2,7 +2,7 @@
   <p>
     message: <%= text_field_tag('body', @body) %><br/>
     link: <%= text_field_tag('link', @link) %><br/>
-    room: <%= text_field_tag('room', @room) %><br/>
+    room: <%= text_field_tag('room', ctx.room) %><br/>
     image upload: <%= file_field_tag('file') %><br/>
     <%= hidden_field_tag('lat', @lat) %>
     <%= hidden_field_tag('long', @long) %>
@@ -20,7 +20,7 @@ post.body.focus();
   Address: <%= text_field_tag('title', @title) %> <%= submit_tag 'search' %><br/>
   <%= hidden_field_tag('body', @body) %>
   <%= hidden_field_tag('link', @link) %>
-  <%= hidden_field_tag('room', @room) %>
+  <%= hidden_field_tag('room', ctx.room) %>
   </p>
   <%- if @placemark -%>
     <%- if @placemark.ambiguous? -%>

@@ -9,6 +9,49 @@ module ApplicationHelper
   YEAR_THRESHOLD = 1.year
   SELF_LABEL = 'You'
   GWT_URL_BASE = 'http://www.google.com/gwt/n?u='
+  ICON_NAME = {
+    'star' => 'star.png',
+    #'star' => 'heart.png', # for special 2/14 configuration!
+    'like' => 'thumb_up.png',
+    'comment' => 'comment.png',
+    'friend_comment' => 'user_comment.png',
+    'comment_add' => 'comment_add.png',
+    'delete' => 'delete.png',
+    'more' => 'add.png',
+    'write' => 'pencil_add.png',
+    'settings' => 'cog_edit.png',
+    'search' => 'find.png',
+    'logout' => 'user_delete.png',
+    'previous' => 'resultset_previous.png',
+    'next' => 'resultset_next.png',
+    'url' => 'world_link.png',
+    'reshare' => 'pencil_go.png',
+    'related' => 'link.png',
+    'go' => 'page_white_world.png',
+  }
+
+  def icon_tag(name, alt = nil)
+    name = name.to_s
+    url = F2P::Config.icon_url_base + ICON_NAME[name]
+    label = alt || name.gsub(/_/, ' ')
+    image_tag(url, :alt => h(label), :title => h(label), :size => '16x16')
+  end
+
+  def write_new_link
+    link_to(icon_tag(:write), :controller => 'entry', :action => 'new')
+  end
+
+  def search_link
+    link_to(icon_tag(:search), :controller => 'entry', :action => 'search')
+  end
+
+  def settings_link
+    link_to(icon_tag(:settings), :controller => 'setting', :action => 'index')
+  end
+
+  def logout_link
+    link_to(icon_tag(:logout), :controller => 'login', :action => 'clear')
+  end
 
   def u(arg)
     if arg
@@ -18,6 +61,14 @@ module ApplicationHelper
 
   def appname
     h(APPNAME)
+  end
+
+  def setting
+    @setting
+  end
+
+  def auth
+    @auth
   end
 
   def service_icon(service, link = nil)
@@ -42,7 +93,7 @@ module ApplicationHelper
     user_id = v(user, 'id')
     nickname = v(user, 'nickname')
     name = v(user, 'name')
-    if nickname == @auth.name
+    if nickname == auth.name
       name = SELF_LABEL
     end
     if nickname
@@ -55,7 +106,7 @@ module ApplicationHelper
     user_id = v(user, 'id')
     nickname = v(user, 'nickname')
     name = v(user, 'name')
-    if nickname == @auth.name
+    if nickname == auth.name
       name = SELF_LABEL
     end
     link_to(h(name), :controller => 'entry', :action => 'list', :user => u(nickname || user_id))
@@ -124,8 +175,8 @@ module ApplicationHelper
   def link_to(markup, *rest)
     if rest.size == 1 and rest.first.is_a?(String)
       opt = {}
-      opt[:target] = '_blank' if @setting.link_open_new_window
-      if @setting.link_type == 'gwt'
+      opt[:target] = '_blank' if setting.link_open_new_window
+      if setting.link_type == 'gwt'
         return super(markup, GWT_URL_BASE + u(rest.first), opt)
       else
         return super(markup, rest.first, opt)

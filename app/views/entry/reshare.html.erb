@@ -2,7 +2,7 @@
   <p>
     title: <%= text_field_tag('link_title', @link_title) %><br/>
     link: <%= link_to(h(@link), @link) %><br/>
-    room: <%= text_field_tag('room', @room) %><br/>
+    room: <%= text_field_tag('room', ctx.room) %><br/>
     <%= hidden_field_tag('link', @link) %>
     message: <%= text_field_tag('body') %><br/>
     <%= submit_tag 'post' %>

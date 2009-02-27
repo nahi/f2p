@@ -2,24 +2,24 @@
   <%= fold_link(entry) %>
 <%- else -%>
   <%= icon(entry) %>
-  <%= published(entry, false) if @eid -%>
+  <%= published(entry, false) if ctx.eid -%>
   <%= author_link(entry, (root_user.nil? or root_user != entry.user_id), (root_service.nil? or root_service != entry.service_identity)) %>
   <%= content(entry) %>
   <%- if comment_inline?(entry) -%>
     -- <%= comment(entry.comments.first) -%>
   <%- end -%>
   <%= via(entry) -%>
-  <%= published(entry, true) unless @eid -%>
+  <%= published(entry, true) unless ctx.eid -%>
   <%= original_link(entry) -%>
 <%= url_link(entry) -%>
-<%= likes(entry, !@eid) -%>
-<%= comments(entry, !@eid) -%>
+<%= likes(entry, !ctx.eid) -%>
+<%= comments(entry, !ctx.eid) -%>
 <%= delete_link(entry) -%>
 <%= like_link(entry) -%>
 <%= reshare_link(entry) -%>
   <%- if entry.comments.empty? or comment_inline?(entry) -%>
-<%= post_comment_link(entry) if !@eid %>
-  <%- elsif @eid -%>
+<%= post_comment_link(entry) if !ctx.eid %>
+  <%- elsif ctx.eid -%>
     <br/>
     <%- entry.comments.each do |comment| -%>
       <%= render :partial => 'comment', :locals => {:comment => comment} %><br/>
@@ -31,8 +31,8 @@
       <%- end -%>
     </ul>
   <%- end -%>
-  <%- if @eid -%>
-    <%- form_tag({:action => 'add_comment', :id => u(@eid)}, {:name => 'post'}) do -%>
+  <%- if ctx.eid -%>
+    <%- form_tag({:action => 'add_comment', :id => u(ctx.eid)}, {:name => 'post'}) do -%>
       <p><%= post_comment_form %></p>
       <script type='text/javascript'><!--
       post.body.focus();
