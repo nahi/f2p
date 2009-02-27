@@ -540,8 +540,16 @@ module EntryHelper
     end
   end
 
-  def undelete_link(id, comment)
+  def undo_delete_link(id, comment)
     link_to(h('Deleted.  UNDO?'), :action => 'undelete', :id => u(id), :comment => u(comment))
+  end
+
+  def undo_add_link(id)
+    link_to(h('Added.  UNDO?'), :action => 'delete', :id => u(id))
+  end
+
+  def undo_add_comment_link(id, comment)
+    link_to(h('Added.  UNDO?'), :action => 'delete', :id => u(id), :comment => u(comment))
   end
 
   def delete_comment_link(comment)

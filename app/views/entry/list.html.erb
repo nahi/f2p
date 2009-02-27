@@ -1,5 +1,9 @@
 <%- if flash[:deleted_id] -%>
-  <p class="message"><%= undelete_link(flash[:deleted_id], flash[:deleted_comment]) %></p>
+  <p class="message"><%= undo_delete_link(flash[:deleted_id], flash[:deleted_comment]) %></p>
+<%- elsif flash[:added_comment] -%>
+  <p class="message"><%= undo_add_comment_link(flash[:added_id], flash[:added_comment]) %></p>
+<%- elsif flash[:added_id] -%>
+  <p class="message"><%= undo_add_link(flash[:added_id]) %></p>
 <%- end -%>
 <%- if flash[:message] -%>
   <p class="message"><%=h flash[:message] %></p>

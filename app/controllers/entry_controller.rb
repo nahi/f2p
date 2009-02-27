@@ -317,11 +317,12 @@ class EntryController < ApplicationController
       render :action => 'new'
       return
     end
-    Entry.create(opt)
+    id = Entry.create(opt)
     flash[:keep_ctx] = true
     if session[:ctx]
       session[:ctx].reset_for_new
     end
+    flash[:added_id] = id
     redirect_to_list
   end
 
@@ -365,8 +366,10 @@ class EntryController < ApplicationController
     id = param(:id)
     body = param(:body)
     if id and body
-      Entry.add_comment(create_opt(:id => id, :body => body))
+      comment_id = Entry.add_comment(create_opt(:id => id, :body => body))
     end
+    flash[:added_id] = id
+    flash[:added_comment] = comment_id
     flash[:keep_ctx] = true
     redirect_to_list
   end

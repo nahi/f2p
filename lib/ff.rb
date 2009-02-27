@@ -219,7 +219,8 @@ module FriendFeed
       end
       query['room'] = room if room
       client_sync(uri, name, remote_key) do |client|
-        client.post(uri, query)
+        res = client.post(uri, query)
+        JSON.parse(res.content)['entries']
       end
     end
 
@@ -239,7 +240,8 @@ module FriendFeed
         'body' => body
       }
       client_sync(uri, name, remote_key) do |client|
-        client.post(uri, query)
+        res = client.post(uri, query)
+        JSON.parse(res.content)
       end
     end
 

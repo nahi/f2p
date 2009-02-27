@@ -2,6 +2,7 @@ require 'hash_utils'
 
 
 class Entry < Hash
+  extend HashUtils
   include HashUtils
 
   class << self
@@ -13,7 +14,8 @@ class Entry < Hash
       images = opt[:images]
       files = opt[:files]
       room = opt[:room]
-      ff_client.post(auth.name, auth.remote_key, body, link, comment, images, files, room)
+      entries = ff_client.post(auth.name, auth.remote_key, body, link, comment, images, files, room)
+      v(entries.first, 'id')
     end
 
     def delete(opt)
@@ -27,7 +29,8 @@ class Entry < Hash
       auth = opt[:auth]
       id = opt[:id]
       body = opt[:body]
-      ff_client.post_comment(auth.name, auth.remote_key, id, body)
+      comment = ff_client.post_comment(auth.name, auth.remote_key, id, body)
+      v(comment, 'id')
     end
 
     def delete_comment(opt)
