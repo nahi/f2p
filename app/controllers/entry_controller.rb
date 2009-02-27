@@ -232,6 +232,7 @@ class EntryController < ApplicationController
     @ctx.room = param(:room)
     @body = param(:body)
     @link = param(:link)
+    @with_form = param(:with_form)
     @title = param(:title)
     @lat = param(:lat)
     @long = param(:long)

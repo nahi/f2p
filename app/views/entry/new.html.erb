@@ -1,9 +1,13 @@
-<%- form_tag({:action => 'add'}, {:name => 'post', :multipart => true}) do -%>
+<%- form_tag({:action => 'add'}, {:name => 'post', :multipart => !@with_form.nil?}) do -%>
   <p>
     message: <%= text_field_tag('body', @body) %><br/>
     link: <%= text_field_tag('link', @link) %><br/>
     room: <%= text_field_tag('room', ctx.room) %><br/>
-    image upload: <%= file_field_tag('file') %><br/>
+    <%- if @with_form -%>
+      image upload: <%= file_field_tag('file') %><br/>
+    <%- else -%>
+      <%= link_to(h('image upload [experimental]'), :action => 'new', :with_form => '1') %><br/>
+    <%- end -%>
     <%= hidden_field_tag('lat', @lat) %>
     <%= hidden_field_tag('long', @long) %>
     <%= hidden_field_tag('title', @title) %>
