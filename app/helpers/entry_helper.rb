@@ -465,6 +465,7 @@ module EntryHelper
     }
     links << menu_link(menu_label('updated', '0'), {:action => 'updated'}, {:accesskey => '0'})
     links << menu_link(menu_label('home', '1'), {:action => 'list'}, {:accesskey => '1'})
+    links << menu_link(menu_label('me'), :action => 'list', :user => @auth.name)
     if ctx.user and ctx.user != auth.name
       links << menu_link(menu_label('friends'), :action => 'list', :friends => ctx.user) {
         !ctx.friends
