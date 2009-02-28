@@ -189,14 +189,6 @@ module ApplicationHelper
     super
   end
 
-  def media_tag(entry, url, *rest)
-    if entry and !ctx.eid and !setting.list_view_media_rendering
-      link_to(icon_tag(:media_disabled) + '[media disabled by setting]', :action => 'show', :id => u(entry.id))
-    else
-      image_tag(url, *rest)
-    end
-  end
-
   def link_url(url)
     link_to(h(url), url)
   end

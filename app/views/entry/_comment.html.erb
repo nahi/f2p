@@ -2,12 +2,12 @@
   <%= fold_comment_link(comment) %>
 <%- else -%>
   <%= comment_icon(comment.by_user(v(comment.entry, 'user', 'nickname'))) %>
-  <%= date(v(comment, 'date'), false) if ctx.eid %>
+  <%= date(v(comment, 'date'), false) if ctx.single? %>
   <%= comment(comment) %>
   by <%= user(comment) %>
   <%= via(comment) -%>
-  <%= date(v(comment, 'date'), true) unless ctx.eid %>
+  <%= date(v(comment, 'date'), true) if ctx.list? %>
   <%= comment_url_link(comment) -%>
 <%= delete_comment_link(comment) -%>
-<%= post_comment_link(comment.entry) if !ctx.eid and comment == comment.entry.comments.last -%>
+<%= post_comment_link(comment.entry) if ctx.single? and comment == comment.entry.comments.last -%>
 <%- end -%>

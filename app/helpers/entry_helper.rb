@@ -28,6 +28,14 @@ module EntryHelper
     service_icon(v(entry, 'service'), opt)
   end
 
+  def media_tag(entry, url, *rest)
+    if entry and ctx.list? and !setting.list_view_media_rendering
+      link_to(icon_tag(:media_disabled) + '[media disabled by setting]', :action => 'show', :id => u(entry.id))
+    else
+      image_tag(url, *rest)
+    end
+  end
+
   def content(entry)
     common = common_content(entry)
     case entry.service_id
@@ -491,7 +499,7 @@ module EntryHelper
     if opt[:with_bottom]
       links << menu_link(menu_label('bottom', '8'), '#bottom', :accesskey => '8')
     end
-    if !ctx.eid and ctx.user
+    if ctx.list? and ctx.user
       links << menu_link(menu_label('subscriptions'), '#subscriptions')
     end
     links << menu_link(menu_label('members'), '#members') if ctx.room_id
@@ -540,7 +548,7 @@ module EntryHelper
   end
 
   def delete_link(entry)
-    if ctx.eid and entry.nickname == auth.name
+    if ctx.single? and entry.nickname == auth.name
       link_to(icon_tag(:delete), {:action => 'delete', :id => u(entry.id)}, :confirm => 'Are you sure?')
     end
   end
@@ -558,7 +566,7 @@ module EntryHelper
   end
 
   def delete_comment_link(comment)
-    if ctx.eid
+    if ctx.single?
       cid = v(comment, 'id')
       name = v(comment, 'user', 'nickname')
       if name == auth.name or auth.name == comment.entry.nickname
@@ -576,7 +584,7 @@ module EntryHelper
   end
 
   def reshare_link(entry)
-    if ctx.eid and entry.link
+    if ctx.single? and entry.link
       opt = {
         :action => 'reshare',
         :eid => u(entry.id),
@@ -649,6 +657,6 @@ module EntryHelper
   end
 
   def comment_inline?(entry)
-    !ctx.eid and entry.self_comment_only?
+    ctx.list? and entry.self_comment_only?
   end
 end

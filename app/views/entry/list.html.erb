@@ -15,12 +15,12 @@
   <script type='text/javascript'><!--
   post.query.focus();
   //--></script>
-<%- elsif !ctx.eid -%>
+<%- elsif ctx.list? -%>
   <%- form_tag({:action => 'add'}, {:name => 'post'}) do -%>
     <p><%= post_entry_form %></p>
   <%- end -%>
 <%- end -%>
-<%- if !ctx.eid -%>
+<%- if ctx.list? -%>
   <%- if ctx.user -%>
     <p><%= service_links(ctx.user) %></p>
   <%- end -%>
@@ -51,7 +51,7 @@
   <%- end -%>
 </div>
 <p><a name="bottom"></a><%= page_links(:with_top => true) %></p>
-<%- if !ctx.eid and ctx.user -%>
+<%- if ctx.list? and ctx.user -%>
   <hr/>
   <p>
     <a name="subscriptions" id="subscriptions"><%= h(ctx.user) %>'s subscriptions:</a><br/>

@@ -90,6 +90,14 @@ class EntryController < ApplicationController
       @home = !(@query or @like or @user or @friends or @list or @room or @link)
     end
 
+    def single?
+      !!@eid
+    end
+
+    def list?
+      !single?
+    end
+
     def find_opt
       opt = {
         :auth => @auth,
