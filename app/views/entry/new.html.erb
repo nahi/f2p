@@ -38,7 +38,7 @@ post.body.focus();
     <%- else -%>
       <dl>
         <dt><%= h(@placemark.address) %></dt>
-        <dd><%= google_maps_link(@placemark) %></dd>
+        <dd><%= google_maps_link(@placemark, nil) %></dd>
       </dl>
     <%- end -%>
   <%- end -%>

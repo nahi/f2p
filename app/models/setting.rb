@@ -5,6 +5,7 @@ class Setting
   attr_accessor :text_folding_size
   attr_accessor :link_open_new_window
   attr_accessor :link_type
+  attr_accessor :list_view_media_rendering
 
   def initialize
     super
@@ -14,6 +15,7 @@ class Setting
     @text_folding_size = F2P::Config.text_folding_size
     @link_open_new_window = F2P::Config.link_open_new_window
     @link_type = F2P::Config.link_type
+    @list_view_media_rendering = F2P::Config.list_view_media_rendering
   end
 
   def validate

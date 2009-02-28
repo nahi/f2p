@@ -33,6 +33,7 @@ module F2P
       attr_accessor :link_open_new_window
       attr_accessor :link_type # nil or 'gwt'
       attr_accessor :updated_expiration
+      attr_accessor :list_view_media_rendering
     end
   end
 end
@@ -122,4 +123,5 @@ Rails::Initializer.run do |config|
   F2P::Config.link_open_new_window = false
   F2P::Config.link_type = 'gwt'
   F2P::Config.updated_expiration = 5400
+  F2P::Config.list_view_media_rendering = true
 end

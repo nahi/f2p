@@ -28,13 +28,17 @@ module ApplicationHelper
     'reshare' => 'pencil_go.png',
     'related' => 'link.png',
     'go' => 'page_white_world.png',
+    'media_disabled' => 'image_link.png',
   }
+
+  def icon_url(name)
+    F2P::Config.icon_url_base + ICON_NAME[name.to_s]
+  end
 
   def icon_tag(name, alt = nil)
     name = name.to_s
-    url = F2P::Config.icon_url_base + ICON_NAME[name]
     label = alt || name.gsub(/_/, ' ')
-    image_tag(url, :alt => h(label), :title => h(label), :size => '16x16')
+    image_tag(icon_url(name), :alt => h(label), :title => h(label), :size => '16x16')
   end
 
   def write_new_link
@@ -183,6 +187,14 @@ module ApplicationHelper
       end
     end
     super
+  end
+
+  def media_tag(entry, url, *rest)
+    if entry and !ctx.eid and !setting.list_view_media_rendering
+      link_to(icon_tag(:media_disabled) + '[media disabled by setting]', :action => 'show', :id => u(entry.id))
+    else
+      image_tag(url, *rest)
+    end
   end
 
   def link_url(url)

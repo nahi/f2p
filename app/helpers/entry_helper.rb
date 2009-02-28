@@ -143,7 +143,7 @@ module EntryHelper
         tb_height = v(tb, 'height')
         if tb_url
           label = title || entry.title
-          safe_content = image_tag(tb_url, :alt => h(label), :title => h(label), :size => image_size(tb_width, tb_height))
+          safe_content = media_tag(entry, tb_url, :alt => h(label), :title => h(label), :size => image_size(tb_width, tb_height))
         end
       elsif title
         safe_content = h(title)
@@ -171,14 +171,14 @@ module EntryHelper
     link
   end
 
-  def google_maps_link(point)
+  def google_maps_link(point, entry = nil)
     generator = GoogleMaps::URLGenerator.new(F2P::Config.google_maps_api_key)
     lat = point.lat
     long = point.long
     address = point.address
     tb = generator.staticmap_url(F2P::Config.google_maps_maptype, lat, long, :zoom => F2P::Config.google_maps_zoom, :width => F2P::Config.google_maps_width, :height => F2P::Config.google_maps_height)
     link = generator.link_url(lat, long, address)
-    link_to(image_tag(tb, :alt => h(address), :title => h(address), :size => image_size(F2P::Config.google_maps_width, F2P::Config.google_maps_height)), link)
+    link_to(media_tag(entry, tb, :alt => h(address), :title => h(address), :size => image_size(F2P::Config.google_maps_width, F2P::Config.google_maps_height)), link)
   end
 
   def brightkite_content(common, entry)
@@ -186,7 +186,7 @@ module EntryHelper
     long = v(entry, 'geo', 'long')
     if lat and long
       point = GoogleMaps::Point.new(entry.title, lat, long)
-      content = google_maps_link(point)
+      content = google_maps_link(point, entry)
       if !entry.medias.empty?
         common + ' ' + content
       else
