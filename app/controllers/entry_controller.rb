@@ -199,7 +199,7 @@ class EntryController < ApplicationController
       ctx.updated = true
     }
     store = session[:checked] ||= {}
-    unless flash[:redirect]
+    if param(:submit) == 'refresh' or updated_expired(Time.now)
       EntryThread.update_checked_modified(@auth, store)
       store = session[:checked] = {}
     end
@@ -209,6 +209,7 @@ class EntryController < ApplicationController
         store[e.id] = e[EntryThread::MODEL_LAST_MODIFIED_TAG]
       end
     end
+    session[:last_updated] = Time.now
     render :action => 'list'
   end
 
@@ -449,11 +450,16 @@ private
   end
 
   def redirect_to_list
-    flash[:redirect] = true
     if ctx = @ctx || session[:ctx]
       redirect_to ctx.redirect_to
     else
       redirect_to :action => 'list'
+    end
+  end
+
+  def updated_expired(time)
+    if session[:last_updated]
+      time - session[:last_updated] > F2P::Config.updated_expiration
     end
   end
 end

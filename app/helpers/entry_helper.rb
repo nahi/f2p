@@ -495,7 +495,11 @@ module EntryHelper
     end
     links << menu_link(menu_label('members'), '#members') if ctx.room_id
     links << menu_link(icon_tag(:next), list_opt(:action => 'list', :start => start + num, :num => num), :accesskey => '6') { !no_page }
-    links.join(' ')
+    str = links.join(' ')
+    if ctx.updated
+      str += button_to('refresh', {:action => 'updated'}, {:name => 'submit'})
+    end
+    str
   end
 
   def menu_label(label, accesskey = nil)

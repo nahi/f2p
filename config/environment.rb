@@ -32,6 +32,7 @@ module F2P
       attr_accessor :service_grouping_threashold
       attr_accessor :link_open_new_window
       attr_accessor :link_type # nil or 'gwt'
+      attr_accessor :updated_expiration
     end
   end
 end
@@ -120,4 +121,5 @@ Rails::Initializer.run do |config|
   F2P::Config.service_grouping_threashold = 5400
   F2P::Config.link_open_new_window = false
   F2P::Config.link_type = 'gwt'
+  F2P::Config.updated_expiration = 5400
 end
