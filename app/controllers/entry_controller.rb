@@ -150,14 +150,17 @@ class EntryController < ApplicationController
     end
 
     def redirect_to
+      {:action => default_action}
+    end
+
+    def default_action
       if @eid
-        action = 'show'
+        'show'
       elsif @updated
-        action = 'updated'
+        'updated'
       else
-        action = 'list'
+        'list'
       end
-      {:action => action}
     end
 
   private
@@ -197,6 +200,7 @@ class EntryController < ApplicationController
         ctx.num = @setting.entries_in_page
       end
       ctx.updated = true
+      ctx.fold = param(:fold) != 'no'
     }
     store = session[:checked] ||= {}
     if param(:submit) == 'refresh' or updated_expired(Time.now)

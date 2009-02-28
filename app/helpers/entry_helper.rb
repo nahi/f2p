@@ -357,7 +357,7 @@ module EntryHelper
 
   def fold_link(entry)
     msg = " (#{entry.fold_entries} more entries)"
-    link_to(icon_tag(:more), list_opt(:action => 'list', :start => ctx.start, :num => ctx.num, :fold => 'no')) + h(msg)
+    link_to(icon_tag(:more), list_opt(:action => ctx.default_action, :start => ctx.start, :num => ctx.num, :fold => 'no')) + h(msg)
   end
 
   def fold_comment_link(fold)
