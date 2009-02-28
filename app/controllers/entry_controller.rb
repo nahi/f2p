@@ -37,6 +37,7 @@ class EntryController < ApplicationController
     end
 
     def viewname
+      return @viewname if @viewname
       if @eid
         'entry'
       elsif @query
