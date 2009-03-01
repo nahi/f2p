@@ -17,6 +17,30 @@ class User < ActiveRecord::Base
       end
     end
 
+    def ff_id(arg)
+      auth = arg[:auth]
+      user = arg[:user]
+      ff_profile(auth, user)['id']
+    end
+
+    def ff_name(arg)
+      auth = arg[:auth]
+      user = arg[:user]
+      ff_profile(auth, user)['name']
+    end
+
+    def status(arg)
+      auth = arg[:auth]
+      user = arg[:user]
+      ff_profile(auth, user)['status']
+    end
+
+    def picture_url(arg)
+      user = arg[:user]
+      size = arg[:size] || 'small'
+      ff_picture_url(user, size)
+    end
+
     def services(arg)
       auth = arg[:auth]
       user = arg[:user]
@@ -43,8 +67,14 @@ class User < ActiveRecord::Base
 
   private
 
+    def ff_picture_url(user, size = 'small')
+      (@picture_url_cache ||= {})[user] ||=
+        ff_client.get_picture_url(user, size)
+    end
+
     def ff_profile(auth, user)
-      ff_client.get_profile(auth.name, auth.remote_key, user)
+      (@profile_cache ||= {})[[auth.name, user]] ||=
+        ff_client.get_profile(auth.name, auth.remote_key, user)
     end
 
     def sort_by_name(lists)

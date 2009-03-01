@@ -93,17 +93,18 @@ module ApplicationHelper
     link_to(h(room.name), :controller => 'entry', :action => 'list', :room => u(room.nickname))
   end
 
-  def user_picture(user)
-    user_id = v(user, 'id')
-    nickname = v(user, 'nickname')
-    name = v(user, 'name')
+  def user_name(nickname)
+    User.ff_name(:auth => auth, :user => nickname)
+  end
+
+  def user_picture(nickname, size = 'small')
+    user_id = User.ff_id(:auth => auth, :user => nickname)
+    name = User.ff_name(:auth => auth, :user => nickname)
     if nickname == auth.name
       name = SELF_LABEL
     end
-    if nickname
-      url = ff_client.get_picture_url(nickname, 'small')
-      link_to(image_tag(url, :alt => h(name), :title => h(name), :size => image_size(25, 25)), :controller => 'entry', :action => 'list', :user => u(nickname || user_id))
-    end
+    url = User.picture_url(:auth => auth, :user => nickname, :size => size)
+    link_to(image_tag(url, :alt => h(name), :title => h(name), :size => image_size(25, 25)), :controller => 'entry', :action => 'list', :user => u(nickname || user_id))
   end
 
   def user(user)

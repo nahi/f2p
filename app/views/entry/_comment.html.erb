@@ -9,5 +9,5 @@
   <%= date(v(comment, 'date'), true) if ctx.list? %>
   <%= comment_url_link(comment) -%>
 <%= delete_comment_link(comment) -%>
-<%= post_comment_link(comment.entry) if ctx.single? and comment == comment.entry.comments.last -%>
+<%= post_comment_link(comment.entry) if ctx.list? and comment == comment.entry.comments.last -%>
 <%- end -%>

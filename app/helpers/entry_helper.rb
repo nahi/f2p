@@ -391,7 +391,7 @@ module EntryHelper
       r[v(e, 'id')] = v(e, 'name')
       r
     }
-    links_if_exists('services: ', map.to_a.sort_by { |k, v| k }) { |id, name|
+    links_if_exists("#{map.size} services: ", map.to_a.sort_by { |k, v| k }) { |id, name|
       label = "[#{name}]"
       link_to(h(label), list_opt(:action => 'list', :user => u(user), :service => u(id)))
     }
@@ -433,7 +433,7 @@ module EntryHelper
       :user => user
     }
     users = (session[:subscriptions] ||= {})[user] ||= User.subscriptions(arg)
-    links_if_exists("(#{users.size} subscriptions) ", users) { |e|
+    links_if_exists("#{users.size} subscriptions: ", users) { |e|
       label = "[#{v(e, 'name')}]"
       nickname = v(e, 'nickname')
       if nickname
@@ -473,34 +473,28 @@ module EntryHelper
     }
     links << menu_link(menu_label('updated', '0'), {:action => 'updated'}, {:accesskey => '0'})
     links << menu_link(menu_label('home', '1'), {:action => 'list'}, {:accesskey => '1'})
-    links << menu_link(menu_label('me'), :action => 'list', :user => @auth.name)
-    if ctx.user and ctx.user != auth.name
-      links << menu_link(menu_label('friends'), :action => 'list', :friends => ctx.user) {
-        !ctx.friends
+    unless ctx.updated
+      links << menu_link(menu_label('me'), :action => 'list', :user => @auth.name)
+      if !(ctx.user || ctx.friends) or auth.name == ctx.user
+        links << menu_link(menu_label('lists'), :action => 'list', :list => 'favorite') {
+          !ctx.list
+        }
+        links << menu_link(menu_label('rooms'), :action => 'list', :room => '*') {
+          ctx.room != '*'
+        }
+      end
+      links << menu_link(menu_label('likes'), :action => 'list', :like => 'likes', :user => ctx.user || ctx.friends) {
+        ctx.like != 'likes'
+      }
+      links << menu_link(menu_label('liked'), :action => 'list', :like => 'liked', :user => ctx.user || ctx.friends) {
+        ctx.like != 'liked'
       }
     end
-    if !ctx.user or auth.name == ctx.user
-      links << menu_link(menu_label('lists'), :action => 'list', :list => 'favorite') {
-        !ctx.list
-      }
-      links << menu_link(menu_label('rooms'), :action => 'list', :room => '*') {
-        ctx.room != '*'
-      }
-    end
-    links << menu_link(h("[likes]"), :action => 'list', :like => 'likes', :user => ctx.user) {
-      ctx.like != 'likes'
-    }
-    links << menu_link(h("[liked]"), :action => 'list', :like => 'liked', :user => ctx.user) {
-      ctx.like != 'liked'
-    }
     if opt[:with_top]
       links << menu_link(menu_label('top', '2'), '#top', :accesskey => '2')
     end
     if opt[:with_bottom]
       links << menu_link(menu_label('bottom', '8'), '#bottom', :accesskey => '8')
-    end
-    if ctx.list? and ctx.user
-      links << menu_link(menu_label('subscriptions'), '#subscriptions')
     end
     links << menu_link(menu_label('members'), '#members') if ctx.room_id
     links << menu_link(icon_tag(:next), list_opt(:action => 'list', :start => start + num, :num => num), :accesskey => '6') { !no_page }
@@ -509,6 +503,16 @@ module EntryHelper
       str += button_to('refresh', {:action => 'updated'}, {:name => 'submit'})
     end
     str
+  end
+
+  def user_page_links(user)
+    links = []
+    if user != auth.name
+      name = user_name(user)
+      links << menu_link(menu_label("entries of #{name}"), :action => 'list', :user => ctx.user || ctx.friends)
+      links << menu_link(menu_label("entries of #{name} with friends"), :action => 'list', :friends => ctx.user || ctx.friends)
+    end
+    links.join(' ')
   end
 
   def menu_label(label, accesskey = nil)

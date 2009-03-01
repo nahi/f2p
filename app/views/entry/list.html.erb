@@ -21,8 +21,8 @@
   <%- end -%>
 <%- end -%>
 <%- if ctx.list? -%>
-  <%- if ctx.user -%>
-    <p><%= service_links(ctx.user) %></p>
+  <%- if ctx.user or ctx.friends -%>
+    <%= render :partial => 'profile', :locals => {:user => ctx.user || ctx.friends} %>
   <%- end -%>
   <%- if ctx.list -%>
     <p><%= list_links %></p>
@@ -51,13 +51,6 @@
   <%- end -%>
 </div>
 <p><a name="bottom"></a><%= page_links(:with_top => true) %></p>
-<%- if ctx.list? and ctx.user -%>
-  <hr/>
-  <p>
-    <a name="subscriptions" id="subscriptions"><%= h(ctx.user) %>'s subscriptions:</a><br/>
-    <%= user_links(ctx.user) %>
-  </p>
-<%- end -%>
 <%- if ctx.room and ctx.room != '*' -%>
   <hr/>
   <p>
