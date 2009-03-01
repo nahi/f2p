@@ -158,8 +158,15 @@ class EntryController < ApplicationController
       (@room != '*') ? @room : nil
     end
 
-    def redirect_to
-      {:action => default_action}
+    def link_opt(opt = {})
+      opt.merge(:action => default_action)
+    end
+
+  private
+
+    def param(key)
+      v = @param[key]
+      (v and v.respond_to?(:empty?) and v.empty?) ? nil : v
     end
 
     def default_action
@@ -170,13 +177,6 @@ class EntryController < ApplicationController
       else
         'list'
       end
-    end
-
-  private
-
-    def param(key)
-      v = @param[key]
-      (v and v.respond_to?(:empty?) and v.empty?) ? nil : v
     end
   end
 
@@ -203,6 +203,7 @@ class EntryController < ApplicationController
 
   def updated
     @ctx = restore_ctx { |ctx|
+      ctx.start = (param(:start) || '0').to_i
       if param(:num)
         ctx.num = param(:num).to_i
       else
@@ -464,7 +465,7 @@ private
 
   def redirect_to_list
     if ctx = @ctx || session[:ctx]
-      redirect_to ctx.redirect_to
+      redirect_to ctx.list_opt
     else
       redirect_to :action => 'list'
     end

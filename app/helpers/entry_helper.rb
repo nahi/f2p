@@ -365,7 +365,7 @@ module EntryHelper
 
   def fold_link(entry)
     msg = " (#{entry.fold_entries} more entries)"
-    link_to(icon_tag(:more), list_opt(:action => ctx.default_action, :start => ctx.start, :num => ctx.num, :fold => 'no')) + h(msg)
+    link_to(icon_tag(:more), list_opt(ctx.link_opt(:start => ctx.start, :num => ctx.num, :fold => 'no'))) + h(msg)
   end
 
   def fold_comment_link(fold)
@@ -468,7 +468,7 @@ module EntryHelper
     start = ctx.start || 0
     num = ctx.num || 0
     links = []
-    links << menu_link(icon_tag(:previous), list_opt(:action => 'list', :start => start - num, :num => num), :accesskey => '4') {
+    links << menu_link(icon_tag(:previous), list_opt(ctx.link_opt(:start => start - num, :num => num)), :accesskey => '4') {
       !no_page and start - num >= 0
     }
     links << menu_link(menu_label('updated', '0'), {:action => 'updated'}, {:accesskey => '0'})
@@ -497,7 +497,7 @@ module EntryHelper
       links << menu_link(menu_label('bottom', '8'), '#bottom', :accesskey => '8')
     end
     links << menu_link(menu_label('members'), '#members') if ctx.room_id
-    links << menu_link(icon_tag(:next), list_opt(:action => 'list', :start => start + num, :num => num), :accesskey => '6') { !no_page }
+    links << menu_link(icon_tag(:next), list_opt(ctx.link_opt(:start => start + num, :num => num)), :accesskey => '6') { !no_page }
     str = links.join(' ')
     if ctx.updated
       str += button_to('refresh', {:action => 'updated'}, {:name => 'submit'})
