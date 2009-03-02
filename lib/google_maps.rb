@@ -56,7 +56,7 @@ module GoogleMaps
       if result.nil? or v(result, 'error')
         nil
       elsif choices = v(result, 'choices', 'choice')
-        Candidates.new(choices)
+        Candidates.new(choices.uniq)
       else
         address = v(result, 'google_maps')
         address = nil if address.is_a?(SOAP::Mapping::Object)
