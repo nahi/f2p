@@ -104,8 +104,13 @@ module FriendFeed
     end
 
     # size: small, medium, or large.
-    def get_picture_url(name, size = 'small')
+    def get_user_picture_url(name, size = 'small')
       "http://friendfeed.com/#{name}/picture?size=#{size}"
+    end
+
+    # size: small, medium, or large.
+    def get_room_picture_url(name, size = 'small')
+      "http://friendfeed.com/rooms/#{name}/picture?size=#{size}"
     end
 
     def get_profile(name, remote_key, user = nil)

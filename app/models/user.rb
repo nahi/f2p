@@ -40,6 +40,12 @@ class User < ActiveRecord::Base
       ff_profile(auth, user)['name']
     end
 
+    def ff_url(arg)
+      auth = arg[:auth]
+      user = arg[:user]
+      ff_profile(auth, user)['profileUrl']
+    end
+
     def status(arg)
       auth = arg[:auth]
       user = arg[:user]
@@ -80,7 +86,7 @@ class User < ActiveRecord::Base
 
     def ff_picture_url(user, size = 'small')
       (@picture_url_cache ||= {})[user] ||=
-        ff_client.get_picture_url(user, size)
+        ff_client.get_user_picture_url(user, size)
     end
 
     def ff_profile(auth, user)

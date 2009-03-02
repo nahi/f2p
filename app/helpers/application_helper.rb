@@ -89,6 +89,17 @@ module ApplicationHelper
     end
   end
 
+  def room_name(nickname)
+    Room.ff_name(:auth => auth, :room => nickname)
+  end
+
+  def room_picture(nickname, size = 'small')
+    name = Room.ff_name(:auth => auth, :room => nickname)
+    image_url = Room.picture_url(:auth => auth, :room => nickname, :size => size)
+    url = Room.ff_url(:auth => auth, :room => nickname)
+    link_to(image_tag(image_url, :alt => h(name), :title => h(name), :size => image_size(25, 25)), url)
+  end
+
   def room(room)
     link_to(h(room.name), :controller => 'entry', :action => 'list', :room => u(room.nickname))
   end
@@ -103,8 +114,9 @@ module ApplicationHelper
     if nickname == auth.name
       name = SELF_LABEL
     end
-    url = User.picture_url(:auth => auth, :user => nickname, :size => size)
-    link_to(image_tag(url, :alt => h(name), :title => h(name), :size => image_size(25, 25)), :controller => 'entry', :action => 'list', :user => u(nickname || user_id))
+    image_url = User.picture_url(:auth => auth, :user => nickname, :size => size)
+    url = User.ff_url(:auth => auth, :user => nickname)
+    link_to(image_tag(image_url, :alt => h(name), :title => h(name), :size => image_size(25, 25)), url)
   end
 
   def user(user)

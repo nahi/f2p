@@ -496,7 +496,6 @@ module EntryHelper
     if opt[:with_bottom]
       links << menu_link(menu_label('bottom', '8'), '#bottom', :accesskey => '8')
     end
-    links << menu_link(menu_label('members'), '#members') if ctx.room_for
     links << menu_link(icon_tag(:next), list_opt(ctx.link_opt(:start => start + num, :num => num)), :accesskey => '6') { !no_page }
     str = links.join(' ')
     if ctx.updated

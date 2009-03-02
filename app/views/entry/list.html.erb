@@ -24,6 +24,9 @@
   <%- if ctx.user_for -%>
     <%= render :partial => 'profile', :locals => {:user => ctx.user_for} %>
   <%- end -%>
+  <%- if ctx.room_for -%>
+    <%= render :partial => 'room', :locals => {:room => ctx.room_for} %>
+  <%- end -%>
   <%- if ctx.list -%>
     <p><%= list_links %></p>
   <%- end -%>
@@ -51,10 +54,3 @@
   <%- end -%>
 </div>
 <p><a name="bottom"></a><%= page_links(:with_top => true) %></p>
-<%- if ctx.room and ctx.room != '*' -%>
-  <hr/>
-  <p>
-    <a name="members" id="members"><%= h(ctx.room)%> members:</a><br/>
-    <%= member_links(ctx.room) %>
-  </p>
-<%- end -%>
