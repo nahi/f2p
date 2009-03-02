@@ -76,7 +76,7 @@ module EntryHelper
       user_str += user(entry)
     end
     if show_service
-      if ctx.room_id
+      if ctx.room_for
         name = v(entry, 'service', 'name')
       else
         if entry.room
@@ -345,7 +345,7 @@ module EntryHelper
     str = ''
     str += hidden_field_tag('user', ctx.user) if ctx.user
     str += hidden_field_tag('list', ctx.list) if ctx.list
-    str += hidden_field_tag('room', ctx.room_id) if ctx.room_id
+    str += hidden_field_tag('room', ctx.room_for) if ctx.room_for
     str += hidden_field_tag('friends', ctx.friends) if ctx.friends
     str += hidden_field_tag('service', ctx.service) if ctx.service
     str += text_field_tag('query', ctx.query) + submit_tag('search')
@@ -354,7 +354,7 @@ module EntryHelper
 
   def post_entry_form
     str = ''
-    str += hidden_field_tag('room', ctx.room_id) + h(ctx.room_id) + ': ' if ctx.room_id
+    str += hidden_field_tag('room', ctx.room_for) + h(ctx.room_for) + ': ' if ctx.room_for
     str += text_field_tag('body') + submit_tag('post')
     str
   end
@@ -374,7 +374,7 @@ module EntryHelper
   end
 
   def write_new_link
-    link_to(icon_tag(:write), :controller => 'entry', :action => 'new', :room => u(ctx.room_id))
+    link_to(icon_tag(:write), :controller => 'entry', :action => 'new', :room => u(ctx.room_for))
   end
 
   def search_link
@@ -475,7 +475,7 @@ module EntryHelper
     links << menu_link(menu_label('home', '1'), {:action => 'list'}, {:accesskey => '1'})
     unless ctx.updated
       links << menu_link(menu_label('me'), :action => 'list', :user => @auth.name)
-      if !(ctx.user || ctx.friends) or auth.name == ctx.user
+      if !ctx.user_for or auth.name == ctx.user_for
         links << menu_link(menu_label('lists'), :action => 'list', :list => 'favorite') {
           !ctx.list
         }
@@ -483,10 +483,10 @@ module EntryHelper
           ctx.room != '*'
         }
       end
-      links << menu_link(menu_label('likes'), :action => 'list', :like => 'likes', :user => ctx.user || ctx.friends) {
+      links << menu_link(menu_label('likes'), :action => 'list', :like => 'likes', :user => ctx.user_for) {
         ctx.like != 'likes'
       }
-      links << menu_link(menu_label('liked'), :action => 'list', :like => 'liked', :user => ctx.user || ctx.friends) {
+      links << menu_link(menu_label('liked'), :action => 'list', :like => 'liked', :user => ctx.user_for) {
         ctx.like != 'liked'
       }
     end
@@ -496,7 +496,7 @@ module EntryHelper
     if opt[:with_bottom]
       links << menu_link(menu_label('bottom', '8'), '#bottom', :accesskey => '8')
     end
-    links << menu_link(menu_label('members'), '#members') if ctx.room_id
+    links << menu_link(menu_label('members'), '#members') if ctx.room_for
     links << menu_link(icon_tag(:next), list_opt(ctx.link_opt(:start => start + num, :num => num)), :accesskey => '6') { !no_page }
     str = links.join(' ')
     if ctx.updated
@@ -509,8 +509,8 @@ module EntryHelper
     links = []
     if user != auth.name
       name = user_name(user)
-      links << menu_link(menu_label("entries of #{name}"), :action => 'list', :user => ctx.user || ctx.friends)
-      links << menu_link(menu_label("entries of #{name} with friends"), :action => 'list', :friends => ctx.user || ctx.friends)
+      links << menu_link(menu_label("entries of #{name}"), :action => 'list', :user => user)
+      links << menu_link(menu_label("entries of #{name} with friends"), :action => 'list', :friends => user)
     end
     links.join(' ')
   end

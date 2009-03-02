@@ -154,8 +154,13 @@ class EntryController < ApplicationController
       }
     end
 
-    def room_id
+    def room_for
       (@room != '*') ? @room : nil
+    end
+
+    def user_for
+      user = @user || @friends
+      user != 'me' ? user : nil
     end
 
     def link_opt(opt = {})
