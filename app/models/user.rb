@@ -13,7 +13,18 @@ class User < ActiveRecord::Base
   class << self
     def validate(name, remote_key)
       if name and remote_key
-        ff_client.validate(name, remote_key)
+        if ff_client.validate(name, remote_key)
+          if user = User.find_by_name(name)
+            user.remote_key = remote_key
+          else
+            user = User.new
+            user.name = name
+            user.remote_key = remote_key
+          end
+          if user.save
+            user
+          end
+        end
       end
     end
 

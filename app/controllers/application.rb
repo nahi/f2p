@@ -118,8 +118,6 @@ private
   end
 
   def logout
-    STDERR.puts(session[:checked])
-    STDERR.puts(@auth)
     update_checked_modified(session[:checked])
     @user_id = session[:user_id] = nil
     @auth = nil
@@ -138,7 +136,7 @@ private
   end
 
   def update_checked_modified(store)
-    if @auth
+    if @auth and store
       EntryThread.update_checked_modified(@auth, store)
     end
   end
