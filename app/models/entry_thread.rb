@@ -108,22 +108,24 @@ class EntryThread
       entries.each do |entry|
         entry[MODEL_PIN_TAG] = true if map.key?(entry.id)
       end
-      if opt[:start] and opt[:start] != 0
-        entries.find_all { |entry|
-          !entry[MODEL_PIN_TAG]
-        }
-      else
-        pinned = Pin.find_all_by_user_id(auth.id).map { |e| e.eid }
-        rest_ids = pinned - target_ids
-        unless rest_ids.empty?
-          pinned_entries = wrap(get_entries(auth, :ids => rest_ids) || [])
-          pinned_entries.each do |entry|
-            entry[MODEL_PIN_TAG] = true
+      if opt[:updated]
+        if opt[:start] and opt[:start] != 0
+          entries.find_all { |entry|
+            !entry[MODEL_PIN_TAG]
+          }
+        else
+          pinned = Pin.find_all_by_user_id(auth.id).map { |e| e.eid }
+          rest_ids = pinned - target_ids
+          unless rest_ids.empty?
+            pinned_entries = wrap(get_entries(auth, :ids => rest_ids) || [])
+            pinned_entries.each do |entry|
+              entry[MODEL_PIN_TAG] = true
+            end
+            entries += pinned_entries
           end
-          entries += pinned_entries
         end
-        entries
       end
+      entries
     end
 
     def pinned_map(auth, eids)
