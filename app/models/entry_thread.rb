@@ -41,6 +41,7 @@ class EntryThread
       ]
       checked = CheckedModified.find(:all, :conditions => cond, :include => 'last_modified')
       hash.each do |eid, checked_modified|
+        next unless checked_modified
         if c = checked.find { |e| e.last_modified.eid == eid }
           c.checked = Time.parse(checked_modified)
           raise unless c.save
@@ -92,27 +93,6 @@ class EntryThread
           entry[MODEL_LAST_MODIFIED_TAG] = entry.modified
           true
         end
-=begin
-        if c = checked.find { |e| e.last_modified.eid == entry.id }
-          if c.checked >= c.last_modified.date
-            false
-          else
-            c.checked = c.last_modified.date
-            raise unless c.save
-            true
-          end
-        else
-          m = mods.find { |e| e.eid == entry.id }
-          raise unless m
-          c = CheckedModified.new
-          c.user = auth
-          c.last_modified = m
-          raise if c.last_modified.nil?
-          c.checked = c.last_modified.date
-          raise unless c.save
-          true
-        end
-=end
       }
     end
 
