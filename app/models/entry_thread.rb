@@ -1,5 +1,6 @@
 class EntryThread
   MODEL_LAST_MODIFIED_TAG = '__model_last_modified'
+  MODEL_PIN_TAG = '__model_pin'
 
   class << self
     def find(opt = {})
@@ -30,10 +31,14 @@ class EntryThread
       if opt[:updated]
         wrapped = filter_checked_entries(auth, wrapped)
       end
+      if opt[:updated] or opt[:id]
+        wrapped = check_pin(auth, wrapped)
+      end
       sort_by_service(wrapped, opt)
     end
 
     def update_checked_modified(auth, hash)
+      pinned = pinned_map(auth, hash.keys)
       cond = [
         'user_id = ? and last_modifieds.eid in (?)',
         auth.id,
@@ -42,6 +47,7 @@ class EntryThread
       checked = CheckedModified.find(:all, :conditions => cond, :include => 'last_modified')
       hash.each do |eid, checked_modified|
         next unless checked_modified
+        next if pinned.key?(eid)
         if c = checked.find { |e| e.last_modified.eid == eid }
           c.checked = Time.parse(checked_modified)
           raise unless c.save
@@ -94,6 +100,23 @@ class EntryThread
           true
         end
       }
+    end
+
+    def check_pin(auth, entries)
+      pinned = pinned_map(auth, entries.map { |e| e.id })
+      entries.each do |entry|
+        entry[MODEL_PIN_TAG] = true if pinned.key?(entry.id)
+      end
+      entries
+    end
+
+    def pinned_map(auth, eids)
+      cond = [
+        'user_id = ? and eid in (?)',
+        auth.id,
+        eids
+      ]
+      Pin.find(:all, :conditions => cond).inject({}) { |r, e| r[e.eid] = true; r }
     end
 
     def search_entries(auth, opt)

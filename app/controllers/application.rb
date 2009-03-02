@@ -118,7 +118,7 @@ private
   end
 
   def logout
-    update_checked_modified(session[:checked])
+    update_checked_modified
     @user_id = session[:user_id] = nil
     @auth = nil
     reset_session
@@ -135,9 +135,21 @@ private
     }
   end
 
-  def update_checked_modified(store)
+  def update_checked_modified
+    store = session[:checked]
     if @auth and store
       EntryThread.update_checked_modified(@auth, store)
+      session[:checked] = {}
+    end
+  end
+
+  def clear_checked_modified(eid)
+    cond = ['user_id = ? and last_modifieds.eid = ?', @auth.id, eid]
+    if checked = CheckedModified.find(:first, :conditions => cond, :include => 'last_modified')
+      checked.destroy
+    end
+    if checked = session[:checked]
+      checked.delete(eid)
     end
   end
 end

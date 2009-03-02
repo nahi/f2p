@@ -29,6 +29,8 @@ module ApplicationHelper
     'related' => 'link.png',
     'go' => 'page_white_world.png',
     'media_disabled' => 'image_link.png',
+    'pinned' => 'tick.png',
+    'pin' => 'anchor.png',
   }
 
   def icon_url(name)

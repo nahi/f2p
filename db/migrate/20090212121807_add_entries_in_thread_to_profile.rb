@@ -1,9 +1,11 @@
 class AddEntriesInThreadToProfile < ActiveRecord::Migration
   def self.up
     add_column :profiles, :entries_in_thread, :integer
-    Profile.find(:all).each do |profile|
-      profile.entries_in_thread = F2P::Config.entries_in_thread
-      profile.save
+    if defined?(Profile)
+      Profile.find(:all).each do |profile|
+        profile.entries_in_thread = F2P::Config.entries_in_thread
+        profile.save
+      end
     end
   end
 

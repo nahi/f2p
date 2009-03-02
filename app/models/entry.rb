@@ -53,11 +53,34 @@ class Entry < Hash
       ff_client.unlike(auth.name, auth.remote_key, id)
     end
 
+    def add_pin(opt)
+      auth = opt[:auth]
+      id = opt[:id]
+      unless Pin.find_by_user_id_and_eid(auth.id, id)
+        pin = Pin.new
+        pin.user = auth
+        pin.eid = id
+        raise unless pin.save
+      end
+    end
+
+    def delete_pin(opt)
+      auth = opt[:auth]
+      id = opt[:id]
+      if pin = Pin.find_by_user_id_and_eid(auth.id, id)
+        raise unless pin.destroy
+      end
+    end
+
   private
 
     def ff_client
       ApplicationController.ff_client
     end
+  end
+
+  def pinned?
+    !!v(EntryThread::MODEL_PIN_TAG)
   end
 
   def similar?(rhs)

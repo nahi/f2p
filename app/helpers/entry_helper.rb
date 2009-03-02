@@ -9,6 +9,14 @@ module EntryHelper
     @ctx
   end
 
+  def pin_link(entry)
+    if entry.pinned?
+      link_to(icon_tag(:pinned, 'unpin'), :action => 'unpin', :id => entry.id)
+    else
+      link_to(icon_tag(:pin), :action => 'pin', :id => entry.id)
+    end
+  end
+
   def icon(entry)
     service_id = entry.service_id
     name = v(entry, 'service', 'name')
@@ -285,7 +293,7 @@ module EntryHelper
     likes = me + rest
     if !likes.empty?
       if liked?(entry)
-        icon = link_to(icon_tag(:star, 'un-like'), :action => 'unlike', :id => u(entry.id))
+        icon = link_to(icon_tag(:star, 'unlike'), :action => 'unlike', :id => u(entry.id))
       else
         icon = icon_tag(:star)
       end

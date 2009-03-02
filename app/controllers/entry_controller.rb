@@ -217,11 +217,10 @@ class EntryController < ApplicationController
       ctx.updated = true
       ctx.fold = param(:fold) != 'no'
     }
-    store = session[:checked] ||= {}
     if param(:submit) == 'refresh' or updated_expired(Time.now)
-      update_checked_modified(store)
-      store = session[:checked] = {}
+      update_checked_modified
     end
+    store = session[:checked] ||= {}
     @entries = EntryThread.find(@ctx.find_opt) || []
     @entries.each do |t|
       t.entries.each do |e|
@@ -420,6 +419,37 @@ class EntryController < ApplicationController
     id = param(:id)
     if id
       Entry.delete_like(create_opt(:id => id))
+    end
+    flash[:keep_ctx] = true
+    redirect_to_list
+  end
+
+  verify :only => :pin,
+          :method => :get,
+          :params => [:id],
+          :add_flash => {:error => 'verify failed'},
+          :redirect_to => {:action => 'list'}
+
+  def pin
+    id = param(:id)
+    if id
+      Entry.add_pin(create_opt(:id => id))
+      clear_checked_modified(id)
+    end
+    flash[:keep_ctx] = true
+    redirect_to_list
+  end
+
+  verify :only => :unpin,
+          :method => :get,
+          :params => [:id],
+          :add_flash => {:error => 'verify failed'},
+          :redirect_to => {:action => 'list'}
+
+  def unpin
+    id = param(:id)
+    if id
+      Entry.delete_pin(create_opt(:id => id))
     end
     flash[:keep_ctx] = true
     redirect_to_list
