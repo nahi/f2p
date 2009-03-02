@@ -28,11 +28,11 @@ class EntryThread
         entries = get_home_entries(auth, opt)
       end
       wrapped = wrap(entries || [])
+      if opt[:updated] or opt[:id]
+        wrapped = filter_pinned_entries(auth, wrapped, opt)
+      end
       if opt[:updated]
         wrapped = filter_checked_entries(auth, wrapped)
-      end
-      if opt[:updated] or opt[:id]
-        wrapped = check_pin(auth, wrapped)
       end
       sort_by_service(wrapped, opt)
     end
@@ -102,12 +102,28 @@ class EntryThread
       }
     end
 
-    def check_pin(auth, entries)
-      pinned = pinned_map(auth, entries.map { |e| e.id })
+    def filter_pinned_entries(auth, entries, opt)
+      target_ids = entries.map { |e| e.id }
+      map = pinned_map(auth, target_ids)
       entries.each do |entry|
-        entry[MODEL_PIN_TAG] = true if pinned.key?(entry.id)
+        entry[MODEL_PIN_TAG] = true if map.key?(entry.id)
       end
-      entries
+      if opt[:start] and opt[:start] != 0
+        entries.find_all { |entry|
+          !entry[MODEL_PIN_TAG]
+        }
+      else
+        pinned = Pin.find_all_by_user_id(auth.id).map { |e| e.eid }
+        rest_ids = pinned - target_ids
+        unless rest_ids.empty?
+          pinned_entries = wrap(get_entries(auth, :ids => rest_ids) || [])
+          pinned_entries.each do |entry|
+            entry[MODEL_PIN_TAG] = true
+          end
+          entries += pinned_entries
+        end
+        entries
+      end
     end
 
     def pinned_map(auth, eids)
@@ -175,6 +191,11 @@ class EntryThread
     def get_entry(auth, opt)
       id = opt[:id]
       ff_client.get_entry(auth.name, auth.remote_key, id)
+    end
+
+    def get_entries(auth, opt)
+      ids = opt[:ids]
+      ff_client.get_entries(auth.name, auth.remote_key, ids)
     end
 
     def filter_opt(opt)

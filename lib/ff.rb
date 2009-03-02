@@ -134,6 +134,14 @@ module FriendFeed
       end
     end
 
+    def get_entries(name, remote_key, eids, opt = {})
+      uri = uri("feed/entry")
+      opt = opt.merge(:entry_id => eids.join(','))
+      client_sync(uri, name, remote_key) do |client|
+        get_feed(client, uri, opt)
+      end
+    end
+
     def get_home_entries(name, remote_key, opt = {})
       uri = uri("feed/home")
       client_sync(uri, name, remote_key) do |client|
