@@ -465,7 +465,7 @@ private
 
   def redirect_to_list
     if ctx = @ctx || session[:ctx]
-      redirect_to ctx.list_opt
+      redirect_to ctx.link_opt
     else
       redirect_to :action => 'list'
     end
