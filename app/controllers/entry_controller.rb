@@ -219,7 +219,7 @@ class EntryController < ApplicationController
     }
     store = session[:checked] ||= {}
     if param(:submit) == 'refresh' or updated_expired(Time.now)
-      EntryThread.update_checked_modified(@auth, store)
+      update_checked_modified(store)
       store = session[:checked] = {}
     end
     @entries = EntryThread.find(@ctx.find_opt) || []

@@ -14,7 +14,9 @@ class LoginController < ApplicationController
   end
 
   def clear
-    logout
+    if ensure_login
+      logout
+    end
     redirect_to :action => 'index'
   end
 

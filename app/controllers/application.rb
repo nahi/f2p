@@ -118,6 +118,9 @@ private
   end
 
   def logout
+    STDERR.puts(session[:checked])
+    STDERR.puts(@auth)
+    update_checked_modified(session[:checked])
     @user_id = session[:user_id] = nil
     @auth = nil
     reset_session
@@ -132,5 +135,11 @@ private
     keywords.inject(hash) { |r, k|
       r[k] if r
     }
+  end
+
+  def update_checked_modified(store)
+    if @auth
+      EntryThread.update_checked_modified(@auth, store)
+    end
   end
 end
