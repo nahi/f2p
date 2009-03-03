@@ -228,7 +228,9 @@ class EntryThread
 
     def sort_by_service(entries, opt = {})
       result = []
-      buf = entries.find_all { |e| !e.hidden? }.sort_by { |e| e.modified }.reverse
+      buf = entries.find_all { |e| !e.hidden? }.sort_by { |e|
+        [e.modified, e.id].join('-') # join e.id for stable sort
+      }.reverse
       while !buf.empty?
         entry = buf.shift
         result << (t = EntryThread.new(entry))
