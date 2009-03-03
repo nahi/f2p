@@ -31,6 +31,8 @@ module ApplicationHelper
     'media_disabled' => 'image_link.png',
     'pinned' => 'tick.png',
     'pin' => 'anchor.png',
+    'bottom' => 'arrow_down.png',
+    'top' => 'arrow_up.png',
   }
 
   def icon_url(name)

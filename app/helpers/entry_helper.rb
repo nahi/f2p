@@ -476,12 +476,17 @@ module EntryHelper
     start = ctx.start || 0
     num = ctx.num || 0
     links = []
+    if opt[:with_bottom]
+      links << link_to(icon_tag(:bottom), '#bottom', :accesskey => '8')
+    end
     links << menu_link(icon_tag(:previous), list_opt(ctx.link_opt(:start => start - num, :num => num)), :accesskey => '4') {
       !no_page and start - num >= 0
     }
     links << menu_link(menu_label('inbox', '0'), {:action => 'inbox'}, {:accesskey => '0'})
     links << menu_link(menu_label('home', '1'), {:action => 'list'}, {:accesskey => '1'})
-    unless ctx.inbox
+    if ctx.inbox
+      links << menu_link(menu_label('likes'), :action => 'list', :like => 'likes', :user => ctx.user_for)
+    else
       links << menu_link(menu_label('me'), :action => 'list', :user => @auth.name)
       if !ctx.user_for or auth.name == ctx.user_for
         links << menu_link(menu_label('lists'), :action => 'list', :list => 'favorite') {
@@ -498,13 +503,10 @@ module EntryHelper
         ctx.like != 'liked'
       }
     end
-    if opt[:with_top]
-      links << menu_link(menu_label('top', '2'), '#top', :accesskey => '2')
-    end
-    if opt[:with_bottom]
-      links << menu_link(menu_label('bottom', '8'), '#bottom', :accesskey => '8')
-    end
     links << menu_link(icon_tag(:next), list_opt(ctx.link_opt(:start => start + num, :num => num)), :accesskey => '6') { !no_page }
+    if opt[:with_top]
+      links << link_to(icon_tag(:top), '#top', :accesskey => '2')
+    end
     str = links.join(' ')
     if ctx.inbox
       str += button_to('refresh', {:action => 'inbox'}, {:name => 'submit'})
