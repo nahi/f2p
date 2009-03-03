@@ -28,10 +28,10 @@ class EntryThread
         entries = get_home_entries(auth, opt)
       end
       wrapped = wrap(entries || [])
-      if opt[:updated] or opt[:id]
+      if opt[:inbox] or opt[:id]
         check_pinned(auth, wrapped, opt)
       end
-      if opt[:updated]
+      if opt[:inbox]
         wrapped = filter_pinned_entries(auth, wrapped, opt)
         wrapped = filter_checked_entries(auth, wrapped)
       end

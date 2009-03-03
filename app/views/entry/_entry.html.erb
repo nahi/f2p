@@ -1,7 +1,7 @@
 <%- if entry.respond_to?(:fold_entries) -%>
   <%= fold_link(entry) %>
 <%- else -%>
-  <%= pin_link(entry) if ctx.updated or ctx.single? -%>
+  <%= pin_link(entry) if ctx.inbox or ctx.single? -%>
   <%= icon(entry) %>
   <%= published(entry, false) if ctx.single? -%>
   <%= author_link(entry, (root_user.nil? or root_user != entry.user_id), (root_service.nil? or root_service != entry.service_identity)) %>

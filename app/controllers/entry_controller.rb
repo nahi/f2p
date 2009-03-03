@@ -19,7 +19,7 @@ class EntryController < ApplicationController
     attr_accessor :start
     attr_accessor :num
     attr_accessor :fold
-    attr_accessor :updated
+    attr_accessor :inbox
     attr_accessor :home
 
     def initialize(auth)
@@ -27,7 +27,7 @@ class EntryController < ApplicationController
       @viewname = nil
       @eid = @query = @user = @list = @room = @friends = @like = @link = @service = @start = @num = nil
       @fold = false
-      @updated = false
+      @inbox = false
       @home = true
       @param = nil
     end
@@ -60,8 +60,8 @@ class EntryController < ApplicationController
         end
       elsif @link
         'related entries'
-      elsif @updated
-        'updated entries'
+      elsif @inbox
+        'inbox entries'
       else
         'home entries'
       end
@@ -86,7 +86,7 @@ class EntryController < ApplicationController
         @num = setting.entries_in_page
       end
       @fold = (!@user and !@service and !@link and param(:fold) != 'no')
-      @updated = false
+      @inbox = false
       @home = !(@query or @like or @user or @friends or @list or @room or @link)
     end
 
@@ -121,8 +121,8 @@ class EntryController < ApplicationController
         opt.merge(:room => @room, :merge_service => true)
       elsif @link
         opt.merge(:link => @link, :merge_service => true)
-      elsif @updated
-        opt.merge(:updated => true, :merge_service => true)
+      elsif @inbox
+        opt.merge(:inbox => true, :merge_service => true)
       else
         opt.merge(:merge_service => true)
       end
@@ -177,8 +177,8 @@ class EntryController < ApplicationController
     def default_action
       if @eid
         'show'
-      elsif @updated
-        'updated'
+      elsif @inbox
+        'inbox'
       else
         'list'
       end
@@ -201,12 +201,12 @@ class EntryController < ApplicationController
     redirect_to_list
   end
 
-  verify :only => :updated,
+  verify :only => :inbox,
           :method => [:get, :post],
           :add_flash => {:error => 'verify failed'},
           :redirect_to => {:action => 'list'}
 
-  def updated
+  def inbox
     @ctx = restore_ctx { |ctx|
       ctx.start = (param(:start) || '0').to_i
       if param(:num)
@@ -214,7 +214,7 @@ class EntryController < ApplicationController
       else
         ctx.num = @setting.entries_in_page
       end
-      ctx.updated = true
+      ctx.inbox = true
       ctx.fold = param(:fold) != 'no'
     }
     if param(:submit) == 'refresh' or updated_expired(Time.now)
@@ -229,6 +229,10 @@ class EntryController < ApplicationController
     end
     session[:last_updated] = Time.now
     render :action => 'list'
+  end
+
+  def updated
+    redirect_to :action => 'inbox'
   end
 
   verify :only => :show,
