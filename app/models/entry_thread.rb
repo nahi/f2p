@@ -29,9 +29,10 @@ class EntryThread
       end
       wrapped = wrap(entries || [])
       if opt[:updated] or opt[:id]
-        wrapped = filter_pinned_entries(auth, wrapped, opt)
+        check_pinned(auth, wrapped, opt)
       end
       if opt[:updated]
+        wrapped = filter_pinned_entries(auth, wrapped, opt)
         wrapped = filter_checked_entries(auth, wrapped)
       end
       sort_by_service(wrapped, opt)
@@ -102,30 +103,30 @@ class EntryThread
       }
     end
 
-    def filter_pinned_entries(auth, entries, opt)
-      target_ids = entries.map { |e| e.id }
-      map = pinned_map(auth, target_ids)
+    def check_pinned(auth, entries, opt)
+      map = pinned_map(auth, entries.map { |e| e.id })
       entries.each do |entry|
         entry[MODEL_PIN_TAG] = true if map.key?(entry.id)
       end
-      if opt[:updated]
-        if opt[:start] and opt[:start] != 0
-          entries.find_all { |entry|
-            !entry[MODEL_PIN_TAG]
-          }
-        else
-          pinned = Pin.find_all_by_user_id(auth.id).map { |e| e.eid }
-          rest_ids = pinned - target_ids
-          unless rest_ids.empty?
-            pinned_entries = wrap(get_entries(auth, :ids => rest_ids) || [])
-            pinned_entries.each do |entry|
-              entry[MODEL_PIN_TAG] = true
-            end
-            entries += pinned_entries
+    end
+
+    def filter_pinned_entries(auth, entries, opt)
+      if opt[:start] and opt[:start] != 0
+        entries.find_all { |entry|
+          !entry[MODEL_PIN_TAG]
+        }
+      else
+        pinned = Pin.find_all_by_user_id(auth.id).map { |e| e.eid }
+        rest_ids = pinned - entries.map { |e| e.id }
+        unless rest_ids.empty?
+          pinned_entries = wrap(get_entries(auth, :ids => rest_ids) || [])
+          pinned_entries.each do |entry|
+            entry[MODEL_PIN_TAG] = true
           end
+          entries += pinned_entries
         end
+        entries
       end
-      entries
     end
 
     def pinned_map(auth, eids)
