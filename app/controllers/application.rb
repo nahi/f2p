@@ -143,6 +143,14 @@ private
     end
   end
 
+  def commit_checked_modified(eid)
+    if store = session[:checked]
+      only = Hash[*store.find { |k, v| k == eid }]
+      EntryThread.update_checked_modified(@auth, only)
+      store.delete(eid)
+    end
+  end
+
   def clear_checked_modified(eid)
     cond = ['user_id = ? and last_modifieds.eid = ?', @auth.id, eid]
     if checked = CheckedModified.find(:first, :conditions => cond, :include => 'last_modified')

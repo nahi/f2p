@@ -301,16 +301,18 @@ class EntryController < ApplicationController
           :redirect_to => {:action => 'list'}
 
   def add
+    @ctx = EntryContext.new(@auth)
     @body = param(:body)
     link_title = param(:link_title)
     @link = param(:link)
-    @room = param(:room)
+    @with_form = param(:with_form)
+    @ctx.room = param(:room)
     file = param(:file)
     @lat = param(:lat)
     @long = param(:long)
     @title = param(:title)
     @address = param(:address)
-    opt = create_opt(:room => @room)
+    opt = create_opt(:room => @ctx.room)
     if @lat and @long and @address
       generator = GoogleMaps::URLGenerator.new
       image_url = generator.staticmap_url(F2P::Config.google_maps_maptype, @lat, @long, :zoom => F2P::Config.google_maps_zoom, :width => F2P::Config.google_maps_width, :height => F2P::Config.google_maps_height)
@@ -450,6 +452,7 @@ class EntryController < ApplicationController
     id = param(:id)
     if id
       Entry.delete_pin(create_opt(:id => id))
+      commit_checked_modified(id)
     end
     flash[:keep_ctx] = true
     redirect_to_list
