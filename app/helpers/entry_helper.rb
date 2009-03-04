@@ -309,7 +309,7 @@ module EntryHelper
 
   def comments(entry, compact)
     unless entry.comments.empty?
-      link_to(icon_tag(:comment), :action => 'show', :id => u(entry.id)) + entry.comments.size.to_s
+      link_to(icon_tag(:comment) + h(entry.comments.size.to_s), :action => 'show', :id => u(entry.id))
     end
   end
 
@@ -479,6 +479,9 @@ module EntryHelper
     if opt[:with_bottom]
       links << link_to(icon_tag(:bottom), '#bottom', :accesskey => '8')
     end
+    if opt[:with_top]
+      links << link_to(icon_tag(:top), '#top', :accesskey => '2')
+    end
     links << menu_link(icon_tag(:previous), list_opt(ctx.link_opt(:start => start - num, :num => num)), :accesskey => '4') {
       !no_page and start - num >= 0
     }
@@ -504,10 +507,7 @@ module EntryHelper
       }
     end
     links << menu_link(icon_tag(:next), list_opt(ctx.link_opt(:start => start + num, :num => num)), :accesskey => '6') { !no_page }
-    if opt[:with_top]
-      links << link_to(icon_tag(:top), '#top', :accesskey => '2')
-    end
-    str = links.join(' ')
+    str = links.join
     if ctx.inbox
       str += button_to('refresh', {:action => 'inbox'}, {:name => 'submit'})
     end
