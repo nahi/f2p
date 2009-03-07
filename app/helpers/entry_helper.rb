@@ -10,10 +10,12 @@ module EntryHelper
   end
 
   def pin_link(entry)
-    if entry.pinned?
-      link_to(icon_tag(:pinned, 'unpin'), :action => 'unpin', :id => entry.id)
-    else
-      link_to(icon_tag(:pin), :action => 'pin', :id => entry.id)
+    if ctx.inbox or ctx.single? or entry.pinned?
+      if entry.pinned?
+        link_to(icon_tag(:pinned, 'unpin'), :action => 'unpin', :id => entry.id)
+      else
+        link_to(icon_tag(:pin), :action => 'pin', :id => entry.id)
+      end
     end
   end
 
