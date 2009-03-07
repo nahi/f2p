@@ -297,10 +297,11 @@ module EntryHelper
       else
         icon = icon_tag(:star)
       end
-      if compact and likes.size > F2P::Config.likes_in_page + 1
-        msg = "... #{likes.size - F2P::Config.likes_in_page} more likes"
-        icon + likes[0, F2P::Config.likes_in_page].collect { |like| user(like) }.join(' ') +
-          ' ' + link_to(h(msg), :action => 'show', :id => u(entry.id))
+      max = compact ? F2P::Config.likes_in_page : F2P::Config.max_friend_list_num
+      if likes.size > max + 1
+        msg = "... #{likes.size - max} more likes"
+        icon + likes[0, max].collect { |like| user(like) }.join(' ') + ' ' +
+          (compact ? link_to(h(msg), :action => 'show', :id => u(entry.id)) : h(msg))
       else
         icon + "#{likes.size.to_s}(#{likes.collect { |like| user(like) }.join(' ')})"
       end
@@ -394,7 +395,7 @@ module EntryHelper
       :auth => auth,
       :user => user
     }
-    services = (session[:services] ||= {})[user] ||= User.services(arg)
+    services = User.services(arg)
     map = services.inject({}) { |r, e|
       r[v(e, 'id')] = v(e, 'name')
       r
@@ -410,7 +411,7 @@ module EntryHelper
       :auth => auth,
       :user => auth.name
     }
-    lists = session[:lists] ||= User.lists(arg)
+    lists = User.lists(arg)
     links_if_exists('lists: ', lists) { |e|
       label = "[#{v(e, 'name')}]"
       nickname = v(e, 'nickname')
@@ -427,7 +428,7 @@ module EntryHelper
       :auth => auth,
       :user => user
     }
-    rooms = (session[:rooms] ||= {})[user] ||= User.rooms(arg)
+    rooms = User.rooms(arg)
     links_if_exists('rooms: ', rooms) { |e|
       label = "[#{v(e, 'name')}]"
       nickname = v(e, 'nickname')
@@ -440,8 +441,8 @@ module EntryHelper
       :auth => auth,
       :user => user
     }
-    users = (session[:subscriptions] ||= {})[user] ||= User.subscriptions(arg)
-    links_if_exists("#{users.size} subscriptions: ", users) { |e|
+    users = User.subscriptions(arg)
+    links_if_exists("#{users.size} subscriptions: ", users, F2P::Config.max_friend_list_num) { |e|
       label = "[#{v(e, 'name')}]"
       nickname = v(e, 'nickname')
       if nickname
@@ -456,7 +457,7 @@ module EntryHelper
       :room => room
     }
     members = Room.members(arg)
-    links_if_exists("(#{members.size} members) ", members) { |e|
+    links_if_exists("(#{members.size} members) ", members, F2P::Config.max_friend_list_num) { |e|
       label = "[#{v(e, 'name')}]"
       nickname = v(e, 'nickname')
       if nickname
@@ -465,8 +466,12 @@ module EntryHelper
     }
   end
 
-  def links_if_exists(label, enum, &block)
-    str = enum.collect { |v| yield(v) }.join(' ')
+  def links_if_exists(label, enum, max = nil, &block)
+    ary = enum.collect { |v| yield(v) }
+    if max and ary.size > max + 1
+      ary = ary[0, max] << "... #{ary.size - max} more"
+    end
+    str = ary.join(' ')
     str = h(label) + str unless str.empty?
     str
   end
