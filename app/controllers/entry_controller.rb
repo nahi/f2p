@@ -129,7 +129,6 @@ class EntryController < ApplicationController
     end
 
     def reset_pagination(setting)
-      @eid = nil
       @start = 0
       @num = setting.entries_in_page
     end
@@ -164,7 +163,7 @@ class EntryController < ApplicationController
     end
 
     def link_opt(opt = {})
-      opt.merge(:action => default_action)
+      opt.merge(:action => default_action, :id => @eid)
     end
 
   private
@@ -242,9 +241,10 @@ class EntryController < ApplicationController
           :redirect_to => {:action => 'list'}
 
   def show
-    @ctx = EntryContext.new(@auth)
-    @ctx.eid = param(:id)
-    @ctx.home = false
+    @ctx = restore_ctx { |ctx|
+      ctx.eid = param(:id)
+      ctx.home = false
+    }
     @entries = EntryThread.find(@ctx.find_opt) || []
     render :action => 'list'
   end

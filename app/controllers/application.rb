@@ -145,9 +145,11 @@ private
 
   def commit_checked_modified(eid)
     if store = session[:checked]
-      only = Hash[*store.find { |k, v| k == eid }]
-      EntryThread.update_checked_modified(@auth, only)
-      store.delete(eid)
+      if e = store.find { |k, v| k == eid }
+        only = Hash[*e]
+        EntryThread.update_checked_modified(@auth, only)
+        store.delete(eid)
+      end
     end
   end
 
