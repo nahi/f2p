@@ -365,6 +365,10 @@ class EntryController < ApplicationController
     flash[:deleted_id] = id
     flash[:deleted_comment] = comment
     flash[:keep_ctx] = true
+    # redirect to list view (not single thread view) when an entry deleted.
+    if !comment and (ctx = @ctx || session[:ctx])
+      ctx.eid = nil
+    end
     redirect_to_list
   end
 
