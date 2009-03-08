@@ -110,6 +110,7 @@ module GoogleMaps
 
     def link_url(lat, long, title = nil)
       if title
+        title = title.gsub(/[\r\n]+/, ' ')
         title = '+' + ERB::Util.u("(#{unwrap_title(title)})")
       else
         title = ''
