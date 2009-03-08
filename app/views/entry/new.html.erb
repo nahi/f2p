@@ -17,7 +17,11 @@
   </p>
 <%- end -%>
 <script type='text/javascript'><!--
-post.body.focus();
+<%- if @with_form -%>
+  post.file.focus();
+<%- else -%>
+  post.body.focus();
+<%- end -%>
 //--></script>
 <hr/>
 <%- form_tag(:action => 'new') do -%>
