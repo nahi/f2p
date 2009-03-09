@@ -352,6 +352,14 @@ module EntryHelper
     str
   end
 
+  def inline_comment(comment)
+    if v(comment, 'date') != v(comment.entry, 'updated')
+      comment(comment) + ' ' + date(v(comment, 'date'), true)
+    else
+      comment(comment)
+    end
+  end
+
   def search_form
     str = ''
     str += hidden_field_tag('user', ctx.user) if ctx.user

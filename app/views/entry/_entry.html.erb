@@ -6,11 +6,11 @@
   <%= published(entry, false) if ctx.single? -%>
   <%= author_link(entry, (root_user.nil? or root_user != entry.user_id), (root_service.nil? or root_service != entry.service_identity)) %>
   <%= content(entry) %>
-  <%- if comment_inline?(entry) -%>
-    -- <%= comment(entry.comments.first) -%>
-  <%- end -%>
   <%= via(entry) -%>
   <%= published(entry, true) if ctx.list? -%>
+  <%- if comment_inline?(entry) -%>
+    -- <%= inline_comment(entry.comments.first) -%>
+  <%- end -%>
   <%= original_link(entry) -%>
 <%= url_link(entry) -%>
 <%= likes(entry, ctx.list?) -%>
