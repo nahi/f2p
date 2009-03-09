@@ -401,6 +401,10 @@ class EntryController < ApplicationController
     flash[:added_id] = id
     flash[:added_comment] = comment_id
     flash[:keep_ctx] = true
+    # redirect to list view (not single thread view)
+    if ctx = @ctx || session[:ctx]
+      ctx.eid = nil
+    end
     redirect_to_list
   end
 
