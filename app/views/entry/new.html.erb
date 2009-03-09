@@ -11,6 +11,7 @@
     <%- end -%>
     <%= hidden_field_tag('lat', @lat) %>
     <%= hidden_field_tag('long', @long) %>
+    <%= hidden_field_tag('lon', @lon) %>
     <%= hidden_field_tag('address', @address) %>
     <%= submit_tag 'post' %>
   </p>
@@ -18,6 +19,8 @@
   <p>
   Address: <%= text_field_tag('title', @title) %> <%= submit_tag 'search' %><br/>
   zoom: <%= zoom_select_tag('zoom', @zoom) %>
+  <br/>
+  <%= write_with_geocode_link_or_form %>
   </p>
   <%- if @placemark -%>
     <%- if @placemark.ambiguous? -%>

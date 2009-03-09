@@ -271,7 +271,43 @@ class EntryController < ApplicationController
     @long = param(:long)
     @address = param(:address)
     @zoom = (param(:zoom) || F2P::Config.google_maps_zoom).to_i
+    reverse_needed = false
+    case @setting.use_gps_info
+    when 'ezweb', 'gpsone', 'DoCoMoFOMA' 
+      if param(:lat) and param(:lon)
+        @lat = calc_geo(@lat)
+        @long = calc_geo(param(:lon))
+        reverse_needed = true
+      end
+    when 'DoCoMomova','SoftBank3G','WILLCOM'
+      if /\A([NS])([0-9\.]+)([EW])([0-9\.]+)\Z/ =~ param(:pos)
+        if $1 == 'N'
+          @lat = calc_geo($2)
+        else
+          @lat = calc_geo('-' + $2)
+        end
+        if $3 == 'E'
+          @long = calc_geo($4)
+        else
+          @long = calc_geo('-' + $4)
+        end
+        reverse_needed = true
+      end
+    when 'SoftBankold'
+      if /\A(\d+) (\d+) / =~ (request.env['HTTP_X_JPHONE_GEOCODE']).to_s
+        @lat = $1
+        @long = $2
+        reverse_needed = true
+      end
+    end
     @placemark = nil
+    if reverse_needed
+      geocoder = GoogleMaps::GoogleGeocoder.new(http_client, F2P::Config.google_maps_api_key)
+      @placemark = geocoder.reversesearch(@lat, @long)
+      if @placemark and !@placemark.ambiguous?
+        @address = @placemark.address
+      end
+    end
   end
 
   verify :only => :reshare,
@@ -568,6 +604,21 @@ private
   def updated_expired(time)
     if session[:last_updated]
       time - session[:last_updated] > F2P::Config.updated_expiration
+    end
+  end
+
+  def calc_geo(m_s_sss)
+    sign = ""
+    if /([-\+])?(\d{1,3})\.(\d{1,2})\.(\d{1,2})\.(\d{1,3})/ =~ m_s_sss then
+      sign = $1
+      m_s_sss = (((($5.to_f/1000) + $4.to_f)/60 + $3.to_f)/60 + $2.to_f)
+      if sign == "-" then
+        (m_s_sss * -1 ).to_s
+      else
+        m_s_sss.to_s
+      end
+    else
+      m_s_sss
     end
   end
 end

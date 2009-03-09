@@ -72,6 +72,8 @@ module GoogleMaps
   end
 
   class GoogleGeocoder
+    include HashUtils
+
     URL = 'http://maps.google.com/maps/geo'
 
     def initialize(httpclient, key)
@@ -79,16 +81,56 @@ module GoogleMaps
       @key = key
     end
 
-    def search(str, hl = 'ja')
+    def search(str, en = 'utf-8')
       query = {
         'q' => str,
         'output' => 'json',
-        'hl' => hl,
+        'en' => en,
         'key' => @key
       }
       result = JSON.parse(NKF.nkf('-wm0', @httpclient.get_content(URL, query)))
-      # TODO: need to construct Point or Candidates.
-      nil
+      if result.nil? or v(result, 'error')
+        nil
+      elsif v(result, 'Status', 'code') != 200
+	nil
+      elsif v(result, 'Placemark').size > 1
+        Candidates.new(v(result, 'Placemark'))
+      else
+        address = v(result, 'name')
+        address = nil if address and address.empty?
+        c = v(result, 'Placemark')
+        cord = v(c[0], 'Point', 'coordinates')
+	lat = cord[1]
+        long = cord[0]
+        if address and lat and long
+          Point.new(address, lat, long)
+        end
+      end
+    end
+
+    def reversesearch(lat, long, oe = 'utf-8')
+      query = {
+        'll' => lat + ',' + long,
+        'output' => 'json',
+        'oe' => oe,
+        'key' => @key
+      }
+      result = JSON.parse(NKF.nkf('-wm0', @httpclient.get_content(URL, query)))
+      if result.nil? or v(result, 'error')
+        nil
+      elsif v(result, 'Status', 'code') != 200
+	nil
+      else
+        address = v(result, 'name')
+        address = nil if address and address.empty?
+        c = v(result, 'Placemark')
+        cord = v(c[0], 'Point', 'coordinates')
+	lat = cord[1]
+        long = cord[0]
+        if address and lat and long
+          Point.new(address, lat, long)
+        end
+      end
     end
   end
 
@@ -110,7 +152,6 @@ module GoogleMaps
 
     def link_url(lat, long, title = nil)
       if title
-        title = title.gsub(/[\r\n]+/, ' ')
         title = '+' + ERB::Util.u("(#{unwrap_title(title)})")
       else
         title = ''
@@ -133,5 +174,9 @@ end
 
 if $0 == __FILE__
   require 'httpclient'
+  require 'pp'
+  pp GoogleMaps::GeocodingJpGeocoder.new(HTTPClient).search('日本、東京駅')
+  pp GoogleMaps::GoogleGeocoder.new(HTTPClient).search('日本、東京駅')
+  pp GoogleMaps::GoogleGeocoder.new(HTTPClient).reversesearch(35.306, 139.274)
   print GoogleMaps::GeocodingJpGeocoder.new(HTTPClient).search('日本、東京駅')
 end

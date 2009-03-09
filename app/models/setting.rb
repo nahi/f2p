@@ -3,10 +3,11 @@ class Setting
   attr_accessor :entries_in_page
   attr_accessor :entries_in_thread
   attr_accessor :text_folding_size
-  attr_accessor :twitter_comment_hack
   attr_accessor :link_open_new_window
   attr_accessor :link_type
   attr_accessor :list_view_media_rendering
+  attr_accessor :twitter_comment_hack
+  attr_accessor :use_gps_info
 
   def initialize
     super
@@ -14,10 +15,11 @@ class Setting
     @entries_in_page = F2P::Config.entries_in_page
     @entries_in_thread = F2P::Config.entries_in_thread
     @text_folding_size = F2P::Config.text_folding_size
-    @twitter_comment_hack = F2P::Config.twitter_comment_hack
     @link_open_new_window = F2P::Config.link_open_new_window
     @link_type = F2P::Config.link_type
     @list_view_media_rendering = F2P::Config.list_view_media_rendering
+    @twitter_comment_hack = F2P::Config.twitter_comment_hack
+    @use_gps_info = F2P::Config.use_gps_info
   end
 
   def validate
@@ -33,6 +35,12 @@ class Setting
     end
     unless (20..1000) === @text_folding_size
       errors << 'text folding size must be in 20..1000'
+    end
+    # TODO: extract as a constant
+    if @use_gps_info
+      unless (['ezweb','gpsone','DoCoMoFOMA', 'DoCoMomova','SoftBank3G', 'SoftBankold','WILLCOM']).include?(@use_gps_info)
+      errors << 'gps type shall be one of ezweb, gpsone, DoCoMoFOMA, DoCoMomova,SoftBank3G, SoftBankold, WILLCOM'
+      end
     end
     errors.empty? ? nil : errors
   end
