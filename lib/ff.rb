@@ -16,7 +16,6 @@ module FriendFeed
   end
 
   class BaseClient
-    attr_reader :client
     attr_accessor :logger
 
     class LShiftLogger
@@ -35,23 +34,25 @@ module FriendFeed
 
     def initialize(logger = nil)
       @logger = logger || NullLogger.new
-      @client = HTTPClient.new
-      #@client.debug_dev = LShiftLogger.new(@logger)
-      @client.extend(MonitorMixin)
+      @clients = {}
     end
 
   private
 
+    def create_client
+      client = HTTPClient.new
+      #client.debug_dev = LShiftLogger.new(@logger)
+      client.extend(MonitorMixin)
+      client
+    end
+
     def client_sync(uri, name, remote_key)
-      logger.info("#{self.class} is accessing to #{uri.to_s}")
-      @client.synchronize do
-        httpclient_protect do
-          @client.set_auth(nil, name, remote_key)
-          @client.www_auth.basic_auth.challenge(uri, true)
-          result = yield(@client)
-          @client.set_auth(nil, nil, nil)
-          result
-        end
+      client = @clients[name] ||= create_client
+      logger.info("#{self.class} is accessing to #{uri.to_s} with client #{client.object_id} for #{name}")
+      httpclient_protect do
+        client.set_auth(nil, name, remote_key)
+        client.www_auth.basic_auth.challenge(uri, true)
+        yield(client)
       end
     end
 
