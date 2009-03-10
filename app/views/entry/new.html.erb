@@ -2,7 +2,7 @@
   <p>
     message: <%= text_field_tag('body', @body) %><br/>
     link: <%= text_field_tag('link', @link) %><br/>
-    room: <%= text_field_tag('room', ctx.room) %><br/>
+    room: <%= room_select_tag('room', auth.name, :default => ctx.room) %><br/>
     <%= hidden_field_tag('with_form', @with_form) %>
     <%- if @with_form -%>
       image upload: <%= file_field_tag('file') %><br/>

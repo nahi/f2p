@@ -2,7 +2,7 @@
   <p>
     keyword: <%= text_field_tag('query', ctx.query) %><br/>
     user: <%= text_field_tag('user', ctx.user) %><br/>
-    room: <%= text_field_tag('room', ctx.room) %><br/>
+    room: <%= room_select_tag('room', auth.name, :default => ctx.room) %><br/>
     friends: <%= text_field_tag('friends', ctx.friends) %><br/>
     service: <%= text_field_tag('service', ctx.service) %><br/>
     <%= submit_tag 'search' %>

@@ -433,6 +433,17 @@ module EntryHelper
     }
   end
 
+  def room_select_tag(varname, user, opt = {})
+    default = opt[:default]
+    arg = {
+      :auth => auth,
+      :user => user
+    }
+    candidates = User.rooms(arg).map { |e| [v(e, 'name'), v(e, 'nickname')] }
+    candidates.unshift([nil, nil])
+    select_tag(varname, options_for_select(candidates, default))
+  end
+
   def room_links(user)
     arg = {
       :auth => auth,

@@ -105,7 +105,7 @@ class EntryThread
     end
 
     def filter_link_entries(auth, entries)
-      entries.partition { |e| STDERR.puts([e.nickname, auth.name].inspect); e.nickname == auth.name }.flatten
+      entries.partition { |e| e.nickname == auth.name }.flatten
     end
 
     def check_pinned(auth, entries, opt)
