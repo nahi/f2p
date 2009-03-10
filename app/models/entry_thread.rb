@@ -27,7 +27,10 @@ class EntryThread
       else
         entries = get_home_entries(auth, opt)
       end
-      wrapped = wrap(entries || [])
+      wrapped = sort_by_modified(wrap(entries || []))
+      if opt[:link]
+        wrapped = filter_link_entries(auth, wrapped)
+      end
       check_pinned(auth, wrapped, opt)
       if opt[:inbox]
         wrapped = filter_pinned_entries(auth, wrapped, opt)
@@ -99,6 +102,10 @@ class EntryThread
           true
         end
       }
+    end
+
+    def filter_link_entries(auth, entries)
+      entries.partition { |e| STDERR.puts([e.nickname, auth.name].inspect); e.nickname == auth.name }.flatten
     end
 
     def check_pinned(auth, entries, opt)
@@ -224,11 +231,15 @@ class EntryThread
       }
     end
 
-    def sort_by_service(entries, opt = {})
-      result = []
-      buf = entries.find_all { |e| !e.hidden? }.sort_by { |e|
+    def sort_by_modified(entries)
+      entries.find_all { |e| !e.hidden? }.sort_by { |e|
         [e.modified, e.id].join('-') # join e.id for stable sort
       }.reverse
+    end
+
+    def sort_by_service(entries, opt = {})
+      result = []
+      buf = entries.dup
       while !buf.empty?
         entry = buf.shift
         result << (t = EntryThread.new(entry))
