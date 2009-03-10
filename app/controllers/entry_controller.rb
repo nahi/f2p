@@ -260,6 +260,7 @@ class EntryController < ApplicationController
     @lat = param(:lat)
     @long = param(:long)
     @address = param(:address)
+    @zoom = (param(:zoom) || F2P::Config.google_maps_zoom).to_i
     @placemark = nil
     if @title
       geocoder = GoogleMaps::GeocodingJpGeocoder.new(http_client)
@@ -316,10 +317,11 @@ class EntryController < ApplicationController
     @long = param(:long)
     @title = param(:title)
     @address = param(:address)
+    @zoom = (param(:zoom) || F2P::Config.google_maps_zoom).to_i
     opt = create_opt(:room => @ctx.room)
     if @lat and @long and @address
       generator = GoogleMaps::URLGenerator.new
-      image_url = generator.staticmap_url(F2P::Config.google_maps_maptype, @lat, @long, :zoom => F2P::Config.google_maps_zoom, :width => F2P::Config.google_maps_width, :height => F2P::Config.google_maps_height)
+      image_url = generator.staticmap_url(F2P::Config.google_maps_maptype, @lat, @long, :zoom => @zoom, :width => F2P::Config.google_maps_width, :height => F2P::Config.google_maps_height)
       image_link = generator.link_url(@lat, @long, @address)
       (opt[:images] ||= []) << [image_url, image_link]
       @body += " ([map] #{@address})"

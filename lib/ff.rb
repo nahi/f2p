@@ -36,6 +36,7 @@ module FriendFeed
     def initialize(logger = nil)
       @logger = logger || NullLogger.new
       @client = HTTPClient.new
+      #@client.debug_dev = LShiftLogger.new(@logger)
       @client.extend(MonitorMixin)
     end
 

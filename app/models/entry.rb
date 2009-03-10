@@ -15,7 +15,9 @@ class Entry < Hash
       files = opt[:files]
       room = opt[:room]
       entries = ff_client.post(auth.name, auth.remote_key, body, link, comment, images, files, room)
-      v(entries.first, 'id')
+      if entries
+        v(entries.first, 'id')
+      end
     end
 
     def delete(opt)

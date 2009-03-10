@@ -189,12 +189,12 @@ module EntryHelper
     link
   end
 
-  def google_maps_link(point, entry = nil)
+  def google_maps_link(point, zoom = nil, entry = nil)
     generator = GoogleMaps::URLGenerator.new(F2P::Config.google_maps_api_key)
     lat = point.lat
     long = point.long
     address = point.address
-    tb = generator.staticmap_url(F2P::Config.google_maps_maptype, lat, long, :zoom => F2P::Config.google_maps_zoom, :width => F2P::Config.google_maps_width, :height => F2P::Config.google_maps_height)
+    tb = generator.staticmap_url(F2P::Config.google_maps_maptype, lat, long, :zoom => zoom || F2P::Config.google_maps_zoom, :width => F2P::Config.google_maps_width, :height => F2P::Config.google_maps_height)
     link = generator.link_url(lat, long, address)
     link_to(media_tag(entry, tb, :alt => h(address), :title => h(address), :size => image_size(F2P::Config.google_maps_width, F2P::Config.google_maps_height)), link)
   end
@@ -433,11 +433,15 @@ module EntryHelper
     }
   end
 
-  def room_select_tag(varname, user, opt = {})
-    default = opt[:default]
+  def zoom_select_tag(varname, default)
+    candidates = (0..19).map { |e| [e, e] }
+    select_tag(varname, options_for_select(candidates, default))
+  end
+
+  def room_select_tag(varname, default)
     arg = {
       :auth => auth,
-      :user => user
+      :user => auth.name
     }
     candidates = User.rooms(arg).map { |e| [v(e, 'name'), v(e, 'nickname')] }
     candidates.unshift([nil, nil])

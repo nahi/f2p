@@ -2,7 +2,7 @@
   <p>
     message: <%= text_field_tag('body', @body) %><br/>
     link: <%= text_field_tag('link', @link) %><br/>
-    room: <%= room_select_tag('room', auth.name, :default => ctx.room) %><br/>
+    room: <%= room_select_tag('room', ctx.room) %><br/>
     <%= hidden_field_tag('with_form', @with_form) %>
     <%- if @with_form -%>
       image upload: <%= file_field_tag('file') %><br/>
@@ -27,10 +27,11 @@
 <%- form_tag(:action => 'new') do -%>
   <p>
   Address: <%= text_field_tag('title', @title) %> <%= submit_tag 'search' %><br/>
+  zoom: <%= zoom_select_tag('zoom', @zoom) %>
   <%= hidden_field_tag('body', @body) %>
   <%= hidden_field_tag('link', @link) %>
   <%= hidden_field_tag('room', ctx.room) %>
-  <%= hidden_field_tag('with_form', @with_form) %><br/>
+  <%= hidden_field_tag('with_form', @with_form) %>
   </p>
   <%- if @placemark -%>
     <%- if @placemark.ambiguous? -%>
@@ -43,7 +44,7 @@
     <%- else -%>
       <dl>
         <dt><%= h(@placemark.address) %></dt>
-        <dd><%= google_maps_link(@placemark, nil) %></dd>
+        <dd><%= google_maps_link(@placemark, @zoom, nil) %></dd>
       </dl>
     <%- end -%>
   <%- end -%>
