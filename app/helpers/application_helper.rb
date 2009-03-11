@@ -35,6 +35,10 @@ module ApplicationHelper
     'top' => 'arrow_up.png',
   }
 
+  def self_label
+    SELF_LABEL
+  end
+
   def icon_url(name)
     F2P::Config.icon_url_base + ICON_NAME[name.to_s]
   end
@@ -116,7 +120,7 @@ module ApplicationHelper
     user_id = User.ff_id(:auth => auth, :user => nickname)
     name = User.ff_name(:auth => auth, :user => nickname)
     if nickname == auth.name
-      name = SELF_LABEL
+      name = self_label
     end
     image_url = User.picture_url(:auth => auth, :user => nickname, :size => size)
     url = User.ff_url(:auth => auth, :user => nickname)
@@ -128,7 +132,7 @@ module ApplicationHelper
     nickname = v(user, 'nickname')
     name = v(user, 'name')
     if nickname == auth.name
-      name = SELF_LABEL
+      name = self_label
     end
     link_to(h(name), :controller => 'entry', :action => 'list', :user => u(nickname || user_id))
   end

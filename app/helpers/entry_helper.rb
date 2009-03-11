@@ -343,7 +343,7 @@ module EntryHelper
         tw_name = (v(user, 'profileUrl') || '').sub(/\A.*\//, '')
         if name != tw_name
           if nickname == auth.name
-            name = SELF_LABEL
+            name = self_label
           end
           name += "(#{tw_name})"
           return link_to(h(name), :controller => 'entry', :action => 'list', :user => u(nickname))
