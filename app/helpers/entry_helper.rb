@@ -204,7 +204,7 @@ module EntryHelper
     long = v(entry, 'geo', 'long')
     if lat and long
       point = GoogleMaps::Point.new(entry.title, lat, long)
-      content = google_maps_link(point, entry)
+      content = google_maps_link(point, nil, entry)
       if !entry.medias.empty?
         common + ' ' + content
       else
