@@ -241,10 +241,12 @@ class EntryController < ApplicationController
           :redirect_to => {:action => 'list'}
 
   def show
-    @ctx = restore_ctx { |ctx|
-      ctx.eid = param(:id)
-      ctx.home = false
-    }
+    @ctx = EntryContext.new(@auth)
+    @ctx.eid = param(:id)
+    @ctx.home = false
+    if ctx = session[:ctx]
+      ctx.eid = @ctx.eid
+    end
     @entries = EntryThread.find(@ctx.find_opt) || []
     render :action => 'list'
   end
@@ -403,10 +405,6 @@ class EntryController < ApplicationController
     flash[:added_id] = id
     flash[:added_comment] = comment_id
     flash[:keep_ctx] = true
-    # redirect to list view (not single thread view)
-    #if ctx = @ctx || session[:ctx]
-    #  ctx.eid = nil
-    #end
     redirect_to_list
   end
 
@@ -422,7 +420,7 @@ class EntryController < ApplicationController
       Entry.add_like(create_opt(:id => id))
     end
     flash[:keep_ctx] = true
-    redirect_to_list
+    redirect_to_entry_or_list
   end
 
   verify :only => :unlike,
@@ -437,7 +435,7 @@ class EntryController < ApplicationController
       Entry.delete_like(create_opt(:id => id))
     end
     flash[:keep_ctx] = true
-    redirect_to_list
+    redirect_to_entry_or_list
   end
 
   verify :only => :pin,
@@ -453,7 +451,7 @@ class EntryController < ApplicationController
       clear_checked_modified(id)
     end
     flash[:keep_ctx] = true
-    redirect_to_list
+    redirect_to_entry_or_list
   end
 
   verify :only => :unpin,
@@ -469,7 +467,7 @@ class EntryController < ApplicationController
       commit_checked_modified(id)
     end
     flash[:keep_ctx] = true
-    redirect_to_list
+    redirect_to_entry_or_list
   end
 
 private
@@ -516,6 +514,15 @@ private
   end
 
   def redirect_to_list
+    if ctx = @ctx || session[:ctx]
+      ctx.eid = nil
+      redirect_to ctx.link_opt
+    else
+      redirect_to :action => 'list'
+    end
+  end
+
+  def redirect_to_entry_or_list
     if ctx = @ctx || session[:ctx]
       redirect_to ctx.link_opt
     else
