@@ -338,17 +338,19 @@ module EntryHelper
   def user(entry)
     user = v(entry, 'user')
     if v(entry, 'service') and entry.service_id == 'twitter'
-      user_id = v(user, 'id')
-      nickname = v(user, 'nickname')
-      name = v(user, 'name')
-      if nickname == auth.name
-        name = SELF_LABEL
+      if nickname = v(user, 'nickname')
+        name = v(user, 'name')
+        tw_name = (v(user, 'profileUrl') || '').sub(/\A.*\//, '')
+        if name != tw_name
+          if nickname == auth.name
+            name = SELF_LABEL
+          end
+          name += "(#{tw_name})"
+          return link_to(h(name), :controller => 'entry', :action => 'list', :user => u(nickname))
+        end
       end
-      name += '(' + (v(user, 'profileUrl') || '').sub(/\A.*\//, '') + ')'
-      link_to(h(name), :controller => 'entry', :action => 'list', :user => u(nickname || user_id))
-    else
-      super(user)
     end
+    super(user)
   end
 
   def comment_icon(by_self = false)
