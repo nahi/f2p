@@ -397,7 +397,7 @@ module EntryHelper
   end
 
   def search_link
-    link_to(icon_tag(:search), search_opt)
+    link_to(icon_tag(:search), search_opt(:controller => 'entry', :action => 'search'))
   end
 
   def service_links(user)
@@ -645,7 +645,7 @@ module EntryHelper
   end
 
   def search_opt(hash = {})
-    search_opt = list_opt.merge(:controller => 'entry', :action => 'search')
+    search_opt = list_opt(hash)
     search_opt[:friends] = 'me' if ctx.home
     search_opt[:room] = nil if search_opt[:room] == '*'
     search_opt
