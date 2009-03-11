@@ -336,7 +336,19 @@ module EntryHelper
   end
 
   def user(entry)
-    super(v(entry, 'user'))
+    user = v(entry, 'user')
+    if v(entry, 'service') and entry.service_id == 'twitter'
+      user_id = v(user, 'id')
+      nickname = v(user, 'nickname')
+      name = v(user, 'name')
+      if nickname == auth.name
+        name = SELF_LABEL
+      end
+      name += '(' + (v(user, 'profileUrl') || '').sub(/\A.*\//, '') + ')'
+      link_to(h(name), :controller => 'entry', :action => 'list', :user => u(nickname || user_id))
+    else
+      super(user)
+    end
   end
 
   def comment_icon(by_self = false)
