@@ -13,11 +13,11 @@
   <%- end -%>
   <%= original_link(entry) -%>
 <%= url_link(entry) -%>
+<%= reshare_link(entry) -%>
+<%= delete_link(entry) -%>
 <%= likes(entry, ctx.list?) -%>
 <%= comments(entry, ctx.list?) unless comment_inline?(entry) -%>
-<%= delete_link(entry) -%>
 <%= like_link(entry) -%>
-<%= reshare_link(entry) -%>
   <%- if entry.comments.empty? or comment_inline?(entry) -%>
 <%= post_comment_link(entry) if ctx.list? %>
   <%- elsif ctx.single? -%>
