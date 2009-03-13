@@ -3,7 +3,7 @@
     <%- if comment.respond_to?(:fold_entries) -%>
       <li><%= fold_comment_link(comment) %></li>
     <%- else -%>
-      <li>
+      <li class="comment">
         <%= comment_icon(comment.by_user(v(comment.entry, 'user', 'nickname'))) %>
         <%= date(v(comment, 'date'), false) if ctx.single? %>
         <%= comment(comment) %>
