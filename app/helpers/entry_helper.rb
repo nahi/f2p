@@ -63,7 +63,7 @@ module EntryHelper
   def common_content(entry)
     title = entry.title
     if entry.link and with_link?(v(entry, 'service'))
-      content = link_content_without_link(title, entry)
+      content = link_content(title, entry)
     else
       fold, str, links = escape_text(title, ctx.fold ? setting.text_folding_size : nil)
       entry[VIEW_LINKS_TAG] = links
@@ -93,6 +93,7 @@ module EntryHelper
           name = entry.room.nickname
         elsif ['blog', 'feed'].include?(entry.service_id)
           name = v(entry, 'service', 'name')
+          name = nil if name == v(entry, 'user', 'name')
         end
       end
       if name
@@ -105,8 +106,8 @@ module EntryHelper
   end
 
   def original_link(entry)
-    if entry.link
-      if with_link?(v(entry, 'service')) and unknown_where_to_go?(entry)
+    if entry.link and (!with_link?(v(entry, 'service')) or entry.service_id == 'tumblr')
+      if unknown_where_to_go?(entry)
         link_content = icon_tag(:go) + h("(#{URI.parse(entry.link).host})")
       else
         link_content = icon_tag(:go)
@@ -116,11 +117,10 @@ module EntryHelper
   end
 
   def link_content(title, entry)
-    link = entry.link
-    if unknown_where_to_go?(entry)
-      q(h(title) + ' ' + link_to(h("(#{URI.parse(link).host})"), link))
+    if entry.service_id == 'tumblr'
+      link_content_without_link(title, entry)
     else
-      q(link_to(h(title), link))
+      link_to(icon_tag(:go) + h(title), entry.link)
     end
   end
 
@@ -136,15 +136,16 @@ module EntryHelper
     link_url = uri(entry.link)
     profile_url = uri(v(entry, 'service', 'profileUrl'))
     if profile_url and link_url
-      (profile_url.host.downcase != link_url.host.downcase) or
-        ['internal', 'blog', 'feed'].include?(entry.service_id)
+      (profile_url.host.downcase != link_url.host.downcase)
+    else
+      ['blog', 'feed', 'tumblr'].include?(entry.service_id)
     end
   end
 
   def with_link?(service)
     service_id = v(service, 'id')
     entry_type = v(service, 'entryType')
-    entry_type != 'message' and !['twitter'].include?(service_id)
+    entry_type != 'message' and service_id != 'twitter'
   end
 
   def content_with_media(entry)
@@ -225,8 +226,7 @@ module EntryHelper
     title = entry.title
     fold = fold_length(title, setting.text_folding_size - 3)
     if ctx.fold and entry.medias.empty? and fold != title
-      link_content_without_link(fold + '...', entry) +
-        link_to(icon_tag(:more), :action => 'show', :id => u(entry.id))
+      link_content(fold + '...', entry) + link_to(icon_tag(:more), :action => 'show', :id => u(entry.id))
     else
       common
     end
