@@ -212,7 +212,7 @@ module ApplicationHelper
 
   # not enabled for now; need to be configurable to use this or not
   def link_to(markup, *rest)
-    if rest.size == 1 and rest.first.is_a?(String)
+    if rest.size == 1 and rest.first.is_a?(String) and !url_for_app?(rest.first)
       opt = {}
       opt[:target] = '_blank' if setting.link_open_new_window
       if setting.link_type == 'gwt'
@@ -222,6 +222,10 @@ module ApplicationHelper
       end
     end
     super
+  end
+
+  def url_for_app?(url)
+    url.index(url_for(:only_path => false, :controller => ''))
   end
 
   def link_url(url)
