@@ -85,13 +85,11 @@ class User < ActiveRecord::Base
   private
 
     def ff_picture_url(user, size = 'small')
-      (@picture_url_cache ||= {})[user] ||=
-        ff_client.get_user_picture_url(user, size)
+      ff_client.get_user_picture_url(user, size)
     end
 
     def ff_profile(auth, user)
-      (@profile_cache ||= {})[[auth.name, user]] ||=
-        ff_client.get_profile(auth.name, auth.remote_key, user)
+      ff_client.get_profile(auth.name, auth.remote_key, user)
     end
 
     def sort_by_name(lists)

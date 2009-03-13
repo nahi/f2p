@@ -98,13 +98,19 @@ module ApplicationHelper
   end
 
   def room_name(nickname)
-    Room.ff_name(:auth => auth, :room => nickname)
+    session_cache(:room, :ff_name, nickname) {
+      Room.ff_name(:auth => auth, :room => nickname)
+    }
   end
 
   def room_picture(nickname, size = 'small')
-    name = Room.ff_name(:auth => auth, :room => nickname)
-    image_url = Room.picture_url(:auth => auth, :room => nickname, :size => size)
-    url = Room.ff_url(:auth => auth, :room => nickname)
+    name = room_name(nickname)
+    image_url = session_cache(:room, :pictur_url, nickname, size) {
+      Room.picture_url(:auth => auth, :room => nickname, :size => size)
+    }
+    url = session_cache(:room, :ff_url, nickname) {
+      Room.ff_url(:auth => auth, :room => nickname)
+    }
     link_to(image_tag(image_url, :alt => h(name), :title => h(name), :size => image_size(25, 25)), url)
   end
 
@@ -113,17 +119,25 @@ module ApplicationHelper
   end
 
   def user_name(nickname)
-    User.ff_name(:auth => auth, :user => nickname)
+    session_cache(:user, :ff_name, nickname) {
+      User.ff_name(:auth => auth, :user => nickname)
+    }
   end
 
   def user_picture(nickname, size = 'small')
-    user_id = User.ff_id(:auth => auth, :user => nickname)
-    name = User.ff_name(:auth => auth, :user => nickname)
+    user_id = session_cache(:user, :ff_id, nickname) {
+      User.ff_id(:auth => auth, :user => nickname)
+    }
+    name = user_name(nickname)
     if nickname == auth.name
       name = self_label
     end
-    image_url = User.picture_url(:auth => auth, :user => nickname, :size => size)
-    url = User.ff_url(:auth => auth, :user => nickname)
+    image_url = session_cache(:user, :pictur_url, nickname, size) {
+      User.picture_url(:auth => auth, :user => nickname, :size => size)
+    }
+    url = session_cache(:user, :ff_url, nickname) {
+      User.ff_url(:auth => auth, :user => nickname)
+    }
     link_to(image_tag(image_url, :alt => h(name), :title => h(name), :size => image_size(25, 25)), url)
   end
 
@@ -232,5 +246,9 @@ private
 
   def ff_client
     ApplicationController.ff_client
+  end
+
+  def session_cache(*key, &block)
+    session[key] ||= yield
   end
 end

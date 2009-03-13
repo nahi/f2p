@@ -415,11 +415,9 @@ module EntryHelper
   end
 
   def service_links(user)
-    arg = {
-      :auth => auth,
-      :user => user
+    services = session_cache(:user, :services, user) {
+      User.services(:auth => auth, :user => user)
     }
-    services = User.services(arg)
     map = services.inject({}) { |r, e|
       r[v(e, 'id')] = v(e, 'name')
       r
@@ -431,11 +429,10 @@ module EntryHelper
   end
 
   def list_links
-    arg = {
-      :auth => auth,
-      :user => auth.name
+    user = auth.name
+    lists = session_cache(:user, :lists, user) {
+      User.lists(:auth => auth, :user => user)
     }
-    lists = User.lists(arg)
     links_if_exists('lists: ', lists) { |e|
       label = "[#{v(e, 'name')}]"
       nickname = v(e, 'nickname')
@@ -453,21 +450,19 @@ module EntryHelper
   end
 
   def room_select_tag(varname, default)
-    arg = {
-      :auth => auth,
-      :user => auth.name
+    user = auth.name
+    rooms = session_cache(:user, :rooms, user) {
+      User.rooms(:auth => auth, :user => user)
     }
-    candidates = User.rooms(arg).map { |e| [v(e, 'name'), v(e, 'nickname')] }
+    candidates = rooms.map { |e| [v(e, 'name'), v(e, 'nickname')] }
     candidates.unshift([nil, nil])
     select_tag(varname, options_for_select(candidates, default))
   end
 
   def room_links(user)
-    arg = {
-      :auth => auth,
-      :user => user
+    rooms = session_cache(:user, :rooms, user) {
+      User.rooms(:auth => auth, :user => user)
     }
-    rooms = User.rooms(arg)
     links_if_exists('rooms: ', rooms) { |e|
       label = "[#{v(e, 'name')}]"
       nickname = v(e, 'nickname')
@@ -476,11 +471,9 @@ module EntryHelper
   end
 
   def user_links(user)
-    arg = {
-      :auth => auth,
-      :user => user
+    users = session_cache(:user, :subscriptions, user) {
+      User.subscriptions(:auth => auth, :user => user)
     }
-    users = User.subscriptions(arg)
     links_if_exists("#{users.size} subscriptions: ", users, F2P::Config.max_friend_list_num) { |e|
       label = "[#{v(e, 'name')}]"
       nickname = v(e, 'nickname')
@@ -491,11 +484,9 @@ module EntryHelper
   end
 
   def member_links(room)
-    arg = {
-      :auth => auth,
-      :room => room
+    members = session_cache(:room, :members, room) {
+      Room.members(:auth => auth, :room => room)
     }
-    members = Room.members(arg)
     links_if_exists("(#{members.size} members) ", members, F2P::Config.max_friend_list_num) { |e|
       label = "[#{v(e, 'name')}]"
       nickname = v(e, 'nickname')
@@ -531,7 +522,7 @@ module EntryHelper
     }
     links << menu_link(menu_label('inbox', '0'), {:action => 'inbox'}, {:accesskey => '0'})
     links << menu_link(menu_label('home', '1'), {:action => 'list'}, {:accesskey => '1'})
-    links << menu_link(menu_label('me'), :action => 'list', :user => @auth.name)
+    links << menu_link(menu_label('me'), :action => 'list', :user => auth.name)
     if ctx.inbox
       links << menu_link(menu_label('likes'), :action => 'list', :like => 'likes', :user => ctx.user_for)
     else

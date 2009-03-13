@@ -50,13 +50,11 @@ class Room < Hash
   private
 
     def ff_picture_url(room, size = 'small')
-      (@picture_url_cache ||= {})[room] ||=
-        ff_client.get_room_picture_url(room, size)
+      ff_client.get_room_picture_url(room, size)
     end
 
     def ff_profile(auth, room)
-      (@profile_cache ||= {})[[auth.name, room]] ||=
-        ff_client.get_room_profile(auth.name, auth.remote_key, room)
+      ff_client.get_room_profile(auth.name, auth.remote_key, room)
     end
 
     def sort_by_name(lists)
