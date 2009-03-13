@@ -474,12 +474,23 @@ module EntryHelper
     users = session_cache(:user, :subscriptions, user) {
       User.subscriptions(:auth => auth, :user => user)
     }
+    users = users.find_all { |e| v(e, 'nickname') and v(e, 'nickname') != auth.name }
     links_if_exists("#{users.size} subscriptions: ", users, F2P::Config.max_friend_list_num) { |e|
-      label = "[#{v(e, 'name')}]"
       nickname = v(e, 'nickname')
-      if nickname
-        link_to(h(label), list_opt(:action => 'list', :user => u(nickname)))
-      end
+      label = "[#{v(e, 'name')}]"
+      link_to(h(label), list_opt(:action => 'list', :user => u(nickname)))
+    }
+  end
+
+  def imaginary_user_links(user)
+    users = session_cache(:user, :subscriptions, user) {
+      User.subscriptions(:auth => auth, :user => user)
+    }
+    users = users.find_all { |e| !v(e, 'nickname') }
+    links_if_exists("#{users.size} imaginary friends: ", users, F2P::Config.max_friend_list_num) { |e|
+      user_id = v(e, 'id')
+      label = "<#{v(e, 'name')}>"
+      link_to(h(label), list_opt(:action => 'list', :user => u(user_id)))
     }
   end
 
