@@ -50,8 +50,10 @@ module FriendFeed
       client = @clients[name] ||= create_client
       logger.info("#{self.class} is accessing to #{uri.to_s} with client #{client.object_id} for #{name}")
       httpclient_protect do
-        client.set_auth(nil, name, remote_key)
-        client.www_auth.basic_auth.challenge(uri, true)
+        client.synchronize do
+          client.set_auth(nil, name, remote_key)
+          client.www_auth.basic_auth.challenge(uri, true)
+        end
         yield(client)
       end
     end
