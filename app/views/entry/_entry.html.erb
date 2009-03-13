@@ -9,7 +9,7 @@
   <%= via(entry) -%>
   <%= published(entry, true) if ctx.list? -%>
   <%- if comment_inline?(entry) -%>
-    -- <%= inline_comment(entry.comments.first) -%>
+    -- <span class="comment"><%= inline_comment(entry.comments.first) -%></span>
   <%- end -%>
   <%= original_link(entry) -%>
 <%= url_link(entry) -%>
