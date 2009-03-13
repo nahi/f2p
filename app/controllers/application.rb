@@ -118,7 +118,6 @@ private
   end
 
   def logout
-    update_checked_modified
     @user_id = session[:user_id] = nil
     @auth = nil
     reset_session
@@ -135,6 +134,7 @@ private
     }
   end
 
+  # not used
   def update_checked_modified
     store = session[:checked]
     if @auth and store
