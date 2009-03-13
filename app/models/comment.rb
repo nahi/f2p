@@ -18,6 +18,10 @@ class Comment < Hash
     v('user', 'id')
   end
 
+  def nickname
+    v('user', 'nickname')
+  end
+
   def by_user(nickname)
     v('user', 'nickname') == nickname
   end

@@ -625,8 +625,7 @@ module EntryHelper
   def delete_comment_link(comment)
     if ctx.single?
       cid = v(comment, 'id')
-      name = v(comment, 'user', 'nickname')
-      if name == auth.name or auth.name == comment.entry.nickname
+      if comment.nickname == auth.name or auth.name == comment.entry.nickname
         link_to(icon_tag(:delete), {:action => 'delete', :id => u(comment.entry.id), :comment => u(cid)}, :confirm => 'Are you sure?')
       end
     end
@@ -641,7 +640,7 @@ module EntryHelper
   end
 
   def reshare_link(entry)
-    if ctx.single? and entry.link
+    if entry.link and entry.nickname != auth.name
       opt = {
         :action => 'reshare',
         :eid => u(entry.id),
