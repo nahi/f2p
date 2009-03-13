@@ -11,35 +11,21 @@
     <%- end -%>
     <%= hidden_field_tag('lat', @lat) %>
     <%= hidden_field_tag('long', @long) %>
-    <%= hidden_field_tag('title', @title) %>
     <%= hidden_field_tag('address', @address) %>
     <%= hidden_field_tag('zoom', @zoom) %>
     <%= submit_tag 'post' %>
   </p>
-<%- end -%>
-<script type='text/javascript'><!--
-<%- if @with_form -%>
-  post.file.focus();
-<%- else -%>
-  post.body.focus();
-<%- end -%>
-//--></script>
-<hr/>
-<%- form_tag(:action => 'new') do -%>
+  <hr/>
   <p>
   Address: <%= text_field_tag('title', @title) %> <%= submit_tag 'search' %><br/>
   zoom: <%= zoom_select_tag('zoom', @zoom) %>
-  <%= hidden_field_tag('body', @body) %>
-  <%= hidden_field_tag('link', @link) %>
-  <%= hidden_field_tag('room', ctx.room) %>
-  <%= hidden_field_tag('with_form', @with_form) %>
   </p>
   <%- if @placemark -%>
     <%- if @placemark.ambiguous? -%>
       <p>Ambiguous:</p>
       <ul>
         <%- @placemark.candidates.each do |cand| -%>
-          <li><%= link_to(h(cand), :action => 'new', :body => @body, :link => @link, :room => @room, :title => cand) %></li>
+          <li><%= link_to(h(cand), :action => 'add', :commit => 'search', :body => @body, :link => @link, :room => @room, :with_form => @with_form, :title => cand) %></li>
         <%- end -%>
       </ul>
     <%- else -%>
@@ -50,3 +36,10 @@
     <%- end -%>
   <%- end -%>
 <%- end -%>
+<script type='text/javascript'><!--
+<%- if @with_form -%>
+  post.file.focus();
+<%- else -%>
+  post.body.focus();
+<%- end -%>
+//--></script>

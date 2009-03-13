@@ -264,15 +264,6 @@ class EntryController < ApplicationController
     @address = param(:address)
     @zoom = (param(:zoom) || F2P::Config.google_maps_zoom).to_i
     @placemark = nil
-    if @title
-      geocoder = GoogleMaps::GeocodingJpGeocoder.new(http_client)
-      @placemark = geocoder.search(@title)
-      if @placemark and !@placemark.ambiguous?
-        @address = @placemark.address
-        @lat = @placemark.lat
-        @long = @placemark.long
-      end
-    end
   end
 
   def reshare
@@ -302,58 +293,74 @@ class EntryController < ApplicationController
   end
 
   verify :only => :add,
-          :method => :post,
+          :method => [:get, :post],
           :params => [:body],
           :add_flash => {:error => 'verify failed'},
           :redirect_to => {:action => 'list'}
 
   def add
     @ctx = EntryContext.new(@auth)
+    @ctx.viewname = 'post new entry' # setting for address search result
+    @ctx.room = param(:room)
     @body = param(:body)
     link_title = param(:link_title)
     @link = param(:link)
     @with_form = param(:with_form)
-    @ctx.room = param(:room)
     file = param(:file)
+    @title = param(:title)
     @lat = param(:lat)
     @long = param(:long)
-    @title = param(:title)
     @address = param(:address)
     @zoom = (param(:zoom) || F2P::Config.google_maps_zoom).to_i
-    opt = create_opt(:room => @ctx.room)
-    if @lat and @long and @address
-      generator = GoogleMaps::URLGenerator.new
-      image_url = generator.staticmap_url(F2P::Config.google_maps_maptype, @lat, @long, :zoom => @zoom, :width => F2P::Config.google_maps_width, :height => F2P::Config.google_maps_height)
-      image_link = generator.link_url(@lat, @long, @address)
-      (opt[:images] ||= []) << [image_url, image_link]
-      @body += " ([map] #{@address})"
-    end
-    if @link
-      link_title ||= capture_title(@link)
-      opt[:body] = link_title
-      opt[:link] = @link
-      opt[:comment] = @body
-    elsif @body
-      opt[:body] = @body
-    end
-    if file
-      if !file.content_type or /\Aimage\//i !~ file.content_type
-        render :action => 'new'
-        return
+    @placemark = nil
+    case param(:commit)
+    when 'search'
+      if @title
+        geocoder = GoogleMaps::GeocodingJpGeocoder.new(http_client)
+        @placemark = geocoder.search(@title)
+        if @placemark and !@placemark.ambiguous?
+          @address = @placemark.address
+          @lat = @placemark.lat
+          @long = @placemark.long
+        end
       end
-      (opt[:files] ||= []) << [file]
-    end
-    unless opt[:body]
       render :action => 'new'
-      return
+    else
+      opt = create_opt(:room => @ctx.room)
+      if @lat and @long and @address
+        generator = GoogleMaps::URLGenerator.new
+        image_url = generator.staticmap_url(F2P::Config.google_maps_maptype, @lat, @long, :zoom => @zoom, :width => F2P::Config.google_maps_width, :height => F2P::Config.google_maps_height)
+        image_link = generator.link_url(@lat, @long, @address)
+        (opt[:images] ||= []) << [image_url, image_link]
+        @body += " ([map] #{@address})"
+      end
+      if @link
+        link_title ||= capture_title(@link)
+        opt[:body] = link_title
+        opt[:link] = @link
+        opt[:comment] = @body
+      elsif @body
+        opt[:body] = @body
+      end
+      if file
+        if !file.content_type or /\Aimage\//i !~ file.content_type
+          render :action => 'new'
+          return
+        end
+        (opt[:files] ||= []) << [file]
+      end
+      if opt[:body]
+        id = Entry.create(opt)
+        flash[:keep_ctx] = true
+        if session[:ctx]
+          session[:ctx].reset_for_new
+        end
+        flash[:added_id] = id
+        redirect_to_list
+      else
+        render :action => 'new'
+      end
     end
-    id = Entry.create(opt)
-    flash[:keep_ctx] = true
-    if session[:ctx]
-      session[:ctx].reset_for_new
-    end
-    flash[:added_id] = id
-    redirect_to_list
   end
 
   verify :only => :delete,
