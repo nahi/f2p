@@ -1,13 +1,19 @@
-<%- if comment.respond_to?(:fold_entries) -%>
-  <%= fold_comment_link(comment) %>
-<%- else -%>
-  <%= comment_icon(comment.by_user(v(comment.entry, 'user', 'nickname'))) %>
-  <%= date(v(comment, 'date'), false) if ctx.single? %>
-  <%= comment(comment) %>
-  by <%= user(comment) %>
-  <%= via(comment) -%>
-  <%= date(v(comment, 'date'), true) if ctx.list? %>
-  <%= comment_url_link(comment) -%>
-<%= delete_comment_link(comment) -%>
-<%= post_comment_link(comment.entry) if ctx.list? and comment == comment.entry.comments.last -%>
-<%- end -%>
+<ul>
+  <%- comments.each do |comment| -%>
+    <%- if comment.respond_to?(:fold_entries) -%>
+      <li><%= fold_comment_link(comment) %></li>
+    <%- else -%>
+      <li>
+        <%= comment_icon(comment.by_user(v(comment.entry, 'user', 'nickname'))) %>
+        <%= date(v(comment, 'date'), false) if ctx.single? %>
+        <%= comment(comment) %>
+        by <%= user(comment) %>
+        <%= via(comment) -%>
+        <%= date(v(comment, 'date'), true) if ctx.list? %>
+        <%= comment_url_link(comment) -%>
+        <%= delete_comment_link(comment) -%>
+        <%= post_comment_link(comment.entry) if ctx.list? and comment == comment.entry.comments.last -%>
+      </li>
+    <%- end -%>
+  <%- end -%>
+</ul>

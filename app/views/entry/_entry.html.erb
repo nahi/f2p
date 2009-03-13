@@ -21,16 +21,9 @@
   <%- if entry.comments.empty? or comment_inline?(entry) -%>
 <%= post_comment_link(entry) if ctx.list? %>
   <%- elsif ctx.single? -%>
-    <br/>
-    <%- entry.comments.each do |comment| -%>
-      <%= render :partial => 'comment', :locals => {:comment => comment} %><br/>
-    <%- end -%>
+    <%= render :partial => 'comment', :locals => {:comments => entry.comments} %>
   <%- else -%>
-    <ul>
-      <%- fold_comments(entry.comments).each do |comment| -%>
-        <li><%= render :partial => 'comment', :locals => {:comment => comment} %></li>
-      <%- end -%>
-    </ul>
+    <%= render :partial => 'comment', :locals => {:comments => fold_comments(entry.comments)} %>
   <%- end -%>
   <%- if ctx.single? -%>
     <%- form_tag({:action => 'add_comment', :id => u(entry.id)}, {:name => 'post'}) do -%>
