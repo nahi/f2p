@@ -534,17 +534,13 @@ module EntryHelper
     links << menu_link(menu_label('inbox', '0'), {:action => 'inbox'}, {:accesskey => '0'})
     links << menu_link(menu_label('home', '1'), {:action => 'list'}, {:accesskey => '1'})
     links << menu_link(menu_label('me'), :action => 'list', :user => auth.name)
-    if ctx.inbox
-      links << menu_link(menu_label('likes'), :action => 'list', :like => 'likes', :user => ctx.user_for)
-    else
-      if !ctx.user_for or auth.name == ctx.user_for
-        links << menu_link(menu_label('lists'), :action => 'list', :list => 'favorite') {
-          !ctx.list
-        }
-        links << menu_link(menu_label('rooms'), :action => 'list', :room => '*') {
-          ctx.room != '*'
-        }
-      end
+    if !ctx.user_for or auth.name == ctx.user_for
+      links << menu_link(menu_label('lists'), :action => 'list', :list => 'favorite') {
+        !ctx.list
+      }
+      links << menu_link(menu_label('rooms'), :action => 'list', :room => '*') {
+        ctx.room != '*'
+      }
       links << menu_link(menu_label('likes'), :action => 'list', :like => 'likes', :user => ctx.user_for) {
         ctx.like != 'likes'
       }
@@ -553,7 +549,7 @@ module EntryHelper
       }
     end
     links << menu_link(icon_tag(:next), list_opt(ctx.link_opt(:start => start + num, :num => num)), :accesskey => '6') { !no_page }
-    str = links.join
+    str = links.join(' ')
     if ctx.inbox
       str += button_to('refresh', {:action => 'inbox'}, {:name => 'submit'})
     end
