@@ -531,10 +531,10 @@ module EntryHelper
     }
     links << menu_link(menu_label('inbox', '0'), {:action => 'inbox'}, {:accesskey => '0'})
     links << menu_link(menu_label('home', '1'), {:action => 'list'}, {:accesskey => '1'})
+    links << menu_link(menu_label('me'), :action => 'list', :user => @auth.name)
     if ctx.inbox
       links << menu_link(menu_label('likes'), :action => 'list', :like => 'likes', :user => ctx.user_for)
     else
-      links << menu_link(menu_label('me'), :action => 'list', :user => @auth.name)
       if !ctx.user_for or auth.name == ctx.user_for
         links << menu_link(menu_label('lists'), :action => 'list', :list => 'favorite') {
           !ctx.list
@@ -588,14 +588,18 @@ module EntryHelper
   end
 
   def url_link(entry)
-    link = entry.link if with_link?(v(entry, 'service'))
-    link ||= v(entry, VIEW_LINKS_TAG, 0)
-    url_link_to(link)
+    if ctx.single?
+      link = entry.link if with_link?(v(entry, 'service'))
+      link ||= v(entry, VIEW_LINKS_TAG, 0)
+      url_link_to(link)
+    end
   end
 
   def comment_url_link(comment)
-    link = v(comment, VIEW_LINKS_TAG, 0)
-    url_link_to(link)
+    if ctx.single?
+      link = v(comment, VIEW_LINKS_TAG, 0)
+      url_link_to(link)
+    end
   end
 
   def url_link_to(link)
