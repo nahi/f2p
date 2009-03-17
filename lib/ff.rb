@@ -32,6 +32,33 @@ module FriendFeed
       end
     end
 
+    class UserClient
+      def initialize(name, remote_key, logger)
+        @client = HTTPClient.new
+        @name = name
+        @remote_key = remote_key
+        @client.debug_dev = LShiftLogger.new(logger)
+        @client.extend(MonitorMixin)
+        reset_auth
+      end
+
+      def client(remote_key)
+        @client.synchronize do
+          if remote_key != @remote_key
+            @remote_key = remote_key
+            reset_auth
+          end
+          @client
+        end
+      end
+
+    private
+
+      def reset_auth
+        @client.set_auth(nil, @name, @remote_key)
+      end
+    end
+
     def initialize(logger = nil)
       @logger = logger || NullLogger.new
       @clients = {}
@@ -39,21 +66,16 @@ module FriendFeed
 
   private
 
-    def create_client
-      client = HTTPClient.new
-      #client.debug_dev = LShiftLogger.new(@logger)
-      client.extend(MonitorMixin)
-      client
+    def create_client(name, remote_key)
+      UserClient.new(name, remote_key, @logger)
     end
 
     def client_sync(uri, name, remote_key)
-      client = @clients[name] ||= create_client
+      user_client = @clients[name] ||= create_client(name, remote_key)
+      client = user_client.client(remote_key)
       logger.info("#{self.class} is accessing to #{uri.to_s} with client #{client.object_id} for #{name}")
       httpclient_protect do
-        client.synchronize do
-          client.set_auth(nil, name, remote_key)
-          client.www_auth.basic_auth.challenge(uri, true)
-        end
+        client.www_auth.basic_auth.challenge(uri, true)
         yield(client)
       end
     end
