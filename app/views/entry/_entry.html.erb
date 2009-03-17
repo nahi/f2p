@@ -4,7 +4,7 @@
   <%= pin_link(entry) -%>
   <%= icon(entry) %>
   <%= published(entry, false) if ctx.single? -%>
-  <%- if entry.view_inbox and !ctx.inbox -%>
+  <%- if entry.view_inbox and !ctx.inbox and !ctx.single? -%>
     <span class="inbox"><%= inbox_label(entry) %></span>
   <%- end -%>
   <%= author_link(entry, (root_user.nil? or root_user != entry.user_id), (root_service.nil? or root_service != entry.service_identity)) %>
