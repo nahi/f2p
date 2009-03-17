@@ -13,6 +13,7 @@
       .latest3 { color: #900; }
       .older { color: #008; }
       .comment { color: #333; }
+      .inbox { font-weight: bold; }
       div.listings .thread1 {
         background-color: #EEE;
         padding-bottom: 0.8ex;
@@ -32,7 +33,7 @@
     </style>
   </head>
   <body>
-    <h1><%= link_to(h(appname), :controller => 'entry', :action => 'list') %> <%= h(viewname) %> at <a name="top"><%= date(Time.now) %></a> <%= write_new_link %> <%= search_link %> <%= settings_link %> <%= logout_link %></h1>
+    <h1><%= link_to(h(appname), :controller => 'entry') %> <%= h(viewname) %> at <a name="top"><%= date(Time.now) %></a> <%= write_new_link %> <%= search_link %> <%= settings_link %> <%= logout_link %></h1>
     <%= yield %>
   </body>
 </html>

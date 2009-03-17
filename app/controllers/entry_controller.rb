@@ -187,7 +187,7 @@ class EntryController < ApplicationController
   verify :only => :list,
           :method => [:get, :post],
           :add_flash => {:error => 'verify failed'},
-          :redirect_to => {:action => 'list'}
+          :redirect_to => {:action => 'inbox'}
 
   def list
     @ctx = restore_ctx { |ctx|
@@ -203,7 +203,7 @@ class EntryController < ApplicationController
   verify :only => :inbox,
           :method => [:get, :post],
           :add_flash => {:error => 'verify failed'},
-          :redirect_to => {:action => 'list'}
+          :redirect_to => {:action => 'inbox'}
 
   def inbox
     @ctx = restore_ctx { |ctx|
@@ -216,14 +216,21 @@ class EntryController < ApplicationController
       ctx.inbox = true
       ctx.fold = param(:fold) != 'no'
     }
-    if param(:submit) == 'refresh' or updated_expired(Time.now)
+    if param(:submit) == 'archive' or updated_expired(Time.now)
       update_checked_modified
     end
     store = session[:checked] ||= {}
-    @entries = EntryThread.find(@ctx.find_opt) || []
+    (F2P::Config.max_skip_empty_inbox_pages + 1).times do
+      @entries = EntryThread.find(@ctx.find_opt) || []
+      if @entries.empty?
+        @ctx.start += @ctx.num
+      else
+        break
+      end
+    end
     @entries.each do |t|
       t.entries.each do |e|
-        store[e.id] = e[EntryThread::MODEL_LAST_MODIFIED_TAG]
+        store[e.id] = e.modified
       end
     end
     session[:last_updated] = Time.now
@@ -238,7 +245,7 @@ class EntryController < ApplicationController
           :method => :get,
           :params => [:id],
           :add_flash => {:error => 'verify failed'},
-          :redirect_to => {:action => 'list'}
+          :redirect_to => {:action => 'inbox'}
 
   def show
     @ctx = EntryContext.new(@auth)
@@ -296,7 +303,7 @@ class EntryController < ApplicationController
           :method => [:get, :post],
           :params => [:body],
           :add_flash => {:error => 'verify failed'},
-          :redirect_to => {:action => 'list'}
+          :redirect_to => {:action => 'inbox'}
 
   def add
     @ctx = EntryContext.new(@auth)
@@ -367,7 +374,7 @@ class EntryController < ApplicationController
           :method => :get,
           :params => [:id],
           :add_flash => {:error => 'verify failed'},
-          :redirect_to => {:action => 'list'}
+          :redirect_to => {:action => 'inbox'}
 
   def delete
     id = param(:id)
@@ -387,7 +394,7 @@ class EntryController < ApplicationController
           :method => :get,
           :params => [:id],
           :add_flash => {:error => 'verify failed'},
-          :redirect_to => {:action => 'list'}
+          :redirect_to => {:action => 'inbox'}
 
   def undelete
     id = param(:id)
@@ -401,7 +408,7 @@ class EntryController < ApplicationController
           :method => :post,
           :params => [:id, :body],
           :add_flash => {:error => 'verify failed'},
-          :redirect_to => {:action => 'list'}
+          :redirect_to => {:action => 'inbox'}
 
   def add_comment
     id = param(:id)
@@ -419,7 +426,7 @@ class EntryController < ApplicationController
           :method => :get,
           :params => [:id],
           :add_flash => {:error => 'verify failed'},
-          :redirect_to => {:action => 'list'}
+          :redirect_to => {:action => 'inbox'}
 
   def like
     id = param(:id)
@@ -434,7 +441,7 @@ class EntryController < ApplicationController
           :method => :get,
           :params => [:id],
           :add_flash => {:error => 'verify failed'},
-          :redirect_to => {:action => 'list'}
+          :redirect_to => {:action => 'inbox'}
 
   def unlike
     id = param(:id)
@@ -449,7 +456,7 @@ class EntryController < ApplicationController
           :method => :get,
           :params => [:id],
           :add_flash => {:error => 'verify failed'},
-          :redirect_to => {:action => 'list'}
+          :redirect_to => {:action => 'inbox'}
 
   def pin
     id = param(:id)
@@ -465,7 +472,7 @@ class EntryController < ApplicationController
           :method => :get,
           :params => [:id],
           :add_flash => {:error => 'verify failed'},
-          :redirect_to => {:action => 'list'}
+          :redirect_to => {:action => 'inbox'}
 
   def unpin
     id = param(:id)
@@ -525,7 +532,7 @@ private
       ctx.eid = nil
       redirect_to ctx.link_opt
     else
-      redirect_to :action => 'list'
+      redirect_to :action => 'inbox'
     end
   end
 
@@ -533,7 +540,7 @@ private
     if ctx = @ctx || session[:ctx]
       redirect_to ctx.link_opt
     else
-      redirect_to :action => 'list'
+      redirect_to :action => 'inbox'
     end
   end
 

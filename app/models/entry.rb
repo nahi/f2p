@@ -81,9 +81,8 @@ class Entry < Hash
     end
   end
 
-  def pinned?
-    !!v(EntryThread::MODEL_PIN_TAG)
-  end
+  attr_accessor :view_pinned
+  attr_accessor :view_inbox
 
   def similar?(rhs)
     result = false
@@ -96,16 +95,22 @@ class Entry < Hash
   def service_identity
     [service_id, room]
   end
+  
+  def modified_at
+    @modified_at ||= Time.parse(modified)
+  end
 
   def modified
-    updated = v('updated')
+    @modified ||= nil
+    return @modified if @modified
+    @modified = v('updated')
     unless comments.empty?
-      updated = [updated, comments.last['date']].max
+      @modified = [@modified, comments.last['date']].max
     end
     unless likes.empty?
-      updated = [updated, likes.last['date']].max
+      @modified = [@modified, likes.last['date']].max
     end
-    updated
+    @modified
   end
 
   def id

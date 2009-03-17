@@ -1,12 +1,52 @@
+require 'timeout'
+
+
 class EntryThread
-  MODEL_LAST_MODIFIED_TAG = '__model_last_modified'
-  MODEL_PIN_TAG = '__model_pin'
+  class Task
+    class << self
+      def run(&block)
+        new(&block)
+      end
+      private :new
+    end
+
+    def initialize(&block)
+      @result = nil
+      @thread = Thread.new {
+        @result = yield
+      }
+    end
+
+    def result(timeout = nil)
+      begin
+        timeout(timeout) do
+          @thread.join
+          @result
+        end
+      rescue Timeout::Error
+        @result = nil
+      end
+    end
+  end
 
   class << self
     def find(opt = {})
       auth = opt[:auth]
       return nil unless auth
-      if opt[:query]
+      entries = pinned_entries = nil
+      if opt[:inbox]
+        list_task = Task.run {
+          get_home_entries(auth, opt)
+        }
+        if opt[:start].nil? or opt[:start] == 0
+          pinned = Pin.find_all_by_user_id(auth.id).map { |e| e.eid }
+          pin_task =  Task.run {
+            get_entries(auth, :ids => pinned)
+          }
+          pinned_entries = wrap(pin_task.result || [])
+        end
+        entries = list_task.result
+      elsif opt[:query]
         entries = search_entries(auth, opt)
       elsif opt[:id]
         entries = get_entry(auth, opt)
@@ -31,9 +71,11 @@ class EntryThread
       if opt[:link]
         wrapped = filter_link_entries(auth, wrapped)
       end
+      record_last_modified(wrapped)
+      check_inbox(auth, wrapped)
       check_pinned(auth, wrapped, opt)
       if opt[:inbox]
-        wrapped = filter_pinned_entries(auth, wrapped, opt)
+        wrapped = filter_pinned_entries(auth, wrapped, pinned_entries, opt)
         wrapped = filter_checked_entries(auth, wrapped)
       end
       sort_by_service(wrapped, opt)
@@ -66,70 +108,75 @@ class EntryThread
 
   private
 
+    def filter_link_entries(auth, entries)
+      entries.partition { |e| e.nickname == auth.name }.flatten
+    end
+
     def record_last_modified(entries)
       found = LastModified.find_all_by_eid(entries.map { |e| e.id })
-      entries.collect { |entry|
+      entries.each do |entry|
         if m = found.find { |e| entry.id == e.eid }
-          m.date = Time.parse(entry.modified)
-          raise unless m.save
-          m
+          d = entry.modified_at
+          if m.date != d
+            m.date = d
+            raise unless m.save
+          end
         else
           m = LastModified.new
           m.eid = entry.id
-          m.date = Time.parse(entry.modified)
+          m.date = entry.modified_at
           raise unless m.save
-          m
         end
-      }
+      end
     end
 
-    def filter_checked_entries(auth, entries)
-      record_last_modified(entries)
+    def check_inbox(auth, entries)
       cond = [
         'user_id = ? and last_modifieds.eid in (?)',
         auth.id,
         entries.map { |e| e.id }
       ]
       checked = CheckedModified.find(:all, :conditions => cond, :include => 'last_modified')
-      entries.find_all { |entry|
+      oldest = checked.max_by { |c| c.checked }
+      entries.each do |entry|
         if c = checked.find { |e| e.last_modified.eid == entry.id }
-          entry[MODEL_LAST_MODIFIED_TAG] = entry.modified
-          c.checked < c.last_modified.date
+          entry.view_inbox = c.checked < c.last_modified.date
         else
-          entry[MODEL_LAST_MODIFIED_TAG] = entry.modified
-          true
+          entry.view_inbox = oldest ? oldest.checked < entry.modified_at : true
         end
-      }
-    end
-
-    def filter_link_entries(auth, entries)
-      entries.partition { |e| e.nickname == auth.name }.flatten
+      end
     end
 
     def check_pinned(auth, entries, opt)
       map = pinned_map(auth, entries.map { |e| e.id })
       entries.each do |entry|
-        entry[MODEL_PIN_TAG] = true if map.key?(entry.id)
+        if map.key?(entry.id)
+          entry.view_pinned = true
+          entry.view_inbox = true
+        end
       end
     end
 
-    def filter_pinned_entries(auth, entries, opt)
+    def filter_pinned_entries(auth, entries, pinned_entries, opt)
       if opt[:start] and opt[:start] != 0
         entries.find_all { |entry|
-          !entry[MODEL_PIN_TAG]
+          !entry.view_pinned
         }
       else
-        pinned = Pin.find_all_by_user_id(auth.id).map { |e| e.eid }
-        rest_ids = pinned - entries.map { |e| e.id }
-        unless rest_ids.empty?
-          pinned_entries = wrap(get_entries(auth, :ids => rest_ids) || [])
-          pinned_entries.each do |entry|
-            entry[MODEL_PIN_TAG] = true
-          end
-          entries += pinned_entries
+        all = entries.map { |e| e.id }
+        rest = pinned_entries.find_all { |e| !all.include?(e.id) }
+        rest.each do |entry|
+          entry.view_pinned = true
+          entry.view_inbox = true
         end
-        entries
+        entries + rest
       end
+    end
+
+    def filter_checked_entries(auth, entries)
+      entries.find_all { |entry|
+        entry.view_inbox
+      }
     end
 
     def pinned_map(auth, eids)

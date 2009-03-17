@@ -45,7 +45,7 @@ class SettingController < ApplicationController
       render :action => 'index'
     else
       flash[:message] = 'Settings updated.'
-      redirect_to :controller => 'entry', :action => 'list'
+      redirect_to :controller => 'entry'
     end
   end
 end

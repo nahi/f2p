@@ -4,12 +4,15 @@
   <%= pin_link(entry) -%>
   <%= icon(entry) %>
   <%= published(entry, false) if ctx.single? -%>
+  <%- if entry.view_inbox and !ctx.inbox -%>
+    <span class="inbox"><%= inbox_label(entry) %></span>
+  <%- end -%>
   <%= author_link(entry, (root_user.nil? or root_user != entry.user_id), (root_service.nil? or root_service != entry.service_identity)) %>
   <%= content(entry) %>
   <%= via(entry) -%>
   <%= published(entry, true) if ctx.list? -%>
   <%- if comment_inline?(entry) -%>
-    -- <span class="comment"><%= inline_comment(entry.comments.first) -%></span>
+    -- <span class="comment"><%= inline_comment(entry.comments.first) %></span>
   <%- end -%>
   <%= original_link(entry) -%>
 <%= url_link(entry) -%>

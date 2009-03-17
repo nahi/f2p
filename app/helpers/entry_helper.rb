@@ -10,8 +10,8 @@ module EntryHelper
   end
 
   def pin_link(entry)
-    if ctx.inbox or ctx.single? or entry.pinned?
-      if entry.pinned?
+    if ctx.inbox or ctx.single? or entry.view_pinned
+      if entry.view_pinned
         link_to(icon_tag(:pinned, 'unpin'), :action => 'unpin', :id => entry.id)
       else
         link_to(icon_tag(:pin), :action => 'pin', :id => entry.id)
@@ -81,7 +81,7 @@ module EntryHelper
   end
 
   def author_link(entry, show_user, show_service)
-    user_str = service_str = ''
+    inbox_str = user_str = service_str = ''
     if show_user
       user_str += user(entry)
     end
@@ -100,9 +100,13 @@ module EntryHelper
         service_str = h("(#{name})")
       end
     end
-    str = user_str + service_str
+    str = inbox_str + user_str + service_str
     str += ':' unless str.empty?
     str
+  end
+
+  def inbox_label(entry)
+    h('[inbox] ')
   end
 
   def original_link(entry)
@@ -542,7 +546,7 @@ module EntryHelper
       !no_page and start - num >= 0
     }
     links << menu_link(menu_label('inbox', '0'), {:action => 'inbox'}, {:accesskey => '0'})
-    links << menu_link(menu_label('home', '1'), {:action => 'list'}, {:accesskey => '1'})
+    links << menu_link(menu_label('all', '1'), {:action => 'list'}, {:accesskey => '1'})
     links << menu_link(menu_label('me'), :action => 'list', :user => auth.name)
     if !ctx.user_for or auth.name == ctx.user_for
       links << menu_link(menu_label('lists'), :action => 'list', :list => 'favorite') {
@@ -561,7 +565,7 @@ module EntryHelper
     links << menu_link(icon_tag(:next), list_opt(ctx.link_opt(:start => start + num, :num => num)), :accesskey => '6') { !no_page }
     str = links.join(' ')
     if ctx.inbox
-      str += button_to('refresh', {:action => 'inbox'}, {:name => 'submit'})
+      str += button_to('archive', {:action => 'inbox'}, {:name => 'submit'})
     end
     str
   end
