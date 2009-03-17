@@ -474,7 +474,7 @@ class EntryController < ApplicationController
       commit_checked_modified(id)
     end
     flash[:keep_ctx] = true
-    redirect_to_entry_or_list
+    redirect_to_list
   end
 
 private
