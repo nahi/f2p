@@ -301,7 +301,6 @@ class EntryController < ApplicationController
 
   verify :only => :add,
           :method => [:get, :post],
-          :params => [:body],
           :add_flash => {:error => 'verify failed'},
           :redirect_to => {:action => 'inbox'}
 
