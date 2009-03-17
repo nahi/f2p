@@ -415,6 +415,7 @@ class EntryController < ApplicationController
     body = param(:body)
     if id and body
       comment_id = Entry.add_comment(create_opt(:id => id, :body => body))
+      unpin_entry(id)
     end
     flash[:added_id] = id
     flash[:added_comment] = comment_id
@@ -460,10 +461,7 @@ class EntryController < ApplicationController
 
   def pin
     id = param(:id)
-    if id
-      Entry.add_pin(create_opt(:id => id))
-      clear_checked_modified(id)
-    end
+    unpin_entry(id)
     flash[:keep_ctx] = true
     redirect_to_entry_or_list
   end
@@ -485,6 +483,13 @@ class EntryController < ApplicationController
   end
 
 private
+
+  def unpin_entry(id)
+    if id
+      Entry.delete_pin(create_opt(:id => id))
+      commit_checked_modified(id)
+    end
+  end
 
   def capture_title(url)
     begin
