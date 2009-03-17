@@ -150,7 +150,12 @@ module EntryHelper
 
   def content_with_media(entry)
     medias = entry.medias
-    medias.collect { |media|
+    if ctx.single?
+      display = medias
+    else
+      display = medias[0, setting.entries_in_thread - 1]
+    end
+    str = display.collect { |media|
       title = v(media, 'title')
       link = v(media, 'link')
       tbs = v(media, 'thumbnails')
@@ -175,6 +180,11 @@ module EntryHelper
         end
       end
     }.join(' ')
+    if medias.size != display.size
+      msg = " (#{medias.size - display.size} more images)"
+      str += link_to(icon_tag(:more), :action => 'show', :id => u(entry.id)) + h(msg)
+    end
+    str
   end
 
   def extract_first_media_link(media)
