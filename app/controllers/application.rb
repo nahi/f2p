@@ -134,7 +134,6 @@ private
     }
   end
 
-  # not used
   def update_checked_modified
     store = session[:checked]
     if @auth and store

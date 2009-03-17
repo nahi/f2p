@@ -40,7 +40,6 @@ class EntryThread
     end
 
     def update_checked_modified(auth, hash)
-      pinned = pinned_map(auth, hash.keys)
       cond = [
         'user_id = ? and last_modifieds.eid in (?)',
         auth.id,
@@ -49,7 +48,6 @@ class EntryThread
       checked = CheckedModified.find(:all, :conditions => cond, :include => 'last_modified')
       hash.each do |eid, checked_modified|
         next unless checked_modified
-        next if pinned.key?(eid)
         if c = checked.find { |e| e.last_modified.eid == eid }
           c.checked = Time.parse(checked_modified)
           raise unless c.save
