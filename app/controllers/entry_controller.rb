@@ -283,7 +283,7 @@ class EntryController < ApplicationController
       return
     end
     @link = entry.link
-    @link_title = entry.title
+    @link_title = %Q("#{entry.title}")
   end
 
   def search
