@@ -114,6 +114,12 @@ module ApplicationHelper
     link_to(image_tag(image_url, :alt => h(name), :title => h(name), :size => image_size(25, 25)), url)
   end
 
+  def room_members(nickname)
+    session_cache(:room, :members, nickname) {
+      Room.members(:auth => auth, :room => nickname)
+    }
+  end
+
   def room(room)
     link_to(h(room.name), :controller => 'entry', :action => 'list', :room => u(room.nickname))
   end
@@ -139,6 +145,30 @@ module ApplicationHelper
       User.ff_url(:auth => auth, :user => nickname)
     }
     link_to(image_tag(image_url, :alt => h(name), :title => h(name), :size => image_size(25, 25)), url)
+  end
+
+  def user_services(nickname)
+    session_cache(:user, :services, nickname) {
+      User.services(:auth => auth, :user => nickname)
+    }
+  end
+
+  def user_rooms(nickname)
+    session_cache(:user, :rooms, nickname) {
+      User.rooms(:auth => auth, :user => nickname)
+    }
+  end
+
+  def user_lists(nickname)
+    session_cache(:user, :lists, nickname) {
+      User.lists(:auth => auth, :user => nickname)
+    }
+  end
+
+  def user_subscriptions(nickname)
+    session_cache(:user, :subscriptions, nickname) {
+      User.subscriptions(:auth => auth, :user => nickname)
+    }
   end
 
   def user(user)
