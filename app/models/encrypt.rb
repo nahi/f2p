@@ -60,10 +60,14 @@ module Encrypt
     def decrypt(bytes)
       iv = bytes.slice!(0, @block_size)
       cipher = OpenSSL::Cipher::Cipher.new(@algorithm)
-      cipher.decrypt
-      cipher.key = @key
-      cipher.iv = iv
-      cipher.update(bytes) + cipher.final
+      begin
+        cipher.decrypt
+        cipher.key = @key
+        cipher.iv = iv
+        cipher.update(bytes) + cipher.final
+      rescue OpenSSL::Cipher::CipherError
+        nil
+      end
     end
   end
 end

@@ -17,7 +17,7 @@ class EntryThread
       }
     end
 
-    def result(timeout = nil)
+    def result(timeout = F2P::Config.friendfeed_api_timeout)
       begin
         timeout(timeout) do
           @thread.join
@@ -40,32 +40,34 @@ class EntryThread
         }
         if opt[:start].nil? or opt[:start] == 0
           pinned = Pin.find_all_by_user_id(auth.id).map { |e| e.eid }
-          pin_task =  Task.run {
-            get_entries(auth, :ids => pinned)
-          }
-          pinned_entries = wrap(pin_task.result || [])
+          unless pinned.empty?
+            pin_task =  Task.run {
+              get_entries(auth, :ids => pinned)
+            }
+            pinned_entries = wrap(pin_task.result || [])
+          end
         end
         entries = list_task.result
       elsif opt[:query]
-        entries = search_entries(auth, opt)
+        entries = Task.run { search_entries(auth, opt) }.result
       elsif opt[:id]
-        entries = get_entry(auth, opt)
+        entries = Task.run { get_entry(auth, opt) }.result
       elsif opt[:like] == 'likes'
-        entries = get_likes(auth, opt)
+        entries = Task.run { get_likes(auth, opt) }.result
       elsif opt[:like] == 'liked'
-        entries = get_liked(auth, opt)
+        entries = Task.run { get_liked(auth, opt) }.result
       elsif opt[:user]
-        entries = get_user_entries(auth, opt)
+        entries = Task.run { get_user_entries(auth, opt) }.result
       elsif opt[:list]
-        entries = get_list_entries(auth, opt)
+        entries = Task.run { get_list_entries(auth, opt) }.result
       elsif opt[:room]
-        entries = get_room_entries(auth, opt)
+        entries = Task.run { get_room_entries(auth, opt) }.result
       elsif opt[:friends]
-        entries = get_friends_entries(auth, opt)
+        entries = Task.run { get_friends_entries(auth, opt) }.result
       elsif opt[:link]
-        entries = get_link_entries(auth, opt)
+        entries = Task.run { get_link_entries(auth, opt) }.result
       else
-        entries = get_home_entries(auth, opt)
+        entries = Task.run { get_home_entries(auth, opt) }.result
       end
       wrapped = sort_by_modified(wrap(entries || []))
       if opt[:link]
@@ -162,7 +164,7 @@ class EntryThread
         entries.find_all { |entry|
           !entry.view_pinned
         }
-      else
+      elsif pinned_entries
         all = entries.map { |e| e.id }
         rest = pinned_entries.find_all { |e| !all.include?(e.id) }
         rest.each do |entry|
@@ -170,6 +172,8 @@ class EntryThread
           entry.view_inbox = true
         end
         entries + rest
+      else
+        entries
       end
     end
 
@@ -277,9 +281,10 @@ class EntryThread
     end
 
     def sort_by_modified(entries)
-      entries.find_all { |e| !e.hidden? }.sort_by { |e|
+      sorted = entries.find_all { |e| !e.hidden? }.sort_by { |e|
         [e.modified, e.id].join('-') # join e.id for stable sort
-      }.reverse
+      }
+      sorted.reverse
     end
 
     def sort_by_service(entries, opt = {})

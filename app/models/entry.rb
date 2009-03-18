@@ -23,7 +23,7 @@ class Entry < Hash
     def delete(opt)
       auth = opt[:auth]
       id = opt[:id]
-      undelete = opt[:undelete]
+      undelete = !!opt[:undelete]
       ff_client.delete(auth.name, auth.remote_key, id, undelete)
     end
 
@@ -32,14 +32,16 @@ class Entry < Hash
       id = opt[:id]
       body = opt[:body]
       comment = ff_client.post_comment(auth.name, auth.remote_key, id, body)
-      v(comment, 'id')
+      if comment
+        v(comment, 'id')
+      end
     end
 
     def delete_comment(opt)
       auth = opt[:auth]
       id = opt[:id]
       comment = opt[:comment]
-      undelete = opt[:undelete]
+      undelete = !!opt[:undelete]
       ff_client.delete_comment(auth.name, auth.remote_key, id, comment, undelete)
     end
 

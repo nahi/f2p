@@ -17,26 +17,12 @@ class ApplicationController < ActionController::Base
   # filter_parameter_logging :password
   session_options[:session_expires] = Time.mktime(2030, 12, 31)
 
-  class DebugLogger
-    def initialize(logger)
-      @logger = logger
-    end
-
-    def <<(str)
-      @logger.info(str)
-    end
-  end
-
   def self.ff_client
     @@ff ||= FriendFeed::APIClient.new(logger)
   end
 
   def self.ff_client=(ff_client)
     @@ff = ff_client
-  end
-
-  def ff_client
-    self.class.ff_client
   end
 
   def self.http_client
@@ -49,6 +35,10 @@ class ApplicationController < ActionController::Base
 
   def http_client
     self.class.http_client
+  end
+
+  def auth
+    @auth
   end
 
 private
@@ -109,7 +99,7 @@ private
         @auth = nil
       end
     end
-    @auth
+    auth
   end
 
   def set_user(user)
@@ -136,8 +126,8 @@ private
 
   def update_checked_modified
     store = session[:checked]
-    if @auth and store
-      EntryThread.update_checked_modified(@auth, store)
+    if auth and store
+      EntryThread.update_checked_modified(auth, store)
       session[:checked] = {}
     end
   end
@@ -146,14 +136,14 @@ private
     if store = session[:checked]
       if e = store.find { |k, v| k == eid }
         only = Hash[*e]
-        EntryThread.update_checked_modified(@auth, only)
+        EntryThread.update_checked_modified(auth, only)
         store.delete(eid)
       end
     end
   end
 
   def clear_checked_modified(eid)
-    cond = ['user_id = ? and last_modifieds.eid = ?', @auth.id, eid]
+    cond = ['user_id = ? and last_modifieds.eid = ?', auth.id, eid]
     if checked = CheckedModified.find(:first, :conditions => cond, :include => 'last_modified')
       checked.destroy
     end

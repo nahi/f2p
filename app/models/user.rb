@@ -89,7 +89,7 @@ class User < ActiveRecord::Base
     end
 
     def ff_profile(auth, user)
-      ff_client.get_profile(auth.name, auth.remote_key, user)
+      ff_client.get_profile(auth.name, auth.remote_key, user) || {}
     end
 
     def sort_by_name(lists)

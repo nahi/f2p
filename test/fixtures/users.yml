@@ -1,0 +1,9 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+user1:
+  name: user1
+  remote_key: key1
+
+user2:
+  name: user2
+  remote_key: user2

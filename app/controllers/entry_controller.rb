@@ -250,7 +250,7 @@ class EntryController < ApplicationController
           :redirect_to => {:action => 'inbox'}
 
   def show
-    @ctx = EntryContext.new(@auth)
+    @ctx = EntryContext.new(auth)
     @ctx.eid = param(:id)
     @ctx.home = false
     if ctx = session[:ctx]
@@ -261,7 +261,7 @@ class EntryController < ApplicationController
   end
 
   def new
-    @ctx = EntryContext.new(@auth)
+    @ctx = EntryContext.new(auth)
     @ctx.viewname = 'post new entry'
     @ctx.room = param(:room)
     @body = param(:body)
@@ -276,7 +276,7 @@ class EntryController < ApplicationController
   end
 
   def reshare
-    @ctx = EntryContext.new(@auth)
+    @ctx = EntryContext.new(auth)
     @ctx.viewname = 'reshare entry'
     @ctx.room = param(:room)
     @eid = param(:eid)
@@ -296,7 +296,7 @@ class EntryController < ApplicationController
   end
 
   def search
-    @ctx = EntryContext.new(@auth)
+    @ctx = EntryContext.new(auth)
     @ctx.viewname = 'search entries'
     @ctx.parse(params, @setting)
   end
@@ -307,7 +307,7 @@ class EntryController < ApplicationController
           :redirect_to => {:action => 'inbox'}
 
   def add
-    @ctx = EntryContext.new(@auth)
+    @ctx = EntryContext.new(auth)
     @ctx.viewname = 'post new entry' # setting for address search result
     @ctx.room = param(:room)
     @body = param(:body)
@@ -520,7 +520,7 @@ private
 
   def create_opt(hash = {})
     {
-      :auth => @auth
+      :auth => auth
     }.merge(hash)
   end
 
@@ -537,7 +537,7 @@ private
       ctx = session[:ctx]
       ctx.reset_pagination(@setting)
     else
-      ctx = EntryContext.new(@auth)
+      ctx = EntryContext.new(auth)
       yield(ctx)
       session[:ctx] = ctx
     end

@@ -1,0 +1,1823 @@
+[
+  {
+    "friendof": {
+      "name": "NAKAMURA, Hiroshi",
+      "nickname": "nahi",
+      "id": "95f306fd-0f63-47f2-88fc-8480ff10d48e",
+      "profileUrl": "http:\/\/friendfeed.com\/nahi"
+    },
+    "comments": [
+
+    ],
+    "title": "\u3078\u30fc http:\/\/online.wsj.com\/article\/SB123735124997967063.html",
+    "published": "2009-03-18T08:41:50Z",
+    "service": {
+      "name": "Twitter",
+      "iconUrl": "http:\/\/friendfeed.com\/static\/images\/icons\/twitter.png?v=df0a0affa8100c494df42159627a38b0",
+      "id": "twitter",
+      "profileUrl": "http:\/\/twitter.com\/tkudos"
+    },
+    "anonymous": false,
+    "id": "df9d34df-23ff-de8e-3675-a82736ef90cc",
+    "media": [
+
+    ],
+    "link": "http:\/\/twitter.com\/tkudos\/statuses\/1347347755",
+    "user": {
+      "name": "tkudo",
+      "nickname": "tkudo",
+      "id": "9a46f9b0-0775-11dd-9e68-003048343a40",
+      "profileUrl": "http:\/\/friendfeed.com\/tkudo"
+    },
+    "updated": "2009-03-18T08:41:50Z",
+    "hidden": false,
+    "likes": [
+      {
+        "date": "2009-03-18T08:51:08Z",
+        "user": {
+          "name": "NAKAMURA, Hiroshi",
+          "nickname": "nahi",
+          "id": "95f306fd-0f63-47f2-88fc-8480ff10d48e",
+          "profileUrl": "http:\/\/friendfeed.com\/nahi"
+        }
+      }
+    ]
+  },
+  {
+    "comments": [
+      {
+        "body": "\u300c\u30c1\u30b1\u30c3\u30c8\u4fa1\u683c\u306b\u592a\u5200\u6253\u3061\u3067\u304d\u306a\u3044\u82e5\u3044\u30b3\u30a2\u306a\u30d5\u30a1\u30f3\u305f\u3061\u306b\u5831\u3044\u308b\u305f\u3081\u300d\u305d\u306e\u8996\u70b9\u306f\u306a\u304b\u3063\u305f\u3002\u306a\u308b\u307b\u3069\u3002",
+        "id": "466f1701-4fd9-40bf-a5d3-0f4894a9df04",
+        "date": "2009-03-18T08:44:35Z",
+        "user": {
+          "name": "NAKAMURA, Hiroshi",
+          "nickname": "nahi",
+          "id": "95f306fd-0f63-47f2-88fc-8480ff10d48e",
+          "profileUrl": "http:\/\/friendfeed.com\/nahi"
+        }
+      }
+    ],
+    "title": "\"\u507d\u5584\u7684\u30a2\u30fc\u30c6\u30a3\u30b9\u30c8\u3068\u30c1\u30b1\u30c3\u30c8\u6d41\u901a\u5e02\u5834\"",
+    "published": "2009-03-18T08:44:34Z",
+    "service": {
+      "name": "FriendFeed",
+      "iconUrl": "http:\/\/friendfeed.com\/static\/images\/icons\/internal.png?v=e471e9afdf04ae568dcbddb5584fc6c0",
+      "entryType": "link",
+      "id": "internal",
+      "profileUrl": "http:\/\/friendfeed.com\/nahi"
+    },
+    "anonymous": false,
+    "id": "4d36961d-6349-44cf-af46-ea8e31119211",
+    "media": [
+
+    ],
+    "link": "http:\/\/jp.techcrunch.com\/archives\/20090317hypocritical-artists-and-secondary-ticket-sales\/",
+    "user": {
+      "name": "NAKAMURA, Hiroshi",
+      "nickname": "nahi",
+      "id": "95f306fd-0f63-47f2-88fc-8480ff10d48e",
+      "profileUrl": "http:\/\/friendfeed.com\/nahi"
+    },
+    "updated": "2009-03-18T08:44:34Z",
+    "hidden": false,
+    "likes": [
+
+    ]
+  },
+  {
+    "friendof": {
+      "name": "NAKAMURA, Hiroshi",
+      "nickname": "nahi",
+      "id": "95f306fd-0f63-47f2-88fc-8480ff10d48e",
+      "profileUrl": "http:\/\/friendfeed.com\/nahi"
+    },
+    "comments": [
+      {
+        "body": "\uff0a\u304a\u304a\u3063\u3068\uff0a",
+        "id": "cf9130a6-93f1-4595-9ca9-cbdc7c8cfd4f",
+        "date": "2009-03-18T08:18:59Z",
+        "user": {
+          "name": "NAKAMURA, Hiroshi",
+          "nickname": "nahi",
+          "id": "95f306fd-0f63-47f2-88fc-8480ff10d48e",
+          "profileUrl": "http:\/\/friendfeed.com\/nahi"
+        }
+      }
+    ],
+    "title": "iPhone\u8cb7\u3063\u305f",
+    "published": "2009-03-18T07:58:35Z",
+    "service": {
+      "name": "Twitter",
+      "iconUrl": "http:\/\/friendfeed.com\/static\/images\/icons\/twitter.png?v=df0a0affa8100c494df42159627a38b0",
+      "id": "twitter",
+      "profileUrl": "http:\/\/twitter.com\/yukihiro_matz"
+    },
+    "anonymous": false,
+    "id": "b0c175ef-c049-a74f-0680-f17cb6974c22",
+    "media": [
+
+    ],
+    "link": "http:\/\/twitter.com\/yukihiro_matz\/statuses\/1347251685",
+    "user": {
+      "name": "matz",
+      "nickname": "matz",
+      "id": "88e2b007-c40b-49a5-a3b0-5e494dff79e0",
+      "profileUrl": "http:\/\/friendfeed.com\/matz"
+    },
+    "updated": "2009-03-18T07:58:35Z",
+    "hidden": false,
+    "likes": [
+
+    ]
+  },
+  {
+    "comments": [
+      {
+        "body": "UnHub\u7d4c\u7531\u3067\u898b\u3064\u3051\u305ftweetree\u304c\u9762\u767d\u3044\u3002 http:\/\/tweetree.com\/nahi",
+        "id": "028370cc-d08d-4918-9eea-dd126de72e2a",
+        "date": "2009-03-18T08:11:34Z",
+        "user": {
+          "name": "NAKAMURA, Hiroshi",
+          "nickname": "nahi",
+          "id": "95f306fd-0f63-47f2-88fc-8480ff10d48e",
+          "profileUrl": "http:\/\/friendfeed.com\/nahi"
+        }
+      },
+      {
+        "body": "\u3061\u306a\u307f\u306bUnHub\u306f\u3053\u308c\u3092\u57cb\u3081\u305f\u3060\u3051: http:\/\/unhub.com\/nakahiro\/",
+        "id": "3cc09c56-ea5d-42b8-8a0c-167b15b8a0bf",
+        "date": "2009-03-18T08:11:55Z",
+        "user": {
+          "name": "NAKAMURA, Hiroshi",
+          "nickname": "nahi",
+          "id": "95f306fd-0f63-47f2-88fc-8480ff10d48e",
+          "profileUrl": "http:\/\/friendfeed.com\/nahi"
+        }
+      }
+    ],
+    "title": "\"\u30aa\u30f3\u30e9\u30a4\u30f3\u306e\u81ea\u5206\u3092\u7c21\u5358\u306b\u307e\u3068\u3081\u3066\u8868\u793a\u3067\u304d\u308bUnHub\"",
+    "published": "2009-03-18T08:11:33Z",
+    "service": {
+      "name": "FriendFeed",
+      "iconUrl": "http:\/\/friendfeed.com\/static\/images\/icons\/internal.png?v=e471e9afdf04ae568dcbddb5584fc6c0",
+      "entryType": "link",
+      "id": "internal",
+      "profileUrl": "http:\/\/friendfeed.com\/nahi"
+    },
+    "anonymous": false,
+    "id": "19ec8fb0-3776-4447-a814-cac6b129db6f",
+    "media": [
+
+    ],
+    "link": "http:\/\/jp.techcrunch.com\/archives\/20090317unhub-offers-a-simple-way-to-showcase-the-online-you\/",
+    "user": {
+      "name": "NAKAMURA, Hiroshi",
+      "nickname": "nahi",
+      "id": "95f306fd-0f63-47f2-88fc-8480ff10d48e",
+      "profileUrl": "http:\/\/friendfeed.com\/nahi"
+    },
+    "updated": "2009-03-18T08:11:33Z",
+    "hidden": false,
+    "likes": [
+
+    ]
+  },
+  {
+    "comments": [
+      {
+        "body": "\u4ffa\u306b\u3068\u3063\u3066\u3001FF\u306f\u3088\u304f\u3066Jaiku\u3067\u306f\u99c4\u76ee\u3060\u3063\u305f\u7406\u7531\u306f\u306a\u3093\u3060\u308d\u3046\u3002\u3069\u3063\u3061\u3082Python\u3060\u3057\u3001\u3067\u304d\u308b\u3053\u3068\u306f\u305d\u3046\u5909\u308f\u3089\u306a\u3044\u3093\u3060\u3051\u3069\u3002 http:\/\/code.google.com\/p\/jaikuengine\/",
+        "id": "14016d8d-757a-48c9-a2be-878bed4408a8",
+        "date": "2009-03-16T05:07:16Z",
+        "user": {
+          "name": "NAKAMURA, Hiroshi",
+          "nickname": "nahi",
+          "id": "95f306fd-0f63-47f2-88fc-8480ff10d48e",
+          "profileUrl": "http:\/\/friendfeed.com\/nahi"
+        }
+      },
+      {
+        "body": "FF\u306f\u6700\u521d\u304b\u3089aggregation\u3092\u76ee\u6307\u3057\u305f\u30b9\u30d1\u30eb\u30bf\u30f3\u306a\u96f0\u56f2\u6c17\u3060\u3063\u305f\u306e\u304c\u3001twitter\u306b\u4f55\u304b\u3092\u304f\u3063\u3064\u3051\u305f\u307f\u3066\u304f\u308c\u306eJaiku\u3068\u306e\u5dee\u7570\u3060\u3068\u611f\u3058\u307e\u3059\u3002\u305d\u308c\u304c\u539f\u56e0\u304b\u3069\u3046\u304b\u306f\u5225\u3067\u3057\u3087\u3046\u304c\u3002\u81ea\u5206\u306b\u3068\u3063\u3066\u306f\u3001FF\u3060\u3051\u3060\u3068\u3060\u3081\u3067FF+f2p\uff08\u81ea\u5206\u3067\u3044\u3058\u308c\u308b\uff09+ff_dump(risk management)\u3058\u3083\u306a\u3044\u3068\u3046\u308c\u3057\u304f\u306a\u3044\u304b\u3082\u3002",
+        "id": "dc7ad779-61f0-4dc7-bbc0-5837b7c8b038",
+        "date": "2009-03-16T06:23:56Z",
+        "user": {
+          "name": "Kazutaka Ogaki",
+          "nickname": "kgbu",
+          "id": "32561751-ea1f-47dd-8220-5a916ca6755a",
+          "profileUrl": "http:\/\/friendfeed.com\/kgbu"
+        }
+      },
+      {
+        "body": "\u30b9\u30d1\u30eb\u30bf\u30f3\u3066\u306a\u3093\u3058\u3083w\u6a5f\u80fd\u540c\u3058\u3060\u3051\u3069\u54f2\u5b66\u3068\u898b\u305f\u76ee\u3060\u3051\u9055\u3044\u307e\u3059\u3001\u3060\u3068\u3001\u81ea\u5206\u304c\u305d\u3093\u306a\u3082\u306e\u306b\u3060\u307e\u304f\u3089\u304b\u3055\u308c\u305f\u307f\u305f\u3044\u3067\u6094\u3057\u3044\u3058\u3083\u306a\u3044\u3067\u3059\u304b\u3002\u304c\u3001\u4ed6\u306b\u601d\u3044\u5f53\u305f\u3089\u306a\u3044\u306e\u3067\u3001\u672c\u5f53\u306b\u305d\u3046\u306a\u306e\u304b\u3082\u3057\u308c\u306a\u3044\u3051\u3069",
+        "id": "d0db699d-6d3f-4316-9581-dc910e6a8aa4",
+        "date": "2009-03-17T00:20:33Z",
+        "user": {
+          "name": "NAKAMURA, Hiroshi",
+          "nickname": "nahi",
+          "id": "95f306fd-0f63-47f2-88fc-8480ff10d48e",
+          "profileUrl": "http:\/\/friendfeed.com\/nahi"
+        }
+      },
+      {
+        "body": "\u30b5\u30fc\u30d3\u30b9\u306eAPI\u304c\u7b49\u4fa1\u3068\u3044\u3046\u304b\u53ef\u63db\u306a\u3089\u3070\u3001\u3044\u3064\u3067\u3082Jaiku\u4e0a\u306e\u30d5\u30a3\u30fc\u30c9\u3092\u3068\u308a\u3053\u3081\u308b\u3057\u3001\u6094\u3057\u304c\u308b\u3053\u3068\u306f\u306a\u3044\u304b\u3082\u3002\u30b5\u30fc\u30d3\u30b9\u306e\u30dd\u30ea\u30b7\u30fc(\u54f2\u5b66\uff0b\u898b\u3066\u304f\u308c\u306b\u9855\u308c\u308b\u30de\u30fc\u30b1\u30c6\u30a3\u30f3\u30b0\u306e\u65b9\u5411)\u304c\u9055\u3048\u3070API\u306e\u767a\u5c55\u306e\u65b9\u5411\u304c\u9055\u3063\u3066\u304f\u308b(\u304d\u305f\uff1f\uff09\u306e\u304b\u306a\u3068\u306f\u601d\u3044\u307e\u3059\u3002",
+        "id": "36c89f8b-fe2c-486b-9d08-4a7ced5419bd",
+        "date": "2009-03-17T00:33:07Z",
+        "user": {
+          "name": "Kazutaka Ogaki",
+          "nickname": "kgbu",
+          "id": "32561751-ea1f-47dd-8220-5a916ca6755a",
+          "profileUrl": "http:\/\/friendfeed.com\/kgbu"
+        }
+      },
+      {
+        "body": "\u753b\u50cf\u304c\u8868\u793a\u3055\u308c\u308b\u3001twitter\u306bURL\u3064\u304d\u3067\u30dd\u30b9\u30c8\u3001\u30ea\u30cb\u30e5\u30fc\u30a2\u30eb\u5f8c\u306eUI\u306a\u3093\u3068\u306a\u304f\u307e\u3068\u3081\u8868\u793a\u3042\u305f\u308a\u304b\u306a\u3002\u304a\u3044\u3089\u306f",
+        "id": "6eed8467-3fd3-4b3b-8c27-5d5c8324c670",
+        "date": "2009-03-17T00:37:36Z",
+        "user": {
+          "name": "Kentaro Goto",
+          "nickname": "gotoken",
+          "id": "c2c4bf4c-fc05-11dc-a86e-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/gotoken"
+        }
+      },
+      {
+        "body": "jaiku\u306ftwitter\u304b\u3089\u306e\u53cd\u6620\u304c\u9045\u3059\u304e\u305f",
+        "id": "3e1df506-4d31-4403-b51b-fc4402eb44bc",
+        "date": "2009-03-17T02:15:55Z",
+        "user": {
+          "name": "eban",
+          "nickname": "eban",
+          "id": "8c5b814e-fee1-4189-87b0-07ce2fbcd5ca",
+          "profileUrl": "http:\/\/friendfeed.com\/eban"
+        }
+      },
+      {
+        "body": "\u6700\u8fd1\u306eFF\u3082\u53cd\u6620\u9045\u3044\u3067\u3059\u306d\u3002",
+        "id": "bc502243-a00e-4895-8032-f21903b765fe",
+        "date": "2009-03-17T03:33:01Z",
+        "user": {
+          "name": "NAKAMURA, Hiroshi",
+          "nickname": "nahi",
+          "id": "95f306fd-0f63-47f2-88fc-8480ff10d48e",
+          "profileUrl": "http:\/\/friendfeed.com\/nahi"
+        }
+      },
+      {
+        "body": "\u6614\u306fUI\u306b\u611f\u5fc3\u3057\u305f\u3093\u3060\u3051\u3069\u3001\u3044\u307e\u3084\u8a2d\u5b9a\u4ee5\u5916\u306f\u30c7\u30b9\u30af\u30c8\u30c3\u30d7\u3082f2p\u306b\u79fb\u884c\u3057\u3066\u3057\u307e\u3044\uff08pin\u304c\u4fbf\u5229\u306a\u3093\u3060\u3088\uff09\u3001\u79c1\u306b\u306f\u305d\u308c\u307b\u3069\u9b45\u529b\u7684\u3067\u3082\u306a\u304b\u3063\u305f\u306e\u3060\u3068\u3002API\u3092\u901a\u3057\u3066\u4e2d\u306e\u30c7\u30fc\u30bf\u306e\u6301\u3061\u65b9\u304c\u898b\u3048\u305f\u3001\u3068\u3044\u3046\u306e\u304c\u5b09\u3057\u304b\u3063\u305f\u306e\u304b\u306a\u3042\u3002",
+        "id": "5dbc7931-4dd4-4493-ad03-ac905c37cf66",
+        "date": "2009-03-18T03:22:13Z",
+        "user": {
+          "name": "NAKAMURA, Hiroshi",
+          "nickname": "nahi",
+          "id": "95f306fd-0f63-47f2-88fc-8480ff10d48e",
+          "profileUrl": "http:\/\/friendfeed.com\/nahi"
+        }
+      },
+      {
+        "body": "pin \u3063\u3066\u3069\u306e\u30a2\u30d7\u30ea\u3067\u3082\u5168\u304f\u4f7f\u308f\u306a\u3044\u6a5f\u80fd\u3060\u3002\u306a\u306b\u304b\u9593\u9055\u3063\u3066\u308b\u306e\u304b\u3082\u3057\u308c\u3093",
+        "id": "75a2689f-b318-4584-b50d-893ffb22bce3",
+        "date": "2009-03-18T05:30:03Z",
+        "user": {
+          "name": "Kentaro Goto",
+          "nickname": "gotoken",
+          "id": "c2c4bf4c-fc05-11dc-a86e-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/gotoken"
+        }
+      },
+      {
+        "body": "\u300c\u3042\u3068\u3067\u300d\u3092delicious\u3067\u3084\u3063\u3066\u308b\u304b\u3089\u3068\u304b? \u4f7f\u3044\u65b9\u9055\u3046\u3068\u3059\u308b\u3068\u3001pin\u4ee5\u964d\u306e\u5909\u66f4\u306f\u3054\u3068\u3051\u3093\u306b\u306f\u8ff7\u60d1\u3060\u3063\u305f\u304b\u3082\u306a\u3042\u3068\u601d\u3063\u305f\u3002",
+        "id": "ef851b7b-3b30-4532-a361-cc6421986fc5",
+        "date": "2009-03-18T06:10:00Z",
+        "user": {
+          "name": "NAKAMURA, Hiroshi",
+          "nickname": "nahi",
+          "id": "95f306fd-0f63-47f2-88fc-8480ff10d48e",
+          "profileUrl": "http:\/\/friendfeed.com\/nahi"
+        }
+      }
+    ],
+    "title": "Jaiku\u304cGoogle App Engine\u3078\u79fb\u690d\u3001\u30aa\u30fc\u30d7\u30f3\u30bd\u30fc\u30b9\u300cJaikuEngine\u300d\u3068\u3057\u3066\u30b9\u30bf\u30fc\u30c8",
+    "published": "2009-03-16T05:07:16Z",
+    "service": {
+      "name": "FriendFeed",
+      "iconUrl": "http:\/\/friendfeed.com\/static\/images\/icons\/internal.png?v=e471e9afdf04ae568dcbddb5584fc6c0",
+      "entryType": "link",
+      "id": "internal",
+      "profileUrl": "http:\/\/friendfeed.com\/nahi"
+    },
+    "anonymous": false,
+    "id": "eec70844-8e21-42e2-997d-f99ef5eb13ec",
+    "media": [
+
+    ],
+    "link": "http:\/\/sourceforge.jp\/magazine\/09\/03\/16\/0218258",
+    "user": {
+      "name": "NAKAMURA, Hiroshi",
+      "nickname": "nahi",
+      "id": "95f306fd-0f63-47f2-88fc-8480ff10d48e",
+      "profileUrl": "http:\/\/friendfeed.com\/nahi"
+    },
+    "updated": "2009-03-16T05:07:16Z",
+    "hidden": false,
+    "likes": [
+
+    ]
+  },
+  {
+    "comments": [
+      {
+        "body": "\u3053\u3053\u306e\u3068\u3053\u308d\u306e_why\u3089\u3057\u304f\u306a\u3044\u5bfe\u6c7a\u59ff\u52e2\u3060\u3051\u3069\u3001\u30c7\u30d3\u30e5\u30fc\u306e\u9803\u306f\u3053\u3093\u306a\u3060\u3063\u305f\u304b\u3082\u3057\u308c\u306a\u3044\u3002",
+        "id": "b0e27b35-a759-43a0-80aa-7c6ba682bbb9",
+        "date": "2009-03-18T00:01:18Z",
+        "user": {
+          "name": "NAKAMURA, Hiroshi",
+          "nickname": "nahi",
+          "id": "95f306fd-0f63-47f2-88fc-8480ff10d48e",
+          "profileUrl": "http:\/\/friendfeed.com\/nahi"
+        }
+      },
+      {
+        "body": "_why\u306fSEGV\u3057\u3088\u3046\u304c\u3001\u901f\u5ea6\u3060\u3051\u306f\u8b72\u308c\u306a\u3044\u6027\u683c\u306a\u3093\u3060\u308d\u3046",
+        "id": "be498635-a220-416e-8237-172820b1f7d5",
+        "date": "2009-03-18T01:53:16Z",
+        "user": {
+          "name": "eban",
+          "nickname": "eban",
+          "id": "8c5b814e-fee1-4189-87b0-07ce2fbcd5ca",
+          "profileUrl": "http:\/\/friendfeed.com\/eban"
+        }
+      },
+      {
+        "body": "\u78ba\u304b\u306b\u3002\u3059\u3063\u304b\u308a\u5fd8\u308c\u3066\u3044\u305f\u3002\u3057\u304b\u3057\u4eca\u306e\u3068\u3053\u308d\u3001\u300c\u901f\u5ea6\u306f\u52dd\u3066\u306a\u3044\u3051\u3069\u3001\u3053\u3046\u3044\u3046\u70b9\u3067\u3044\u3044\u3088\u300d\u3068\u306a\u3063\u3066\u3066\u8907\u96d1\u3002\u3044\u3084\u60aa\u3044\u3053\u3068\u306f\u5168\u7136\u306a\u3044\u3093\u3060\u3051\u3069\u3002",
+        "id": "174e58c6-73eb-4322-b007-e91032432de7",
+        "date": "2009-03-18T03:15:34Z",
+        "user": {
+          "name": "NAKAMURA, Hiroshi",
+          "nickname": "nahi",
+          "id": "95f306fd-0f63-47f2-88fc-8480ff10d48e",
+          "profileUrl": "http:\/\/friendfeed.com\/nahi"
+        }
+      },
+      {
+        "body": "\u3057\u304b\u3057\u300cSEGV\u3057\u3088\u3046\u304c\u300d\u3066\u3002",
+        "id": "f1bfb595-5398-4bb8-904f-9e1a4c4042f7",
+        "date": "2009-03-18T03:15:49Z",
+        "user": {
+          "name": "NAKAMURA, Hiroshi",
+          "nickname": "nahi",
+          "id": "95f306fd-0f63-47f2-88fc-8480ff10d48e",
+          "profileUrl": "http:\/\/friendfeed.com\/nahi"
+        }
+      },
+      {
+        "body": "\u305f\u3057\u304b\u306bsyck\u306e\u82b8\u98a8\u306f\u305d\u3093\u306a\u611f\u3058\u3060\u3063\u305f",
+        "id": "dbf60270-e549-4b2c-87d5-4f383b464b1c",
+        "date": "2009-03-18T05:34:41Z",
+        "user": {
+          "name": "Kentaro Goto",
+          "nickname": "gotoken",
+          "id": "c2c4bf4c-fc05-11dc-a86e-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/gotoken"
+        }
+      },
+      {
+        "body": "syck\u306f\u9045\u3044\u304b\u3089SEGV\u3059\u308b\u3093\u3060\u3063\u3066\u5831\u544a\u3059\u308c\u3070SEGV\u3082\u76f4\u3057\u3066\u304f\u308c\u308b\u3060\u308d\u3046",
+        "id": "7bdcbc6f-cd34-426d-abde-ad9c6a71d120",
+        "date": "2009-03-18T05:43:20Z",
+        "user": {
+          "name": "eban",
+          "nickname": "eban",
+          "id": "8c5b814e-fee1-4189-87b0-07ce2fbcd5ca",
+          "profileUrl": "http:\/\/friendfeed.com\/eban"
+        }
+      },
+      {
+        "body": "\u3066\u3044\u3046\u304bsyck\u3060\u3051\u3058\u3083\u3093\uff01",
+        "id": "b8b51c5b-0457-4bc0-a82c-a92b2bd2a345",
+        "date": "2009-03-18T06:08:45Z",
+        "user": {
+          "name": "NAKAMURA, Hiroshi",
+          "nickname": "nahi",
+          "id": "95f306fd-0f63-47f2-88fc-8480ff10d48e",
+          "profileUrl": "http:\/\/friendfeed.com\/nahi"
+        }
+      }
+    ],
+    "title": "\"[ANN] hpricot 0.7\"",
+    "published": "2009-03-18T00:01:17Z",
+    "service": {
+      "name": "FriendFeed",
+      "iconUrl": "http:\/\/friendfeed.com\/static\/images\/icons\/internal.png?v=e471e9afdf04ae568dcbddb5584fc6c0",
+      "entryType": "link",
+      "id": "internal",
+      "profileUrl": "http:\/\/friendfeed.com\/nahi"
+    },
+    "anonymous": false,
+    "id": "8c690067-8b1f-41f9-8707-b9bb227a2286",
+    "media": [
+
+    ],
+    "link": "http:\/\/blade.nagaokaut.ac.jp\/cgi-bin\/scat.rb\/ruby\/ruby-talk\/331411",
+    "user": {
+      "name": "NAKAMURA, Hiroshi",
+      "nickname": "nahi",
+      "id": "95f306fd-0f63-47f2-88fc-8480ff10d48e",
+      "profileUrl": "http:\/\/friendfeed.com\/nahi"
+    },
+    "updated": "2009-03-18T00:01:17Z",
+    "hidden": false,
+    "likes": [
+
+    ]
+  },
+  {
+    "friendof": {
+      "name": "NAKAMURA, Hiroshi",
+      "nickname": "nahi",
+      "id": "95f306fd-0f63-47f2-88fc-8480ff10d48e",
+      "profileUrl": "http:\/\/friendfeed.com\/nahi"
+    },
+    "comments": [
+      {
+        "body": "\u305d\u3046\u306a\u3093\u3067\u3059\u3002\u30c9\u30ad\u30e5\u30e1\u30f3\u30c8\u7121\u304f\u3066\u3059\u307f\u307e\u305b\u3093\u3002\u3002",
+        "id": "7b678884-2c21-404c-aab6-6ecc6f6aa54a",
+        "date": "2009-03-18T05:50:37Z",
+        "user": {
+          "name": "jugyo",
+          "nickname": "jugyo",
+          "id": "2d77a85e-f2f1-11dc-8dfb-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/jugyo"
+        }
+      },
+      {
+        "body": "\u30c9\u30ad\u30e5\u30e1\u30f3\u30c8\u3042\u3063\u305f\u3063\u3066\u8aad\u307e\u306a\u3044\u4eba\u3060\u304b\u3089",
+        "id": "6406199e-8d92-409d-a388-cf86e628e3a8",
+        "date": "2009-03-18T06:08:19Z",
+        "user": {
+          "name": "NAKAMURA, Hiroshi",
+          "nickname": "nahi",
+          "id": "95f306fd-0f63-47f2-88fc-8480ff10d48e",
+          "profileUrl": "http:\/\/friendfeed.com\/nahi"
+        }
+      },
+      {
+        "body": "\u3042\u3001\u305d\u3046\u305d\u3046\u30021.9\u306erexml\u3060\u306890\u307f\u305f\u3044\u306a\u6570\u5b57\u3060\u3051\u306e\u30bf\u30b0\u306f\u8a31\u3055\u308c\u306a\u3044\u3088\u3046\u3067\u3059",
+        "id": "f80b9ae6-b716-407e-ad51-709d1b6e11bf",
+        "date": "2009-03-18T06:48:45Z",
+        "user": {
+          "name": "eban",
+          "nickname": "eban",
+          "id": "8c5b814e-fee1-4189-87b0-07ce2fbcd5ca",
+          "profileUrl": "http:\/\/friendfeed.com\/eban"
+        }
+      }
+    ],
+    "title": "\u3042\u3042\u3001 \u81ea\u524d\u306eplugin\u306f ~\/.termtter\/plugins\/ \u306b\u7f6e\u3051\u3070\u3044\u3044\u306e\u304b",
+    "published": "2009-03-18T04:09:48Z",
+    "service": {
+      "name": "FriendFeed",
+      "iconUrl": "http:\/\/friendfeed.com\/static\/images\/icons\/internal.png?v=e471e9afdf04ae568dcbddb5584fc6c0",
+      "entryType": "message",
+      "id": "internal",
+      "profileUrl": "http:\/\/friendfeed.com\/eban"
+    },
+    "anonymous": false,
+    "id": "512e099e-07b8-41a6-b7b4-4522802a20b9",
+    "media": [
+
+    ],
+    "link": "http:\/\/friendfeed.com\/e\/512e099e-07b8-41a6-b7b4-4522802a20b9",
+    "user": {
+      "name": "eban",
+      "nickname": "eban",
+      "id": "8c5b814e-fee1-4189-87b0-07ce2fbcd5ca",
+      "profileUrl": "http:\/\/friendfeed.com\/eban"
+    },
+    "updated": "2009-03-18T04:09:48Z",
+    "hidden": false,
+    "likes": [
+
+    ]
+  },
+  {
+    "comments": [
+      {
+        "body": "\u82b1\u7c89\u75c7\u3058\u3083\u306a\u3044\u3063\u3066\u672c\u5f53\u306b\u3046\u3089\u3084\u307e\u3057\u3044\u2026",
+        "id": "bb5d5cd0-ccbf-4f2d-a6ab-d34d557b374a",
+        "date": "2009-03-18T03:06:25Z",
+        "user": {
+          "name": "akiko",
+          "nickname": "coeli",
+          "id": "073204a0-b317-11dd-a155-003048678d04",
+          "profileUrl": "http:\/\/friendfeed.com\/coeli"
+        }
+      },
+      {
+        "body": "\u3044\u3044\u3060\u308d\u30fc",
+        "id": "b445bbcb-9ee7-4694-ae56-9a5d77ec36cc",
+        "date": "2009-03-18T03:13:46Z",
+        "user": {
+          "name": "NAKAMURA, Hiroshi",
+          "nickname": "nahi",
+          "id": "95f306fd-0f63-47f2-88fc-8480ff10d48e",
+          "profileUrl": "http:\/\/friendfeed.com\/nahi"
+        }
+      },
+      {
+        "body": "\u98fd\u548c\u91cf\u3092\u8d85\u3048\u308b\u307e\u3067\u306e\u6642\u9593\u306e\u554f\u984c",
+        "id": "6804fade-8399-4400-966c-c75a78285a6e",
+        "date": "2009-03-18T03:39:54Z",
+        "user": {
+          "name": "eban",
+          "nickname": "eban",
+          "id": "8c5b814e-fee1-4189-87b0-07ce2fbcd5ca",
+          "profileUrl": "http:\/\/friendfeed.com\/eban"
+        }
+      },
+      {
+        "body": "\u307e\u3060\u307e\u3060\u3002",
+        "id": "025a34b0-de60-43d1-9b79-782c31dc1f86",
+        "date": "2009-03-18T03:51:04Z",
+        "user": {
+          "name": "NAKAMURA, Hiroshi",
+          "nickname": "nahi",
+          "id": "95f306fd-0f63-47f2-88fc-8480ff10d48e",
+          "profileUrl": "http:\/\/friendfeed.com\/nahi"
+        }
+      },
+      {
+        "body": "\u75ab\u5b66\u7684\u306b\u306f\u907a\u4f1d\u304c\u8a8d\u3081\u3089\u308c\u308b\u3089\u3057\u3044\u3088",
+        "id": "2a06924d-1022-4b50-9936-fbd1f71ffaac",
+        "date": "2009-03-18T04:09:09Z",
+        "user": {
+          "name": "Kentaro Goto",
+          "nickname": "gotoken",
+          "id": "c2c4bf4c-fc05-11dc-a86e-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/gotoken"
+        }
+      }
+    ],
+    "title": "\u901a\u52e4\u304c\u697d\u3057\u3044\u5b63\u7bc0\u3002 ([map] \u6771\u4eac\u90fd\u5343\u4ee3\u7530\u533a\u5916\u795e\u7530\uff12\u4e01\u76ee\uff11\uff16\u2212\uff12 (\u795e\u7530\u660e\u795e))",
+    "published": "2009-03-18T00:32:53Z",
+    "service": {
+      "name": "FriendFeed",
+      "iconUrl": "http:\/\/friendfeed.com\/static\/images\/icons\/internal.png?v=e471e9afdf04ae568dcbddb5584fc6c0",
+      "entryType": "message",
+      "id": "internal",
+      "profileUrl": "http:\/\/friendfeed.com\/nahi"
+    },
+    "anonymous": false,
+    "id": "260e9e92-0559-4b2d-8487-f98481f967dc",
+    "media": [
+      {
+        "player": null,
+        "title": "CGI.31359.5",
+        "enclosures": null,
+        "content": [
+          {
+            "url": "http:\/\/friendfeed.s3.amazonaws.com\/e75eaf8b0265fc75181911012ffbd3ba50a125d5",
+            "type": "image\/jpeg",
+            "height": 320,
+            "width": 240
+          }
+        ],
+        "link": "http:\/\/friendfeed.com\/e\/260e9e92-0559-4b2d-8487-f98481f967dc",
+        "thumbnails": [
+          {
+            "url": "http:\/\/i.friendfeed.com\/b30b4a123d6381b003bf14e728cd07f5faa8f5de",
+            "height": 175,
+            "width": 131
+          }
+        ]
+      },
+      {
+        "player": null,
+        "title": null,
+        "enclosures": null,
+        "content": [
+          {
+            "url": "http:\/\/maps.google.com\/staticmap?zoom=15&size=160x80&maptype=mobile&markers=35.70204,139.767606",
+            "type": "image\/gif",
+            "height": 80,
+            "width": 160
+          }
+        ],
+        "link": "http:\/\/friendfeed.com\/e\/260e9e92-0559-4b2d-8487-f98481f967dc",
+        "thumbnails": [
+          {
+            "url": "http:\/\/i.friendfeed.com\/4a080aeffa0e624f8002cbfb33600405449989d0",
+            "height": 80,
+            "width": 160
+          }
+        ]
+      }
+    ],
+    "link": "http:\/\/friendfeed.com\/e\/260e9e92-0559-4b2d-8487-f98481f967dc",
+    "user": {
+      "name": "NAKAMURA, Hiroshi",
+      "nickname": "nahi",
+      "id": "95f306fd-0f63-47f2-88fc-8480ff10d48e",
+      "profileUrl": "http:\/\/friendfeed.com\/nahi"
+    },
+    "updated": "2009-03-18T00:32:53Z",
+    "hidden": false,
+    "likes": [
+
+    ]
+  },
+  {
+    "comments": [
+      {
+        "body": "\u3053\u3053\u3067\u3082hpricot\u5bfenokogiri\u304c\u3002\u7af6\u3048\u308b\u306e\u3063\u3066\u3044\u3044\u306a\u3042\u3002soap4r\u3082\u7af6\u4e89\u76f8\u624b\u304c\u3044\u306a\u3044\u306e\u304c\u3044\u304b\u3093\u3088\u306a\u3002",
+        "id": "d3556118-fb5a-4669-be13-fb67722650ee",
+        "date": "2009-03-18T03:19:17Z",
+        "user": {
+          "name": "NAKAMURA, Hiroshi",
+          "nickname": "nahi",
+          "id": "95f306fd-0f63-47f2-88fc-8480ff10d48e",
+          "profileUrl": "http:\/\/friendfeed.com\/nahi"
+        }
+      }
+    ],
+    "title": "\"Write an Internet search engine with 200 lines of Ruby code\"",
+    "published": "2009-03-18T03:19:16Z",
+    "service": {
+      "name": "FriendFeed",
+      "iconUrl": "http:\/\/friendfeed.com\/static\/images\/icons\/internal.png?v=e471e9afdf04ae568dcbddb5584fc6c0",
+      "entryType": "link",
+      "id": "internal",
+      "profileUrl": "http:\/\/friendfeed.com\/nahi"
+    },
+    "anonymous": false,
+    "id": "32b53dc8-52cb-4cea-ad42-0191ee7ec3a3",
+    "media": [
+
+    ],
+    "link": "http:\/\/www.reddit.com\/r\/ruby\/comments\/85d25\/write_an_internet_search_engine_with_200_lines_of\/",
+    "user": {
+      "name": "NAKAMURA, Hiroshi",
+      "nickname": "nahi",
+      "id": "95f306fd-0f63-47f2-88fc-8480ff10d48e",
+      "profileUrl": "http:\/\/friendfeed.com\/nahi"
+    },
+    "updated": "2009-03-18T03:19:16Z",
+    "hidden": false,
+    "likes": [
+
+    ]
+  },
+  {
+    "comments": [
+      {
+        "body": "\u697d\u3057\u304b\u3063\u305f\u306d\u3048\u3002\u3068\u30fc\u3055\u3093\u5e78\u305b\u3002",
+        "id": "42ecff6c-ddaf-4862-8e5d-470360f17ccc",
+        "date": "2009-03-18T01:22:31Z",
+        "user": {
+          "name": "NAKAMURA, Hiroshi",
+          "nickname": "nahi",
+          "id": "95f306fd-0f63-47f2-88fc-8480ff10d48e",
+          "profileUrl": "http:\/\/friendfeed.com\/nahi"
+        }
+      },
+      {
+        "body": "\u305d\u3093\u306a\u306b\u3057\u3083\u3079\u308c\u308b\u306e\u304b\u3002\u3059\u3054\u3044\u306a\u3042",
+        "id": "62cbb4a3-b4bf-4142-8c35-9be4523e4460",
+        "date": "2009-03-18T02:25:54Z",
+        "user": {
+          "name": "usa",
+          "nickname": "unak",
+          "id": "4c2cbcfe-9c5a-11dd-b629-00304865cd52",
+          "profileUrl": "http:\/\/friendfeed.com\/unak"
+        }
+      },
+      {
+        "body": "\u3046\u3055\u3055\u3093\u3082\u606f\u5b50\u81ea\u6162\u3057\u3066\u4e92\u3044\u306b\u5e78\u305b\u306b\u306a\u308a\u307e\u3057\u3087\u3046\u3002",
+        "id": "bfc763ef-ec23-4f9e-9eea-000e82262180",
+        "date": "2009-03-18T03:16:09Z",
+        "user": {
+          "name": "NAKAMURA, Hiroshi",
+          "nickname": "nahi",
+          "id": "95f306fd-0f63-47f2-88fc-8480ff10d48e",
+          "profileUrl": "http:\/\/friendfeed.com\/nahi"
+        }
+      }
+    ],
+    "title": "\"\u7bb1\u6839\u306e\u30ac\u30a4\u30c9\u30d6\u30c3\u30af\u3092\u898b\u306a\u304c\u3089\u300c\u3053\u308c\u3053\u308c\uff01\uff01\u300d\u898b\u308b\u3068\u30ed\u30fc\u30d7\u30a6\u30a7\u30a4\u3002\u300e\u30ed\u30fc\u30d7\u30a6\u30a7\u30a4\u306e\u3063\u305f\u306d\u3048\u300f\u300c\u308d\u30fc\u3077\u3046\u3047\u3044\u3001\u3073\u3085\u30fc\u3093\u3066\uff01\u3073\u3085\u30fc\u30fc\u3093\u3066\u306f\u3084\u304b\u3063\u305f\uff01\u8d64\u3044\u306e\u3073\u3085\u30fc\u3093\u3066\uff01\u3048\u304d\u306d\uff01\u300d\u4f59\u7a0b\u697d\u3057\u304b\u3063\u305f\u3089\u3057\u3044\u2026\u3002\"",
+    "published": "2009-03-18T01:22:30Z",
+    "service": {
+      "name": "FriendFeed",
+      "iconUrl": "http:\/\/friendfeed.com\/static\/images\/icons\/internal.png?v=e471e9afdf04ae568dcbddb5584fc6c0",
+      "entryType": "link",
+      "id": "internal",
+      "profileUrl": "http:\/\/friendfeed.com\/nahi"
+    },
+    "anonymous": false,
+    "id": "8de1f334-6e5c-42d9-a6ef-32c86ea6edc7",
+    "media": [
+
+    ],
+    "link": "http:\/\/twitter.com\/geno_twtt\/statuses\/1345699916",
+    "user": {
+      "name": "NAKAMURA, Hiroshi",
+      "nickname": "nahi",
+      "id": "95f306fd-0f63-47f2-88fc-8480ff10d48e",
+      "profileUrl": "http:\/\/friendfeed.com\/nahi"
+    },
+    "updated": "2009-03-18T01:22:30Z",
+    "hidden": false,
+    "likes": [
+
+    ]
+  },
+  {
+    "comments": [
+
+    ],
+    "title": "\u76f8\u5f01\u3082\u3050",
+    "published": "2009-03-18T03:13:29Z",
+    "service": {
+      "name": "FriendFeed",
+      "iconUrl": "http:\/\/friendfeed.com\/static\/images\/icons\/internal.png?v=e471e9afdf04ae568dcbddb5584fc6c0",
+      "entryType": "message",
+      "id": "internal",
+      "profileUrl": "http:\/\/friendfeed.com\/nahi"
+    },
+    "anonymous": false,
+    "id": "58d3aa1c-519c-4ac2-8181-299de3a83d6d",
+    "media": [
+
+    ],
+    "link": "http:\/\/friendfeed.com\/e\/58d3aa1c-519c-4ac2-8181-299de3a83d6d",
+    "user": {
+      "name": "NAKAMURA, Hiroshi",
+      "nickname": "nahi",
+      "id": "95f306fd-0f63-47f2-88fc-8480ff10d48e",
+      "profileUrl": "http:\/\/friendfeed.com\/nahi"
+    },
+    "updated": "2009-03-18T03:13:29Z",
+    "hidden": false,
+    "likes": [
+
+    ]
+  },
+  {
+    "comments": [
+
+    ],
+    "title": "2.0.170.0 #chrome",
+    "published": "2009-03-18T01:51:30Z",
+    "service": {
+      "name": "FriendFeed",
+      "iconUrl": "http:\/\/friendfeed.com\/static\/images\/icons\/internal.png?v=e471e9afdf04ae568dcbddb5584fc6c0",
+      "entryType": "message",
+      "id": "internal",
+      "profileUrl": "http:\/\/friendfeed.com\/nahi"
+    },
+    "anonymous": false,
+    "id": "06675c5a-ae61-41e7-be94-e3bf2fc3429c",
+    "media": [
+
+    ],
+    "link": "http:\/\/friendfeed.com\/e\/06675c5a-ae61-41e7-be94-e3bf2fc3429c",
+    "user": {
+      "name": "NAKAMURA, Hiroshi",
+      "nickname": "nahi",
+      "id": "95f306fd-0f63-47f2-88fc-8480ff10d48e",
+      "profileUrl": "http:\/\/friendfeed.com\/nahi"
+    },
+    "updated": "2009-03-18T01:51:30Z",
+    "hidden": false,
+    "likes": [
+
+    ]
+  },
+  {
+    "comments": [
+      {
+        "body": "qux",
+        "id": "05c58e2e-b08c-49b8-b97e-e8475ca04167",
+        "date": "2009-03-18T01:21:36Z",
+        "user": {
+          "name": "f2ptest",
+          "nickname": "f2ptest",
+          "id": "9940a42a-ad73-4d6a-ac1b-e00b977d8584",
+          "profileUrl": "http:\/\/friendfeed.com\/f2ptest"
+        }
+      }
+    ],
+    "title": "baz",
+    "published": "2009-03-18T01:21:36Z",
+    "service": {
+      "name": "FriendFeed",
+      "iconUrl": "http:\/\/friendfeed.com\/static\/images\/icons\/internal.png?v=e471e9afdf04ae568dcbddb5584fc6c0",
+      "entryType": "link",
+      "id": "internal",
+      "profileUrl": "http:\/\/friendfeed.com\/f2ptest"
+    },
+    "anonymous": false,
+    "id": "0c0208f6-1640-4417-a93b-1538069917c9",
+    "media": [
+
+    ],
+    "link": "http:\/\/twitter.com\/moro\/statuses\/1240799247",
+    "user": {
+      "name": "f2ptest",
+      "nickname": "f2ptest",
+      "id": "9940a42a-ad73-4d6a-ac1b-e00b977d8584",
+      "profileUrl": "http:\/\/friendfeed.com\/f2ptest"
+    },
+    "updated": "2009-03-18T01:21:36Z",
+    "hidden": false,
+    "likes": [
+
+    ]
+  },
+  {
+    "comments": [
+      {
+        "body": "bar",
+        "id": "417da28c-9ef8-406b-976f-7895e6f71101",
+        "date": "2009-03-18T01:20:34Z",
+        "user": {
+          "name": "f2ptest",
+          "nickname": "f2ptest",
+          "id": "9940a42a-ad73-4d6a-ac1b-e00b977d8584",
+          "profileUrl": "http:\/\/friendfeed.com\/f2ptest"
+        }
+      }
+    ],
+    "title": "foo",
+    "published": "2009-03-18T01:20:34Z",
+    "service": {
+      "name": "FriendFeed",
+      "iconUrl": "http:\/\/friendfeed.com\/static\/images\/icons\/internal.png?v=e471e9afdf04ae568dcbddb5584fc6c0",
+      "entryType": "link",
+      "id": "internal",
+      "profileUrl": "http:\/\/friendfeed.com\/f2ptest"
+    },
+    "anonymous": false,
+    "id": "feb1f11e-116c-4fbc-9cbd-6dbad2c09362",
+    "media": [
+
+    ],
+    "link": "http:\/\/twitter.com\/hemge\/statuses\/1344024405",
+    "user": {
+      "name": "f2ptest",
+      "nickname": "f2ptest",
+      "id": "9940a42a-ad73-4d6a-ac1b-e00b977d8584",
+      "profileUrl": "http:\/\/friendfeed.com\/f2ptest"
+    },
+    "updated": "2009-03-18T01:20:34Z",
+    "hidden": false,
+    "likes": [
+
+    ]
+  },
+  {
+    "friendof": {
+      "name": "NAKAMURA, Hiroshi",
+      "nickname": "nahi",
+      "id": "95f306fd-0f63-47f2-88fc-8480ff10d48e",
+      "profileUrl": "http:\/\/friendfeed.com\/nahi"
+    },
+    "comments": [
+      {
+        "body": "SNS\u95a2\u4fc2\u306a\u3044\u3051\u3069\u3001github\u306b\u7d10\u4ed8\u3051\u3066ticket\u7ba1\u7406\u3059\u308b\u304a\u52e7\u3081\u306e\u65b9\u6cd5\u306f\u4f55\uff1f > my friends",
+        "id": "db601587-df37-4be4-a905-4c043ead2ab4",
+        "date": "2009-02-24T00:13:19Z",
+        "user": {
+          "name": "NAKAMURA, Hiroshi",
+          "nickname": "nahi",
+          "id": "95f306fd-0f63-47f2-88fc-8480ff10d48e",
+          "profileUrl": "http:\/\/friendfeed.com\/nahi"
+        }
+      },
+      {
+        "body": "\u3088\u304f\u898b\u308b\u306e\u306fLighthouse\u3067\u3059\u306d\u3002Rails\u3068\u304b\u3002GitHub\u5074\u3067\u7528\u610f\u3057\u3066\u308b\u30d5\u30c3\u30af\u304c\u3044\u308d\u3044\u308d\u3042\u308b\u306e\u3067\u305d\u308c\u306a\u308a\u306b\u4f55\u3068\u304b\u306a\u308a\u305d\u3046\u306a\u3002\u8a66\u3057\u3066\u306a\u304f\u3066\u3059\u3044\u307e\u305b\u3093\u304c\u3002\u3002",
+        "id": "155176a7-8b08-4697-bf4f-282f25b18b26",
+        "date": "2009-02-24T00:20:43Z",
+        "user": {
+          "name": "MOROHASHI Kyosuke",
+          "nickname": "morohashi",
+          "id": "031cc6ac-bc2c-11dd-9ea8-003048678d04",
+          "profileUrl": "http:\/\/friendfeed.com\/morohashi"
+        }
+      },
+      {
+        "body": "\u3042\u308a\u304c\u3068\u3046\u3054\u3056\u3044\u307e\u3059! \u65e9\u901f\u8a66\u3057\u4e2d > http:\/\/nahi.lighthouseapp.com\/projects\/26026-f2p\/overview",
+        "id": "ff58907e-2db8-4399-baa1-e2d0fd7f2508",
+        "date": "2009-02-24T04:19:58Z",
+        "user": {
+          "name": "NAKAMURA, Hiroshi",
+          "nickname": "nahi",
+          "id": "95f306fd-0f63-47f2-88fc-8480ff10d48e",
+          "profileUrl": "http:\/\/friendfeed.com\/nahi"
+        }
+      },
+      {
+        "body": "lighthouse\u3067\u306e\u3001changeset log\u306b\u3088\u308bticket control\u306f\u3053\u308c\u3092\u53c2\u7167\u3059\u308b\u306e\u304c\u3044\u3044\u306e\u304b\u306a\u3002\u3044\u307e\u3072\u3068\u3064\u300c\u3053\u308c\u300d\u3068\u3044\u3063\u305f\u306e\u304c\u898b\u3064\u304b\u3089\u306a\u3044\u3002 http:\/\/lighthouseapp.com\/help\/setting-up-subversion-integration",
+        "id": "7a007243-6a37-49b0-8cb1-293950e61c23",
+        "date": "2009-02-24T09:58:21Z",
+        "user": {
+          "name": "NAKAMURA, Hiroshi",
+          "nickname": "nahi",
+          "id": "95f306fd-0f63-47f2-88fc-8480ff10d48e",
+          "profileUrl": "http:\/\/friendfeed.com\/nahi"
+        }
+      },
+      {
+        "body": "\u306a\u3072\u3055\u3093\u3001\u3053\u308c\u306f\u307f\u305f? http:\/\/typo.okkez.net\/2009\/02\/15\/redmine-works-with-git-repository-on-github-com",
+        "id": "49936535-5a96-42cb-9853-768187f7189c",
+        "date": "2009-02-24T10:07:56Z",
+        "user": {
+          "name": "Kentaro Goto",
+          "nickname": "gotoken",
+          "id": "c2c4bf4c-fc05-11dc-a86e-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/gotoken"
+        }
+      },
+      {
+        "body": "lighthouse\u304a\u3082\u3057\u308d\u30fc\u3044\u3002",
+        "id": "56bbdf7d-c21f-4c01-91c1-caa632efb684",
+        "date": "2009-02-24T10:25:51Z",
+        "user": {
+          "name": "NAKAMURA, Hiroshi",
+          "nickname": "nahi",
+          "id": "95f306fd-0f63-47f2-88fc-8480ff10d48e",
+          "profileUrl": "http:\/\/friendfeed.com\/nahi"
+        }
+      },
+      {
+        "body": "\u3046\u3001\u77e5\u308a\u307e\u305b\u3093\u3067\u3057\u305f\u3002\u898b\u3066\u898b\u307e\u3059 > redmine",
+        "id": "36b37aee-177e-473f-bf85-d56d983ee908",
+        "date": "2009-02-24T10:26:14Z",
+        "user": {
+          "name": "NAKAMURA, Hiroshi",
+          "nickname": "nahi",
+          "id": "95f306fd-0f63-47f2-88fc-8480ff10d48e",
+          "profileUrl": "http:\/\/friendfeed.com\/nahi"
+        }
+      },
+      {
+        "body": "\u60c5\u5831\u3042\u308a\u304c\u3068\u3046\u3054\u3056\u3044\u307e\u3057\u305f\u3002lighthouse\u304c\u3044\u308d\u3093\u306a\u610f\u5473\u3067\u8efd\u304f\u3066\u6c17\u306b\u5165\u3063\u305f\u306e\u3067\u3001\u3057\u3070\u3089\u304f\u4f7f\u3044\u7d9a\u3051\u3088\u3046\u3068\u601d\u3044\u307e\u3059\u3002redmine\u306b\u3082\u74b0\u5883\u30b5\u30fc\u30d3\u30b9\u3042\u308b\u3093\u304b\u306a",
+        "id": "0f7b9db2-d390-42ab-adb0-ba072567ea3b",
+        "date": "2009-02-24T13:24:46Z",
+        "user": {
+          "name": "NAKAMURA, Hiroshi",
+          "nickname": "nahi",
+          "id": "95f306fd-0f63-47f2-88fc-8480ff10d48e",
+          "profileUrl": "http:\/\/friendfeed.com\/nahi"
+        }
+      },
+      {
+        "body": "\u30c1\u30b1\u30c3\u30c8\u691c\u7d22\u3067sort:priority\u3059\u308b\u3068\u7a7a\u306b\u306a\u308b\u306e\u306f\u4f55\u3060\u308d\u3046\u306a\u3042\u3002",
+        "id": "177d9c1f-267b-4d38-a517-882d22dbf86d",
+        "date": "2009-02-24T13:27:22Z",
+        "user": {
+          "name": "NAKAMURA, Hiroshi",
+          "nickname": "nahi",
+          "id": "95f306fd-0f63-47f2-88fc-8480ff10d48e",
+          "profileUrl": "http:\/\/friendfeed.com\/nahi"
+        }
+      },
+      {
+        "body": "\u305f\u3057\u304b\u306b\u8a66\u3059\u3060\u3051\u306a\u3089\u81ea\u5206\u3067\u5efa\u3066\u308b\u306e\u3081\u3093\u3069\u3044\u306a\u3042",
+        "id": "86e5c861-6b03-42b9-b97c-55d6ac8be6ed",
+        "date": "2009-02-24T18:17:32Z",
+        "user": {
+          "name": "Kentaro Goto",
+          "nickname": "gotoken",
+          "id": "c2c4bf4c-fc05-11dc-a86e-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/gotoken"
+        }
+      },
+      {
+        "body": "ticket\u30b7\u30b9\u30c6\u30e0\u304c\u30b7\u30f3\u30d7\u30eb\u304b\u3064UI\u304c\u3053\u306a\u308c\u3066\u3066\u3088\u3044\u3002RSS\u304ccontent\u306a\u306e\u3067ff\u306b\u672c\u6587\u51fa\u3066\u3053\u306a\u3044\u306e\u304c\u60dc\u3057\u3044\u306a\u3042\u3002",
+        "id": "5f184852-0e07-450e-be06-0a1bd258e72e",
+        "date": "2009-02-24T23:41:13Z",
+        "user": {
+          "name": "NAKAMURA, Hiroshi",
+          "nickname": "nahi",
+          "id": "95f306fd-0f63-47f2-88fc-8480ff10d48e",
+          "profileUrl": "http:\/\/friendfeed.com\/nahi"
+        }
+      },
+      {
+        "body": "\u3075\u3068\u6c17\u4ed8\u304f\u3068\u3001ticket bin\u3067sort:priority\u304c\u4f7f\u3048\u308b\u3088\u3046\u306b\u306a\u3063\u3066\u3044\u305f\u3002\u3068\u3066\u3082\u5b09\u3057\u3044\u3002",
+        "id": "d71984c7-a9f8-41bd-9b73-14d653f283b3",
+        "date": "2009-03-18T01:14:04Z",
+        "user": {
+          "name": "NAKAMURA, Hiroshi",
+          "nickname": "nahi",
+          "id": "95f306fd-0f63-47f2-88fc-8480ff10d48e",
+          "profileUrl": "http:\/\/friendfeed.com\/nahi"
+        }
+      }
+    ],
+    "title": "IT\u696d\u754c\u3067\u50cd\u304f\u4eba\u306eSNS\u3063\u3066GitHub\u3058\u3083\u3060\u3081\u306a\u306e??",
+    "published": "2009-02-23T13:46:07Z",
+    "service": {
+      "name": "Twitter",
+      "iconUrl": "http:\/\/friendfeed.com\/static\/images\/icons\/twitter.png?v=df0a0affa8100c494df42159627a38b0",
+      "id": "twitter",
+      "profileUrl": "http:\/\/twitter.com\/moro"
+    },
+    "anonymous": false,
+    "id": "881bc496-559b-4c51-607d-c290c25b01be",
+    "media": [
+
+    ],
+    "link": "http:\/\/twitter.com\/moro\/statuses\/1240799247",
+    "user": {
+      "name": "MOROHASHI Kyosuke",
+      "nickname": "morohashi",
+      "id": "031cc6ac-bc2c-11dd-9ea8-003048678d04",
+      "profileUrl": "http:\/\/friendfeed.com\/morohashi"
+    },
+    "updated": "2009-02-23T13:46:07Z",
+    "hidden": false,
+    "likes": [
+      {
+        "date": "2009-02-24T10:55:04Z",
+        "user": {
+          "name": "gotoyuzo",
+          "nickname": "gotoyuzo",
+          "id": "a8603148-ae4f-11dd-9b88-003048678d04",
+          "profileUrl": "http:\/\/friendfeed.com\/gotoyuzo"
+        }
+      },
+      {
+        "date": "2009-02-24T01:04:29Z",
+        "user": {
+          "name": "NAKAMURA, Hiroshi",
+          "nickname": "nahi",
+          "id": "95f306fd-0f63-47f2-88fc-8480ff10d48e",
+          "profileUrl": "http:\/\/friendfeed.com\/nahi"
+        }
+      }
+    ]
+  },
+  {
+    "comments": [
+      {
+        "body": "\u76f8\u5909\u308f\u3089\u305a\u3001exception\u306e\u307b\u3046\u306f\u901a\u77e5\u3055\u308c\u306a\u3044\u3002\u4ffa\u306b\u306f\u305d\u3063\u3061\u306e\u307b\u3046\u304c\u91cd\u8981\u306a\u3093\u3060\u3051\u3069\u3002\u4f55\u304c\u3044\u3051\u306a\u3044\u3093\u3060\u308d\u3046\u306a\u3042\u3002",
+        "id": "bb979918-31c7-494a-9342-6cd99f2e96d6",
+        "date": "2009-03-18T00:04:42Z",
+        "user": {
+          "name": "NAKAMURA, Hiroshi",
+          "nickname": "nahi",
+          "id": "95f306fd-0f63-47f2-88fc-8480ff10d48e",
+          "profileUrl": "http:\/\/friendfeed.com\/nahi"
+        }
+      }
+    ],
+    "title": "f2p has been deployed. https:\/\/dash.fiveruns.com\/events\/37920",
+    "published": "2009-03-17T14:47:12Z",
+    "service": {
+      "name": "Twitter",
+      "iconUrl": "http:\/\/friendfeed.com\/static\/images\/icons\/twitter.png?v=df0a0affa8100c494df42159627a38b0",
+      "id": "twitter",
+      "profileUrl": "http:\/\/twitter.com\/nahi"
+    },
+    "anonymous": false,
+    "id": "3d2caf58-26c6-fb3b-4932-04d5d16e18d2",
+    "media": [
+
+    ],
+    "link": "http:\/\/twitter.com\/nahi\/statuses\/1342420077",
+    "user": {
+      "name": "NAKAMURA, Hiroshi",
+      "nickname": "nahi",
+      "id": "95f306fd-0f63-47f2-88fc-8480ff10d48e",
+      "profileUrl": "http:\/\/friendfeed.com\/nahi"
+    },
+    "updated": "2009-03-17T14:47:12Z",
+    "hidden": false,
+    "likes": [
+
+    ]
+  },
+  {
+    "friendof": {
+      "name": "NAKAMURA, Hiroshi",
+      "nickname": "nahi",
+      "id": "95f306fd-0f63-47f2-88fc-8480ff10d48e",
+      "profileUrl": "http:\/\/friendfeed.com\/nahi"
+    },
+    "comments": [
+      {
+        "body": "\u53d6\u308a\u8fd4\u3059\u3063\u3066\u4f55\uff1f\uff01",
+        "id": "50d194af-dbd0-49b2-99a7-07239b8e6730",
+        "date": "2009-03-11T09:18:51Z",
+        "user": {
+          "name": "NAKAMURA, Hiroshi",
+          "nickname": "nahi",
+          "id": "95f306fd-0f63-47f2-88fc-8480ff10d48e",
+          "profileUrl": "http:\/\/friendfeed.com\/nahi"
+        }
+      },
+      {
+        "body": "twitter\u306eshugo\u53d6\u3063\u3066\u308b\u4eba\u304cbrigtkite\u3067shugo01\u53d6\u3063\u3066\u308b\u306e\u3092\u898b\u3064\u3051\u305f\u3068\u3044\u3046\u8a71\u3067\u3059\u3002",
+        "id": "1e4a52ee-6c24-44ce-8cc9-082ec5f01470",
+        "date": "2009-03-17T23:42:57Z",
+        "user": {
+          "name": "Shugo Maeda",
+          "nickname": "shugomaeda",
+          "id": "3daf0ffc-ae24-11dd-b005-003048678d04",
+          "profileUrl": "http:\/\/friendfeed.com\/shugomaeda"
+        }
+      },
+      {
+        "body": "bk\u3069\u3046\u3067\u3059\u304b\u3002\u6700\u8fd1\u4f7f\u3063\u3066\u306a\u3044\u3093\u3060\u3051\u3069\u3002\u8ab0\u304b\u3068\u304a\u53cb\u9054\u306b\u306a\u308c\u305f\uff1fw",
+        "id": "935e87e7-95e3-43f8-bbc5-2482f0d86cc8",
+        "date": "2009-03-18T00:03:28Z",
+        "user": {
+          "name": "NAKAMURA, Hiroshi",
+          "nickname": "nahi",
+          "id": "95f306fd-0f63-47f2-88fc-8480ff10d48e",
+          "profileUrl": "http:\/\/friendfeed.com\/nahi"
+        }
+      }
+    ],
+    "title": "twitter\u306eshugo\u306f\u53d6\u3089\u308c\u305f\u3051\u3069\u3001brightkite\u306eshugo\u306f\u53d6\u308a\u8fd4\u305b\u305f",
+    "published": "2009-03-11T08:24:20Z",
+    "service": {
+      "name": "Twitter",
+      "iconUrl": "http:\/\/friendfeed.com\/static\/images\/icons\/twitter.png?v=df0a0affa8100c494df42159627a38b0",
+      "id": "twitter",
+      "profileUrl": "http:\/\/twitter.com\/shugomaeda"
+    },
+    "anonymous": false,
+    "id": "520b2a4a-230c-e1f2-d842-96f1f4c13f74",
+    "media": [
+
+    ],
+    "link": "http:\/\/twitter.com\/shugomaeda\/statuses\/1309716508",
+    "user": {
+      "name": "Shugo Maeda",
+      "nickname": "shugomaeda",
+      "id": "3daf0ffc-ae24-11dd-b005-003048678d04",
+      "profileUrl": "http:\/\/friendfeed.com\/shugomaeda"
+    },
+    "updated": "2009-03-11T08:24:20Z",
+    "hidden": false,
+    "likes": [
+
+    ]
+  },
+  {
+    "friendof": {
+      "name": "NAKAMURA, Hiroshi",
+      "nickname": "nahi",
+      "id": "95f306fd-0f63-47f2-88fc-8480ff10d48e",
+      "profileUrl": "http:\/\/friendfeed.com\/nahi"
+    },
+    "comments": [
+      {
+        "body": "\u3057\u3066\u306a\u3044\u3093\u3067\u3059\u3088\u304d\u3063\u3068\u3002\u3082\u3057\u304f\u306f\u3054\u3068\u3086\u305e\u307f\u305f\u3044\u306b\u9006\u8ee2\u3055\u305b\u3066\u308b\u304b\u3002:-)",
+        "id": "d45029d7-ed0f-4602-a454-52daf1af6a5e",
+        "date": "2009-03-17T22:08:56Z",
+        "user": {
+          "name": "NAKAMURA, Hiroshi",
+          "nickname": "nahi",
+          "id": "95f306fd-0f63-47f2-88fc-8480ff10d48e",
+          "profileUrl": "http:\/\/friendfeed.com\/nahi"
+        }
+      }
+    ],
+    "title": "\u307f\u3093\u306a\u3053\u3093\u306a\u6642\u9593\u307e\u3067\u304a\u304d\u3066\u308b\u306e\u306b\u793e\u4f1a\u4eba\u3057\u3066\u308b\u3063\u3066\u3059\u3054\u3044\u3002",
+    "published": "2009-03-17T19:25:24Z",
+    "service": {
+      "name": "Twitter",
+      "iconUrl": "http:\/\/friendfeed.com\/static\/images\/icons\/twitter.png?v=df0a0affa8100c494df42159627a38b0",
+      "id": "twitter",
+      "profileUrl": "http:\/\/twitter.com\/hemge"
+    },
+    "anonymous": false,
+    "id": "8450b9b0-a44b-c557-d033-8e3158406728",
+    "media": [
+
+    ],
+    "link": "http:\/\/twitter.com\/hemge\/statuses\/1344024405",
+    "user": {
+      "name": "ANDO Yoko",
+      "nickname": "hemge",
+      "id": "b563f2fa-9d04-11dd-b629-00304865cd52",
+      "profileUrl": "http:\/\/friendfeed.com\/hemge"
+    },
+    "updated": "2009-03-17T19:25:24Z",
+    "hidden": false,
+    "likes": [
+
+    ]
+  },
+  {
+    "comments": [
+      {
+        "body": "\u3044\u308d\u3093\u306aCAPTCHA\u304c\u3042\u308b\u3082\u3093\u3060\u3002",
+        "id": "9f437ccd-a912-4520-91bf-fe3b257f28fb",
+        "date": "2009-03-17T14:27:02Z",
+        "user": {
+          "name": "NAKAMURA, Hiroshi",
+          "nickname": "nahi",
+          "id": "95f306fd-0f63-47f2-88fc-8480ff10d48e",
+          "profileUrl": "http:\/\/friendfeed.com\/nahi"
+        }
+      }
+    ],
+    "title": "\"Do you read the Rubyist and Rails Magazine?\"",
+    "published": "2009-03-17T14:27:02Z",
+    "service": {
+      "name": "FriendFeed",
+      "iconUrl": "http:\/\/friendfeed.com\/static\/images\/icons\/internal.png?v=e471e9afdf04ae568dcbddb5584fc6c0",
+      "entryType": "link",
+      "id": "internal",
+      "profileUrl": "http:\/\/friendfeed.com\/nahi"
+    },
+    "anonymous": false,
+    "id": "fd06b920-e42f-49da-9824-131231882600",
+    "media": [
+
+    ],
+    "link": "http:\/\/www.rubyflow.com\/items\/1908",
+    "user": {
+      "name": "NAKAMURA, Hiroshi",
+      "nickname": "nahi",
+      "id": "95f306fd-0f63-47f2-88fc-8480ff10d48e",
+      "profileUrl": "http:\/\/friendfeed.com\/nahi"
+    },
+    "updated": "2009-03-17T14:27:02Z",
+    "hidden": false,
+    "likes": [
+
+    ]
+  },
+  {
+    "comments": [
+
+    ],
+    "title": "\u82a6\u30ce\u6e56\u904a\u89a7\u8239",
+    "published": "2009-03-17T13:59:27Z",
+    "service": {
+      "name": "Flickr",
+      "iconUrl": "http:\/\/friendfeed.com\/static\/images\/icons\/flickr.png?v=77eeaefbcb3644cec0162a0938ec28e2",
+      "entryType": "publish",
+      "id": "flickr",
+      "profileUrl": "http:\/\/www.flickr.com\/photos\/15353795%40N04\/"
+    },
+    "anonymous": false,
+    "id": "6b35e068-5208-c414-a040-eb96f3e61794",
+    "media": [
+      {
+        "player": null,
+        "title": "\u82a6\u30ce\u6e56\u904a\u89a7\u8239",
+        "enclosures": null,
+        "content": [
+          {
+            "url": "http:\/\/farm4.static.flickr.com\/3653\/3362123927_e3fba0d6d3_o.jpg",
+            "type": "image\/jpeg",
+            "height": 2592,
+            "width": 3872
+          }
+        ],
+        "link": "http:\/\/www.flickr.com\/photos\/15353795@N04\/3362123927\/",
+        "thumbnails": [
+          {
+            "url": "http:\/\/farm4.static.flickr.com\/3653\/3362123927_a81e48efc9_s.jpg",
+            "height": 75,
+            "width": 75
+          }
+        ]
+      },
+      {
+        "player": null,
+        "title": "\u5927\u6d8c\u8c37 - \u5bcc\u58eb\u5c71",
+        "enclosures": null,
+        "content": [
+          {
+            "url": "http:\/\/farm4.static.flickr.com\/3441\/3362928140_695e58e13b_o.jpg",
+            "type": "image\/jpeg",
+            "height": 2592,
+            "width": 3872
+          }
+        ],
+        "link": "http:\/\/www.flickr.com\/photos\/15353795@N04\/3362928140\/",
+        "thumbnails": [
+          {
+            "url": "http:\/\/farm4.static.flickr.com\/3441\/3362928140_c66e27cee1_s.jpg",
+            "height": 75,
+            "width": 75
+          }
+        ]
+      },
+      {
+        "player": null,
+        "title": "\u5927\u6d8c\u8c37 - \u30ed\u30fc\u30d7\u30a6\u30a7\u30fc\u304b\u30891\/2",
+        "enclosures": null,
+        "content": [
+          {
+            "url": "http:\/\/farm4.static.flickr.com\/3588\/3362112713_658404840d_o.jpg",
+            "type": "image\/jpeg",
+            "height": 2592,
+            "width": 3872
+          }
+        ],
+        "link": "http:\/\/www.flickr.com\/photos\/15353795@N04\/3362112713\/",
+        "thumbnails": [
+          {
+            "url": "http:\/\/farm4.static.flickr.com\/3588\/3362112713_e38cfd3c43_s.jpg",
+            "height": 75,
+            "width": 75
+          }
+        ]
+      },
+      {
+        "player": null,
+        "title": "\u5927\u6d8c\u8c37 - \u30ed\u30fc\u30d7\u30a6\u30a7\u30fc\u304b\u30892\/2",
+        "enclosures": null,
+        "content": [
+          {
+            "url": "http:\/\/farm4.static.flickr.com\/3617\/3362925364_9e89b11502_o.jpg",
+            "type": "image\/jpeg",
+            "height": 2592,
+            "width": 3872
+          }
+        ],
+        "link": "http:\/\/www.flickr.com\/photos\/15353795@N04\/3362925364\/",
+        "thumbnails": [
+          {
+            "url": "http:\/\/farm4.static.flickr.com\/3617\/3362925364_1833fef532_s.jpg",
+            "height": 75,
+            "width": 75
+          }
+        ]
+      },
+      {
+        "player": null,
+        "title": "\u5927\u6d8c\u8c37 - \u30ed\u30fc\u30d7\u30a6\u30a7\u30fc",
+        "enclosures": null,
+        "content": [
+          {
+            "url": "http:\/\/farm4.static.flickr.com\/3547\/3362923714_79e8d13b9e_o.jpg",
+            "type": "image\/jpeg",
+            "height": 2592,
+            "width": 3872
+          }
+        ],
+        "link": "http:\/\/www.flickr.com\/photos\/15353795@N04\/3362923714\/",
+        "thumbnails": [
+          {
+            "url": "http:\/\/farm4.static.flickr.com\/3547\/3362923714_f446d7ac71_s.jpg",
+            "height": 75,
+            "width": 75
+          }
+        ]
+      }
+    ],
+    "link": "http:\/\/www.flickr.com\/photos\/15353795@N04\/3362123927\/",
+    "user": {
+      "name": "NAKAMURA, Hiroshi",
+      "nickname": "nahi",
+      "id": "95f306fd-0f63-47f2-88fc-8480ff10d48e",
+      "profileUrl": "http:\/\/friendfeed.com\/nahi"
+    },
+    "updated": "2009-03-17T13:59:27Z",
+    "hidden": false,
+    "likes": [
+
+    ]
+  },
+  {
+    "comments": [
+      {
+        "body": "\u3059\u3054\u3044URL\u3060\u306a\u3002\u3068\u3042\u308b\u6848\u4ef6\u3067\u5c01\u5165\u6a5f\u304c\u52d5\u304f\u3068\u3053\u308d\u3092\u898b\u305b\u3066\u3082\u3089\u3063\u305f\u3053\u3068\u304c\u3042\u308b\u304c\u3001\u3059\u3054\u3044\u30e1\u30ab\u30e1\u30ab\u3067\u3001\u3053\u306e\u624b\u306e\u30df\u30b9\u3092\u6975\u529b\u907f\u3051\u308b\u305f\u3081\u306e\u8a2d\u8a08\u306b\u82e6\u52b4\u3057\u305f\u3002",
+        "id": "a56fa677-9b18-464e-abf0-ed37a4f4c1ee",
+        "date": "2009-03-17T13:48:42Z",
+        "user": {
+          "name": "NAKAMURA, Hiroshi",
+          "nickname": "nahi",
+          "id": "95f306fd-0f63-47f2-88fc-8480ff10d48e",
+          "profileUrl": "http:\/\/friendfeed.com\/nahi"
+        }
+      }
+    ],
+    "title": "\"\u65e5\u672cIBM\u3001\u516b\u5341\u4e8c\u9280\u884c\u304b\u3089\u59d4\u8a17\u306e\u9867\u5ba2\u60c5\u5831\u3092\u8aa4\u3063\u3066\u90f5\u9001\"",
+    "published": "2009-03-17T13:48:42Z",
+    "service": {
+      "name": "FriendFeed",
+      "iconUrl": "http:\/\/friendfeed.com\/static\/images\/icons\/internal.png?v=e471e9afdf04ae568dcbddb5584fc6c0",
+      "entryType": "link",
+      "id": "internal",
+      "profileUrl": "http:\/\/friendfeed.com\/nahi"
+    },
+    "anonymous": false,
+    "id": "ee5cc8c6-3a04-4222-a74a-e28d0301328f",
+    "media": [
+
+    ],
+    "link": "http:\/\/rss.rssad.jp\/rss\/artclk\/gJ6ewlkEZ75h\/2801a1911254316e6dbc2b8bfc5d2967?ul=sZH1S9vybWs4uWCcBzYNYRlKTBkWCkgcT9SVe.mgrTzmQAfE1sLVj0Ce0Nvint4itMDaTZ1HzWBsasJMN7kj.uL5hy.KAL3U5K9lghImo6DO_OVKVaherRWip3GTutqeR.eZFWj",
+    "user": {
+      "name": "NAKAMURA, Hiroshi",
+      "nickname": "nahi",
+      "id": "95f306fd-0f63-47f2-88fc-8480ff10d48e",
+      "profileUrl": "http:\/\/friendfeed.com\/nahi"
+    },
+    "updated": "2009-03-17T13:48:42Z",
+    "hidden": false,
+    "likes": [
+
+    ]
+  },
+  {
+    "comments": [
+      {
+        "body": "FF\u306f\u3069\u3046\u306a\u306e\u304b\u306a\u3042\u3002\u305a\u3044\u3076\u3093\u524d\u306b\u300c\u3084\u308b\u3064\u3082\u308a\u306f\u3042\u308b\u300d\u3068\u3044\u3046\u306e\u3092\u898b\u305f\u304d\u308a\u3002",
+        "id": "cc525d28-8aed-4664-a38f-f2955b080725",
+        "date": "2009-03-17T13:39:21Z",
+        "user": {
+          "name": "NAKAMURA, Hiroshi",
+          "nickname": "nahi",
+          "id": "95f306fd-0f63-47f2-88fc-8480ff10d48e",
+          "profileUrl": "http:\/\/friendfeed.com\/nahi"
+        }
+      }
+    ],
+    "title": "\"Twitter\u306eOAuth\u30b5\u30dd\u30fc\u30c8\u304c\u516c\u958b\u30d9\u30fc\u30bf\u3078\"",
+    "published": "2009-03-17T13:39:21Z",
+    "service": {
+      "name": "FriendFeed",
+      "iconUrl": "http:\/\/friendfeed.com\/static\/images\/icons\/internal.png?v=e471e9afdf04ae568dcbddb5584fc6c0",
+      "entryType": "link",
+      "id": "internal",
+      "profileUrl": "http:\/\/friendfeed.com\/nahi"
+    },
+    "anonymous": false,
+    "id": "25abf507-d6f3-43e6-a84e-5c24054c738f",
+    "media": [
+
+    ],
+    "link": "http:\/\/jp.techcrunch.com\/archives\/20090316twitters-oauth-support-now-in-public-beta\/",
+    "user": {
+      "name": "NAKAMURA, Hiroshi",
+      "nickname": "nahi",
+      "id": "95f306fd-0f63-47f2-88fc-8480ff10d48e",
+      "profileUrl": "http:\/\/friendfeed.com\/nahi"
+    },
+    "updated": "2009-03-17T13:39:21Z",
+    "hidden": false,
+    "likes": [
+
+    ]
+  },
+  {
+    "comments": [
+
+    ],
+    "title": "f2p has been deployed. https:\/\/dash.fiveruns.com\/events\/37730",
+    "published": "2009-03-17T13:19:11Z",
+    "service": {
+      "name": "Twitter",
+      "iconUrl": "http:\/\/friendfeed.com\/static\/images\/icons\/twitter.png?v=df0a0affa8100c494df42159627a38b0",
+      "id": "twitter",
+      "profileUrl": "http:\/\/twitter.com\/nahi"
+    },
+    "anonymous": false,
+    "id": "bacbd132-c153-261d-28cf-e37c638d2465",
+    "media": [
+
+    ],
+    "link": "http:\/\/twitter.com\/nahi\/statuses\/1341987125",
+    "user": {
+      "name": "NAKAMURA, Hiroshi",
+      "nickname": "nahi",
+      "id": "95f306fd-0f63-47f2-88fc-8480ff10d48e",
+      "profileUrl": "http:\/\/friendfeed.com\/nahi"
+    },
+    "updated": "2009-03-17T13:19:11Z",
+    "hidden": false,
+    "likes": [
+
+    ]
+  },
+  {
+    "comments": [
+
+    ],
+    "title": "f2p has been deployed. https:\/\/dash.fiveruns.com\/events\/37714",
+    "published": "2009-03-17T13:09:10Z",
+    "service": {
+      "name": "Twitter",
+      "iconUrl": "http:\/\/friendfeed.com\/static\/images\/icons\/twitter.png?v=df0a0affa8100c494df42159627a38b0",
+      "id": "twitter",
+      "profileUrl": "http:\/\/twitter.com\/nahi"
+    },
+    "anonymous": false,
+    "id": "4d374f5e-15e0-d034-039f-113be7d2db2c",
+    "media": [
+
+    ],
+    "link": "http:\/\/twitter.com\/nahi\/statuses\/1341943931",
+    "user": {
+      "name": "NAKAMURA, Hiroshi",
+      "nickname": "nahi",
+      "id": "95f306fd-0f63-47f2-88fc-8480ff10d48e",
+      "profileUrl": "http:\/\/friendfeed.com\/nahi"
+    },
+    "updated": "2009-03-17T13:09:10Z",
+    "hidden": false,
+    "likes": [
+
+    ]
+  },
+  {
+    "comments": [
+      {
+        "body": "\u5e30\u3063\u3066\u5a18\u306b\u8a71\u3092\u805e\u304f\u306e\u304c\u697d\u3057\u307f\u3060\u3002",
+        "id": "01d0084c-b1a8-4afe-99f6-61dce9094e1a",
+        "date": "2009-03-17T07:10:27Z",
+        "user": {
+          "name": "NAKAMURA, Hiroshi",
+          "nickname": "nahi",
+          "id": "95f306fd-0f63-47f2-88fc-8480ff10d48e",
+          "profileUrl": "http:\/\/friendfeed.com\/nahi"
+        }
+      },
+      {
+        "body": "\u300c\u305b\u3093\u305b\u30fc\u306b\u3053\u308c\u3082\u3089\u3063\u305f\u306e\u30fc\u300d\u3068\u7c98\u571f\u3092\u898b\u305b\u3066\u304f\u308c\u305f\u3002\u307f\u3093\u306a\u3067\u697d\u3057\u304f\u30d3\u30c7\u30aa\u9451\u8cde\u4f1a\u3002\u7acb\u6d3e\u306b\u8e0a\u3063\u3066\u3044\u3066\u611f\u52d5\u3057\u305f\u3002",
+        "id": "e4bb7e72-beac-440b-9cf3-640d43e51ea3",
+        "date": "2009-03-17T13:26:12Z",
+        "user": {
+          "name": "NAKAMURA, Hiroshi",
+          "nickname": "nahi",
+          "id": "95f306fd-0f63-47f2-88fc-8480ff10d48e",
+          "profileUrl": "http:\/\/friendfeed.com\/nahi"
+        }
+      }
+    ],
+    "title": "\u30ea\u30c8\u30df\u30c3\u30af\u306f\u30019:30\u306e\u30af\u30e9\u30b9\u219210:30\u219211:30\u3068\u9806\u756a\u306b\u6b4c\u3068\u632f\u308a\u4ed8\u3051\u3092\u3057\u305f\u306e\u3060\u3051\u3069\u30019:30\u3092\u3084\u3063\u3066\u3044\u308b\u6bb5\u968e\u3067\u8e0a\u308a\u307e\u304f\u308a\u3001\u81ea\u5206\u306e\u51fa\u756a\u3067\u3082\u672a\u3060\u304b\u3064\u3066\u306a\u3044\u307b\u3069\u306b\u3057\u3063\u304b\u308a\u8e0a\u308a\u3001\u51fa\u756a\u304c\u7d42\u308f\u3063\u305f\u306e\u306b\u821e\u53f0\u304b\u3089\u300c\u304a\u308a\u306a\u3044\uff01\u300d\u3068\u52d5\u3053\u3046\u3068\u3057\u306a\u304b\u3063\u305f\u3002",
+    "published": "2009-03-17T07:10:26Z",
+    "service": {
+      "name": "FriendFeed",
+      "iconUrl": "http:\/\/friendfeed.com\/static\/images\/icons\/internal.png?v=e471e9afdf04ae568dcbddb5584fc6c0",
+      "entryType": "link",
+      "id": "internal",
+      "profileUrl": "http:\/\/friendfeed.com\/nahi"
+    },
+    "anonymous": false,
+    "id": "967d6c2d-4abb-42dd-a9cb-192fc19c44d0",
+    "media": [
+
+    ],
+    "link": "http:\/\/twitter.com\/geno_twtt\/statuses\/1340512746",
+    "user": {
+      "name": "NAKAMURA, Hiroshi",
+      "nickname": "nahi",
+      "id": "95f306fd-0f63-47f2-88fc-8480ff10d48e",
+      "profileUrl": "http:\/\/friendfeed.com\/nahi"
+    },
+    "updated": "2009-03-17T07:10:26Z",
+    "hidden": false,
+    "likes": [
+
+    ]
+  },
+  {
+    "comments": [
+      {
+        "body": "tst",
+        "id": "3ae31285-fb30-45f3-8f4c-8c9c0c5f125d",
+        "date": "2009-03-11T15:58:44Z",
+        "user": {
+          "name": "f2ptest",
+          "nickname": "f2ptest",
+          "id": "9940a42a-ad73-4d6a-ac1b-e00b977d8584",
+          "profileUrl": "http:\/\/friendfeed.com\/f2ptest"
+        }
+      },
+      {
+        "body": "tst2",
+        "id": "c97a6bd2-46db-4ce3-956a-d5ddf3620ac5",
+        "date": "2009-03-11T16:00:18Z",
+        "user": {
+          "name": "f2ptest",
+          "nickname": "f2ptest",
+          "id": "9940a42a-ad73-4d6a-ac1b-e00b977d8584",
+          "profileUrl": "http:\/\/friendfeed.com\/f2ptest"
+        }
+      },
+      {
+        "body": "tst3",
+        "id": "2767500e-65a0-4460-bfb8-55f1d8330eb7",
+        "date": "2009-03-11T16:01:34Z",
+        "user": {
+          "name": "f2ptest",
+          "nickname": "f2ptest",
+          "id": "9940a42a-ad73-4d6a-ac1b-e00b977d8584",
+          "profileUrl": "http:\/\/friendfeed.com\/f2ptest"
+        }
+      },
+      {
+        "body": "foo",
+        "id": "ba0a316a-a5d2-4ebc-a4a5-9f026fddf5f7",
+        "date": "2009-03-11T16:05:54Z",
+        "user": {
+          "name": "f2ptest",
+          "nickname": "f2ptest",
+          "id": "9940a42a-ad73-4d6a-ac1b-e00b977d8584",
+          "profileUrl": "http:\/\/friendfeed.com\/f2ptest"
+        }
+      },
+      {
+        "body": "bar",
+        "id": "7b19ef84-f129-4cf5-98be-e427669d2122",
+        "date": "2009-03-11T16:13:56Z",
+        "user": {
+          "name": "f2ptest",
+          "nickname": "f2ptest",
+          "id": "9940a42a-ad73-4d6a-ac1b-e00b977d8584",
+          "profileUrl": "http:\/\/friendfeed.com\/f2ptest"
+        }
+      },
+      {
+        "body": "baz",
+        "id": "e70c77fe-5734-4a6b-aeb5-608efa8558cd",
+        "date": "2009-03-17T13:04:05Z",
+        "user": {
+          "name": "f2ptest",
+          "nickname": "f2ptest",
+          "id": "9940a42a-ad73-4d6a-ac1b-e00b977d8584",
+          "profileUrl": "http:\/\/friendfeed.com\/f2ptest"
+        }
+      }
+    ],
+    "title": "tst ([map] \u6771\u4eac\u90fd\u5343\u4ee3\u7530\u533a\u795e\u7530\u9326\u753a3-23\u897f\u672c\u8208\u7523\u9326\u753a\u30d3\u30eb14F (\u682a\u5f0f\u4f1a\u793e\u30b5\u30ea\u30aa\u30f3\u30b7\u30b9\u30c6\u30e0\u30ba\u30ea\u30b5\u30fc\u30c1))",
+    "published": "2009-03-10T15:24:44Z",
+    "service": {
+      "name": "FriendFeed",
+      "iconUrl": "http:\/\/friendfeed.com\/static\/images\/icons\/internal.png?v=e471e9afdf04ae568dcbddb5584fc6c0",
+      "entryType": "message",
+      "id": "internal",
+      "profileUrl": "http:\/\/friendfeed.com\/f2ptest"
+    },
+    "anonymous": false,
+    "id": "5a40e4d3-a631-43dc-9e63-a9354cc28b37",
+    "media": [
+      {
+        "player": null,
+        "title": null,
+        "enclosures": null,
+        "content": [
+          {
+            "url": "http:\/\/maps.google.com\/staticmap?zoom=1&size=160x80&maptype=mobile&markers=35.691095,139.761948",
+            "type": "image\/gif",
+            "height": 80,
+            "width": 160
+          }
+        ],
+        "link": "http:\/\/friendfeed.com\/e\/5a40e4d3-a631-43dc-9e63-a9354cc28b37",
+        "thumbnails": [
+          {
+            "url": "http:\/\/i.friendfeed.com\/58f69f97989b08fe7b68aa8349e35528e16cfc32",
+            "height": 80,
+            "width": 160
+          }
+        ]
+      }
+    ],
+    "link": "http:\/\/friendfeed.com\/e\/5a40e4d3-a631-43dc-9e63-a9354cc28b37",
+    "user": {
+      "name": "f2ptest",
+      "nickname": "f2ptest",
+      "id": "9940a42a-ad73-4d6a-ac1b-e00b977d8584",
+      "profileUrl": "http:\/\/friendfeed.com\/f2ptest"
+    },
+    "updated": "2009-03-10T15:24:44Z",
+    "hidden": false,
+    "likes": [
+
+    ]
+  },
+  {
+    "comments": [
+
+    ],
+    "title": "\u3055\u3066\u4eca\u65e5\u306f\u5b9a\u6642\u3067\u5e30\u308b\u3088\u3002\u5e30\u3063\u305f\u3089\u5a18\u306e\u767a\u8868\u4f1a\u30d3\u30c7\u30aa\u3092\u898b\u306a\u304d\u3083",
+    "published": "2009-03-17T09:19:56Z",
+    "service": {
+      "name": "FriendFeed",
+      "iconUrl": "http:\/\/friendfeed.com\/static\/images\/icons\/internal.png?v=e471e9afdf04ae568dcbddb5584fc6c0",
+      "entryType": "message",
+      "id": "internal",
+      "profileUrl": "http:\/\/friendfeed.com\/nahi"
+    },
+    "anonymous": false,
+    "id": "19d9f4f0-0414-40b9-9a28-e4de91007f63",
+    "media": [
+
+    ],
+    "link": "http:\/\/friendfeed.com\/e\/19d9f4f0-0414-40b9-9a28-e4de91007f63",
+    "user": {
+      "name": "NAKAMURA, Hiroshi",
+      "nickname": "nahi",
+      "id": "95f306fd-0f63-47f2-88fc-8480ff10d48e",
+      "profileUrl": "http:\/\/friendfeed.com\/nahi"
+    },
+    "updated": "2009-03-17T09:19:56Z",
+    "hidden": false,
+    "likes": [
+
+    ]
+  },
+  {
+    "comments": [
+
+    ],
+    "title": "baz",
+    "published": "2009-03-17T05:56:44Z",
+    "service": {
+      "name": "FriendFeed",
+      "iconUrl": "http:\/\/friendfeed.com\/static\/images\/icons\/internal.png?v=e471e9afdf04ae568dcbddb5584fc6c0",
+      "entryType": "message",
+      "id": "internal",
+      "profileUrl": "http:\/\/friendfeed.com\/f2ptest"
+    },
+    "anonymous": false,
+    "id": "4a7c07c8-7543-4c45-92f4-a00b14b9c324",
+    "media": [
+
+    ],
+    "link": "http:\/\/friendfeed.com\/e\/4a7c07c8-7543-4c45-92f4-a00b14b9c324",
+    "user": {
+      "name": "f2ptest",
+      "nickname": "f2ptest",
+      "id": "9940a42a-ad73-4d6a-ac1b-e00b977d8584",
+      "profileUrl": "http:\/\/friendfeed.com\/f2ptest"
+    },
+    "updated": "2009-03-17T05:56:44Z",
+    "hidden": false,
+    "likes": [
+
+    ]
+  },
+  {
+    "comments": [
+
+    ],
+    "title": "bar",
+    "published": "2009-03-17T05:55:21Z",
+    "service": {
+      "name": "FriendFeed",
+      "iconUrl": "http:\/\/friendfeed.com\/static\/images\/icons\/internal.png?v=e471e9afdf04ae568dcbddb5584fc6c0",
+      "entryType": "message",
+      "id": "internal",
+      "profileUrl": "http:\/\/friendfeed.com\/f2ptest"
+    },
+    "anonymous": false,
+    "id": "5950f0c3-0453-4bde-8bbe-bf181ec39856",
+    "media": [
+
+    ],
+    "link": "http:\/\/friendfeed.com\/e\/5950f0c3-0453-4bde-8bbe-bf181ec39856",
+    "user": {
+      "name": "f2ptest",
+      "nickname": "f2ptest",
+      "id": "9940a42a-ad73-4d6a-ac1b-e00b977d8584",
+      "profileUrl": "http:\/\/friendfeed.com\/f2ptest"
+    },
+    "updated": "2009-03-17T05:55:21Z",
+    "hidden": false,
+    "likes": [
+
+    ]
+  },
+  {
+    "comments": [
+
+    ],
+    "title": "foo",
+    "published": "2009-03-17T05:55:03Z",
+    "service": {
+      "name": "FriendFeed",
+      "iconUrl": "http:\/\/friendfeed.com\/static\/images\/icons\/internal.png?v=e471e9afdf04ae568dcbddb5584fc6c0",
+      "entryType": "message",
+      "id": "internal",
+      "profileUrl": "http:\/\/friendfeed.com\/f2ptest"
+    },
+    "anonymous": false,
+    "id": "3a7308a8-a116-4e70-a03f-0702769bb347",
+    "media": [
+
+    ],
+    "link": "http:\/\/friendfeed.com\/e\/3a7308a8-a116-4e70-a03f-0702769bb347",
+    "user": {
+      "name": "f2ptest",
+      "nickname": "f2ptest",
+      "id": "9940a42a-ad73-4d6a-ac1b-e00b977d8584",
+      "profileUrl": "http:\/\/friendfeed.com\/f2ptest"
+    },
+    "updated": "2009-03-17T05:55:03Z",
+    "hidden": false,
+    "likes": [
+
+    ]
+  }
+]

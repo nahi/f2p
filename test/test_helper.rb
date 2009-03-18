@@ -35,4 +35,28 @@ class Test::Unit::TestCase
   fixtures :all
 
   # Add more helper methods to be used by all tests here...
+  def read_fixture(*path_components)
+    path = File.expand_path(File.join('fixtures', *path_components), File.dirname(__FILE__))
+    File.open(path, 'rb') { |f| f.read }
+  end
+
+  def read_entries(*path_components)
+    JSON.parse(read_fixture(*path_components)).map { |e|
+      entry = Entry[e]
+      entry['comments'] = entry['comments'].map { |c|
+        comment = Comment[c]
+        comment.entry = entry
+        comment
+      }
+      entry['room'] = Room[entry['room']] if entry['room']
+      entry
+    }
+  end
+
+  def login(name)
+    user = User.find_by_name(name)
+    @request.session[:user_id] = user.id
+    @request.session[:setting] = Setting.new
+    @controller.stubs(:auth).returns(user)
+  end
 end

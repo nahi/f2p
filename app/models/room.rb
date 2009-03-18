@@ -54,7 +54,7 @@ class Room < Hash
     end
 
     def ff_profile(auth, room)
-      ff_client.get_room_profile(auth.name, auth.remote_key, room)
+      ff_client.get_room_profile(auth.name, auth.remote_key, room) || {}
     end
 
     def sort_by_name(lists)
