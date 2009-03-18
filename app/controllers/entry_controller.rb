@@ -217,7 +217,7 @@ class EntryController < ApplicationController
       ctx.inbox = true
       ctx.fold = param(:fold) != 'no'
     }
-    if param(:submit) == 'archive' or updated_expired(Time.now)
+    if updated_expired(Time.now)
       update_checked_modified
     end
     (F2P::Config.max_skip_empty_inbox_pages + 1).times do
@@ -232,6 +232,15 @@ class EntryController < ApplicationController
 
   def updated
     redirect_to :action => 'inbox'
+  end
+
+  verify :only => :archive,
+          :method => :post,
+          :add_flash => {:error => 'verify failed'},
+          :redirect_to => {:action => 'inbox'}
+  def archive
+    update_checked_modified
+    redirect_to_list
   end
 
   verify :only => :show,
