@@ -106,7 +106,7 @@ module EntryHelper
   end
 
   def inbox_label(entry)
-    h('[inbox] ')
+    h('[new] ')
   end
 
   def original_link(entry)

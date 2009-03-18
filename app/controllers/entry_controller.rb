@@ -194,6 +194,7 @@ class EntryController < ApplicationController
       ctx.parse(params, @setting)
     }
     @entries = EntryThread.find(@ctx.find_opt) || []
+    remember_checked(@entries)
   end
 
   def index
@@ -219,20 +220,12 @@ class EntryController < ApplicationController
     if param(:submit) == 'archive' or updated_expired(Time.now)
       update_checked_modified
     end
-    store = session[:checked] ||= {}
     (F2P::Config.max_skip_empty_inbox_pages + 1).times do
       @entries = EntryThread.find(@ctx.find_opt) || []
-      if @entries.empty?
-        @ctx.start += @ctx.num
-      else
-        break
-      end
+      break unless @entries.empty?
+      @ctx.start += @ctx.num
     end
-    @entries.each do |t|
-      t.entries.each do |e|
-        store[e.id] = e.modified
-      end
-    end
+    remember_checked(@entries)
     session[:last_updated] = Time.now
     render :action => 'list'
   end
@@ -277,8 +270,8 @@ class EntryController < ApplicationController
     @ctx = EntryContext.new(@auth)
     @ctx.viewname = 'reshare entry'
     @ctx.room = param(:room)
-    eid = param(:eid)
-    opt = create_opt(:id => eid)
+    @eid = param(:eid)
+    opt = create_opt(:id => @eid)
     t = EntryThread.find(opt).first
     if t.nil?
       redirect_to_list
@@ -313,6 +306,7 @@ class EntryController < ApplicationController
     @link = param(:link)
     @with_form = param(:with_form)
     file = param(:file)
+    reshared_from = param(:reshared_from)
     @title = param(:title)
     @lat = param(:lat)
     @long = param(:long)
@@ -357,6 +351,7 @@ class EntryController < ApplicationController
       end
       if opt[:body]
         id = Entry.create(opt)
+        unpin_entry(reshared_from, false)
         flash[:keep_ctx] = true
         if session[:ctx]
           session[:ctx].reset_for_new
@@ -483,10 +478,19 @@ class EntryController < ApplicationController
 
 private
 
-  def unpin_entry(id)
+  def remember_checked(threads)
+    store = session[:checked] ||= {}
+    threads.each do |t|
+      t.entries.each do |e|
+        store[e.id] = e.modified
+      end
+    end
+  end
+
+  def unpin_entry(id, commit = true)
     if id
       Entry.delete_pin(create_opt(:id => id))
-      commit_checked_modified(id)
+      commit_checked_modified(id) if commit
     end
   end
 
