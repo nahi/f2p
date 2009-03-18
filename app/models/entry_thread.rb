@@ -137,7 +137,7 @@ class EntryThread
         entries.map { |e| e.id }
       ]
       checked = CheckedModified.find(:all, :conditions => cond, :include => 'last_modified')
-      oldest = checked.max { |a, b| a.checked <=> b.checked }
+      oldest = CheckedModified.find(:all, :order => 'checked asc', :limit => 1).first
       entries.each do |entry|
         if c = checked.find { |e| e.last_modified.eid == entry.id }
           entry.view_inbox = c.checked < c.last_modified.date
