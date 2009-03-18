@@ -643,7 +643,8 @@ module EntryHelper
   end
 
   def reshare_link(entry)
-    if entry.link and entry.nickname != auth.name
+    if (ctx.inbox or ctx.single? or entry.view_pinned) and
+        entry.link and entry.nickname != auth.name
       opt = {
         :action => 'reshare',
         :eid => u(entry.id),
