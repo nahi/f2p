@@ -36,6 +36,7 @@ module F2P
       attr_accessor :list_view_media_rendering
       attr_accessor :max_friend_list_num
       attr_accessor :max_skip_empty_inbox_pages
+      attr_accessor :twitter_comment_hack
     end
   end
 end
@@ -130,4 +131,5 @@ Rails::Initializer.run do |config|
   F2P::Config.list_view_media_rendering = true
   F2P::Config.max_friend_list_num = 50
   F2P::Config.max_skip_empty_inbox_pages = 2
+  F2P::Config.twitter_comment_hack = false
 end

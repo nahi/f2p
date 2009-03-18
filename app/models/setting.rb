@@ -3,6 +3,7 @@ class Setting
   attr_accessor :entries_in_page
   attr_accessor :entries_in_thread
   attr_accessor :text_folding_size
+  attr_accessor :twitter_comment_hack
   attr_accessor :link_open_new_window
   attr_accessor :link_type
   attr_accessor :list_view_media_rendering
@@ -13,6 +14,7 @@ class Setting
     @entries_in_page = F2P::Config.entries_in_page
     @entries_in_thread = F2P::Config.entries_in_thread
     @text_folding_size = F2P::Config.text_folding_size
+    @twitter_comment_hack = F2P::Config.twitter_comment_hack
     @link_open_new_window = F2P::Config.link_open_new_window
     @link_type = F2P::Config.link_type
     @list_view_media_rendering = F2P::Config.list_view_media_rendering

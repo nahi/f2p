@@ -351,10 +351,10 @@ module EntryHelper
 
   def user(entry)
     user = v(entry, 'user')
-    if v(entry, 'service') and entry.service_id == 'twitter'
+    if setting.twitter_comment_hack and v(entry, 'service') and entry.service_id == 'twitter'
       if nickname = v(user, 'nickname')
         name = v(user, 'name')
-        tw_name = (v(user, 'profileUrl') || '').sub(/\A.*\//, '')
+        tw_name = twitter_username(entry)
         if name != tw_name
           if nickname == auth.name
             name = self_label
@@ -406,8 +406,14 @@ module EntryHelper
     str
   end
 
-  def post_comment_form
-    text_field_tag('body') + submit_tag('post')
+  def post_comment_form(entry)
+    if setting.twitter_comment_hack and entry.service_id == 'twitter'
+      default = twitter_username(entry)
+      unless default.empty?
+        default = "@#{default} "
+      end
+    end
+    text_field_tag('body', default) + submit_tag('post')
   end
 
   def fold_link(entry)
@@ -718,5 +724,11 @@ module EntryHelper
 
   def comment_inline?(entry)
     ctx.list? and entry.self_comment_only?
+  end
+
+  def twitter_username(entry)
+    if entry.service_id == 'twitter'
+      (v(entry, 'user', 'profileUrl') || '').sub(/\A.*\//, '')
+    end
   end
 end
