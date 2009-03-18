@@ -194,7 +194,6 @@ class EntryController < ApplicationController
       ctx.parse(params, @setting)
     }
     @entries = EntryThread.find(@ctx.find_opt) || []
-    remember_checked(@entries) unless @ctx.home
   end
 
   def index
