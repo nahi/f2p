@@ -338,6 +338,5 @@ if $0 == __FILE__
   name = ARGV.shift or raise
   remote_key = ARGV.shift or raise
   client = FriendFeed::APIClient.new
-  require 'pp'
-  pp client.get_home_entries(name, remote_key)
+  print JSON.pretty_generate(client.get_room_profile(name, remote_key, 'f2ptest-room'))
 end

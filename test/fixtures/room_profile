@@ -1,0 +1,24 @@
+{
+  "name": "f2ptest_room",
+  "nickname": "f2ptest-room",
+  "url": "http:\/\/friendfeed.com\/rooms\/f2ptest-room",
+  "id": "e213f58f-7a72-42f4-9be5-ad7e20f67b15",
+  "members": [
+    {
+      "name": "f2ptest",
+      "nickname": "f2ptest",
+      "id": "9940a42a-ad73-4d6a-ac1b-e00b977d8584",
+      "profileUrl": "http:\/\/friendfeed.com\/f2ptest"
+    }
+  ],
+  "description": "f2ptest_room",
+  "status": "private",
+  "administrators": [
+    {
+      "name": "f2ptest",
+      "nickname": "f2ptest",
+      "id": "9940a42a-ad73-4d6a-ac1b-e00b977d8584",
+      "profileUrl": "http:\/\/friendfeed.com\/f2ptest"
+    }
+  ]
+}

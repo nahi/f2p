@@ -187,7 +187,7 @@ class EntryThreadTest < ActiveSupport::TestCase
     EntryThread.find(:auth => user, :link => 'http://www.example.org/')
   end
 
-  test 'self.find update_checked_modified' do
+  test 'update_checked_modified' do
     user = User.find_by_name('user1')
     ff = mock('ff_client')
     ApplicationController.ff_client = ff
@@ -203,6 +203,7 @@ class EntryThreadTest < ActiveSupport::TestCase
       end
     end
     EntryThread.update_checked_modified(user, hash)
+    hash[hash.keys[0]] = Time.now.xmlschema
     EntryThread.update_checked_modified(user, hash)
     #
     list[0]['updated'] = Time.now.xmlschema

@@ -274,6 +274,12 @@ class EntryController < ApplicationController
     @placemark = nil
   end
 
+  verify :only => :reshare,
+          :method => :get,
+          :params => [:eid],
+          :add_flash => {:error => 'verify failed'},
+          :redirect_to => {:action => 'inbox'}
+
   def reshare
     @ctx = EntryContext.new(auth)
     @ctx.viewname = 'reshare entry'
@@ -286,10 +292,6 @@ class EntryController < ApplicationController
       return
     end
     entry = t.root
-    if entry.nil?
-      redirect_to_list
-      return
-    end
     @link = entry.link
     @link_title = %Q("#{entry.title}")
   end
@@ -309,6 +311,9 @@ class EntryController < ApplicationController
     @ctx = EntryContext.new(auth)
     @ctx.viewname = 'post new entry' # setting for address search result
     @ctx.room = param(:room)
+    if ctx = session[:ctx]
+      @ctx.inbox = ctx.inbox
+    end
     @body = param(:body)
     link_title = param(:link_title)
     @link = param(:link)
@@ -512,7 +517,7 @@ private
         end
       end
     rescue Exception
-      # ignore
+      nil # ignore
     end
     '(unknown)'
   end

@@ -1,0 +1,46 @@
+{
+  "name": "f2ptest",
+  "subscriptions": [
+    {
+      "name": "NAKAMURA, Hiroshi",
+      "nickname": "nahi",
+      "id": "95f306fd-0f63-47f2-88fc-8480ff10d48e",
+      "profileUrl": "http:\/\/friendfeed.com\/nahi"
+    }
+  ],
+  "nickname": "f2ptest",
+  "lists": [
+    {
+      "name": "\u304a\u6c17\u306b\u5165\u308a",
+      "nickname": "favorites",
+      "url": "http:\/\/friendfeed.com\/list\/favorites",
+      "id": "724369fa-3785-4e30-830a-2637091180ba"
+    },
+    {
+      "name": "\u30d1\u30fc\u30bd\u30ca\u30eb",
+      "nickname": "personal",
+      "url": "http:\/\/friendfeed.com\/list\/personal",
+      "id": "56028b2f-cc5e-4033-87d8-42eab1a08eff"
+    },
+    {
+      "name": "\u30d7\u30ed\u30d5\u30a7\u30c3\u30b7\u30e7\u30ca\u30eb",
+      "nickname": "professional",
+      "url": "http:\/\/friendfeed.com\/list\/professional",
+      "id": "9defec2d-a644-4d7f-8057-3767015ff684"
+    }
+  ],
+  "rooms": [
+    {
+      "name": "f2ptest_room",
+      "nickname": "f2ptest-room",
+      "url": "http:\/\/friendfeed.com\/rooms\/f2ptest-room",
+      "id": "e213f58f-7a72-42f4-9be5-ad7e20f67b15"
+    }
+  ],
+  "id": "9940a42a-ad73-4d6a-ac1b-e00b977d8584",
+  "services": [
+
+  ],
+  "status": "private",
+  "profileUrl": "http:\/\/friendfeed.com\/f2ptest"
+}

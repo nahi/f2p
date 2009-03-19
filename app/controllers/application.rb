@@ -118,12 +118,6 @@ private
     (v and v.respond_to?(:empty?) and v.empty?) ? nil : v
   end
 
-  def v(hash, *keywords)
-    keywords.inject(hash) { |r, k|
-      r[k] if r
-    }
-  end
-
   def update_checked_modified
     store = session[:checked]
     if auth and store

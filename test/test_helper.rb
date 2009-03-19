@@ -53,10 +53,50 @@ class Test::Unit::TestCase
     }
   end
 
+  def read_profile(*path_components)
+    JSON.parse(read_fixture(*path_components))
+  end
+
   def login(name)
     user = User.find_by_name(name)
-    @request.session[:user_id] = user.id
-    @request.session[:setting] = Setting.new
+    @user_id = @request.session[:user_id] = user.id
+    @setting = @request.session[:setting] = Setting.new
     @controller.stubs(:auth).returns(user)
+  end
+end
+
+module ActionView
+  class TestCase < ActionController::TestCase
+    include ERB::Util
+    include ActionView::Helpers
+    include ApplicationHelper
+
+    def initialize(*arg)
+      super
+    end
+
+    def setup
+      super
+      login('user1')
+      @auth = @controller.auth
+      ActionController::Base.relative_url_root = '/foo'
+    end
+
+    def session
+      @request.session
+    end
+
+    def self.inherited(testklass)
+      klassname = testklass.name.sub(/Test\z/, '')
+      if klass = const_get(klassname)
+        testklass.class_eval do
+          include klass
+        end
+      end
+      controller_klassname = klassname.sub(/Helper\z/, 'Controller')
+      if klass = const_get(controller_klassname)
+        testklass.write_inheritable_attribute(:controller_class, klass)
+      end
+    end
   end
 end

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<result>
+  <version>1.1</version>
+  <address>日本、東京駅</address>
+  <coordinate>
+    <lat>35.681382</lat>
+    <lng>139.766084</lng>
+    <lat_dms>35,40,52.975</lat_dms>
+    <lng_dms>139,45,57.902</lng_dms>
+  </coordinate>
+  <url>http://www.geocoding.jp/?q=%E6%97%A5%E6%9C%AC%E3%80%81%E6%9D%B1%E4%BA%AC%E9%A7%85</url>
+  <needs_to_verify>yes</needs_to_verify>
+  <google_maps>東京駅（東京）</google_maps>
+</result>

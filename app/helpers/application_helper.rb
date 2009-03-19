@@ -40,7 +40,7 @@ module ApplicationHelper
   end
 
   def icon_url(name)
-    F2P::Config.icon_url_base + ICON_NAME[name.to_s]
+    F2P::Config.icon_url_base + (ICON_NAME[name.to_s] || name.to_s)
   end
 
   def icon_tag(name, alt = nil)
@@ -120,10 +120,6 @@ module ApplicationHelper
     }
   end
 
-  def room(room)
-    link_to(h(room.name), :controller => 'entry', :action => 'list', :room => u(room.nickname))
-  end
-
   def user_name(nickname)
     session_cache(:user, :ff_name, nickname) {
       User.ff_name(:auth => auth, :user => nickname)
@@ -185,7 +181,7 @@ module ApplicationHelper
     name = v(via, 'name')
     link = v(via, 'url')
     if link
-      %Q[via #{link_to(h(name), link)}</a>]
+      %Q[via #{link_to(h(name), link)}]
     elsif name
       %Q[via #{h(name)}]
     end
@@ -240,7 +236,6 @@ module ApplicationHelper
     end
   end
 
-  # not enabled for now; need to be configurable to use this or not
   def link_to(markup, *rest)
     if rest.size == 1 and rest.first.is_a?(String) and !url_for_app?(rest.first)
       opt = {}
@@ -255,7 +250,7 @@ module ApplicationHelper
   end
 
   def url_for_app?(url)
-    url.index(url_for(:only_path => false, :controller => ''))
+    !!url.index(url_for(:only_path => false, :controller => ''))
   end
 
   def link_url(url)
@@ -273,14 +268,12 @@ module ApplicationHelper
   end
 
   def fold_length(str, length)
-    str.scan(Regexp.new("^.{0,#{length}}", Regexp::MULTILINE, 'u'))[0] || ''
+    len = length.to_i
+    return '' if len <= 0
+    str.scan(Regexp.new("^.{0,#{len.to_s}}", Regexp::MULTILINE, 'u'))[0] || ''
   end
 
 private
-
-  def ff_client
-    ApplicationController.ff_client
-  end
 
   def session_cache(*key, &block)
     session[key] ||= yield

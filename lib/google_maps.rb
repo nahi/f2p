@@ -133,6 +133,5 @@ end
 
 if $0 == __FILE__
   require 'httpclient'
-  require 'pp'
-  pp GoogleMaps::Geocoder.new(HTTPClient).search('日本、東京駅')
+  print GoogleMaps::GeocodingJpGeocoder.new(HTTPClient).search('日本、東京駅')
 end
