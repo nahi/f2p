@@ -80,10 +80,22 @@ module EntryHelper
     content
   end
 
+  def friend_of(entry)
+    if friendof = v(entry, 'friendof')
+      name = v(friendof, 'name')
+      nickname = v(friendof, 'nickname')
+      if entry.comments.find { |c| c.nickname == nickname }
+        h(" (through #{name})")
+      elsif entry.likes.find { |l| v(l, 'user', 'nickname') == nickname }
+        h(" (through #{name})")
+      end
+    end
+  end
+
   def author_link(entry, show_user, show_service)
     inbox_str = user_str = service_str = ''
     if show_user
-      user_str += user(entry)
+      user_str += user(entry) + (friend_of(entry) || '')
     end
     if show_service
       if ctx.room_for
