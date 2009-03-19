@@ -93,8 +93,11 @@ class EntryThread
       hash.each do |eid, checked_modified|
         next unless checked_modified
         if c = checked.find { |e| e.last_modified.eid == eid }
-          c.checked = Time.parse(checked_modified)
-          raise unless c.save
+          d = Time.parse(checked_modified)
+          if c.checked < d
+            c.checked = d
+            raise unless c.save
+          end
         else
           m = LastModified.find_by_eid(eid)
           if m
@@ -310,8 +313,7 @@ class EntryThread
         end
         group += kinds
         buf -= kinds
-        t.add(group.shift)
-        t.add(*group.reverse)
+        t.add(*group)
       end
       result
     end
