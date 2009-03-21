@@ -379,6 +379,9 @@ class EntryController < ApplicationController
         image_link = generator.link_url(@lat, @long, @address)
         (opt[:images] ||= []) << [image_url, image_link]
         @body += " ([map] #{@address})"
+        if !@link and !file
+          opt[:link] = image_link
+        end
       end
       if @link
         link_title ||= capture_title(@link)
