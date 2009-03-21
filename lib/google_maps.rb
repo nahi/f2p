@@ -185,5 +185,4 @@ if $0 == __FILE__
   pp GoogleMaps::GeocodingJpGeocoder.new(HTTPClient).search('日本、東京駅')
   pp GoogleMaps::GoogleGeocoder.new(HTTPClient).search('日本、東京駅')
   pp GoogleMaps::GoogleGeocoder.new(HTTPClient).reversesearch(35.306, 139.274)
-  print GoogleMaps::GeocodingJpGeocoder.new(HTTPClient).search('日本、東京駅')
 end

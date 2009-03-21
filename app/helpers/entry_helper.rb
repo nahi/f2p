@@ -756,8 +756,6 @@ module EntryHelper
       '<form><input type="submit" name="navi_pos" value=""></form>'
     when 'SoftBank3G'
       '<a href="location:auto?new">' + icon_tag(:map) + '</a>'
-    when 'SoftBankold'
-      '<a href="new" z>' + icon_tag(:map) + '</a>'
     when 'WILLCOM'
       '<a href="http://location.request/dummy.cgi?my=new&amp;pos=$location">' + icon_tag(:map) + '</a>'
     end

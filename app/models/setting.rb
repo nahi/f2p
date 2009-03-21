@@ -1,5 +1,5 @@
 class Setting
-  MOBILE_GPS_TYPE = ['ezweb','gpsone','DoCoMoFOMA', 'DoCoMomova','SoftBank3G', 'SoftBankold','WILLCOM']
+  MOBILE_GPS_TYPE = ['ezweb', 'gpsone', 'DoCoMoFOMA', 'DoCoMomova', 'SoftBank3G', 'WILLCOM']
 
   attr_accessor :font_size
   attr_accessor :entries_in_page

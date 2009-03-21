@@ -47,9 +47,9 @@ class EntryControllerTest < ActionController::TestCase
     post :inbox
     assert_response :success
     #
-    session[:last_updated] = Time.at(Time.now - F2P::Config.updated_expiration + 1)
+    session[:last_updated] = Time.at(Time.now - (F2P::Config.updated_expiration + 1))
     @ff.expects(:get_home_entries).
-      returns(read_entries('entries', 'f2ptest')).times(1)
+      returns(read_entries('entries', 'f2ptest')).times(3) # +2 skipped pages
     post :inbox
     assert_response :success
   end
@@ -276,6 +276,34 @@ class EntryControllerTest < ActionController::TestCase
     assert_response :success
   end
 
+  test 'new with gps ezweb' do
+    login('user1')
+    @ff.expects(:get_profile).
+      returns(read_profile('profile')).times(1)
+    h = mock('http_client')
+    ApplicationController.http_client = h
+    h.expects(:get_content).
+      with('http://maps.google.com/maps/geo', {'oe' => 'utf-8', 'll' => '35.01,135.693222222222', 'hl' => 'ja', 'output' => 'json', 'key' => ''}).
+      returns(read_fixture('google_geocoder_tokyo_sta.json'))
+    @setting.mobile_gps_type = 'ezweb'
+    get :new, :lat => '+35.00.36.00', :lon => '+135.41.35.600'
+    assert_response :success
+  end
+
+  test 'new with gps willcom' do
+    login('user1')
+    @ff.expects(:get_profile).
+      returns(read_profile('profile')).times(1)
+    h = mock('http_client')
+    ApplicationController.http_client = h
+    h.expects(:get_content).
+      with('http://maps.google.com/maps/geo', {'oe' => 'utf-8', 'll' => '35.7425416666667,135.375866944444', 'hl' => 'ja', 'output' => 'json', 'key' => ''}).
+      returns(read_fixture('google_geocoder_tokyo_sta.json'))
+    @setting.mobile_gps_type = 'SoftBank3G'
+    get :new, :pos => 'N35.44.33.150E135.22.33.121'
+    assert_response :success
+  end
+
   test 'reshare' do
     login('user1')
     #
@@ -314,13 +342,25 @@ class EntryControllerTest < ActionController::TestCase
     assert_response :success
   end
 
-  test 'add search' do
+  test 'add search ja' do
     login('user1')
     h = mock('http_client')
     ApplicationController.http_client = h
     h.expects(:get_content).
       with('http://www.geocoding.jp/api/', {'v' => 1.1, 'q' => 'address'}).
       returns(read_fixture('geocoding_jp_tokyo_sta.xml'))
+    post :add, :commit => 'search', :title => 'address'
+    assert_response :success
+  end
+
+  test 'add search non ja' do
+    login('user1')
+    h = mock('http_client')
+    ApplicationController.http_client = h
+    h.expects(:get_content).
+      with('http://maps.google.com/maps/geo', {'oe' => 'utf-8', 'hl' => 'en', 'output' => 'json', 'q' => 'address', 'key' => ''}).
+      returns(read_fixture('google_geocoder_tokyo_sta.json'))
+    @setting.google_maps_geocoding_lang = 'en'
     post :add, :commit => 'search', :title => 'address'
     assert_response :success
   end
@@ -429,7 +469,8 @@ class EntryControllerTest < ActionController::TestCase
     @ff.expects(:post).
       with('user1', nil,
            'hello ([map] 日本、東京駅)',
-           nil, nil,
+           'http://maps.google.com/maps?q=35.681382,139.766084+%28%E6%97%A5%E6%9C%AC%E3%80%81%E6%9D%B1%E4%BA%AC%E9%A7%85%29',
+           nil,
            [['http://maps.google.com/staticmap?zoom=13&size=160x80&maptype=mobile&markers=35.681382,139.766084', 'http://maps.google.com/maps?q=35.681382,139.766084+%28%E6%97%A5%E6%9C%AC%E3%80%81%E6%9D%B1%E4%BA%AC%E9%A7%85%29']],
            nil, nil).
       returns({'id' => 'foo'})

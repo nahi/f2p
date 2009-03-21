@@ -18,6 +18,8 @@ class SettingControllerTest < ActionController::TestCase
     assert_equal(F2P::Config.list_view_media_rendering, s.list_view_media_rendering)
     assert_equal(F2P::Config.link_open_new_window, s.link_open_new_window)
     assert_equal(F2P::Config.link_type, s.link_type)
+    assert_equal(F2P::Config.mobile_gps_type, s.mobile_gps_type)
+    assert_equal(F2P::Config.google_maps_geocoding_lang, s.google_maps_geocoding_lang)
     #
     post :update,
       :font_size => '10',
@@ -27,7 +29,9 @@ class SettingControllerTest < ActionController::TestCase
       :twitter_comment_hack => '',
       :list_view_media_rendering => '',
       :link_open_new_window => '',
-      :link_type_gwt => ''
+      :link_type_gwt => '',
+      :mobile_gps_type => '',
+      :google_maps_geocoding_lang => ''
     assert_redirected_to :controller => 'entry'
     s = @request.session[:setting]
     assert_equal(10, s.font_size)
@@ -38,6 +42,8 @@ class SettingControllerTest < ActionController::TestCase
     assert_equal(false, s.list_view_media_rendering)
     assert_equal(false, s.link_open_new_window)
     assert_equal(nil, s.link_type)
+    assert_equal(nil, s.mobile_gps_type)
+    assert_equal(nil, s.google_maps_geocoding_lang)
     #
     post :update,
       :font_size => '11',
@@ -47,7 +53,9 @@ class SettingControllerTest < ActionController::TestCase
       :twitter_comment_hack => 'checked',
       :list_view_media_rendering => 'checked',
       :link_open_new_window => 'checked',
-      :link_type_gwt => 'checked'
+      :link_type_gwt => 'checked',
+      :mobile_gps_type => 'WILLCOM',
+      :google_maps_geocoding_lang => 'ja'
     assert_redirected_to :controller => 'entry'
     s = @request.session[:setting]
     assert_equal(11, s.font_size)
@@ -58,6 +66,8 @@ class SettingControllerTest < ActionController::TestCase
     assert_equal(true, s.list_view_media_rendering)
     assert_equal(true, s.link_open_new_window)
     assert_equal('gwt', s.link_type)
+    assert_equal('WILLCOM', s.mobile_gps_type)
+    assert_equal('ja', s.google_maps_geocoding_lang)
   end
 
   test 'update failure' do
@@ -71,10 +81,12 @@ class SettingControllerTest < ActionController::TestCase
       :twitter_comment_hack => '',
       :list_view_media_rendering => '',
       :link_open_new_window => '',
-      :link_type_gwt => ''
+      :link_type_gwt => '',
+      :mobile_gps_type => 'unknown',
+      :google_maps_geocoding_lang => 'foobar'
     assert_response :success
     assert_equal(
-      "Settings error: font size must be greater than 6, entries in page must be in 5..100, entries in thread must be in 3..100, text folding size must be in 20..1000",
+      "Settings error: font size must be greater than 6, entries in page must be in 5..100, entries in thread must be in 3..100, text folding size must be in 20..1000, gps type shall be one of ezweb, gpsone, DoCoMoFOMA, DoCoMomova, SoftBank3G, WILLCOM",
       flash[:error]
     )
     s = @request.session[:setting]
@@ -86,5 +98,7 @@ class SettingControllerTest < ActionController::TestCase
     assert_equal(F2P::Config.list_view_media_rendering, s.list_view_media_rendering)
     assert_equal(F2P::Config.link_open_new_window, s.link_open_new_window)
     assert_equal(F2P::Config.link_type, s.link_type)
+    assert_equal(F2P::Config.mobile_gps_type, s.mobile_gps_type)
+    assert_equal(F2P::Config.google_maps_geocoding_lang, s.google_maps_geocoding_lang)
   end
 end

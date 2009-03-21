@@ -290,11 +290,6 @@ class EntryController < ApplicationController
           @long = calc_geo('-' + $4)
         end
       end
-    when 'SoftBankold'
-      if /\A(\d+) (\d+) / =~ (request.env['HTTP_X_JPHONE_GEOCODE']).to_s
-        @lat = $1
-        @long = $2
-      end
     end
     @placemark = nil
     if @lat and @long
