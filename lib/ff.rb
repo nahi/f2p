@@ -338,5 +338,5 @@ if $0 == __FILE__
   name = ARGV.shift or raise
   remote_key = ARGV.shift or raise
   client = FriendFeed::APIClient.new
-  print JSON.pretty_generate(client.get_home_entries(name, remote_key, name))
+  print JSON.pretty_generate(client.get_home_entries(name, remote_key, :service => 'flickr'))
 end

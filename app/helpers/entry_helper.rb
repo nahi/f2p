@@ -174,7 +174,13 @@ module EntryHelper
     str = display.collect { |media|
       title = v(media, 'title')
       link = v(media, 'link')
+      contents = v(media, 'content')
       tbs = v(media, 'thumbnails')
+      if contents and contents.first
+        if entry.service_id == 'internal' and v(contents.first, 'url')
+          link = v(contents.first, 'url')
+        end
+      end
       safe_content = nil
       if tbs and tbs.first
         tb = tbs.first
