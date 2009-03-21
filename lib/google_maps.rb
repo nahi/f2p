@@ -81,37 +81,11 @@ module GoogleMaps
       @key = key
     end
 
-    def search(str, en = 'utf-8')
+    def search(str, hl = 'ja', oe = 'utf-8')
       query = {
         'q' => str,
         'output' => 'json',
-        'en' => en,
-        'key' => @key
-      }
-      result = JSON.parse(NKF.nkf('-wm0', @httpclient.get_content(URL, query)))
-      if result.nil? or v(result, 'error')
-        nil
-      elsif v(result, 'Status', 'code') != 200
-	nil
-      elsif v(result, 'Placemark').size > 1
-        Candidates.new(v(result, 'Placemark'))
-      else
-        address = v(result, 'name')
-        address = nil if address and address.empty?
-        c = v(result, 'Placemark')
-        cord = v(c[0], 'Point', 'coordinates')
-	lat = cord[1]
-        long = cord[0]
-        if address and lat and long
-          Point.new(address, lat, long)
-        end
-      end
-    end
-
-    def reversesearch(lat, long, oe = 'utf-8')
-      query = {
-        'll' => lat + ',' + long,
-        'output' => 'json',
+        'hl' => hl,
         'oe' => oe,
         'key' => @key
       }
@@ -121,15 +95,48 @@ module GoogleMaps
       elsif v(result, 'Status', 'code') != 200
 	nil
       else
-        address = v(result, 'name')
-        address = nil if address and address.empty?
-        c = v(result, 'Placemark')
-        cord = v(c[0], 'Point', 'coordinates')
-	lat = cord[1]
+        filter_point(result)
+      end
+    end
+
+    def reversesearch(lat, long, hl = 'ja', oe = 'utf-8')
+      query = {
+        'll' => lat + ',' + long,
+        'output' => 'json',
+        'hl' => hl,
+        'oe' => oe,
+        'key' => @key
+      }
+      result = JSON.parse(NKF.nkf('-wm0', @httpclient.get_content(URL, query)))
+      if result.nil? or v(result, 'error')
+        nil
+      elsif v(result, 'Status', 'code') != 200
+	nil
+      else
+        filter_point(result)
+      end
+    end
+
+    def filter_point(result)
+      c = v(result, 'Placemark')
+      unless c.empty?
+        # just a max_by
+        mark = c.map { |e|
+          [v(e, 'AddressDetails', 'Accuracy'), e]
+        }.max { |a, b|
+          a[0] <=> b[0]
+        }[1]
+      end
+      if mark
+        cord = v(mark, 'Point', 'coordinates')
+        address ||= v(mark, 'address')
+        lat = cord[1]
         long = cord[0]
-        if address and lat and long
-          Point.new(address, lat, long)
-        end
+      end
+      address ||= v(result, 'name')
+      address = nil if address and address.empty?
+      if address and lat and long
+        Point.new(address, lat, long)
       end
     end
   end

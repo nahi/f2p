@@ -271,13 +271,11 @@ class EntryController < ApplicationController
     @long = param(:long)
     @address = param(:address)
     @zoom = (param(:zoom) || F2P::Config.google_maps_zoom).to_i
-    reverse_needed = false
     case @setting.mobile_gps_type
     when 'ezweb', 'gpsone', 'DoCoMoFOMA' 
       if param(:lat) and param(:lon)
         @lat = calc_geo(@lat)
         @long = calc_geo(param(:lon))
-        reverse_needed = true
       end
     when 'DoCoMomova','SoftBank3G','WILLCOM'
       if /\A([NS])([0-9\.]+)([EW])([0-9\.]+)\Z/ =~ param(:pos)
@@ -291,21 +289,20 @@ class EntryController < ApplicationController
         else
           @long = calc_geo('-' + $4)
         end
-        reverse_needed = true
       end
     when 'SoftBankold'
       if /\A(\d+) (\d+) / =~ (request.env['HTTP_X_JPHONE_GEOCODE']).to_s
         @lat = $1
         @long = $2
-        reverse_needed = true
       end
     end
     @placemark = nil
-    if reverse_needed
+    if @lat and @long
       geocoder = GoogleMaps::GoogleGeocoder.new(http_client, F2P::Config.google_maps_api_key)
-      @placemark = geocoder.reversesearch(@lat, @long)
+      lang = @setting.google_maps_geocoding_lang || 'ja'
+      @placemark = geocoder.reversesearch(@lat, @long, lang)
       if @placemark and !@placemark.ambiguous?
-        @address = @placemark.address
+        @address = @title = @placemark.address
       end
     end
   end
@@ -365,8 +362,13 @@ class EntryController < ApplicationController
     case param(:commit)
     when 'search'
       if @title
-        geocoder = GoogleMaps::GeocodingJpGeocoder.new(http_client)
-        @placemark = geocoder.search(@title)
+        lang = @setting.google_maps_geocoding_lang || 'ja'
+        if lang == 'ja'
+          geocoder = GoogleMaps::GeocodingJpGeocoder.new(http_client)
+        else
+          geocoder = GoogleMaps::GoogleGeocoder.new(http_client, F2P::Config.google_maps_api_key)
+        end
+        @placemark = geocoder.search(@title, lang)
         if @placemark and !@placemark.ambiguous?
           @address = @placemark.address
           @lat = @placemark.lat

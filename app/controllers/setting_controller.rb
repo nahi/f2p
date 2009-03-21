@@ -17,11 +17,12 @@ class SettingController < ApplicationController
     @link_open_new_window = param(:link_open_new_window) || @setting.link_open_new_window
     @link_type = param(:link_type) || @setting.link_type
     @mobile_gps_type = param(:mobile_gps_type) || @setting.mobile_gps_type
+    @google_maps_geocoding_lang = param(:google_maps_geocoding_lang) || @setting.google_maps_geocoding_lang
   end
 
   def update
     original_value = {}
-    [:font_size, :entries_in_page, :entries_in_thread, :text_folding_size, :twitter_comment_hack, :list_view_media_rendering, :link_open_new_window, :link_type, :mobile_gps_type].each do |key|
+    [:font_size, :entries_in_page, :entries_in_thread, :text_folding_size, :twitter_comment_hack, :list_view_media_rendering, :link_open_new_window, :link_type, :mobile_gps_type, :google_maps_geocoding_lang].each do |key|
       original_value[key] = @setting.send(key)
     end
     # int settings
@@ -41,6 +42,7 @@ class SettingController < ApplicationController
       @setting.link_type = 'gwt'
     end
     @setting.mobile_gps_type = param(:mobile_gps_type)
+    @setting.google_maps_geocoding_lang = param(:google_maps_geocoding_lang)
     if errors = @setting.validate
       original_value.each do |key, value|
         @setting.send(key.to_s + '=', value)

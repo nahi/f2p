@@ -127,6 +127,12 @@ module ApplicationHelper
     }
   end
 
+  def user_status(nickname)
+    session_cache(:user, :status, nickname) {
+      User.status(:auth => auth, :user => nickname)
+    }
+  end
+
   def user_picture(nickname, size = 'small')
     user_id = session_cache(:user, :ff_id, nickname) {
       User.ff_id(:auth => auth, :user => nickname)

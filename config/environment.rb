@@ -25,6 +25,7 @@ module F2P
       attr_accessor :google_maps_zoom
       attr_accessor :google_maps_width
       attr_accessor :google_maps_height
+      attr_accessor :google_maps_geocoding_lang
 
       attr_accessor :font_size
       attr_accessor :entries_in_page
@@ -125,6 +126,7 @@ Rails::Initializer.run do |config|
   F2P::Config.google_maps_zoom = 13
   F2P::Config.google_maps_width = 160
   F2P::Config.google_maps_height = 80
+  F2P::Config.google_maps_geocoding_lang = 'ja'
 
   F2P::Config.font_size = 9
   F2P::Config.entries_in_page = 20

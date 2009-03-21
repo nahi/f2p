@@ -10,6 +10,7 @@ class Setting
   attr_accessor :list_view_media_rendering
   attr_accessor :twitter_comment_hack
   attr_accessor :mobile_gps_type
+  attr_accessor :google_maps_geocoding_lang
 
   def initialize
     super
@@ -22,6 +23,7 @@ class Setting
     @list_view_media_rendering = F2P::Config.list_view_media_rendering
     @twitter_comment_hack = F2P::Config.twitter_comment_hack
     @mobile_gps_type = F2P::Config.mobile_gps_type
+    @google_maps_geocoding_lang = F2P::Config.google_maps_geocoding_lang
   end
 
   def validate

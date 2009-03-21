@@ -13,6 +13,7 @@
     open links in new window: <%= check_box_tag('link_open_new_window', 'checked', @link_open_new_window) %><br/>
     open links via mobile proxy(gwt): <%= check_box_tag('link_type_gwt', 'checked', @link_type == 'gwt') %><br/>
     use mobile phone's GPS info: <%= gps_info_select_tag('mobile_gps_type', @mobile_gps_type) %><br/>
+    Google Maps geocoding language: <%= text_field_tag('google_maps_geocoding_lang', @google_maps_geocoding_lang) %><br/>
     <%= submit_tag 'update' %>
   </p>
 <%- end -%>
