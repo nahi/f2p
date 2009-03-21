@@ -260,4 +260,11 @@ class EntryHelperTest < ActionView::TestCase
   test 'viewname' do
     assert_equal('home entries', viewname)
   end
+
+  test 'twitter_username' do
+    entry = read_entries('entries', 'twitter')[0]
+    assert_equal('foo', twitter_username(entry))
+    entry['service']['id'] = 'not twitter'
+    assert_nil(twitter_username(entry))
+  end
 end

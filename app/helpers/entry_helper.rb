@@ -740,7 +740,7 @@ module EntryHelper
 
   def twitter_username(entry)
     if entry.service_id == 'twitter'
-      (v(entry, 'user', 'profileUrl') || '').sub(/\A.*\//, '')
+      (v(entry, 'service', 'profileUrl') || '').sub(/\A.*\//, '')
     end
   end
 
