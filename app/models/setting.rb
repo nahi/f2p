@@ -1,4 +1,6 @@
 class Setting
+  MOBILE_GPS_TYPE = ['ezweb','gpsone','DoCoMoFOMA', 'DoCoMomova','SoftBank3G', 'SoftBankold','WILLCOM']
+
   attr_accessor :font_size
   attr_accessor :entries_in_page
   attr_accessor :entries_in_thread
@@ -7,7 +9,7 @@ class Setting
   attr_accessor :link_type
   attr_accessor :list_view_media_rendering
   attr_accessor :twitter_comment_hack
-  attr_accessor :use_gps_info
+  attr_accessor :mobile_gps_type
 
   def initialize
     super
@@ -19,7 +21,7 @@ class Setting
     @link_type = F2P::Config.link_type
     @list_view_media_rendering = F2P::Config.list_view_media_rendering
     @twitter_comment_hack = F2P::Config.twitter_comment_hack
-    @use_gps_info = F2P::Config.use_gps_info
+    @mobile_gps_type = F2P::Config.mobile_gps_type
   end
 
   def validate
@@ -36,10 +38,9 @@ class Setting
     unless (20..1000) === @text_folding_size
       errors << 'text folding size must be in 20..1000'
     end
-    # TODO: extract as a constant
-    if @use_gps_info
-      unless (['ezweb','gpsone','DoCoMoFOMA', 'DoCoMomova','SoftBank3G', 'SoftBankold','WILLCOM']).include?(@use_gps_info)
-      errors << 'gps type shall be one of ezweb, gpsone, DoCoMoFOMA, DoCoMomova,SoftBank3G, SoftBankold, WILLCOM'
+    if @mobile_gps_type
+      unless MOBILE_GPS_TYPE.include?(@mobile_gps_type)
+        errors << 'gps type shall be one of ' + MOBILE_GPS_TYPE.join(', ')
       end
     end
     errors.empty? ? nil : errors

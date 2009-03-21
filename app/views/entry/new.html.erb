@@ -18,9 +18,10 @@
   <hr/>
   <p>
   Address: <%= text_field_tag('title', @title) %> <%= submit_tag 'search' %><br/>
-  zoom: <%= zoom_select_tag('zoom', @zoom) %>
-  <br/>
-  <%= write_with_geocode_link_or_form %>
+  zoom: <%= zoom_select_tag('zoom', @zoom) %><br/>
+  <%- if setting.mobile_gps_type -%>
+    get GPS data: <%= gps_info_link %>
+  <%- end -%>
   </p>
   <%- if @placemark -%>
     <%- if @placemark.ambiguous? -%>

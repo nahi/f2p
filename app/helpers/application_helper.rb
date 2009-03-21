@@ -33,6 +33,7 @@ module ApplicationHelper
     'pin' => 'anchor.png',
     'bottom' => 'arrow_down.png',
     'top' => 'arrow_up.png',
+    'map' => 'map.png',
   }
 
   def self_label
@@ -63,29 +64,6 @@ module ApplicationHelper
 
   def logout_link
     link_to(icon_tag(:logout), :controller => 'login', :action => 'clear')
-  end
-
-  # TODO: use select_tag
-  def write_with_geocode_link_or_form
-    if setting.use_gps_info
-      title = 'get GPS data'
-    end
-    if setting.use_gps_info == 'ezweb'
-      title + '<a href="device:location?url=new"><img alt="world add" height="16" src="/images/icons/map.png" title="world add" width="16" /></a>'
-    elsif setting.use_gps_info == 'gpsone'
-      title + '<a href="device:gpsone?url=new&ver=1&datum=0&unit=0"><img alt="world add" height="16" src="/images/icons/map.png" title="world add" width="16" />
-</a>'
-    elsif setting.use_gps_info == 'DoCoMoFOMA'
-      title + '<a href="new" lcs><img alt="world add" height="16" src="/images/icons/map.png" title="world add" width="16" /></a>'
-    elsif setting.use_gps_info == 'DoCoMomova'
-      title + '<form><input type="submit" name="navi_pos" value=""></form>'
-    elsif setting.use_gps_info == 'SoftBank3G'
-      title + '<a href="location:auto?new"><img alt="world add" height="16" src="/images/icons/map.png" title="world add" width="16" /></a>'
-    elsif setting.use_gps_info == 'SoftBankold'
-      title + '<a href="new" z><img alt="world add" height="16" src="/images/icons/map.png" title="world add" width="16" /></a>'
-    elsif setting.use_gps_info == 'WILLCOM'
-      title + '<a href="http://location.request/dummy.cgi?my=new&pos=$location"><img alt="world add" height="16" src="/images/icons/map.png" title="world add" width="16" /></a>'
-    end
   end
 
   def u(arg)

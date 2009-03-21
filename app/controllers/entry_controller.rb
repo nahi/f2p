@@ -272,7 +272,7 @@ class EntryController < ApplicationController
     @address = param(:address)
     @zoom = (param(:zoom) || F2P::Config.google_maps_zoom).to_i
     reverse_needed = false
-    case @setting.use_gps_info
+    case @setting.mobile_gps_type
     when 'ezweb', 'gpsone', 'DoCoMoFOMA' 
       if param(:lat) and param(:lon)
         @lat = calc_geo(@lat)

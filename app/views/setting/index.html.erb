@@ -12,21 +12,7 @@
     show medias in list view: <%= check_box_tag('list_view_media_rendering', 'checked', @list_view_media_rendering) %><br/>
     open links in new window: <%= check_box_tag('link_open_new_window', 'checked', @link_open_new_window) %><br/>
     open links via mobile proxy(gwt): <%= check_box_tag('link_type_gwt', 'checked', @link_type == 'gwt') %><br/>
-    use mobile phone's GPS info: <br/>
-    <select id="use_gps_info" name="use_gps_info">
-      	<option value="" 
-    <% if @use_gps_info == '' -%>
-      	 selected="selected"
-    <% end -%>
- >not use</option>
-    <% (['ezweb','gpsone','DoCoMoFOMA', 'DoCoMomova','SoftBank3G','SoftBankold','WILLCOM']).each do |item| %>
-    <option value="<%= item %>"
-    <% if @use_gps_info == item -%> selected="selected"<% end -%>
-    ><%= item %></option>
-   <% end %>
-   </select>
-<a href="http://www.yaskey.cside.tv/mapserver/note/gps.html" target="_blank">GPS? What?</a>
-<br/>
+    use mobile phone's GPS info: <%= gps_info_select_tag('mobile_gps_type', @mobile_gps_type) %><br/>
     <%= submit_tag 'update' %>
   </p>
 <%- end -%>

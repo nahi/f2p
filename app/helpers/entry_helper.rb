@@ -743,4 +743,23 @@ module EntryHelper
       (v(entry, 'user', 'profileUrl') || '').sub(/\A.*\//, '')
     end
   end
+
+  def gps_info_link
+    case setting.mobile_gps_type
+    when 'ezweb'
+      '<a href="device:location?url=new">' + icon_tag(:map) + '</a>'
+    when 'gpsone'
+      '<a href="device:gpsone?url=new&amp;ver=1&amp;datum=0&amp;unit=0">' + icon_tag(:map) + '</a>'
+    when 'DoCoMoFOMA'
+      '<a href="new" lcs>' + icon_tag(:map) + '</a>'
+    when 'DoCoMomova'
+      '<form><input type="submit" name="navi_pos" value=""></form>'
+    when 'SoftBank3G'
+      '<a href="location:auto?new">' + icon_tag(:map) + '</a>'
+    when 'SoftBankold'
+      '<a href="new" z>' + icon_tag(:map) + '</a>'
+    when 'WILLCOM'
+      '<a href="http://location.request/dummy.cgi?my=new&amp;pos=$location">' + icon_tag(:map) + '</a>'
+    end
+  end
 end
