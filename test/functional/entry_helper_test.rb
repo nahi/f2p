@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class EntryHelperTest < ActionView::TestCase
+class EntryHelperTest < MyActionView::TestCaseWithController
   def setup
     super
     @ctx = EntryController::EntryContext.new(auth)
