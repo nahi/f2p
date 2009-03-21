@@ -260,12 +260,4 @@ class EntryHelperTest < ActionView::TestCase
   test 'viewname' do
     assert_equal('home entries', viewname)
   end
-
-  test 'pin_link' do
-    ctx.inbox = true
-    entry = Entry.new
-    entry.view_pinned = true
-    entry['id'] = 'id'
-    assert_equal('', pin_link(entry))
-  end
 end
