@@ -103,6 +103,12 @@ module ApplicationHelper
     end
   end
 
+  def list_name(nickname)
+    if found = user_lists(auth.name).find { |e| v(e, nickname) == nickname }
+      v(found, 'name')
+    end
+  end
+
   def room_name(nickname)
     session_cache(:room, :ff_name, nickname) {
       Room.ff_name(:auth => auth, :room => nickname)
@@ -126,6 +132,12 @@ module ApplicationHelper
     }
   end
 
+  def user_id(nickname)
+    session_cache(:user, :ff_id, nickname) {
+      User.ff_id(:auth => auth, :user => nickname)
+    }
+  end
+
   def user_name(nickname)
     session_cache(:user, :ff_name, nickname) {
       User.ff_name(:auth => auth, :user => nickname)
@@ -139,9 +151,7 @@ module ApplicationHelper
   end
 
   def user_picture(nickname, size = 'small')
-    user_id = session_cache(:user, :ff_id, nickname) {
-      User.ff_id(:auth => auth, :user => nickname)
-    }
+    return if user_id(nickname) == nickname
     name = user_name(nickname)
     if nickname == auth.name
       name = self_label

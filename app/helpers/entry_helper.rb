@@ -2,7 +2,38 @@ module EntryHelper
   VIEW_LINKS_TAG = '__view_links'
 
   def viewname
-    ctx.viewname
+    return ctx.viewname if ctx.viewname
+    if ctx.eid
+      'entry'
+    elsif ctx.query
+      'search results'
+    elsif ctx.like == 'likes'
+      "entries #{user_name(ctx.user || auth.name)} likes"
+    elsif ctx.like == 'liked'
+      "#{user_name(ctx.user || auth.name)}'s liked entries"
+    elsif ctx.comment == 'comments'
+      "entries #{user_name(ctx.user || auth.name)} commented"
+    elsif ctx.comment == 'commented'
+      "#{user_name(ctx.user || auth.name)}'s commented + liked entries"
+    elsif ctx.user
+      "#{user_name(ctx.user)}'s entries"
+    elsif ctx.friends
+      "#{user_name(ctx.user)}'s friends entries"
+    elsif ctx.list
+      "'#{list_name(ctx.list)}' entries"
+    elsif ctx.room
+      if ctx.room == '*'
+        'rooms entries'
+      else
+        "'#{room_name(ctx.room)}' entries"
+      end
+    elsif ctx.link
+      'related entries'
+    elsif ctx.inbox
+      'inbox entries'
+    else
+      'home entries'
+    end
   end
 
   def ctx
@@ -454,7 +485,11 @@ module EntryHelper
     }
     links_if_exists("#{map.size} services: ", map.to_a.sort_by { |k, v| k }) { |id, name|
       label = "[#{name}]"
-      link_to(h(label), list_opt(:action => 'list', :user => u(user), :service => u(id)))
+      if ctx.service == id
+        h(label)
+      else
+        link_to(h(label), list_opt(:action => 'list', :user => u(user), :service => u(id)))
+      end
     }
   end
 
@@ -552,15 +587,12 @@ module EntryHelper
     links << menu_link(menu_label('inbox', '0'), {:action => 'inbox'}, {:accesskey => '0'})
     links << menu_link(menu_label('all', '1'), {:action => 'list'}, {:accesskey => '1'})
     links << menu_link(menu_label('me', '3'), {:action => 'list', :user => auth.name}, {:accesskey => '3'})
-    if !ctx.user_for or auth.name == ctx.user_for
-      lists = user_lists(auth.name)
-      links << menu_link(menu_label('lists', '7'), {:action => 'list', :list => u(v(lists.first, 'nickname'))}, {:accesskey => '7'}) {
-        !ctx.list
-      }
-      links << menu_link(menu_label('rooms', '9'), {:action => 'list', :room => '*'}, {:accesskey => '9'}) {
-        ctx.room != '*'
-      }
-    end
+    links << menu_link(menu_label('lists', '7'), {:action => 'list', :list => u(v(user_lists(auth.name).first, 'nickname'))}, {:accesskey => '7'}) {
+      !ctx.list
+    }
+    links << menu_link(menu_label('rooms', '9'), {:action => 'list', :room => '*'}, {:accesskey => '9'}) {
+      ctx.room != '*'
+    }
     links << menu_link(icon_tag(:next), list_opt(ctx.link_opt(:start => start + num, :num => num)), :accesskey => '6') { !no_page }
     str = links.join(' ')
     if ctx.inbox
@@ -572,17 +604,19 @@ module EntryHelper
   def user_page_links(user)
     links = []
     links << menu_link(menu_label("self"), :action => 'list', :user => user) {
-      ctx.friends or ctx.like
+      ctx.friends or ctx.like or ctx.comment
     }
-    links << menu_link(menu_label('friends'), :action => 'list', :friends => user) {
-      !ctx.friends
-    }
-    links << menu_link(menu_label('likes'), :action => 'list', :like => 'likes', :user => ctx.user_for) {
-      ctx.like != 'likes'
-    }
-    links << menu_link(menu_label('comments'), :action => 'list', :comment => 'comments', :user => ctx.user_for) {
-      ctx.comment != 'comments'
-    }
+    if user_id(user) != user
+      links << menu_link(menu_label('friends'), :action => 'list', :friends => user) {
+        !ctx.friends
+      }
+      links << menu_link(menu_label('likes'), :action => 'list', :like => 'likes', :user => ctx.user_for) {
+        ctx.like != 'likes'
+      }
+      links << menu_link(menu_label('comments'), :action => 'list', :comment => 'comments', :user => ctx.user_for) {
+        ctx.comment != 'comments'
+      }
+    end
     links << menu_link(menu_label('liked'), :action => 'list', :like => 'liked', :user => ctx.user_for) {
       ctx.like != 'liked'
     }

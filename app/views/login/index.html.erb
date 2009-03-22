@@ -6,17 +6,20 @@
   <p>
     FriendFeed user nickname: <%= text_field_tag 'name' %><br/>
     Remote key(NOT A PASSWORD): <%= password_field_tag 'remote_key' %><br/>
+    Do NOT enter your FriendFeed PASSWORD here.  You can check <%= link_to('your remote key', 'https://friendfeed.com/account/api') %> by yourself.<br/>
     <%= submit_tag 'login' %>
   </p>
 <%- end -%>
 <hr/>
-<p>Bear in mind...</p>
+<p>
+'f2p' is a FriendFeed web-based application for mobile users by NaHi.
+It's based on <a href="http://friendfeed.com/api/">FriendFeed API</a>.
+See <%= link_to(h('help page'), :controller => 'help', :action => 'index') %> to see what you can do.
+</p>
 <ul>
-  <li>Do NOT enter your FriendFeed PASSWORD here.  You can check <%= link_to('your remote key', 'https://friendfeed.com/account/api') %> by yourself.</li>
   <li>NO WARRANTY; This service is provided on an "AS IS" basis without warranty of any kind.</li>
   <li>Nickname and remote key are stored in DB of this server for accessing FriendFeed API.</li>
-  <li>Your feed ID (e.g. 9ac57155-b878-4438-a0ab-c214d27b747d) and its modification date are stored in the DB, too.  Other feed content is NOT stored in the DB.</li>
-  <li>Icons used in this site are <a href="http://www.famfamfam.com/lab/icons/silk/">&quot;Silk&quot; by FAMFAMFAM</a>.
+  <li>Your feed ID (e.g. 9ac57155-b878-4438-a0ab-c214d27b747d), pin state and its modification time are stored in DB, too.  Other feed content is NOT stored in DB.</li>
   <li>Let me know about any trouble on this service at <%= link_url('http://friendfeed.com/rooms/f2p') %>.</li>
 </ul>
 <hr/>

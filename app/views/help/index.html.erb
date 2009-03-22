@@ -1,5 +1,7 @@
+<p>Icons used in this site are <a href="http://www.famfamfam.com/lab/icons/silk/">&quot;Silk&quot; by FAMFAMFAM</a>.  Thanks!</p>
+
 <div class="listings">
-<h2>top menu</h2>
+<h2>Top Menu</h2>
 <ul>
   <li><%= icon_tag(:write) %> ... add new entry</li>
   <li><%= icon_tag(:search) %> ... search entries</li>
@@ -8,7 +10,7 @@
   <li><%= icon_tag(:help) %> ... show this help</li>
 </ul>
 
-<h2>page cursor</h2>
+<h2>Page Cursor</h2>
 <ul>
   <li><%= icon_tag(:previous) %> ... go previous page</li>
   <li><%= icon_tag(:next) %> ... go next page</li>
@@ -17,21 +19,7 @@
   <li><%= icon_tag(:more) %> ... go detailed page which shows omitted entries/comments of a list</li>
 </ul>
 
-<h2>operation</h2>
-
-<p>Operation for each entry.</p>
-<ul>
-  <li><%= icon_tag(:comment_add) %> ... add comment to the entry</li>
-  <li><%= icon_tag(:pin) %> ... pin the entry to [inbox] view</li>
-  <li><%= icon_tag(:pinned) %> ... unpin the entry and archive to [all]</li>
-  <li><%= submit_tag(:archive) %> ... archive all entries in [inbox] to [all] except pinned entries</li>
-  <li><%= icon_tag(:like) %> ... add 'like'</li>
-  <li><%= icon_tag(:star) %> ... delete 'like'</li>
-  <li><%= icon_tag(:delete) %> ... delete the entry/comment</li>
-  <li><%= icon_tag(:reshare) %> ... reshare the entry</li>
-</ul>
-
-<h2>page menu</h2>
+<h2>Page Menu</h2>
 <ul>
   <li>[inbox] ... show your entries in 'home' excluding archived entries</li>
   <li>[all] ... show all of your entries in 'home' including archived entries</li>
@@ -43,7 +31,25 @@
   <li>(user link) ... show user profile</li>
 </ul>
 
-<h2>user filter menu</h2>
+<h2>Entry Edit Operation</h2>
+
+<ul>
+  <li><%= icon_tag(:comment_add) %> ... add comment to the entry</li>
+  <li><%= icon_tag(:like) %> ... add 'like'</li>
+  <li><%= icon_tag(:star) %> ... delete 'like'</li>
+  <li><%= icon_tag(:delete) %> ... delete the entry/comment</li>
+  <li><%= icon_tag(:reshare) %> ... reshare the entry</li>
+</ul>
+
+<h2>Pin Operation</h2>
+
+<ul>
+  <li><%= icon_tag(:pin) %> ... add pin to the entry; pinned entries keep on showing in [inbox]</li>
+  <li><%= icon_tag(:pinned) %> ... unpin the entry and archive it to [all]</li>
+  <li><%= submit_tag(:archive) %> ... archive all entries in [inbox] to [all] except pinned entries</li>
+</ul>
+
+<h2>User Filter</h2>
 
 <p>These filters are shown at the top of user profile page.</p>
 
@@ -56,7 +62,7 @@
   <li>[commented] ... show entries of the user which is commented or 'like'd</li>
 </ul>
 
-<h2>notation</h2>
+<h2>Others</h2>
 <ul>
   <li><%= icon_tag(:go) %> ... link to go source site</li>
   <li><%= icon_tag(:map) %> ... search location with mobile GPS info</li>

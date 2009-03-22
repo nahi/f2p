@@ -23,6 +23,8 @@ class EntryController < ApplicationController
     attr_accessor :inbox
     attr_accessor :home
 
+    attr_accessor :viewname
+
     def initialize(auth)
       @auth = auth
       @viewname = nil
@@ -31,45 +33,6 @@ class EntryController < ApplicationController
       @inbox = false
       @home = true
       @param = nil
-    end
-
-    def viewname=(viewname)
-      @viewname = viewname
-    end
-
-    def viewname
-      return @viewname if @viewname
-      if @eid
-        'entry'
-      elsif @query
-        'search results'
-      elsif @like == 'likes'
-        "entries #{@user || @auth.name} likes"
-      elsif @like == 'liked'
-        "#{@user || @auth.name}'s liked entries"
-      elsif @comment == 'comments'
-        "entries #{@user || @auth.name} commented"
-      elsif @comment == 'commented'
-        "#{@user || @auth.name}'s commented + liked entries"
-      elsif @user
-        "#{@user}'s entries"
-      elsif @friends
-        "#{@friends}'s friends entries"
-      elsif @list
-        "'#{@list}' entries"
-      elsif @room
-        if @room == '*'
-          'rooms entries'
-        else
-          "'#{@room}' entries"
-        end
-      elsif @link
-        'related entries'
-      elsif @inbox
-        'inbox entries'
-      else
-        'home entries'
-      end
     end
 
     def parse(param, setting)
