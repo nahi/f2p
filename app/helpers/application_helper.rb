@@ -104,7 +104,7 @@ module ApplicationHelper
   end
 
   def list_name(nickname)
-    if found = user_lists(auth.name).find { |e| v(e, nickname) == nickname }
+    if found = user_lists(auth.name).find { |e| v(e, 'nickname') == nickname }
       v(found, 'name')
     end
   end
