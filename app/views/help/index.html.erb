@@ -1,59 +1,64 @@
 <div class="listings">
 <h2>top menu</h2>
 <ul>
-  <li><%= icon_tag(:write) %></li>
-  <li><%= icon_tag(:search) %></li>
-  <li><%= icon_tag(:settings) %></li>
-  <li><%= icon_tag(:logout) %></li>
-  <li><%= icon_tag(:help) %> show this help</li>
+  <li><%= icon_tag(:write) %> ... add new entry</li>
+  <li><%= icon_tag(:search) %> ... search entries</li>
+  <li><%= icon_tag(:settings) %> ... change session settings</li>
+  <li><%= icon_tag(:logout) %> ... logout and discard settings</li>
+  <li><%= icon_tag(:help) %> ... show this help</li>
 </ul>
 
 <h2>page cursor</h2>
 <ul>
-  <li><%= icon_tag(:previous) %></li>
-  <li><%= icon_tag(:next) %></li>
-  <li><%= icon_tag(:top) %></li>
-  <li><%= icon_tag(:bottom) %></li>
-  <li><%= icon_tag(:more) %></li>
-  <li><%= icon_tag(:url) %></li>
+  <li><%= icon_tag(:previous) %> ... go previous page</li>
+  <li><%= icon_tag(:next) %> ... go next page</li>
+  <li><%= icon_tag(:top) %> ... go top of this page</li>
+  <li><%= icon_tag(:bottom) %> ... go bottom of this page</li>
+  <li><%= icon_tag(:more) %> ... go detailed page which shows omitted entries/comments of a list</li>
 </ul>
 
-<h2>general page menu</h2>
+<h2>operation</h2>
 <ul>
-  <li>[inbox]</li>
-  <li>[all]</li>
-  <li>[me]</li>
-  <li>[lists]</li>
-  <li>[rooms]</li>
+  <li><%= icon_tag(:comment_add) %> ... add comment to the entry</li>
+  <li><%= icon_tag(:pin) %> ... pin this entry to [inbox] view</li>
+  <li><%= icon_tag(:pinned) %> ... unpin this entry and archive to [all]</li>
+  <li><%= icon_tag(:like) %> ... add 'like'</li>
+  <li><%= icon_tag(:star) %> ... delete 'like'</li>
+  <li><%= icon_tag(:delete) %> ... delete the entry/comment</li>
+  <li><%= icon_tag(:reshare) %> ... reshare this entry</li>
+</ul>
+
+<h2>page menu</h2>
+<ul>
+  <li>[inbox] ... show your entries in 'home' excluding archived entries</li>
+  <li>[all] ... show all of your entries in 'home' including archived entries</li>
+  <li>[me] ... show your profile</li>
+  <li>[lists] ... show entries of your list</li>
+  <li>[rooms] ... show entries of rooms you are joining</li>
+  <li><%= icon_tag(:url) %> ... show seach result page of entries which relate to specified link</li>
+  <li><%= image_tag('http://friendfeed.com/static/images/icons/internal.png') %> ... show filtered entries by specified service</li>
+  <li>(user link) ... show user profile</li>
 </ul>
 
 <h2>user filter menu</h2>
-<ul>
-  <li>[self]</li>
-  <li>[friends]</li>
-  <li>[likes]</li>
-  <li>[comments]</li>
-  <li>[liked]</li>
-  <li>[commented]</li>
-</ul>
 
-<h2>entry operation</h2>
+<p>These filters are shown at the top of user profile page.</p>
+
 <ul>
-  <li><%= icon_tag(:pin) %></li>
-  <li><%= icon_tag(:pinned) %></li>
-  <li><%= icon_tag(:like) %></li>
-  <li><%= icon_tag(:star) %></li>
-  <li><%= icon_tag(:comment_add) %></li>
-  <li><%= icon_tag(:delete) %></li>
-  <li><%= icon_tag(:reshare) %></li>
+  <li>[self] ... show entries of this user</li>
+  <li>[friends] ... show entries of this user + his/her friends</li>
+  <li>[likes] ... show entries this user 'like'd</li>
+  <li>[comments] ... show entries this user commented</li>
+  <li>[liked] ... show entries of this user which is commented by other</li>
+  <li>[commented] ... show entries of this user which is commented or 'like'd</li>
 </ul>
 
 <h2>notation</h2>
 <ul>
-  <li><%= icon_tag(:go) %></li>
-  <li><%= icon_tag(:map) %></li>
-  <li><%= icon_tag(:comment) %></li>
-  <li><%= icon_tag(:friend_comment) %></li>
-  <li><%= icon_tag(:related) %></li>
+  <li><%= icon_tag(:go) %> ... link to go source site</li>
+  <li><%= icon_tag(:map) %> ... search location with mobile GPS info</li>
+  <li><%= icon_tag(:comment) %> ... self comment by the entry author</li>
+  <li><%= icon_tag(:friend_comment) %> ... comment from friends of the entry author</li>
+  <li><%= icon_tag(:related) %> ... showing related entries</li>
 </ul>
 </div>

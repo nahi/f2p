@@ -7,7 +7,7 @@
     <%- if @with_form -%>
       image upload: <%= file_field_tag('file') %><br/>
     <%- else -%>
-      <%= link_to(h('image upload [experimental]'), :action => 'new', :with_form => '1') %><br/>
+      <%= link_to(h('image upload'), :action => 'new', :with_form => '1') %><br/>
     <%- end -%>
     <%= hidden_field_tag('lat', @lat) %>
     <%= hidden_field_tag('long', @long) %>
@@ -16,6 +16,7 @@
     <%= submit_tag 'post' %>
   </p>
   <hr/>
+  <p>For posting with location info</p>
   <p>
   Address: <%= text_field_tag('title', @title) %> <%= submit_tag 'search' %><br/>
   geocoding language: '<%= h(setting.google_maps_geocoding_lang || 'ja') %>'<br/>
