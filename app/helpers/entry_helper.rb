@@ -551,20 +551,14 @@ module EntryHelper
     }
     links << menu_link(menu_label('inbox', '0'), {:action => 'inbox'}, {:accesskey => '0'})
     links << menu_link(menu_label('all', '1'), {:action => 'list'}, {:accesskey => '1'})
-    links << menu_link(menu_label('me'), :action => 'list', :user => auth.name)
+    links << menu_link(menu_label('me', '3'), :action => 'list', :user => auth.name)
     if !ctx.user_for or auth.name == ctx.user_for
       lists = user_lists(auth.name)
-      links << menu_link(menu_label('lists'), :action => 'list', :list => u(v(lists.first, 'nickname'))) {
+      links << menu_link(menu_label('lists', '7'), :action => 'list', :list => u(v(lists.first, 'nickname'))) {
         !ctx.list
       }
-      links << menu_link(menu_label('rooms'), :action => 'list', :room => '*') {
+      links << menu_link(menu_label('rooms', '9'), :action => 'list', :room => '*') {
         ctx.room != '*'
-      }
-      links << menu_link(menu_label('likes'), :action => 'list', :like => 'likes', :user => ctx.user_for) {
-        ctx.like != 'likes'
-      }
-      links << menu_link(menu_label('liked'), :action => 'list', :like => 'liked', :user => ctx.user_for) {
-        ctx.like != 'liked'
       }
     end
     links << menu_link(icon_tag(:next), list_opt(ctx.link_opt(:start => start + num, :num => num)), :accesskey => '6') { !no_page }
@@ -577,12 +571,26 @@ module EntryHelper
 
   def user_page_links(user)
     links = []
-    if user != auth.name
-      name = user_name(user)
-      links << menu_link(menu_label("entries of #{name}"), :action => 'list', :user => user)
-      links << menu_link(menu_label("entries of #{name} with friends"), :action => 'list', :friends => user)
-    end
-    links.join(' ')
+    name = user_name(user)
+    links << menu_link(menu_label("by #{name}"), :action => 'list', :user => user) {
+      ctx.friends or ctx.like
+    }
+    links << menu_link(menu_label('with friends'), :action => 'list', :friends => user) {
+      !ctx.friends
+    }
+    links << menu_link(menu_label('likes'), :action => 'list', :like => 'likes', :user => ctx.user_for) {
+      ctx.like != 'likes'
+    }
+    links << menu_link(menu_label('comments'), :action => 'list', :comment => 'comments', :user => ctx.user_for) {
+      ctx.comment != 'comments'
+    }
+    links << menu_link(menu_label('liked'), :action => 'list', :like => 'liked', :user => ctx.user_for) {
+      ctx.like != 'liked'
+    }
+    links << menu_link(menu_label('commented'), :action => 'list', :comment => 'commented', :user => ctx.user_for) {
+      ctx.comment != 'commented'
+    }
+    'filter: ' + links.join(' ')
   end
 
   def menu_label(label, accesskey = nil)

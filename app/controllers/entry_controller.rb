@@ -14,6 +14,7 @@ class EntryController < ApplicationController
     attr_accessor :room
     attr_accessor :friends
     attr_accessor :like
+    attr_accessor :comment
     attr_accessor :link
     attr_accessor :service
     attr_accessor :start
@@ -25,7 +26,7 @@ class EntryController < ApplicationController
     def initialize(auth)
       @auth = auth
       @viewname = nil
-      @eid = @query = @user = @list = @room = @friends = @like = @link = @service = @start = @num = nil
+      @eid = @query = @user = @list = @room = @friends = @like = @comment = @link = @service = @start = @num = nil
       @fold = false
       @inbox = false
       @home = true
@@ -46,6 +47,10 @@ class EntryController < ApplicationController
         "entries #{@user || @auth.name} likes"
       elsif @like == 'liked'
         "#{@user || @auth.name}'s liked entries"
+      elsif @comment == 'comments'
+        "entries #{@user || @auth.name} commented"
+      elsif @comment == 'commented'
+        "#{@user || @auth.name}'s commented + liked entries"
       elsif @user
         "#{@user}'s entries"
       elsif @friends
@@ -77,6 +82,7 @@ class EntryController < ApplicationController
       @room = param(:room)
       @friends = param(:friends)
       @like = param(:like)
+      @comment = param(:comment)
       @link = param(:link)
       @service = param(:service)
       @start = (param(:start) || '0').to_i
@@ -87,7 +93,7 @@ class EntryController < ApplicationController
       end
       @fold = (!@user and !@service and !@link and param(:fold) != 'no')
       @inbox = false
-      @home = !(@query or @like or @user or @friends or @list or @room or @link)
+      @home = !(@query or @like or @comment or @user or @friends or @list or @room or @link)
     end
 
     def single?
@@ -111,6 +117,8 @@ class EntryController < ApplicationController
         opt.merge(:query => @query, :user => @user, :room => @room, :friends => @friends, :service => @service)
       elsif @like
         opt.merge(:like => @like, :user => @user || @auth.name)
+      elsif @comment
+        opt.merge(:comment => @comment, :user => @user || @auth.name)
       elsif @user
         opt.merge(:user => @user)
       elsif @friends
@@ -135,7 +143,7 @@ class EntryController < ApplicationController
 
     def reset_for_new
       # keep @room
-      @eid = @query = @user = @list = @friends = @like = @link = @service = nil
+      @eid = @query = @user = @list = @friends = @like = @comment = @link = @service = nil
       @fold = true
     end
 
@@ -147,6 +155,7 @@ class EntryController < ApplicationController
         :room => @room,
         :friends => @friends,
         :like => @like,
+        :comment => @comment,
         :link => @link,
         :service => @service,
         :fold => @fold ? nil : 'no'

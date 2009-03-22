@@ -207,8 +207,8 @@ module FriendFeed
       end
     end
 
-    def get_comments(name, remote_key, opt = {})
-      uri = uri("feed/user/#{name}/comments")
+    def get_comments(name, remote_key, user, opt = {})
+      uri = uri("feed/user/#{user}/comments")
       client_sync(uri, name, remote_key) do |client|
         get_feed(client, uri, opt)
       end
@@ -216,6 +216,13 @@ module FriendFeed
 
     def get_likes(name, remote_key, user, opt = {})
       uri = uri("feed/user/#{user}/likes")
+      client_sync(uri, name, remote_key) do |client|
+        get_feed(client, uri, opt)
+      end
+    end
+
+    def get_discussion(name, remote_key, user, opt = {})
+      uri = uri("feed/user/#{user}/discussion")
       client_sync(uri, name, remote_key) do |client|
         get_feed(client, uri, opt)
       end

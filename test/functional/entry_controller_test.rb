@@ -153,6 +153,28 @@ class EntryControllerTest < ActionController::TestCase
     assert_response :success
   end
 
+  test 'list comments' do
+    login('user1')
+    @ff.expects(:get_comments).
+      with('user1', nil, 'user1', {:service => nil, :num => 20, :start => 0}).
+      returns(read_entries('entries', 'f2ptest')).times(2)
+    get :list, :comment => 'comments'
+    assert_response :success
+    get :list, :comment => 'comments'
+    assert_response :success
+  end
+
+  test 'list commented' do
+    login('user1')
+    @ff.expects(:get_discussion).
+      with('user1', nil, 'user1', {:service => nil, :num => 20, :start => 0}).
+      returns(read_entries('entries', 'f2ptest')).times(2)
+    get :list, :comment => 'commented'
+    assert_response :success
+    get :list, :comment => 'commented'
+    assert_response :success
+  end
+
   test 'list user' do
     login('user1')
     @ff.expects(:get_user_picture_url).with('user1', 'small').

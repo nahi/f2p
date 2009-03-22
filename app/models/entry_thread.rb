@@ -56,6 +56,10 @@ class EntryThread
         entries = Task.run { get_likes(auth, opt) }.result
       elsif opt[:like] == 'liked'
         entries = Task.run { get_liked(auth, opt) }.result
+      elsif opt[:comment] == 'comments'
+        entries = Task.run { get_comments(auth, opt) }.result
+      elsif opt[:comment] == 'commented'
+        entries = Task.run { get_commented(auth, opt) }.result
       elsif opt[:user]
         entries = Task.run { get_user_entries(auth, opt) }.result
       elsif opt[:list]
@@ -246,6 +250,16 @@ class EntryThread
       search[:from] = user
       search[:likes] = 1
       ff_client.search_entries(auth.name, auth.remote_key, '', search)
+    end
+
+    def get_comments(auth, opt)
+      user = opt[:user]
+      ff_client.get_comments(auth.name, auth.remote_key, user, filter_opt(opt))
+    end
+
+    def get_commented(auth, opt)
+      user = opt[:user]
+      ff_client.get_discussion(auth.name, auth.remote_key, user, filter_opt(opt))
     end
 
     def get_entry(auth, opt)
