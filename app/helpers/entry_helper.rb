@@ -571,11 +571,10 @@ module EntryHelper
 
   def user_page_links(user)
     links = []
-    name = user_name(user)
-    links << menu_link(menu_label("by #{name}"), :action => 'list', :user => user) {
+    links << menu_link(menu_label("self"), :action => 'list', :user => user) {
       ctx.friends or ctx.like
     }
-    links << menu_link(menu_label('with friends'), :action => 'list', :friends => user) {
+    links << menu_link(menu_label('friends'), :action => 'list', :friends => user) {
       !ctx.friends
     }
     links << menu_link(menu_label('likes'), :action => 'list', :like => 'likes', :user => ctx.user_for) {

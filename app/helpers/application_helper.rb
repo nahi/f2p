@@ -34,6 +34,7 @@ module ApplicationHelper
     'bottom' => 'arrow_down.png',
     'top' => 'arrow_up.png',
     'map' => 'map.png',
+    'help' => 'help.png',
   }
 
   def self_label
@@ -64,6 +65,10 @@ module ApplicationHelper
 
   def logout_link
     link_to(icon_tag(:logout), :controller => 'login', :action => 'clear')
+  end
+
+  def help_link
+    link_to(icon_tag(:help), :controller => 'help', :action => 'index')
   end
 
   def u(arg)

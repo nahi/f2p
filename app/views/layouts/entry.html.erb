@@ -1,39 +1,15 @@
 <html>
   <head>
     <title><%= appname %> entries</title>
+    <%= stylesheet_link_tag 'f2p' %>
     <style type="text/css">
       body {
         font-size: <%= h(setting.font_size) %>pt;
       }
-      h1 { font-size: 110%; }
-      a img { border: none; }
-      p.message { color: red; }
-      .latest1 { color: #F00; }
-      .latest2 { color: #C00; }
-      .latest3 { color: #900; }
-      .older { color: #008; }
-      .comment { color: #333; }
-      .inbox { font-weight: bold; }
-      div.listings .thread1 {
-        background-color: #EEE;
-        padding-bottom: 0.8ex;
-      }
-      div.listings .thread2 {
-        padding-bottom: 0.8ex;
-      }
-      div.listings ul {
-        list-style-type: none;
-        margin-top: 0pt;
-        margin-bottom: 0pt; /*0.8ex;*/
-      }
-      div.listings p {
-        margin-top: 0pt;
-        margin-bottom: 0pt;
-      }
     </style>
   </head>
   <body>
-    <h1><%= link_to(h(appname), :controller => 'entry') %> <%= h(viewname) %> at <%= date(Time.now) %> <%= write_new_link %> <%= search_link %> <%= settings_link %> <%= logout_link %></h1>
+    <h1><%= link_to(h(appname), :controller => 'entry') %> <%= h(viewname) %> at <%= date(Time.now) %> <%= write_new_link %> <%= search_link %> <%= settings_link %> <%= logout_link %> <%= help_link %></h1>
     <%= yield %>
   </body>
 </html>

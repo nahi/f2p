@@ -1,0 +1,23 @@
+{
+  "name": "日本、東京駅",
+  "Status": {
+    "code": 200,
+    "request": "geocode"
+  },
+  "Placemark": [ {
+    "id": "p1",
+    "address": "東京駅（東京） station Japan",
+    "AddressDetails": {"Country": {"CountryNameCode": "JP","CountryName": "Japan","AddressLine":["東京駅（東京） station"]},"Accuracy": 9},
+    "ExtendedData": {
+      "LatLonBox": {
+        "north": 35.6845296,
+        "south": 35.6782344,
+        "east": 139.7692316,
+        "west": 139.7629364
+      }
+    },
+    "Point": {
+      "coordinates": [ 139.7660840, 35.6813820, 0 ]
+    }
+  } ]
+}

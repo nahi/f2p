@@ -14,6 +14,11 @@ class EntryControllerTest < ActionController::TestCase
     assert_redirected_to :action => 'inbox'
   end
 
+  test 'inbox without login' do
+    get :inbox
+    assert_redirected_to :controller => 'login', :action => 'index'
+  end
+
   test 'inbox' do
     login('user1')
     @ff.expects(:get_profile).
