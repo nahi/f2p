@@ -551,13 +551,13 @@ module EntryHelper
     }
     links << menu_link(menu_label('inbox', '0'), {:action => 'inbox'}, {:accesskey => '0'})
     links << menu_link(menu_label('all', '1'), {:action => 'list'}, {:accesskey => '1'})
-    links << menu_link(menu_label('me', '3'), :action => 'list', :user => auth.name)
+    links << menu_link(menu_label('me', '3'), {:action => 'list', :user => auth.name}, {:accesskey => '3'})
     if !ctx.user_for or auth.name == ctx.user_for
       lists = user_lists(auth.name)
-      links << menu_link(menu_label('lists', '7'), :action => 'list', :list => u(v(lists.first, 'nickname'))) {
+      links << menu_link(menu_label('lists', '7'), {:action => 'list', :list => u(v(lists.first, 'nickname'))}, {:accesskey => '7'}) {
         !ctx.list
       }
-      links << menu_link(menu_label('rooms', '9'), :action => 'list', :room => '*') {
+      links << menu_link(menu_label('rooms', '9'), {:action => 'list', :room => '*'}, {:accesskey => '9'}) {
         ctx.room != '*'
       }
     end

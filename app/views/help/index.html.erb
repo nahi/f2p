@@ -18,15 +18,17 @@
 </ul>
 
 <h2>operation</h2>
+
+<p>Operation for each entry.</p>
 <ul>
   <li><%= icon_tag(:comment_add) %> ... add comment to the entry</li>
-  <li><%= icon_tag(:pin) %> ... pin this entry to [inbox] view</li>
-  <li><%= icon_tag(:pinned) %> ... unpin pinned entry and archive to [all]</li>
-  <li><%= submit_tag(:archive) %> ... archive all unpinned entries to [all]</li>
+  <li><%= icon_tag(:pin) %> ... pin the entry to [inbox] view</li>
+  <li><%= icon_tag(:pinned) %> ... unpin the entry and archive to [all]</li>
+  <li><%= submit_tag(:archive) %> ... archive all entries in [inbox] to [all] except pinned entries</li>
   <li><%= icon_tag(:like) %> ... add 'like'</li>
   <li><%= icon_tag(:star) %> ... delete 'like'</li>
   <li><%= icon_tag(:delete) %> ... delete the entry/comment</li>
-  <li><%= icon_tag(:reshare) %> ... reshare this entry</li>
+  <li><%= icon_tag(:reshare) %> ... reshare the entry</li>
 </ul>
 
 <h2>page menu</h2>
@@ -46,12 +48,12 @@
 <p>These filters are shown at the top of user profile page.</p>
 
 <ul>
-  <li>[self] ... show entries of this user</li>
-  <li>[friends] ... show entries of this user + his/her friends</li>
-  <li>[likes] ... show entries this user 'like'd</li>
-  <li>[comments] ... show entries this user commented</li>
-  <li>[liked] ... show entries of this user which is commented by other</li>
-  <li>[commented] ... show entries of this user which is commented or 'like'd</li>
+  <li>[self] ... show entries of the user</li>
+  <li>[friends] ... show entries of the user + his/her friends</li>
+  <li>[likes] ... show entries the user 'like'd</li>
+  <li>[comments] ... show entries the user commented</li>
+  <li>[liked] ... show entries of the user which is commented by other</li>
+  <li>[commented] ... show entries of the user which is commented or 'like'd</li>
 </ul>
 
 <h2>notation</h2>

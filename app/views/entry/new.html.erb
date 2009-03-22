@@ -16,7 +16,7 @@
     <%= submit_tag 'post' %>
   </p>
   <hr/>
-  <p>For posting with location info</p>
+  <p>For posting with location info:</p>
   <p>
   Address: <%= text_field_tag('title', @title) %> <%= submit_tag 'search' %><br/>
   geocoding language: '<%= h(setting.google_maps_geocoding_lang || 'ja') %>'<br/>
