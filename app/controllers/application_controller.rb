@@ -17,7 +17,7 @@ class ApplicationController < ActionController::Base
   # filter_parameter_logging :password
 
   def self.ff_client
-    @@ff ||= FriendFeed::APIClient.new(logger)
+    @@ff ||= FriendFeed::APIClient.new(logger, F2P::Config.friendfeed_api_key)
   end
 
   def self.ff_client=(ff_client)

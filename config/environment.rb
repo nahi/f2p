@@ -19,6 +19,7 @@ module F2P
       attr_accessor :google_maps_api_key
       attr_accessor :icon_url_base
 
+      attr_accessor :friendfeed_api_key
       attr_accessor :friendfeed_api_timeout
 
       attr_accessor :google_maps_maptype
@@ -96,7 +97,7 @@ Rails::Initializer.run do |config|
   config.action_controller.session = {
     :session_key => '_ff1_session',
     :secret      => 'cb8724bb405f34efcaea391cce2380850d80455f8d01de24a0d385a2452a8772ec7a71d765c85c321d17a1f6705d9cfc642c62c39b9be9594f05b49e8e22e6ae',
-    :expire_after => 2.weeks
+    :expire_after => 2 * 7 * 24 * 60 * 60 
   }
 
   # Use the database for sessions instead of the cookie-based default,
@@ -122,6 +123,8 @@ Rails::Initializer.run do |config|
   F2P::Config.icon_url_base = '/images/icons/'
 
   F2P::Config.friendfeed_api_timeout = 15
+  # don't touch this.  apikey needs to be private.
+  F2P::Config.friendfeed_api_key = nil
 
   F2P::Config.google_maps_maptype = 'mobile'
   F2P::Config.google_maps_zoom = 13

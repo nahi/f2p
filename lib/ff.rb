@@ -17,6 +17,7 @@ module FriendFeed
 
   class BaseClient
     attr_accessor :logger
+    attr_accessor :apikey
 
     class LShiftLogger
       def initialize(logger)
@@ -59,8 +60,9 @@ module FriendFeed
       end
     end
 
-    def initialize(logger = nil)
+    def initialize(logger = nil, apikey = nil)
       @logger = logger || NullLogger.new
+      @apikey = apikey
       @clients = {}
     end
 
@@ -93,6 +95,23 @@ module FriendFeed
       logger.info("elapsed: #{Time.now - start} [sec]")
       result
     end
+
+    def get_request(client, uri, query = {})
+      ext = { 'Accept-Encoding' => 'gzip' }
+      query = query.merge(:apikey => @apikey) if @apikey
+      res = client.get(uri, query, ext)
+      enc = res.header['content-encoding']
+      if enc and enc[0] and enc[0].downcase == 'gzip'
+        c = Zlib::GzipReader.wrap(StringIO.new(res.content)) { |gz| gz.read }
+        res.body.init_response(c)
+      end
+      res
+    end
+
+    def post_request(client, uri, query = {})
+      query = query.merge(:apikey => @apikey) if @apikey
+      client.post(uri, query)
+    end
   end
 
   class ChannelClient < BaseClient
@@ -101,14 +120,14 @@ module FriendFeed
     def get_token
       uri = uri("updates")
       query = { :format => 'json', :timeout => 0 }
-      JSON.parse(client.get(uri, query).content)['update']['token']
+      JSON.parse(get_request(client, uri, query).content)['update']['token']
     end
 
     def get_home_entries(name, remote_key, token, opt = {})
       uri = uri("updates/home")
       query = opt.merge(:token => token, :format => 'json')
       client_sync(uri, name, remote_key) do |client|
-        JSON.parse(client.get(uri, query).content)
+        JSON.parse(get_request(client, uri, query).content)
       end
     end
 
@@ -125,7 +144,7 @@ module FriendFeed
     def validate(name, remote_key)
       uri = uri('validate')
       client_sync(uri, name, remote_key) do |client|
-        client.get(uri).status == 200
+        get_request(client, uri).status == 200
       end
     end
 
@@ -142,14 +161,14 @@ module FriendFeed
     def get_profile(name, remote_key, user = nil)
       uri = uri("user/#{user || name}/profile")
       client_sync(uri, name, remote_key) do |client|
-        JSON.parse(client.get(uri).content)
+        JSON.parse(get_request(client, uri).content)
       end
     end
 
     def get_room_profile(name, remote_key, room)
       uri = uri("room/#{room}/profile")
       client_sync(uri, name, remote_key) do |client|
-        JSON.parse(client.get(uri).content)
+        JSON.parse(get_request(client, uri).content)
       end
     end
 
@@ -265,7 +284,7 @@ module FriendFeed
       end
       query['room'] = room if room
       client_sync(uri, name, remote_key) do |client|
-        res = client.post(uri, query)
+        res = post_request(client, uri, query)
         JSON.parse(res.content)['entries']
       end
     end
@@ -275,7 +294,7 @@ module FriendFeed
       query = { 'entry' => entry }
       query['undelete'] = 1 if undelete
       client_sync(uri, name, remote_key) do |client|
-        client.post(uri, query)
+        post_request(client, uri, query)
       end
     end
 
@@ -286,7 +305,7 @@ module FriendFeed
         'body' => body
       }
       client_sync(uri, name, remote_key) do |client|
-        res = client.post(uri, query)
+        res = post_request(client, uri, query)
         JSON.parse(res.content)
       end
     end
@@ -299,7 +318,7 @@ module FriendFeed
       }
       query['undelete'] = 1 if undelete
       client_sync(uri, name, remote_key) do |client|
-        client.post(uri, query)
+        post_request(client, uri, query)
       end
     end
 
@@ -307,7 +326,7 @@ module FriendFeed
       uri = uri("like")
       query = {'entry' => entry}
       client_sync(uri, name, remote_key) do |client|
-        client.post(uri, query)
+        post_request(client, uri, query)
       end
     end
 
@@ -315,7 +334,7 @@ module FriendFeed
       uri = uri("like/delete")
       query = {'entry' => entry}
       client_sync(uri, name, remote_key) do |client|
-        client.post(uri, query)
+        post_request(client, uri, query)
       end
     end
 
@@ -327,15 +346,8 @@ module FriendFeed
 
     def get_feed(client, uri, query = {})
       logger.info("getting entries with query: " + query.inspect)
-      ext = { 'Accept-Encoding' => 'gzip' }
-      res = client.get(uri, query, ext)
-      enc = res.header['content-encoding']
-      if enc and enc[0] and enc[0].downcase == 'gzip'
-        content = Zlib::GzipReader.wrap(StringIO.new(res.content)) { |gz| gz.read }
-      else
-        content = res.content
-      end
-      JSON.parse(content)['entries']
+      res = get_request(client, uri, query)
+      JSON.parse(res.content)['entries']
     end
   end
 end
