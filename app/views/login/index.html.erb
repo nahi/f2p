@@ -6,14 +6,15 @@
   <p>
     FriendFeed user nickname: <%= text_field_tag 'name' %><br/>
     Remote key(NOT A PASSWORD): <%= password_field_tag 'remote_key' %><br/>
-    Do NOT enter your FriendFeed PASSWORD here.  You can check <%= link_to('your remote key', 'https://friendfeed.com/account/api') %> by yourself.<br/>
+    Do NOT enter your FriendFeed PASSWORD here.  You can check <%= link_to('your remote key', 'https://friendfeed.com/account/api') %> from PC you are using for FriendFeed login.<br/>
     <%= submit_tag 'login' %>
   </p>
 <%- end -%>
 <hr/>
 <p>
-'f2p' is a FriendFeed web-based application for mobile users by NaHi.
-It's based on <a href="http://friendfeed.com/api/">FriendFeed API</a>.
+'f2p' is a web-based FriendFeed application for mobile users by NaHi.
+It's based on <a href="http://friendfeed.com/api/">FriendFeed API</a> but
+it's not formally affiliated with <a href="http://friendfeed.com">FriendFeed</a>.
 See <%= link_to(h('help page'), :controller => 'help', :action => 'index') %> to see what you can do.
 </p>
 <ul>
