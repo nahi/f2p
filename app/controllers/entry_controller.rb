@@ -211,6 +211,7 @@ class EntryController < ApplicationController
           :redirect_to => {:action => 'inbox'}
   def archive
     update_checked_modified
+    reset_pagination_ctx
     redirect_to_list
   end
 
@@ -363,6 +364,7 @@ class EntryController < ApplicationController
           session[:ctx].reset_for_new
         end
         flash[:added_id] = id
+        reset_pagination_ctx
         redirect_to_list
       else
         render :action => 'new'
@@ -525,13 +527,18 @@ private
   def restore_ctx
     if flash[:keep_ctx] and session[:ctx]
       ctx = session[:ctx]
-      ctx.reset_pagination(@setting)
     else
       ctx = EntryContext.new(auth)
       yield(ctx)
       session[:ctx] = ctx
     end
     ctx
+  end
+
+  def reset_pagination_ctx
+    if ctx = session[:ctx]
+      ctx.reset_pagination(@setting)
+    end
   end
 
   def redirect_to_list
