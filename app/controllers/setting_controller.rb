@@ -51,7 +51,8 @@ class SettingController < ApplicationController
       render :action => 'index'
     else
       flash[:message] = 'Settings updated.'
-      redirect_to :controller => 'entry', :action => 'inbox'
+      flash[:keep_ctx] = true
+      redirect_to_entry_list
     end
   end
 end

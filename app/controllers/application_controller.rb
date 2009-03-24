@@ -125,6 +125,16 @@ private
     end
   end
 
+  def redirect_to_entry_list(clear_eid = false)
+    if ctx = @ctx || session[:ctx]
+      ctx.eid = nil if clear_eid
+      flash[:keep_ctx] = true
+      redirect_to ctx.link_opt(:controller => 'entry')
+    else
+      redirect_to :controller => 'entry', :action => 'inbox'
+    end
+  end
+
   def commit_checked_modified(eid)
     if store = session[:checked]
       if e = store.find { |k, v| k == eid }

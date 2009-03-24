@@ -373,7 +373,6 @@ class EntryController < ApplicationController
       if opt[:body]
         id = Entry.create(opt)
         unpin_entry(reshared_from, false)
-        flash[:keep_ctx] = true
         if session[:ctx]
           session[:ctx].reset_for_new
         end
@@ -397,7 +396,6 @@ class EntryController < ApplicationController
     do_delete(id, comment, false)
     flash[:deleted_id] = id
     flash[:deleted_comment] = comment
-    flash[:keep_ctx] = true
     # redirect to list view (not single thread view) when an entry deleted.
     if !comment and (ctx = @ctx || session[:ctx])
       ctx.eid = nil
@@ -415,7 +413,6 @@ class EntryController < ApplicationController
     id = param(:id)
     comment = param(:comment)
     do_delete(id, comment, true)
-    flash[:keep_ctx] = true
     redirect_to_list
   end
 
@@ -434,7 +431,6 @@ class EntryController < ApplicationController
     end
     flash[:added_id] = id
     flash[:added_comment] = comment_id
-    flash[:keep_ctx] = true
     redirect_to_list
   end
 
@@ -449,7 +445,6 @@ class EntryController < ApplicationController
     if id
       Entry.add_like(create_opt(:id => id))
     end
-    flash[:keep_ctx] = true
     redirect_to_entry_or_list
   end
 
@@ -464,7 +459,6 @@ class EntryController < ApplicationController
     if id
       Entry.delete_like(create_opt(:id => id))
     end
-    flash[:keep_ctx] = true
     redirect_to_entry_or_list
   end
 
@@ -480,7 +474,6 @@ class EntryController < ApplicationController
       Entry.add_pin(create_opt(:id => id))
       clear_checked_modified(id)
     end
-    flash[:keep_ctx] = true
     redirect_to_entry_or_list
   end
 
@@ -493,7 +486,6 @@ class EntryController < ApplicationController
   def unpin
     id = param(:id)
     unpin_entry(id)
-    flash[:keep_ctx] = true
     redirect_to_list
   end
 
@@ -557,20 +549,11 @@ private
   end
 
   def redirect_to_list
-    if ctx = @ctx || session[:ctx]
-      ctx.eid = nil
-      redirect_to ctx.link_opt
-    else
-      redirect_to :action => 'inbox'
-    end
+    redirect_to_entry_list(true)
   end
 
   def redirect_to_entry_or_list
-    if ctx = @ctx || session[:ctx]
-      redirect_to ctx.link_opt
-    else
-      redirect_to :action => 'inbox'
-    end
+    redirect_to_entry_list(false)
   end
 
   def updated_expired(time)
