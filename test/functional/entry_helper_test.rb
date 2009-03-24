@@ -74,6 +74,15 @@ class EntryHelperTest < MyActionView::TestCaseWithController
     assert_nil(service_icon(service))
   end
 
+  test 'list_name' do
+    User.expects(:lists).with(:auth => auth, :user => 'user1').
+      returns([{'nickname' => 'n1', 'name' => 'name1'}, {'nickname' => 'n2', 'name' => 'name2'}]).times(1)
+    assert_equal('name1', list_name('n1'))
+    assert_equal('name1', list_name('n1'))
+    assert_equal('name2', list_name('n2'))
+    assert_equal(nil, list_name('n3'))
+  end
+
   test 'room_name' do
     Room.expects(:ff_name).with(:auth => auth, :room => 'nick').
       returns('name').times(1)
@@ -108,6 +117,13 @@ class EntryHelperTest < MyActionView::TestCaseWithController
       returns('name').times(1)
     assert_equal('name', user_name('nick'))
     assert_equal('name', user_name('nick'))
+  end
+
+  test 'user_status' do
+    User.expects(:status).with(:auth => auth, :user => 'nick').
+      returns('status').times(1)
+    assert_equal('status', user_status('nick'))
+    assert_equal('status', user_status('nick'))
   end
 
   test 'user_picture' do

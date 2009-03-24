@@ -7,6 +7,12 @@ class SettingControllerTest < ActionController::TestCase
     assert_response :success
   end
 
+  test 'login redirect' do
+    get :index
+    assert_redirected_to :controller => 'login', :action => 'index'
+    assert(!session[:redirect_to_after_authenticate].nil?)
+  end
+
   test 'update success' do
     login('user1')
     s = @request.session[:setting]

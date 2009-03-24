@@ -32,6 +32,8 @@ class ApplicationController < ActionController::Base
     @@http = http_client
   end
 
+private
+
   def http_client
     self.class.http_client
   end
@@ -39,8 +41,6 @@ class ApplicationController < ActionController::Base
   def auth
     @auth
   end
-
-private
 
   def login_required
     unless ensure_login
