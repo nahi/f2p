@@ -256,7 +256,7 @@ class EntryController < ApplicationController
       lang = @setting.google_maps_geocoding_lang || 'ja'
       @placemark = geocoder.reversesearch(@lat, @long, lang)
       if @placemark and !@placemark.ambiguous?
-        @address = @title = @placemark.address
+        @address = @placemark.address
       end
     end
   end
@@ -313,63 +313,49 @@ class EntryController < ApplicationController
     @address = param(:address)
     @zoom = (param(:zoom) || F2P::Config.google_maps_zoom).to_i
     @placemark = nil
-    case param(:commit)
-    when 'search'
-      if @title
-        lang = @setting.google_maps_geocoding_lang || 'ja'
-        if lang == 'ja'
-          geocoder = GoogleMaps::GeocodingJpGeocoder.new(http_client)
-        else
-          geocoder = GoogleMaps::GoogleGeocoder.new(http_client, F2P::Config.google_maps_api_key)
-        end
-        @placemark = geocoder.search(@title, lang)
-        if @placemark and !@placemark.ambiguous?
-          @address = @placemark.address
-          @lat = @placemark.lat
-          @long = @placemark.long
-        end
-      end
+    if param(:commit) == 'search'
+      do_location_search
       render :action => 'new'
-    else
-      opt = create_opt(:room => @ctx.room)
-      if @lat and @long and @address
-        generator = GoogleMaps::URLGenerator.new
-        image_url = generator.staticmap_url(F2P::Config.google_maps_maptype, @lat, @long, :zoom => @zoom, :width => F2P::Config.google_maps_width, :height => F2P::Config.google_maps_height)
-        image_link = generator.link_url(@lat, @long, @address)
-        (opt[:images] ||= []) << [image_url, image_link]
-        @body += " ([map] #{@address})"
-        if !@link and !file
-          opt[:link] = image_link
-        end
-      end
-      if @link
-        link_title ||= capture_title(@link)
-        opt[:body] = link_title
-        opt[:link] = @link
-        opt[:comment] = @body
-      elsif @body
-        opt[:body] = @body
-      end
-      if file
-        if !file.content_type or /\Aimage\//i !~ file.content_type
-          render :action => 'new'
-          return
-        end
-        (opt[:files] ||= []) << [file]
-      end
-      if opt[:body]
-        id = Entry.create(opt)
-        unpin_entry(reshared_from, false)
-        if session[:ctx]
-          session[:ctx].reset_for_new
-        end
-        flash[:added_id] = id
-        reset_pagination_ctx
-        redirect_to_list
-      else
-        render :action => 'new'
+      return
+    end
+    opt = create_opt(:room => @ctx.room)
+    if @lat and @long and @address
+      generator = GoogleMaps::URLGenerator.new
+      image_url = generator.staticmap_url(F2P::Config.google_maps_maptype, @lat, @long, :zoom => @zoom, :width => F2P::Config.google_maps_width, :height => F2P::Config.google_maps_height)
+      image_link = generator.link_url(@lat, @long, @address)
+      (opt[:images] ||= []) << [image_url, image_link]
+      @body += " ([map] #{@address})"
+      if !@link and !file
+        opt[:link] = image_link
       end
     end
+    if @link
+      link_title ||= capture_title(@link)
+      opt[:body] = link_title
+      opt[:link] = @link
+      opt[:comment] = @body
+    elsif @body
+      opt[:body] = @body
+    end
+    if file
+      if !file.content_type or /\Aimage\//i !~ file.content_type
+        render :action => 'new'
+        return
+      end
+      (opt[:files] ||= []) << [file]
+    end
+    unless opt[:body]
+      render :action => 'new'
+      return
+    end
+    id = Entry.create(opt)
+    unpin_entry(reshared_from, false)
+    if session[:ctx]
+      session[:ctx].reset_for_new
+    end
+    flash[:added_id] = id
+      reset_pagination_ctx
+    redirect_to_list
   end
 
   verify :only => :delete,
@@ -552,6 +538,26 @@ private
   def updated_expired(time)
     if session[:last_updated]
       time - session[:last_updated] > F2P::Config.updated_expiration
+    end
+  end
+
+  def do_location_search
+    if @title
+      lang = @setting.google_maps_geocoding_lang || 'ja'
+      if lang == 'ja'
+        geocoder = GoogleMaps::GeocodingJpGeocoder.new(http_client)
+      else
+        geocoder = GoogleMaps::GoogleGeocoder.new(http_client, F2P::Config.google_maps_api_key)
+      end
+      @placemark = geocoder.search(@title, lang)
+      if @placemark and !@placemark.ambiguous?
+        @address = @placemark.address
+        @lat = @placemark.lat
+        @long = @placemark.long
+      end
+    end
+    if @placemark.nil? and @address and @lat and @long
+      @placemark = GoogleMaps::Point.new(@address, @lat, @long)
     end
   end
 end

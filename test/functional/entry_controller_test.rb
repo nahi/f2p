@@ -312,6 +312,7 @@ class EntryControllerTest < ActionController::TestCase
     mobile = mock('request.mobile')
     position = mock('request.mobile.position')
     @request.stubs(:mobile).returns(mobile)
+    mobile.stubs(:supports_cookie?).returns(true)
     mobile.expects(:position).returns(position)
     position.expects(:lat).returns(35.01)
     position.expects(:lon).returns(135.693222222)
@@ -380,6 +381,12 @@ class EntryControllerTest < ActionController::TestCase
       returns(read_fixture('google_geocoder_tokyo_sta.json'))
     @setting.google_maps_geocoding_lang = 'en'
     post :add, :commit => 'search', :title => 'address'
+    assert_response :success
+  end
+
+  test 'add search lat long' do
+    login('user1')
+    post :add, :commit => 'search', :address => 'addredd', :lat => 35.0, :long => 136.0
     assert_response :success
   end
 
@@ -535,13 +542,13 @@ class EntryControllerTest < ActionController::TestCase
     assert_redirected_to :action => 'list'
     assert_equal(20, session[:ctx].start)
     #
-    # reset pagination
+    # no reset pagination
     #
     @ff.expects(:get_home_entries).
       returns(read_entries('entries', 'f2ptest')).times(1)
     get :list
     assert_response :success
-    assert_equal(0, session[:ctx].start)
+    assert_equal(20, session[:ctx].start)
   end
 
   test 'undelete' do
