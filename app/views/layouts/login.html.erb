@@ -2,13 +2,8 @@
   <head>
     <title><%= appname %> login</title>
     <%= stylesheet_link_tag 'f2p' %>
-    <style type="text/css">
-      body {
-        font-size: <%= h(setting.font_size) %>pt;
-      }
-    </style>
   </head>
-  <body>
+  <body style="font-size: <%= h(setting.font_size) %>pt;">
     <%= yield %>
   </body>
 </html>

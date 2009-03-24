@@ -21,8 +21,8 @@
   Address: <%= text_field_tag('title', @title) %> <%= submit_tag 'search' %><br/>
   geocoding language: '<%= h(setting.google_maps_geocoding_lang || 'ja') %>'<br/>
   zoom: <%= zoom_select_tag('zoom', @zoom) %><br/>
-  <%- if setting.mobile_gps_type -%>
-    get GPS data: <%= gps_info_link %>
+  <%- if gps_link = gps_link(:action => 'new') -%>
+  get GPS data: <%= gps_link %>
   <%- end -%>
   </p>
   <%- if @placemark -%>

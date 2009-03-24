@@ -303,31 +303,22 @@ class EntryControllerTest < ActionController::TestCase
     assert_response :success
   end
 
-  test 'new with gps ezweb' do
+  test 'new with gps' do
     login('user1')
     @ff.expects(:get_profile).
       returns(read_profile('profile')).times(1)
     h = mock('http_client')
     ApplicationController.http_client = h
+    mobile = mock('request.mobile')
+    position = mock('request.mobile.position')
+    @request.stubs(:mobile).returns(mobile)
+    mobile.expects(:position).returns(position)
+    position.expects(:lat).returns(35.01)
+    position.expects(:lon).returns(135.693222222)
     h.expects(:get_content).
-      with('http://maps.google.com/maps/geo', {'oe' => 'utf-8', 'll' => '35.01,135.693222222222', 'hl' => 'ja', 'output' => 'json', 'key' => ''}).
+      with('http://maps.google.com/maps/geo', {'oe' => 'utf-8', 'll' => '35.01,135.693222222', 'hl' => 'ja', 'output' => 'json', 'key' => ''}).
       returns(read_fixture('google_geocoder_tokyo_sta.json'))
-    @setting.mobile_gps_type = 'ezweb'
     get :new, :lat => '+35.00.36.00', :lon => '+135.41.35.600'
-    assert_response :success
-  end
-
-  test 'new with gps willcom' do
-    login('user1')
-    @ff.expects(:get_profile).
-      returns(read_profile('profile')).times(1)
-    h = mock('http_client')
-    ApplicationController.http_client = h
-    h.expects(:get_content).
-      with('http://maps.google.com/maps/geo', {'oe' => 'utf-8', 'll' => '35.7425416666667,135.375866944444', 'hl' => 'ja', 'output' => 'json', 'key' => ''}).
-      returns(read_fixture('google_geocoder_tokyo_sta.json'))
-    @setting.mobile_gps_type = 'SoftBank3G'
-    get :new, :pos => 'N35.44.33.150E135.22.33.121'
     assert_response :success
   end
 

@@ -243,24 +243,10 @@ class EntryController < ApplicationController
     @long = param(:long)
     @address = param(:address)
     @zoom = (param(:zoom) || F2P::Config.google_maps_zoom).to_i
-    case @setting.mobile_gps_type
-    when 'ezweb', 'gpsone', 'DoCoMoFOMA' 
-      if param(:lat) and param(:lon)
-        @lat = calc_geo(@lat)
-        @long = calc_geo(param(:lon))
-      end
-    when 'DoCoMomova','SoftBank3G','WILLCOM'
-      if /\A([NS])([0-9\.]+)([EW])([0-9\.]+)\Z/ =~ param(:pos)
-        if $1 == 'N'
-          @lat = calc_geo($2)
-        else
-          @lat = calc_geo('-' + $2)
-        end
-        if $3 == 'E'
-          @long = calc_geo($4)
-        else
-          @long = calc_geo('-' + $4)
-        end
+    if request.respond_to?(:mobile) and request.mobile
+      if pos = request.mobile.position
+        @lat = pos.lat.to_s
+        @long = pos.lon.to_s
       end
     end
     @placemark = nil
@@ -559,21 +545,6 @@ private
   def updated_expired(time)
     if session[:last_updated]
       time - session[:last_updated] > F2P::Config.updated_expiration
-    end
-  end
-
-  def calc_geo(m_s_sss)
-    sign = ""
-    if /([-\+])?(\d{1,3})\.(\d{1,2})\.(\d{1,2})\.(\d{1,3})/ =~ m_s_sss then
-      sign = $1
-      m_s_sss = (((($5.to_f/1000) + $4.to_f)/60 + $3.to_f)/60 + $2.to_f)
-      if sign == "-" then
-        (m_s_sss * -1 ).to_s
-      else
-        m_s_sss.to_s
-      end
-    else
-      m_s_sss
     end
   end
 end

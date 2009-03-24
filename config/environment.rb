@@ -41,9 +41,6 @@ module F2P
       attr_accessor :max_friend_list_num
       attr_accessor :max_skip_empty_inbox_pages
       attr_accessor :twitter_comment_hack
-
-      # nil or type String; Setting::MOBILE_GPS_TYPE
-      attr_accessor :mobile_gps_type
     end
   end
 end
@@ -145,5 +142,4 @@ Rails::Initializer.run do |config|
   F2P::Config.max_friend_list_num = 50
   F2P::Config.max_skip_empty_inbox_pages = 2
   F2P::Config.twitter_comment_hack = false
-  F2P::Config.mobile_gps_type = nil
 end
