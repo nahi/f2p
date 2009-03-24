@@ -16,6 +16,11 @@ class ApplicationController < ActionController::Base
   # from your application log (in this case, all fields with names like "password"). 
   # filter_parameter_logging :password
 
+  # use URL rewriting feature if jpmobile plugin exists.
+  if self.respond_to?(:trans_sid)
+    trans_sid
+  end
+
   def self.ff_client
     @@ff ||= FriendFeed::APIClient.new(logger, F2P::Config.friendfeed_api_key)
   end

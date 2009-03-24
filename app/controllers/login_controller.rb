@@ -4,7 +4,6 @@ require 'httpclient'
 class LoginController < ApplicationController
   after_filter :strip_heading_spaces
   after_filter :compress
-  trans_sid
 
   filter_parameter_logging :remote_key
 
