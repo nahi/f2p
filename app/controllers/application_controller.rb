@@ -44,6 +44,9 @@ private
 
   def login_required
     unless ensure_login
+      if request.method == :get
+        session[:redirect_to_after_authenticate] = request.parameters
+      end
       redirect_to :controller => 'login', :action => 'index'
     end
   end

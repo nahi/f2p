@@ -26,7 +26,12 @@ class LoginController < ApplicationController
       remote_key = param(:remote_key)
       if user = User.validate(name, remote_key)
         set_user(user)
-        redirect_to :controller => 'entry'
+        if params = session[:redirect_to_after_authenticate]
+          session[:redirect_to_after_authenticate] = nil
+          redirect_to url_for(params)
+        else
+          redirect_to :controller => 'entry'
+        end
         return
       end
     end
