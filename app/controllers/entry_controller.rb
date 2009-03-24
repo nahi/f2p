@@ -5,6 +5,7 @@ class EntryController < ApplicationController
   before_filter :login_required
   after_filter :strip_heading_spaces
   after_filter :compress
+  trans_sid
 
   class EntryContext
     attr_accessor :eid
