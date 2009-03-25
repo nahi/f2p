@@ -560,6 +560,8 @@ module EntryHelper
 
   def member_links(room)
     members = room_members(room)
+    me, rest = members.partition { |e| v(e, 'nickname') == auth.name }
+    members = me + rest
     links_if_exists("(#{members.size} members) ", members, F2P::Config.max_friend_list_num) { |e|
       label = "[#{v(e, 'name')}]"
       nickname = v(e, 'nickname')
