@@ -18,6 +18,7 @@ module FriendFeed
   class BaseClient
     attr_accessor :logger
     attr_accessor :apikey
+    attr_accessor :http_proxy
 
     class LShiftLogger
       def initialize(logger)
@@ -34,8 +35,8 @@ module FriendFeed
     end
 
     class UserClient
-      def initialize(name, remote_key, logger)
-        @client = HTTPClient.new
+      def initialize(name, remote_key, logger, http_proxy)
+        @client = HTTPClient.new(http_proxy)
         @name = name
         @remote_key = remote_key
         #@client.debug_dev = LShiftLogger.new(logger)
@@ -63,13 +64,14 @@ module FriendFeed
     def initialize(logger = nil, apikey = nil)
       @logger = logger || NullLogger.new
       @apikey = apikey
+      @http_proxy = nil
       @clients = {}
     end
 
   private
 
     def create_client(name, remote_key)
-      UserClient.new(name, remote_key, @logger)
+      UserClient.new(name, remote_key, @logger, @http_proxy)
     end
 
     def client_sync(uri, name, remote_key)

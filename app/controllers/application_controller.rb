@@ -21,20 +21,30 @@ class ApplicationController < ActionController::Base
     trans_sid
   end
 
-  def self.ff_client
-    @@ff ||= FriendFeed::APIClient.new(logger, F2P::Config.friendfeed_api_key)
-  end
+  class << self
+    def ff_client
+      @@ff ||= create_ff_client(logger)
+    end
 
-  def self.ff_client=(ff_client)
-    @@ff = ff_client
-  end
+    def ff_client=(ff_client)
+      @@ff = ff_client
+    end
 
-  def self.http_client
-    @@http ||= HTTPClient.new
-  end
+    def http_client
+      @@http ||= HTTPClient.new(F2P::Config.http_proxy)
+    end
 
-  def self.http_client=(http_client)
-    @@http = http_client
+    def http_client=(http_client)
+      @@http = http_client
+    end
+
+  private
+
+    def create_ff_client(logger)
+      ff = FriendFeed::APIClient.new(logger, F2P::Config.friendfeed_api_key)
+      ff.http_proxy = F2P::Config.http_proxy
+      ff
+    end
   end
 
 private
