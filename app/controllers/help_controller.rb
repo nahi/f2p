@@ -3,6 +3,6 @@ class HelpController < ApplicationController
   after_filter :compress
 
   def index
-    @setting = Setting.new
+    @setting = session[:setting] ||= Setting.new
   end
 end
