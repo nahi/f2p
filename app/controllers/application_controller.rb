@@ -98,14 +98,7 @@ private
   def ensure_login
     @user_id ||= session[:user_id]
     @setting = session[:setting] ||= Setting.new
-    if @user_id
-      begin
-        @auth = User.find(@user_id)
-      rescue Exception
-        logger.warn($!)
-        @auth = nil
-      end
-    end
+    @auth = User.find(@user_id) if @user_id
     auth
   end
 
