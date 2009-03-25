@@ -1,0 +1,36 @@
+[
+  {
+    "comments": [
+
+    ],
+    "title": "\u306d\u3080\u3044",
+    "published": "2009-03-24T23:38:50Z",
+    "service": {
+      "name": "brightkite.com",
+      "iconUrl": "http:\/\/friendfeed.com\/static\/images\/icons\/brightkite.png?v=5e24d43ca46845c0063a9e4bdf9d6377",
+      "id": "brightkite",
+      "profileUrl": "http:\/\/brightkite.com\/people\/shugo"
+    },
+    "anonymous": false,
+    "id": "6ca71af6-118a-9d03-eb0e-921b2d2d5ce7",
+    "geo": {
+      "lat": 35.47357,
+      "long": 133.068686
+    },
+    "media": [
+
+    ],
+    "link": "http:\/\/brightkite.com\/objects\/ed63b34a18cc11debfa0003048c0801e",
+    "user": {
+      "name": "Shugo Maeda",
+      "nickname": "shugomaeda",
+      "id": "3daf0ffc-ae24-11dd-b005-003048678d04",
+      "profileUrl": "http:\/\/friendfeed.com\/shugomaeda"
+    },
+    "updated": "2009-03-24T23:38:50Z",
+    "hidden": false,
+    "likes": [
+
+    ]
+  }
+]

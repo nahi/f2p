@@ -1,0 +1,31 @@
+[
+  {
+    "comments": [
+    ],
+    "title": "foo bar",
+    "published": "2009-03-21T05:46:04Z",
+    "service": {
+      "name": "Twitter",
+      "iconUrl": "http:\/\/friendfeed.com\/static\/images\/icons\/twitter.png?v=df0a0affa8100c494df42159627a38b0",
+      "id": "twitter",
+      "profileUrl": "http:\/\/twitter.com\/foo"
+    },
+    "anonymous": false,
+    "id": "id1",
+    "media": [
+
+    ],
+    "link": "http:\/\/twitter.com\/foo\/statuses\/1364788540",
+    "user": {
+      "name": "foobar bazqux",
+      "nickname": "foobar",
+      "id": "id2",
+      "profileUrl": "http:\/\/friendfeed.com\/foobar"
+    },
+    "updated": "2009-03-21T05:46:04Z",
+    "hidden": false,
+    "likes": [
+
+    ]
+  }
+]

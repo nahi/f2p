@@ -283,4 +283,30 @@ class EntryHelperTest < MyActionView::TestCaseWithController
     entry['service']['id'] = 'not twitter'
     assert_nil(twitter_username(entry))
   end
+
+  test 'pin_link' do
+    entry = read_entries('entries', 'twitter')[0]
+    ctx.inbox = true
+    assert_match(/anchor.png/, pin_link(entry))
+    entry.view_pinned = true
+    assert_match(/tick.png/, pin_link(entry))
+  end
+
+  test 'icon' do
+    entry = read_entries('entries', 'twitter')[0]
+    assert_match(/\?service=twitter/, icon(entry))
+    entry['room'] = Room['nickname' => 'n1']
+    assert_match(/\?room=n1&amp;service=twitter/, icon(entry))
+  end
+
+  test 'content brightkite' do
+    entry = read_entries('entries', 'brightkite')[0]
+    assert_match(/maps.google.com\/staticmap/, content(entry))
+  end
+
+  test 'content tumblr' do
+    entry = read_entries('entries', 'tumblr')[0]
+    ctx.fold = true
+    assert_match(/add.png/, content(entry))
+  end
 end

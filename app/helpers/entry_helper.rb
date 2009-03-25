@@ -40,12 +40,28 @@ module EntryHelper
     @ctx
   end
 
+  def link_action(action, opt = {})
+    { :controller => 'entry', :action => action }.merge(opt)
+  end
+
+  def link_list(opt = {})
+    link_action('list', opt)
+  end
+
+  def link_show(id)
+    link_action('show', :id => u(id))
+  end
+
+  def link_user(user, opt = {})
+    link_list(opt.merge(:user => user))
+  end
+
   def pin_link(entry)
     if ctx.inbox or ctx.single? or entry.view_pinned
       if entry.view_pinned
-        link_to(icon_tag(:pinned, 'unpin'), :action => 'unpin', :id => entry.id)
+        link_to(icon_tag(:pinned, 'unpin'), link_action('unpin', :id => entry.id))
       else
-        link_to(icon_tag(:pin), :action => 'pin', :id => entry.id)
+        link_to(icon_tag(:pin), link_action('pin', :id => entry.id))
       end
     end
   end
@@ -59,19 +75,12 @@ module EntryHelper
     if entry.room
       room = entry.room.nickname
     end
-    opt = {
-      :controller => 'entry',
-      :action => 'list',
-      :user => u(user),
-      :room => u(room),
-      :service => u(service_id)
-    }
-    service_icon(v(entry, 'service'), opt)
+    service_icon(v(entry, 'service'), link_user(user, :room => u(room), :service => u(service_id)))
   end
 
   def media_tag(entry, url, *rest)
     if entry and ctx.list? and !setting.list_view_media_rendering
-      link_to(icon_tag(:media_disabled) + '[media disabled by setting]', :action => 'show', :id => u(entry.id))
+      link_to(icon_tag(:media_disabled) + '[media disabled by setting]', link_show(entry.id))
     else
       image_tag(url, *rest)
     end
@@ -99,7 +108,7 @@ module EntryHelper
       fold, str, links = escape_text(title, ctx.fold ? setting.text_folding_size : nil)
       entry[VIEW_LINKS_TAG] = links
       if fold
-        str += link_to(icon_tag(:more), :action => 'show', :id => u(entry.id))
+        str += link_to(icon_tag(:more), link_show(entry.id))
       end
       content = q(str)
     end
@@ -229,7 +238,7 @@ module EntryHelper
     }.join(' ')
     if medias.size != display.size
       msg = " (#{medias.size - display.size} more images)"
-      str += link_to(icon_tag(:more), :action => 'show', :id => u(entry.id)) + h(msg)
+      str += link_to(icon_tag(:more), link_show(entry.id)) + h(msg)
     end
     str
   end
@@ -283,7 +292,7 @@ module EntryHelper
     title = entry.title
     fold = fold_length(title, setting.text_folding_size - 3)
     if ctx.fold and entry.medias.empty? and fold != title
-      link_content(fold + '...', entry) + link_to(icon_tag(:more), :action => 'show', :id => u(entry.id))
+      link_content(fold + '...', entry) + link_to(icon_tag(:more), link_show(entry.id))
     else
       common
     end
@@ -352,7 +361,7 @@ module EntryHelper
     likes = me + rest
     if !likes.empty?
       if liked?(entry)
-        icon = link_to(icon_tag(:star, 'unlike'), :action => 'unlike', :id => u(entry.id))
+        icon = link_to(icon_tag(:star, 'unlike'), link_action('unlike', :id => u(entry.id)))
       else
         icon = icon_tag(:star)
       end
@@ -360,7 +369,7 @@ module EntryHelper
       if likes.size > max + 1
         msg = "... #{likes.size - max} more likes"
         icon + likes[0, max].collect { |like| user(like) }.join(' ') + ' ' +
-          (compact ? link_to(h(msg), :action => 'show', :id => u(entry.id)) : h(msg))
+          (compact ? link_to(h(msg), link_show(entry.id)) : h(msg))
       else
         icon + "#{likes.size.to_s}(#{likes.collect { |like| user(like) }.join(' ')})"
       end
@@ -369,7 +378,7 @@ module EntryHelper
 
   def comments(entry, compact)
     unless entry.comments.empty?
-      link_to(icon_tag(:comment) + h(entry.comments.size.to_s), :action => 'show', :id => u(entry.id))
+      link_to(icon_tag(:comment) + h(entry.comments.size.to_s), link_show(entry.id))
     end
   end
 
@@ -403,7 +412,7 @@ module EntryHelper
             name = self_label
           end
           name += "(#{tw_name})"
-          return link_to(h(name), :controller => 'entry', :action => 'list', :user => u(nickname))
+          return link_to(h(name), link_user(nickname))
         end
       end
     end
@@ -418,7 +427,7 @@ module EntryHelper
     fold, str, links = escape_text(comment.body, ctx.fold ? setting.text_folding_size : nil)
     comment[VIEW_LINKS_TAG] = links
     if fold
-      str += link_to(icon_tag(:more), :action => 'show', :id => u(comment.entry.id))
+      str += link_to(icon_tag(:more), link_show(comment.entry.id))
     end
     str
   end
@@ -466,15 +475,15 @@ module EntryHelper
 
   def fold_comment_link(fold)
     msg = " (#{fold.fold_entries} more comments)"
-    link_to(icon_tag(:more), :action => 'show', :id => u(fold.entry_id)) + h(msg)
+    link_to(icon_tag(:more), link_show(fold.entry_id)) + h(msg)
   end
 
   def write_new_link
-    link_to(icon_tag(:write), :controller => 'entry', :action => 'new', :room => u(ctx.room_for))
+    link_to(icon_tag(:write), link_action('new', :room => u(ctx.room_for)))
   end
 
   def search_link
-    link_to(icon_tag(:search), search_opt(:controller => 'entry', :action => 'search'))
+    link_to(icon_tag(:search), search_opt(link_action('search')))
   end
 
   def service_links(user)
@@ -488,7 +497,7 @@ module EntryHelper
       if ctx.service == id
         h(label)
       else
-        link_to(h(label), list_opt(:action => 'list', :user => u(user), :service => u(id)))
+        link_to(h(label), list_opt(link_user(user, :service => u(id))))
       end
     }
   end
@@ -502,7 +511,7 @@ module EntryHelper
       if ctx.list == nickname
         h(label)
       else
-        link_to(h(label), list_opt(:action => 'list', :list => u(nickname)))
+        link_to(h(label), link_list(:list => u(nickname)))
       end
     }
   end
@@ -525,7 +534,7 @@ module EntryHelper
     links_if_exists('rooms: ', rooms) { |e|
       label = "[#{v(e, 'name')}]"
       nickname = v(e, 'nickname')
-      link_to(h(label), list_opt(:action => 'list', :room => u(nickname)))
+      link_to(h(label), link_list(:room => u(nickname)))
     }
   end
 
@@ -535,7 +544,7 @@ module EntryHelper
     links_if_exists("#{users.size} subscriptions: ", users, F2P::Config.max_friend_list_num) { |e|
       nickname = v(e, 'nickname')
       label = "[#{v(e, 'name')}]"
-      link_to(h(label), list_opt(:action => 'list', :user => u(nickname)))
+      link_to(h(label), link_user(nickname))
     }
   end
 
@@ -545,7 +554,7 @@ module EntryHelper
     links_if_exists("#{users.size} imaginary friends: ", users, F2P::Config.max_friend_list_num) { |e|
       user_id = v(e, 'id')
       label = "<#{v(e, 'name')}>"
-      link_to(h(label), list_opt(:action => 'list', :user => u(user_id)))
+      link_to(h(label), link_user(user_id))
     }
   end
 
@@ -555,7 +564,7 @@ module EntryHelper
       label = "[#{v(e, 'name')}]"
       nickname = v(e, 'nickname')
       if nickname
-        link_to(h(label), list_opt(:action => 'list', :user => u(nickname)))
+        link_to(h(label), link_user(nickname))
       end
     }
   end
@@ -584,43 +593,43 @@ module EntryHelper
     links << menu_link(icon_tag(:previous), list_opt(ctx.link_opt(:start => start - num, :num => num)), :accesskey => '4') {
       !no_page and start - num >= 0
     }
-    links << menu_link(menu_label('inbox', '0'), {:action => 'inbox'}, {:accesskey => '0'})
-    links << menu_link(menu_label('all', '1'), {:action => 'list'}, {:accesskey => '1'})
-    links << menu_link(menu_label('me', '3'), {:action => 'list', :user => auth.name}, {:accesskey => '3'})
-    links << menu_link(menu_label('lists', '7'), {:action => 'list', :list => u(v(user_lists(auth.name).first, 'nickname'))}, {:accesskey => '7'}) {
+    links << menu_link(menu_label('inbox', '0'), link_action('inbox'), :accesskey => '0')
+    links << menu_link(menu_label('all', '1'), link_list(), :accesskey => '1')
+    links << menu_link(menu_label('me', '3'), link_user(auth.name), :accesskey => '3')
+    links << menu_link(menu_label('lists', '7'), link_list(:list => u(v(user_lists(auth.name).first, 'nickname'))), :accesskey => '7') {
       !ctx.list
     }
-    links << menu_link(menu_label('rooms', '9'), {:action => 'list', :room => '*'}, {:accesskey => '9'}) {
+    links << menu_link(menu_label('rooms', '9'), link_list(:room => '*'), :accesskey => '9') {
       ctx.room != '*'
     }
     links << menu_link(icon_tag(:next), list_opt(ctx.link_opt(:start => start + num, :num => num)), :accesskey => '6') { !no_page }
     str = links.join(' ')
     if ctx.inbox
-      str += button_to('archive', :action => 'archive')
+      str += button_to('archive', link_action('archive'))
     end
     str
   end
 
   def user_page_links(user)
     links = []
-    links << menu_link(menu_label("self"), :action => 'list', :user => user) {
+    links << menu_link(menu_label("self"), link_user(user)) {
       ctx.friends or ctx.like or ctx.comment
     }
     if user_id(user) != user
-      links << menu_link(menu_label('friends'), :action => 'list', :friends => user) {
+      links << menu_link(menu_label('friends'), link_list(:friends => user)) {
         !ctx.friends
       }
-      links << menu_link(menu_label('likes'), :action => 'list', :like => 'likes', :user => ctx.user_for) {
+      links << menu_link(menu_label('likes'), link_list(:like => 'likes', :user => ctx.user_for)) {
         ctx.like != 'likes'
       }
-      links << menu_link(menu_label('comments'), :action => 'list', :comment => 'comments', :user => ctx.user_for) {
+      links << menu_link(menu_label('comments'), link_list(:comment => 'comments', :user => ctx.user_for)) {
         ctx.comment != 'comments'
       }
     end
-    links << menu_link(menu_label('liked'), :action => 'list', :like => 'liked', :user => ctx.user_for) {
+    links << menu_link(menu_label('liked'), link_list(:like => 'liked', :user => ctx.user_for)) {
       ctx.like != 'liked'
     }
-    links << menu_link(menu_label('commented'), :action => 'list', :comment => 'commented', :user => ctx.user_for) {
+    links << menu_link(menu_label('commented'), link_list(:comment => 'commented', :user => ctx.user_for)) {
       ctx.comment != 'commented'
     }
     'filter: ' + links.join(' ')
@@ -642,7 +651,7 @@ module EntryHelper
   end
 
   def post_comment_link(entry)
-    link_to(icon_tag(:comment_add, 'comment'), :action => 'show', :id => u(entry.id))
+    link_to(icon_tag(:comment_add, 'comment'), link_show(entry.id))
   end
 
   def url_link(entry)
@@ -662,33 +671,33 @@ module EntryHelper
 
   def url_link_to(link)
     if link and ctx.link != link
-      link_to(icon_tag(:url, 'related'), :action => 'list', :link => link)
+      link_to(icon_tag(:url, 'related'), link_list(:link => link))
     end
   end
 
   def delete_link(entry)
     if ctx.single? and entry.nickname == auth.name
-      link_to(icon_tag(:delete), {:action => 'delete', :id => u(entry.id)}, :confirm => 'Are you sure?')
+      link_to(icon_tag(:delete), link_action('delete', :id => u(entry.id)), :confirm => 'Are you sure?')
     end
   end
 
   def undo_delete_link(id, comment)
-    link_to(h('Deleted.  UNDO?'), :action => 'undelete', :id => u(id), :comment => u(comment))
+    link_to(h('Deleted.  UNDO?'), link_action('undelete', :id => u(id), :comment => u(comment)))
   end
 
   def undo_add_link(id)
-    link_to(h('Added.  UNDO?'), :action => 'delete', :id => u(id))
+    link_to(h('Added.  UNDO?'), link_action('delete', :id => u(id)))
   end
 
   def undo_add_comment_link(id, comment)
-    link_to(h('Added.  UNDO?'), :action => 'delete', :id => u(id), :comment => u(comment))
+    link_to(h('Added.  UNDO?'), link_action('delete', :id => u(id), :comment => u(comment)))
   end
 
   def delete_comment_link(comment)
     if ctx.single?
       cid = v(comment, 'id')
       if comment.nickname == auth.name or auth.name == comment.entry.nickname
-        link_to(icon_tag(:delete), {:action => 'delete', :id => u(comment.entry.id), :comment => u(cid)}, :confirm => 'Are you sure?')
+        link_to(icon_tag(:delete), link_action('delete', :id => u(comment.entry.id), :comment => u(cid)), :confirm => 'Are you sure?')
       end
     end
   end
@@ -696,7 +705,7 @@ module EntryHelper
   def like_link(entry)
     if entry.nickname != auth.name or (entry.room and entry.service_id != 'internal')
       unless liked?(entry)
-        link_to(icon_tag(:like), :action => 'like', :id => u(entry.id))
+        link_to(icon_tag(:like), link_action('like', :id => u(entry.id)))
       end
     end
   end
@@ -704,11 +713,7 @@ module EntryHelper
   def reshare_link(entry)
     if (ctx.inbox or ctx.single? or entry.view_pinned) and
         entry.link and entry.nickname != auth.name
-      opt = {
-        :action => 'reshare',
-        :eid => u(entry.id),
-      }
-      link_to(icon_tag(:reshare), opt)
+      link_to(icon_tag(:reshare), link_action('reshare', :eid => u(entry.id)))
     end
   end
 
