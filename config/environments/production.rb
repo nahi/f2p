@@ -5,14 +5,14 @@
 config.cache_classes = true
 
 # Enable threaded mode
-# config.threadsafe!
+config.threadsafe!
 
 # Use a different logger for distributed setups
 # config.logger = SyslogLogger.new
 class F2pLogFormatter
   def call(severity, datetime, progname, msg)
-    datetime.strftime("#{severity[0, 1]},%H:%M:%S.") +
-      "%06d #{msg}\n" % datetime.usec
+    datetime.strftime("#{severity[0, 1]},[%H:%M:%S.") +
+      "%06d] #{msg}\n" % datetime.usec
   end
 end
 config.logger = Logger.new(config.log_path, 'daily')

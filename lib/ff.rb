@@ -54,6 +54,10 @@ module FriendFeed
         end
       end
 
+      def inspect
+        sprintf("#<%s:0x%x>", self.class.name, object_id)
+      end
+
     private
 
       def reset_auth
@@ -77,7 +81,7 @@ module FriendFeed
     def client_sync(uri, name, remote_key)
       user_client = @clients[name] ||= create_client(name, remote_key)
       client = user_client.client(remote_key)
-      logger.info("#{self.class} is accessing to #{uri.to_s} with client #{client.object_id} for #{name}")
+      logger.info("#{user_client.inspect} is accessing to #{uri.to_s} for #{name}")
       httpclient_protect do
         client.www_auth.basic_auth.challenge(uri, true)
         yield(client)
@@ -94,7 +98,7 @@ module FriendFeed
       rescue HTTPClient::TimeoutError => e
         logger.error(e)
       end
-      logger.info("elapsed: #{Time.now - start} [sec]")
+      logger.info("elapsed: #{((Time.now - start) * 1000).to_i}ms")
       result
     end
 
