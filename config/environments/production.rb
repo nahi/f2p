@@ -9,6 +9,15 @@ config.cache_classes = true
 
 # Use a different logger for distributed setups
 # config.logger = SyslogLogger.new
+class F2pLogFormatter
+  def call(severity, datetime, progname, msg)
+    datetime.strftime("#{severity[0, 1]},%H:%M:%S.") +
+      "%06d #{msg}\n" % datetime.usec
+  end
+end
+config.logger = Logger.new(config.log_path, 'daily')
+config.logger.level = Logger::INFO
+config.logger.formatter = F2pLogFormatter.new
 
 # Full error reports are disabled and caching is turned on
 config.action_controller.consider_all_requests_local = false
