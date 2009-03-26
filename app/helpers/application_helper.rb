@@ -37,6 +37,40 @@ module ApplicationHelper
     'help' => 'help.png',
   }
 
+  # TODO: uglish; how to prepare common partial layout?
+  def inline_stylesheet
+    <<__EOS__
+<style type="text/css">
+  h1 { font-size: 110%; }
+  h2 { font-size: 105%; }
+  a img { border: none; }
+  p.message { color: red; }
+  .latest1 { color: #F00; }
+  .latest2 { color: #C00; }
+  .latest3 { color: #900; }
+  .older { color: #008; }
+  .comment { color: #333; }
+  .inbox { font-weight: bold; }
+  div.listings .thread1 {
+    background-color: #EEE;
+    padding-bottom: 0.8ex;
+  }
+  div.listings .thread2 {
+    padding-bottom: 0.8ex;
+  }
+  div.listings ul {
+    list-style-type: none;
+    margin-top: 0pt;
+    margin-bottom: 0pt; /*0.8ex;*/
+  }
+  div.listings p {
+    margin-top: 0pt;
+    margin-bottom: 0pt;
+  }
+</style>
+__EOS__
+  end
+
   def self_label
     SELF_LABEL
   end

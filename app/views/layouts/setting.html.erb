@@ -1,7 +1,7 @@
 <html>
   <head>
     <title><%= appname %> setting</title>
-    <%= stylesheet_link_tag 'f2p' %>
+    <%= inline_stylesheet %>
   </head>
   <body style="font-size: <%= h(setting.font_size) %>pt;">
     <h1><%= link_to(h(appname), :controller => 'entry') %> <%= h(viewname) %> at <%= date(Time.now) %> <%= write_new_link %> <%= search_link %> <%= settings_link %> <%= logout_link %> <%= help_link %></h1>
