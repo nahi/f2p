@@ -38,7 +38,7 @@ class EntryThread
         list_task = Task.run {
           get_home_entries(auth, opt)
         }
-        if opt[:start].nil? or opt[:start] == 0
+        if first_page_option?(opt)
           pinned = Pin.find_all_by_user_id(auth.id).map { |e| e.eid }
           unless pinned.empty?
             pin_task =  Task.run {
@@ -167,7 +167,7 @@ class EntryThread
     end
 
     def filter_pinned_entries(auth, entries, pinned_entries, opt)
-      if opt[:start] and opt[:start] != 0
+      if !first_page_option?(opt)
         entries.find_all { |entry|
           !entry.view_pinned
         }
@@ -340,6 +340,10 @@ class EntryThread
 
     def similar_entries(collection, entry)
       collection.find_all { |e| entry.similar?(e) }
+    end
+
+    def first_page_option?(opt)
+      opt[:start].nil? or opt[:start] == 0
     end
   end
 
