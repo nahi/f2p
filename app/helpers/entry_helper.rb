@@ -607,7 +607,7 @@ module EntryHelper
     links << menu_link(icon_tag(:next), list_opt(ctx.link_opt(:start => start + num, :num => num)), :accesskey => '6') { !no_page }
     str = links.join(' ')
     if ctx.inbox
-      str += button_to('archive', link_action('archive'))
+      str += button_to('mark as read', link_action('archive'))
     end
     str
   end
