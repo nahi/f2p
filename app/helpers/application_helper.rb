@@ -39,10 +39,14 @@ module ApplicationHelper
 
   # TODO: uglish; how to prepare common partial layout?
   def inline_stylesheet
+    h1_size = setting.font_size + 1
+    h2_size = setting.font_size
+    body_size = setting.font_size
     <<__EOS__
 <style type="text/css">
-  h1 { font-size: 110%; }
-  h2 { font-size: 105%; }
+  h1 { font-size: #{h1_size}pt; }
+  h2 { font-size: #{h2_size}pt; }
+  body { font-size: #{body_size}pt; }
   a img { border: none; }
   p.message { color: red; }
   .latest1 { color: #F00; }
