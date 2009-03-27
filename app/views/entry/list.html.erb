@@ -23,10 +23,11 @@
 <%- end -%>
 <%- if ctx.list? -%>
   <%- if ctx.user_for -%>
-    <%= render :partial => 'profile', :locals => {:user => ctx.user_for} %>
+    <p><%= user_picture(ctx.user_for) %> <%= h(user_name(ctx.user_for)) %> <%= link_to(h('[profile]'), '#profile') %></p>
+    <p><%= user_page_links(ctx.user_for) %></p>
   <%- end -%>
   <%- if ctx.room_for -%>
-    <%= render :partial => 'room', :locals => {:room => ctx.room_for} %>
+    <p><%= room_picture(ctx.room_for) %> <%= h(room_name(ctx.room_for)) %> <%= link_to(h('[profile]'), '#profile') %></p>
   <%- end -%>
   <%- if ctx.list -%>
     <p><%= list_links %></p>
@@ -55,3 +56,11 @@
   <%- end -%>
 </div>
 <p><a name="bottom"></a><%= page_links(:with_top => true) %></p>
+<%- if ctx.list? -%>
+  <%- if ctx.user_for -%>
+    <p><%= render :partial => 'profile', :locals => {:user => ctx.user_for} %></p>
+  <%- end -%>
+  <%- if ctx.room_for -%>
+    <p><%= render :partial => 'room', :locals => {:room => ctx.room_for} %></p>
+  <%- end -%>
+<%- end -%>

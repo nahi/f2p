@@ -16,16 +16,16 @@ module EntryHelper
     elsif ctx.comment == 'commented'
       "#{user_name(ctx.user || auth.name)}'s commented + liked entries"
     elsif ctx.user
-      "#{user_name(ctx.user)}'s entries"
+      "user entries"
     elsif ctx.friends
-      "#{user_name(ctx.user)}'s friends entries"
+      "friends entries"
     elsif ctx.list
       "'#{list_name(ctx.list)}' entries"
     elsif ctx.room
       if ctx.room == '*'
         'rooms entries'
       else
-        "'#{room_name(ctx.room)}' entries"
+        'room entries'
       end
     elsif ctx.link
       'related entries'

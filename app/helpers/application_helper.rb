@@ -318,7 +318,7 @@ __EOS__
   end
 
   def url_for_app?(url)
-    !!url.index(url_for(:only_path => false, :controller => ''))
+    !!url.index(url_for(:only_path => false, :controller => '')) or url[0] == ?#
   end
 
   def link_url(url)
