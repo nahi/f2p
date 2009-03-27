@@ -21,7 +21,7 @@ module ApplicationHelper
     'write' => 'pencil_add.png',
     'settings' => 'cog_edit.png',
     'search' => 'find.png',
-    'logout' => 'user_delete.png',
+    'logout' => 'user_go.png',
     'previous' => 'resultset_previous.png',
     'next' => 'resultset_next.png',
     'url' => 'world_link.png',
@@ -69,6 +69,14 @@ module ApplicationHelper
   }
 </style>
 __EOS__
+  end
+
+  def top_menu
+    write_new_link +
+      search_link +
+      settings_link +
+      logout_link +
+      help_link
   end
 
   def self_label
