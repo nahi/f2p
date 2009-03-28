@@ -161,6 +161,12 @@ __EOS__
     }
   end
 
+  def room_description(nickname)
+    session_cache(:room, :description, nickname) {
+      Room.description(:auth => auth, :room => nickname)
+    }
+  end
+
   def room_picture(nickname, size = 'small')
     name = room_name(nickname)
     image_url = session_cache(:room, :pictur_url, nickname, size) {
