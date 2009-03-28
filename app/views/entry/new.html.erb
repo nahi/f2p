@@ -1,25 +1,25 @@
 <%- form_tag({:action => 'add'}, {:name => 'post', :multipart => !@with_form.nil?}) do -%>
   <p>
-    message: <%= text_field_tag('body', @body) %><br/>
-    link: <%= text_field_tag('link', @link) %><br/>
-    room: <%= room_select_tag('room', ctx.room) %><br/>
+    message: <%= text_field_tag('body', @body) %><br />
+    link: <%= text_field_tag('link', @link) %><br />
+    room: <%= room_select_tag('room', ctx.room) %><br />
     <%= hidden_field_tag('with_form', @with_form) %>
     <%- if @with_form -%>
-      image upload: <%= file_field_tag('file') %><br/>
+      image upload: <%= file_field_tag('file') %><br />
     <%- else -%>
-      <%= link_to(h('image upload'), :action => 'new', :with_form => '1') %><br/>
+      <%= link_to(h('image upload'), :action => 'new', :with_form => '1') %><br />
     <%- end -%>
     <%= hidden_field_tag('lat', @lat) %>
     <%= hidden_field_tag('long', @long) %>
     <%= hidden_field_tag('address', @address) %>
     <%= submit_tag 'post' %>
   </p>
-  <hr/>
+  <hr />
   <p>For posting with location info:</p>
   <p>
-  Address: <%= text_field_tag('title', @title) %> <%= submit_tag 'search' %><br/>
-  geocoding language: '<%= h(setting.google_maps_geocoding_lang || 'ja') %>'<br/>
-  zoom: <%= zoom_select_tag('zoom', @zoom) %><br/>
+  Address: <%= text_field_tag('title', @title) %> <%= submit_tag 'search' %><br />
+  geocoding language: '<%= h(setting.google_maps_geocoding_lang || 'ja') %>'<br />
+  zoom: <%= zoom_select_tag('zoom', @zoom) %><br />
   <%- if gps_link = gps_link(:action => 'new') -%>
   get GPS data: <%= gps_link %>
   <%- end -%>

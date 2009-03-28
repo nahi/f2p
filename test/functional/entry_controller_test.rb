@@ -232,7 +232,7 @@ class EntryControllerTest < ActionController::TestCase
     login('user1')
     @ff.expects(:get_room_profile).with('user1', nil, 'room1').
       returns(read_profile('room_profile')).
-      times(3) # for name, url, and description.
+      times(4) # for name, url, description, and members.
     @ff.expects(:get_room_picture_url).with('room1', 'small').
       returns('http://room1/').times(1)
     @ff.expects(:get_room_entries).
@@ -420,7 +420,7 @@ class EntryControllerTest < ActionController::TestCase
     login('user1')
     @ff.expects(:get_room_profile).with('user1', nil, 'room1').
       returns(read_profile('room_profile')).
-      times(3) # for name, url, and description.
+      times(4) # for name, url, description, and members.
     @ff.expects(:get_room_picture_url).with('room1', 'small').
       returns('http://room1/').times(1)
     @ff.expects(:get_room_entries).

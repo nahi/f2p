@@ -244,7 +244,7 @@ class EntryController < ApplicationController
     @long = param(:long)
     @address = param(:address)
     @zoom = (param(:zoom) || F2P::Config.google_maps_zoom).to_i
-    if request.respond_to?(:mobile) and request.mobile
+    if jpmobile? and request.mobile
       if pos = request.mobile.position
         @lat = pos.lat.to_s
         @long = pos.lon.to_s

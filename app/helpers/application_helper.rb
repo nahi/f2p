@@ -37,8 +37,13 @@ module ApplicationHelper
     'help' => 'help.png',
   }
 
+  def jpmobile?
+    request.respond_to?(:mobile)
+  end
+
   # TODO: uglish; how to prepare common partial layout?
   def inline_stylesheet
+    return if jpmobile? and request.mobile.is_a?(Jpmobile::Mobile::Docomo)
     h1_size = setting.font_size + 1
     h2_size = setting.font_size
     body_size = setting.font_size

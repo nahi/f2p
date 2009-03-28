@@ -49,6 +49,10 @@ class ApplicationController < ActionController::Base
 
 private
 
+  def jpmobile?
+    request.respond_to?(:mobile)
+  end
+
   def http_client
     self.class.http_client
   end

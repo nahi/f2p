@@ -1,11 +1,11 @@
 <%- form_tag({:action => 'add'}, {:name => 'post'}) do -%>
   <p>
-    title: <%= text_field_tag('link_title', @link_title) %><br/>
-    link: <%= link_to(h(@link), @link) %><br/>
-    room: <%= room_select_tag('room', ctx.room) %><br/>
+    title: <%= text_field_tag('link_title', @link_title) %><br />
+    link: <%= link_to(h(@link), @link) %><br />
+    room: <%= room_select_tag('room', ctx.room) %><br />
     <%= hidden_field_tag('link', @link) %>
     <%= hidden_field_tag('reshared_from', @eid) %>
-    message: <%= text_field_tag('body') %><br/>
+    message: <%= text_field_tag('body') %><br />
     <%= submit_tag 'post' %>
   </p>
 <%- end -%>

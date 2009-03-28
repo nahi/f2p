@@ -4,13 +4,13 @@
     <p class="message"><%= flash[:error] %></p>
   <%- end -%>
   <p>
-    FriendFeed user nickname: <%= text_field_tag 'name' %><br/>
-    Remote key(NOT A PASSWORD): <%= password_field_tag 'remote_key' %><br/>
-    Do NOT enter your FriendFeed PASSWORD here.  You can check <%= link_to('your remote key', 'https://friendfeed.com/account/api') %> from PC you are using for FriendFeed login.<br/>
+    FriendFeed user nickname: <%= text_field_tag 'name' %><br />
+    Remote key(NOT A PASSWORD): <%= password_field_tag 'remote_key' %><br />
+    Do NOT enter your FriendFeed PASSWORD here.  You can check <%= link_to('your remote key', 'https://friendfeed.com/account/api') %> from PC you are using for FriendFeed login.<br />
     <%= submit_tag 'login' %>
   </p>
 <%- end -%>
-<hr/>
+<hr />
 <p>
 'f2p' is a web-based FriendFeed application for mobile users by NaHi.
 It's based on <a href="http://friendfeed.com/api/">FriendFeed API</a> but
@@ -23,5 +23,5 @@ See <%= link_to(h('help page'), :controller => 'help', :action => 'index') %> to
   <li>Your feed ID (e.g. 9ac57155-b878-4438-a0ab-c214d27b747d), pin state and its modification time are stored in DB, too.  Other feed content is NOT stored in DB.</li>
   <li>Let me know about any trouble on this service at <%= link_url('http://friendfeed.com/rooms/f2p') %>.</li>
 </ul>
-<hr/>
+<hr />
 <p>NAKAMURA, Hiroshi a.k.a. NaHi - <%= link_url('http://friendfeed.com/nahi') %></p>
