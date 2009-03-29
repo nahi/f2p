@@ -336,7 +336,7 @@ class EntryThread
         end
         group += kinds
         buf -= kinds
-        t.add(*group)
+        t.add(*sort_by_modified(group))
       end
       result
     end
