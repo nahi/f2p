@@ -11,6 +11,7 @@ class SettingTest < ActiveSupport::TestCase
     assert_equal(F2P::Config.link_open_new_window, s.link_open_new_window)
     assert_equal(F2P::Config.link_type, s.link_type)
     assert_equal(F2P::Config.list_view_media_rendering, s.list_view_media_rendering)
+    assert_equal(F2P::Config.google_maps_zoom, s.google_maps_zoom)
     assert_nil(s.validate)
   end
 
@@ -20,6 +21,7 @@ class SettingTest < ActiveSupport::TestCase
     s.entries_in_page = 4
     s.entries_in_thread = 2
     s.text_folding_size = 19
-    assert_equal(4, s.validate.size)
+    s.google_maps_zoom = 20
+    assert_equal(5, s.validate.size)
   end
 end

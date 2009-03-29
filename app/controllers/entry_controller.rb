@@ -243,7 +243,8 @@ class EntryController < ApplicationController
     @lat = param(:lat)
     @long = param(:long)
     @address = param(:address)
-    @zoom = (param(:zoom) || F2P::Config.google_maps_zoom).to_i
+    @setting.google_maps_zoom = param(:zoom).to_i if param(:zoom)
+    @setting.google_maps_zoom ||= F2P::Config.google_maps_zoom
     if jpmobile? and request.mobile
       if pos = request.mobile.position
         @lat = pos.lat.to_s
@@ -311,7 +312,7 @@ class EntryController < ApplicationController
     @lat = param(:lat)
     @long = param(:long)
     @address = param(:address)
-    @zoom = (param(:zoom) || F2P::Config.google_maps_zoom).to_i
+    @setting.google_maps_zoom = param(:zoom).to_i
     @placemark = nil
     if param(:commit) == 'search'
       do_location_search
@@ -321,7 +322,7 @@ class EntryController < ApplicationController
     opt = create_opt(:room => @ctx.room)
     if @lat and @long and @address
       generator = GoogleMaps::URLGenerator.new
-      image_url = generator.staticmap_url(F2P::Config.google_maps_maptype, @lat, @long, :zoom => @zoom, :width => F2P::Config.google_maps_width, :height => F2P::Config.google_maps_height)
+      image_url = generator.staticmap_url(F2P::Config.google_maps_maptype, @lat, @long, :zoom => @setting.google_maps_zoom, :width => F2P::Config.google_maps_width, :height => F2P::Config.google_maps_height)
       image_link = generator.link_url(@lat, @long, @address)
       (opt[:images] ||= []) << [image_url, image_link]
       @body += " ([map] #{@address})"

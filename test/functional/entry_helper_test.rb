@@ -99,7 +99,7 @@ class EntryHelperTest < MyActionView::TestCaseWithController
       returns('http://picture/').times(1)
     Room.expects(:ff_url).with(:auth => auth, :room => 'nick').
       returns('http://url/').times(1)
-    str = %Q(<a href="http://www.google.com/gwt/n?u=http%3A%2F%2Furl%2F"><img alt="name" height="25" src="http://picture/" title="name" width="25" /></a>)
+    str = %Q(<a href="http://www.google.com/gwt/n?u=http%3A%2F%2Furl%2F"><img alt="name" class="profile" height="25" src="http://picture/" title="name" width="25" /></a>)
     assert_equal(str, room_picture('nick'))
     assert_equal(str, room_picture('nick', 'small'))
   end

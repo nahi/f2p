@@ -8,6 +8,7 @@ class Setting
   attr_accessor :list_view_media_rendering
   attr_accessor :twitter_comment_hack
   attr_accessor :google_maps_geocoding_lang
+  attr_accessor :google_maps_zoom
 
   def initialize
     super
@@ -20,6 +21,7 @@ class Setting
     @list_view_media_rendering = F2P::Config.list_view_media_rendering
     @twitter_comment_hack = F2P::Config.twitter_comment_hack
     @google_maps_geocoding_lang = F2P::Config.google_maps_geocoding_lang
+    @google_maps_zoom = F2P::Config.google_maps_zoom
   end
 
   def validate
@@ -35,6 +37,9 @@ class Setting
     end
     unless (20..1000) === @text_folding_size
       errors << 'text folding size must be in 20..1000'
+    end
+    unless (0..19) === @google_maps_zoom
+      errors << 'zoom must be in 0..19'
     end
     errors.empty? ? nil : errors
   end
