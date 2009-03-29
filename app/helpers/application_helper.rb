@@ -41,7 +41,18 @@ module ApplicationHelper
     request.respond_to?(:mobile)
   end
 
-  # TODO: uglish; how to prepare common partial layout?
+  def iphone?
+    /(iPhone|iPod)/ =~ request.user_agent
+  end
+
+  def inline_meta
+    if iphone?
+      <<__EOS__
+<meta name="viewport" content="width=device-width; initial-scale=1.0" />
+__EOS__
+    end
+  end
+
   def inline_stylesheet
     return if jpmobile? and request.mobile.is_a?(Jpmobile::Mobile::Docomo)
     h1_size = setting.font_size + 1
@@ -53,6 +64,8 @@ module ApplicationHelper
   h2 { font-size: #{h2_size}pt; }
   body { font-size: #{body_size}pt; }
   a img { border: none; }
+  img.media   { border: 1px solid #ccc; padding: 1px; }
+  img.profile { border: 1px solid #ccc; padding: 0px; }
   p.message { color: red; }
   .latest1 { color: #F00; }
   .latest2 { color: #C00; }
@@ -60,24 +73,31 @@ module ApplicationHelper
   .older { color: #008; }
   .comment { color: #333; }
   .inbox { font-weight: bold; }
-  div.listings .thread1 {
-    background-color: #EEE;
-    padding-bottom: 0.8ex;
-  }
-  div.listings .thread2 {
-    padding-bottom: 0.8ex;
-  }
+  div.listings .thread1 { padding-bottom: 0.8ex; background-color: #EEE; }
+  div.listings .thread2 { padding-bottom: 0.8ex; }
   div.listings ul {
     list-style-type: none;
     margin-top: 0pt;
-    margin-bottom: 0pt; /*0.8ex;*/
+    margin-bottom: 0pt;
   }
   div.listings p {
     margin-top: 0pt;
     margin-bottom: 0pt;
   }
+  #{ inline_stylesheet_iphone }
 </style>
 __EOS__
+  end
+
+  def inline_stylesheet_iphone
+    if iphone?
+      <<__EOS__
+  body {
+    -webkit-user-select: none;
+    -webkit-text-size-adjust: none;
+  }
+__EOS__
+    end
   end
 
   def top_menu
@@ -219,7 +239,7 @@ __EOS__
     url = session_cache(:user, :ff_url, nickname) {
       User.ff_url(:auth => auth, :user => nickname)
     }
-    link_to(image_tag(image_url, :alt => h(name), :title => h(name), :size => image_size(25, 25)), url)
+    link_to(image_tag(image_url, :class => h('profile'), :alt => h(name), :title => h(name), :size => image_size(25, 25)), url)
   end
 
   def user_services(nickname)

@@ -1,7 +1,8 @@
 <html>
   <head>
     <title><%= appname %> entries</title>
-    <%= inline_stylesheet %>
+    <%= inline_meta -%>
+    <%= inline_stylesheet -%>
   </head>
   <body>
     <h1><%= link_to(h(appname), :controller => 'entry') %> <%= h(viewname) %> at <%= date(Time.now) %> <%= top_menu %></h1>

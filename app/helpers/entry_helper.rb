@@ -78,11 +78,11 @@ module EntryHelper
     service_icon(v(entry, 'service'), link_user(user, :room => u(room), :service => u(service_id)))
   end
 
-  def media_tag(entry, url, *rest)
+  def media_tag(entry, url, opt = {})
     if entry and ctx.list? and !setting.list_view_media_rendering
       link_to(icon_tag(:media_disabled) + '[media disabled by setting]', link_show(entry.id))
     else
-      image_tag(url, *rest)
+      image_tag(url, opt.merge(:class => h('media')))
     end
   end
 
