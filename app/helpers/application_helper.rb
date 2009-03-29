@@ -200,7 +200,7 @@ __EOS__
     url = session_cache(:room, :ff_url, nickname) {
       Room.ff_url(:auth => auth, :room => nickname)
     }
-    link_to(image_tag(image_url, :alt => h(name), :title => h(name), :size => image_size(25, 25)), url)
+    link_to(image_tag(image_url, :class => h('profile'), :alt => h(name), :title => h(name), :size => image_size(25, 25)), url)
   end
 
   def room_members(nickname)
