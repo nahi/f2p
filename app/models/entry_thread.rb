@@ -73,10 +73,12 @@ class EntryThread
       else
         entries = Task.run { get_home_entries(auth, opt) }.result
       end
+      wrapped = wrap(entries || [])
+      wrapped = filter_hidden(wrapped)
       if opt[:inbox]
-        wrapped = sort_by_detection(wrap(entries || []))
+        wrapped = sort_by_detection(wrapped)
       else
-        wrapped = sort_by_modified(wrap(entries || []))
+        wrapped = sort_by_modified(wrapped)
       end
       if opt[:link]
         wrapped = filter_link_entries(auth, wrapped)
@@ -301,13 +303,17 @@ class EntryThread
       }
     end
 
+    def filter_hidden(entries)
+      entries.find_all { |e| !e.hidden? }
+    end
+
     # FF seems to sort by this.  there's no way to sort by API client for now.
     def sort_by_detection(entries)
       entries
     end
 
     def sort_by_modified(entries)
-      sorted = entries.find_all { |e| !e.hidden? }.sort_by { |e|
+      sorted = entries.sort_by { |e|
         [e.modified, e.id].join('-') # join e.id for stable sort
       }
       sorted.reverse
