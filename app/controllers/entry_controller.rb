@@ -19,6 +19,8 @@ class EntryController < ApplicationController
     attr_accessor :service
     attr_accessor :start
     attr_accessor :num
+    attr_accessor :likes
+    attr_accessor :comments
     attr_accessor :fold
     attr_accessor :inbox
     attr_accessor :home
@@ -28,7 +30,7 @@ class EntryController < ApplicationController
     def initialize(auth)
       @auth = auth
       @viewname = nil
-      @eid = @query = @user = @list = @room = @friends = @like = @comment = @link = @service = @start = @num = nil
+      @eid = @query = @user = @list = @room = @friends = @like = @comment = @link = @service = @start = @num = @likes = @comments = nil
       @fold = false
       @inbox = false
       @home = true
@@ -49,11 +51,9 @@ class EntryController < ApplicationController
       @link = param(:link)
       @service = param(:service)
       @start = (param(:start) || '0').to_i
-      if param(:num)
-        @num = param(:num).to_i
-      else
-        @num = setting.entries_in_page
-      end
+      @num = intparam(:num) || setting.entries_in_page
+      @likes = intparam(:likes)
+      @comments = intparam(:comments)
       @fold = (!@user and !@service and !@link and param(:fold) != 'no')
       @inbox = false
       @home = !(@query or @like or @comment or @user or @friends or @list or @room or @link)
@@ -77,7 +77,7 @@ class EntryController < ApplicationController
       if @eid
         {:auth => @auth, :id => @eid}
       elsif @query
-        opt.merge(:query => @query, :user => @user, :room => @room, :friends => @friends, :service => @service)
+        opt.merge(:query => @query, :likes => @likes, :comments => @comments, :user => @user, :room => @room, :friends => @friends, :service => @service)
       elsif @like
         opt.merge(:like => @like, :user => @user || @auth.name)
       elsif @comment
@@ -113,6 +113,8 @@ class EntryController < ApplicationController
     def list_opt
       {
         :query => @query,
+        :likes => @likes,
+        :comments => @comments,
         :user => @user,
         :list => @list,
         :room => @room,
@@ -141,8 +143,11 @@ class EntryController < ApplicationController
   private
 
     def param(key)
-      v = @param[key]
-      (v and v.respond_to?(:empty?) and v.empty?) ? nil : v
+      ApplicationController.param(@param, key)
+    end
+
+    def intparam(key)
+      ApplicationController.intparam(@param, key)
     end
 
     def default_action
@@ -180,11 +185,7 @@ class EntryController < ApplicationController
   def inbox
     @ctx = restore_ctx { |ctx|
       ctx.start = (param(:start) || '0').to_i
-      if param(:num)
-        ctx.num = param(:num).to_i
-      else
-        ctx.num = @setting.entries_in_page
-      end
+      ctx.num = intparam(:num) || @setting.entries_in_page
       ctx.inbox = true
       ctx.fold = param(:fold) != 'no'
     }
@@ -243,7 +244,7 @@ class EntryController < ApplicationController
     @lat = param(:lat)
     @long = param(:long)
     @address = param(:address)
-    @setting.google_maps_zoom = param(:zoom).to_i if param(:zoom)
+    @setting.google_maps_zoom = intparam(:zoom)
     @setting.google_maps_zoom ||= F2P::Config.google_maps_zoom
     if jpmobile? and request.mobile
       if pos = request.mobile.position
@@ -312,7 +313,7 @@ class EntryController < ApplicationController
     @lat = param(:lat)
     @long = param(:long)
     @address = param(:address)
-    @setting.google_maps_zoom = param(:zoom).to_i
+    @setting.google_maps_zoom = intparam(:zoom)
     @placemark = nil
     if param(:commit) == 'search'
       do_location_search

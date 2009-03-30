@@ -248,6 +248,8 @@ class EntryThread
       search[:from] = opt[:user]
       search[:room] = opt[:room]
       search[:friends] = opt[:friends]
+      search[:likes] = opt[:likes] if opt[:likes]
+      search[:comments] = opt[:comments] if opt[:comments]
       ff_client.search_entries(auth.name, auth.remote_key, query, search)
     end
 

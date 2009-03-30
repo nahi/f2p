@@ -38,6 +38,18 @@ class ApplicationController < ActionController::Base
       @@http = http_client
     end
 
+    def param(params, key)
+      v = params[key]
+      (v and v.respond_to?(:empty?) and v.empty?) ? nil : v
+    end
+
+    def intparam(params, key)
+      v = param(params, key)
+      if v
+        v.to_i
+      end
+    end
+
   private
 
     def create_ff_client(logger)
@@ -128,8 +140,11 @@ private
   end
 
   def param(key)
-    v = params[key]
-    (v and v.respond_to?(:empty?) and v.empty?) ? nil : v
+    self.class.param(params, key)
+  end
+
+  def intparam(key)
+    self.class.intparam(params, key)
   end
 
   def update_checked_modified

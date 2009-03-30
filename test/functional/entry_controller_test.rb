@@ -8,6 +8,20 @@ class EntryControllerTest < ActionController::TestCase
     ApplicationController.ff_client = @ff
   end
 
+  test 'compress' do
+    login('user1')
+    @request.env['HTTP_ACCEPT_ENCODING'] = 'gzip'
+    get :index
+    assert_redirected_to :action => 'inbox'
+  end
+
+  test 'compress q' do
+    login('user1')
+    @request.env['HTTP_ACCEPT_ENCODING'] = 'x-gzip; q=0.1, unknown, unknown; q=0.9, gzip; q=0.2'
+    get :index
+    assert_redirected_to :action => 'inbox'
+  end
+
   test 'ff_client' do
     ApplicationController.ff_client = nil
     assert(ApplicationController.ff_client)

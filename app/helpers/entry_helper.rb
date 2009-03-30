@@ -529,6 +529,12 @@ module EntryHelper
     select_tag(varname, options_for_select(candidates, default))
   end
 
+  def likes_select_tag(varname, default)
+    candidates = [1, 2, 3, 4, 5, 10].map { |e| [e, e] }
+    candidates.unshift([nil, nil])
+    select_tag(varname, options_for_select(candidates, default))
+  end
+
   def room_links(user)
     rooms = user_rooms(user)
     links_if_exists('rooms: ', rooms) { |e|

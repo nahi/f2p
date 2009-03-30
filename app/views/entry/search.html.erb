@@ -1,10 +1,12 @@
 <%- form_tag({:action => 'list'}, {:method => 'GET', :name => 'search'}) do -%>
   <p>
     keyword: <%= text_field_tag('query', ctx.query) %><br />
-    user: <%= text_field_tag('user', ctx.user) %><br />
-    room: <%= room_select_tag('room', ctx.room) %><br />
-    friends: <%= text_field_tag('friends', ctx.friends) %><br />
-    service: <%= text_field_tag('service', ctx.service) %><br />
+    from room: <%= room_select_tag('room', ctx.room) %><br />
+    from friends of: <%= text_field_tag('friends', ctx.friends) %><br />
+    from user: <%= text_field_tag('user', ctx.user) %><br />
+    from service: <%= text_field_tag('service', ctx.service) %><br />
+    likes: <%= likes_select_tag('likes', ctx.likes) %><br />
+    comments: <%= likes_select_tag('comments', ctx.comments) %><br />
     <%= submit_tag 'search' %>
   </p>
 <%- end -%>
