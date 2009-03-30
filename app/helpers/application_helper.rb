@@ -290,6 +290,10 @@ __EOS__
     "#{width}x#{height}"
   end
 
+  def title_date
+    h(Time.now.strftime("%H:%M"))
+  end
+
   def date(time, compact = true)
     return unless time
     unless time.is_a?(Time)

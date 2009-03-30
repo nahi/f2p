@@ -16,23 +16,23 @@ module EntryHelper
     elsif ctx.comment == 'commented'
       "#{user_name(ctx.user || auth.name)}'s commented + liked entries"
     elsif ctx.user
-      "user entries"
+      'user'
     elsif ctx.friends
-      "friends entries"
+      'friends'
     elsif ctx.list
       "'#{list_name(ctx.list)}' entries"
     elsif ctx.room
       if ctx.room == '*'
-        'rooms entries'
+        'rooms'
       else
-        'room entries'
+        'room'
       end
     elsif ctx.link
       'related entries'
     elsif ctx.inbox
-      'inbox entries'
+      'inbox'
     else
-      'home entries'
+      'home'
     end
   end
 
@@ -592,15 +592,15 @@ module EntryHelper
     start = ctx.start || 0
     num = ctx.num || 0
     links = []
-    if opt[:with_bottom]
-      links << link_to(icon_tag(:bottom), '#bottom', :accesskey => '8')
-    end
-    if opt[:with_top]
-      links << link_to(icon_tag(:top), '#top', :accesskey => '2')
-    end
     links << menu_link(icon_tag(:previous), list_opt(ctx.link_opt(:start => start - num, :num => num)), :accesskey => '4') {
       !no_page and start - num >= 0
     }
+    if opt[:for_top]
+      links << link_to(icon_tag(:bottom), '#bottom', :accesskey => '8')
+    end
+    if opt[:for_bottom]
+      links << link_to(icon_tag(:top), '#top', :accesskey => '2')
+    end
     links << menu_link(menu_label('inbox', '0'), link_action('inbox'), :accesskey => '0')
     links << menu_link(menu_label('all', '1'), link_list(), :accesskey => '1')
     links << menu_link(menu_label('me', '3'), link_user(auth.name), :accesskey => '3')
@@ -613,7 +613,7 @@ module EntryHelper
     links << menu_link(icon_tag(:next), list_opt(ctx.link_opt(:start => start + num, :num => num)), :accesskey => '6') { !no_page }
     str = links.join(' ')
     if ctx.inbox
-      str += button_to('mark as read', link_action('archive'))
+      str += button_to('5.mark as read', link_action('archive'), :accesskey => '5')
     end
     str
   end

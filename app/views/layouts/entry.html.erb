@@ -5,7 +5,7 @@
     <%= inline_stylesheet -%>
   </head>
   <body>
-    <h1><%= link_to(h(appname), :controller => 'entry') %> <%= h(viewname) %> at <%= date(Time.now) %> <%= top_menu %></h1>
+    <h1><%= link_to(h(appname), :controller => 'entry') %> <%= h(viewname) %> at <%= title_date %> <%= top_menu %></h1>
     <%= yield %>
   </body>
 </html>

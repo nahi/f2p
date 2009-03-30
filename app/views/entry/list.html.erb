@@ -17,9 +17,6 @@
   post.query.focus();
   //--></script>
 <%- elsif ctx.list? -%>
-  <%- form_tag({:action => 'add'}, {:name => 'post'}) do -%>
-    <p><%= post_entry_form %></p>
-  <%- end -%>
   <%- if ctx.user_for -%>
     <p><%= user_picture(ctx.user_for) %> <%= h(user_name(ctx.user_for)) %> <%= link_to(h('[profile]'), '#profile') %></p>
     <p><%= user_page_links(ctx.user_for) %></p>
@@ -34,8 +31,18 @@
   <%- elsif ctx.link -%>
     <p>entries for: <%= link_to(h(ctx.link), u(ctx.link)) %></p>
   <%- end -%>
+  <%- form_tag({:action => 'add'}, {:name => 'post'}) do -%>
+    <p>
+      <%- if ctx.inbox -%>
+        <a name="top"></a><%= link_to(h('[menu]'), '#bottom') %>
+      <%- end -%>
+      <%= post_entry_form %>
+    </p>
+  <%- end -%>
 <%- end -%>
-<p><a name="top"></a><%= page_links(:with_bottom => true) %></p>
+<%- unless ctx.inbox -%>
+  <p><a name="top"></a><%= page_links(:for_top => true) %></p>
+<%- end -%>
 <div class="listings">
   <%- @entries.each do |thread| -%>
     <div class="<%= cycle('thread1', 'thread2') %>">
@@ -54,7 +61,7 @@
     <p>No feed is good feed.</p>
   <%- end -%>
 </div>
-<p><a name="bottom"></a><%= page_links(:with_top => true) %></p>
+<p><a name="bottom"></a><%= page_links(:for_bottom => true) %></p>
 <%- if ctx.list? -%>
   <%- if ctx.user_for -%>
     <p><%= render :partial => 'profile', :locals => {:user => ctx.user_for} %></p>
