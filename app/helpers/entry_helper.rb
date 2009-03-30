@@ -459,7 +459,7 @@ module EntryHelper
   end
 
   def post_comment_form(entry)
-    if setting.twitter_comment_hack and entry.service_id == 'twitter'
+    if setting.twitter_comment_hack and entry.service_id == 'twitter' and user_status(entry.user_id) == 'public'
       default = twitter_username(entry)
       unless default.empty?
         default = "@#{default} "
