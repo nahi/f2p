@@ -11,7 +11,7 @@
 <%- if ctx.query -%>
   <%- form_tag({:action => 'list'}, {:name => 'post'}) do -%>
     <p><%= search_form %></p>
-    <p><%= link_to(h('permalink: ' + url_for(search_opt.merge(:only_path => false))), search_opt) %></p>
+    <p>permalink: <%= link_to(h(url_for(search_opt.merge(:only_path => false))), search_opt) %></p>
   <%- end -%>
   <script type='text/javascript'><!--
   post.query.focus();

@@ -657,7 +657,7 @@ module EntryHelper
   end
 
   def url_link(entry)
-    if ctx.single?
+    if ctx.single? or ctx.query
       link = entry.link if with_link?(v(entry, 'service'))
       link ||= v(entry, VIEW_LINKS_TAG, 0)
       url_link_to(link)
