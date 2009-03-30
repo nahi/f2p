@@ -20,8 +20,6 @@
   <%- form_tag({:action => 'add'}, {:name => 'post'}) do -%>
     <p><%= post_entry_form %></p>
   <%- end -%>
-<%- end -%>
-<%- if ctx.list? -%>
   <%- if ctx.user_for -%>
     <p><%= user_picture(ctx.user_for) %> <%= h(user_name(ctx.user_for)) %> <%= link_to(h('[profile]'), '#profile') %></p>
     <p><%= user_page_links(ctx.user_for) %></p>
@@ -31,9 +29,10 @@
   <%- end -%>
   <%- if ctx.list -%>
     <p><%= list_links %></p>
-  <%- end -%>
-  <%- if ctx.room == '*' -%>
+  <%- elsif ctx.room == '*' -%>
     <p><%= room_links(ctx.user) %></p>
+  <%- elsif ctx.link -%>
+    <p>entries for: <%= link_to(h(ctx.link), u(ctx.link)) %></p>
   <%- end -%>
 <%- end -%>
 <p><a name="top"></a><%= page_links(:with_bottom => true) %></p>
