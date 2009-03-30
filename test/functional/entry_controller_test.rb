@@ -8,6 +8,16 @@ class EntryControllerTest < ActionController::TestCase
     ApplicationController.ff_client = @ff
   end
 
+  test 'ff_client' do
+    ApplicationController.ff_client = nil
+    assert(ApplicationController.ff_client)
+  end
+
+  test 'http_client' do
+    ApplicationController.http_client = nil
+    assert(ApplicationController.http_client)
+  end
+
   test 'index' do
     login('user1')
     get :index

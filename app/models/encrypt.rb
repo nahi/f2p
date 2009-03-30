@@ -40,6 +40,10 @@ module Encrypt
 
   private
 
+    def logger
+      ActiveRecord::Base.logger
+    end
+
     def pack(bytes)
       [bytes].pack('m*')
     end
@@ -65,7 +69,8 @@ module Encrypt
         cipher.key = @key
         cipher.iv = iv
         cipher.update(bytes) + cipher.final
-      rescue OpenSSL::Cipher::CipherError
+      rescue OpenSSL::Cipher::CipherError => e
+        logger.warn(e)
         nil
       end
     end

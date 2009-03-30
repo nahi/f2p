@@ -10,7 +10,10 @@ class EntryThread
       private :new
     end
 
-    def initialize(&block)
+    attr_accessor :logger
+
+    def initialize(logger = nil, &block)
+      @logger = logger || ActiveRecord::Base.logger
       @result = nil
       @thread = Thread.new {
         @result = yield
@@ -23,74 +26,42 @@ class EntryThread
           @thread.join
           @result
         end
-      rescue Timeout::Error
+      rescue Timeout::Error => e
+        logger.warn(e)
         @result = nil
       end
     end
   end
 
   class << self
+    EMPTY = [].freeze
+
     def find(opt = {})
       auth = opt[:auth]
       return nil unless auth
-      entries = pinned_entries = nil
-      if opt[:inbox]
-        list_task = Task.run {
-          get_home_entries(auth, opt)
-        }
-        if first_page_option?(opt)
-          pinned = Pin.find_all_by_user_id(auth.id).map { |e| e.eid }
-          unless pinned.empty?
-            pin_task =  Task.run {
-              get_entries(auth, :ids => pinned)
-            }
-            pinned_entries = wrap(pin_task.result || [])
-          end
+      opt.delete(:auth)
+      if opt[:id]
+        entries = fetch_single_entry_as_array(auth, opt)
+      else
+        entries = fetch_list_entries(auth, opt)
+        entries = filter_hidden(entries)
+        if opt[:inbox]
+          entries = sort_by_detection(entries)
+        else
+          entries = sort_by_modified(entries)
         end
-        entries = list_task.result
-      elsif opt[:query]
-        entries = Task.run { search_entries(auth, opt) }.result
-      elsif opt[:id]
-        entries = Task.run { get_entry(auth, opt) }.result
-      elsif opt[:like] == 'likes'
-        entries = Task.run { get_likes(auth, opt) }.result
-      elsif opt[:like] == 'liked'
-        entries = Task.run { get_liked(auth, opt) }.result
-      elsif opt[:comment] == 'comments'
-        entries = Task.run { get_comments(auth, opt) }.result
-      elsif opt[:comment] == 'commented'
-        entries = Task.run { get_commented(auth, opt) }.result
-      elsif opt[:user]
-        entries = Task.run { get_user_entries(auth, opt) }.result
-      elsif opt[:list]
-        entries = Task.run { get_list_entries(auth, opt) }.result
-      elsif opt[:room]
-        entries = Task.run { get_room_entries(auth, opt) }.result
-      elsif opt[:friends]
-        entries = Task.run { get_friends_entries(auth, opt) }.result
-      elsif opt[:link]
-        entries = Task.run { get_link_entries(auth, opt) }.result
-      else
-        entries = Task.run { get_home_entries(auth, opt) }.result
+        if opt[:link]
+          entries = filter_link_entries(auth, entries)
+        end
       end
-      wrapped = wrap(entries || [])
-      wrapped = filter_hidden(wrapped)
+      record_last_modified(entries)
+      check_inbox(auth, entries)
+      check_pinned(auth, entries, opt)
       if opt[:inbox]
-        wrapped = sort_by_detection(wrapped)
-      else
-        wrapped = sort_by_modified(wrapped)
+        entries = filter_pinned_entries(auth, entries, opt)
+        entries = filter_checked_entries(auth, entries)
       end
-      if opt[:link]
-        wrapped = filter_link_entries(auth, wrapped)
-      end
-      record_last_modified(wrapped)
-      check_inbox(auth, wrapped)
-      check_pinned(auth, wrapped, opt)
-      if opt[:inbox]
-        wrapped = filter_pinned_entries(auth, wrapped, pinned_entries, opt)
-        wrapped = filter_checked_entries(auth, wrapped)
-      end
-      sort_by_service(wrapped, opt)
+      sort_by_service(entries, opt)
     end
 
     def update_checked_modified(auth, hash)
@@ -122,6 +93,80 @@ class EntryThread
     end
 
   private
+
+    def logger
+      ActiveRecord::Base.logger
+    end
+
+    def fetch_single_entry_as_array(auth, opt)
+      wrap(Task.run { get_entry(auth, opt) }.result)
+    end
+
+    def fetch_list_entries(auth, opt)
+      cache_entries(auth, opt) {
+        if opt[:inbox]
+          list_task = Task.run {
+            get_home_entries(auth, opt)
+          }
+          if first_page_option?(opt)
+            pinned = Pin.find_all_by_user_id(auth.id).map { |e| e.eid }
+            unless pinned.empty?
+              pin_task =  Task.run {
+                get_entries(auth, :ids => pinned)
+              }
+              pinned_entries = wrap(pin_task.result)
+            end
+          end
+          entries = wrap(list_task.result)
+          if pinned_entries
+            all = entries.map { |e| e.id }
+            rest = pinned_entries.find_all { |e| !all.include?(e.id) }
+            entries += rest
+          end
+          entries
+        elsif opt[:query]
+          wrap(Task.run { search_entries(auth, opt) }.result)
+        elsif opt[:like] == 'likes'
+          wrap(Task.run { get_likes(auth, opt) }.result)
+        elsif opt[:like] == 'liked'
+          wrap(Task.run { get_liked(auth, opt) }.result)
+        elsif opt[:comment] == 'comments'
+          wrap(Task.run { get_comments(auth, opt) }.result)
+        elsif opt[:comment] == 'commented'
+          wrap(Task.run { get_commented(auth, opt) }.result)
+        elsif opt[:user]
+          wrap(Task.run { get_user_entries(auth, opt) }.result)
+        elsif opt[:list]
+          wrap(Task.run { get_list_entries(auth, opt) }.result)
+        elsif opt[:room]
+          wrap(Task.run { get_room_entries(auth, opt) }.result)
+        elsif opt[:friends]
+          wrap(Task.run { get_friends_entries(auth, opt) }.result)
+        elsif opt[:link]
+          wrap(Task.run { get_link_entries(auth, opt) }.result)
+        else
+          wrap(Task.run { get_home_entries(auth, opt) }.result)
+        end
+      }
+    end
+
+    def cache_entries(auth, opt, &block)
+      @entries_cache ||= {}
+      allow_cache = opt[:allow_cache]
+      opt = opt.dup
+      opt.delete(:allow_cache)
+      opt.delete(:merge_service)
+      if allow_cache and @entries_cache[auth.name]
+        cached_opt, entries = @entries_cache[auth.name]
+        if opt == cached_opt
+          logger.info("entries cache found for #{opt.inspect}")
+          return entries
+        end
+      end
+      entries = yield
+      @entries_cache[auth.name] = [opt, entries]
+      entries
+    end
 
     def filter_link_entries(auth, entries)
       entries.partition { |e| e.nickname == auth.name }.flatten
@@ -172,19 +217,11 @@ class EntryThread
       end
     end
 
-    def filter_pinned_entries(auth, entries, pinned_entries, opt)
+    def filter_pinned_entries(auth, entries, opt)
       if !first_page_option?(opt)
         entries.find_all { |entry|
           !entry.view_pinned
         }
-      elsif pinned_entries
-        all = entries.map { |e| e.id }
-        rest = pinned_entries.find_all { |e| !all.include?(e.id) }
-        rest.each do |entry|
-          entry.view_pinned = true
-          entry.view_inbox = true
-        end
-        entries + rest
       else
         entries
       end
@@ -291,6 +328,7 @@ class EntryThread
     end
 
     def wrap(entries)
+      return EMPTY if entries.nil?
       entries.map { |hash|
         entry = Entry[hash]
         entry['comments'] = entry['comments'].map { |hash|

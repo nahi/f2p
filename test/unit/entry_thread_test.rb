@@ -79,6 +79,22 @@ class EntryThreadTest < ActiveSupport::TestCase
     end
   end
 
+  test 'self.find inbox cache' do
+    user = User.find_by_name('user1')
+    ff = mock('ff_client')
+    ApplicationController.ff_client = ff
+    #
+    ff.expects(:get_home_entries).with('user1', nil, {:num => nil, :start => nil, :service => nil}).
+      returns(read_entries('entries', 'f2ptest')).times(1) # 1 time only
+    2.times do
+      threads = EntryThread.find(:auth => user, :inbox => true, :start => nil, :allow_cache => true)
+      assert_equal(
+        [1, 2, 1, 1, 4, 1, 2, 6, 3, 1, 3, 1, 1, 1, 1, 1],
+        threads.map { |t| t.entries.size }
+      )
+    end
+  end
+
   test 'self.find home' do
     user = User.find_by_name('user1')
     ff = mock('ff_client')
@@ -91,6 +107,19 @@ class EntryThreadTest < ActiveSupport::TestCase
       [1, 2, 1, 1, 1, 4, 2, 6, 3, 1, 3, 1, 1, 1, 1, 1],
       threads.map { |t| t.entries.size }
     )
+  end
+
+  test 'self.find home cache' do
+    user = User.find_by_name('user1')
+    ff = mock('ff_client')
+    ApplicationController.ff_client = ff
+    #
+    ff.expects(:get_home_entries).with('user1', nil, {:num => nil, :start => nil, :service => nil}).
+      returns(read_entries('entries', 'f2ptest')).times(4) # no cache used
+    assert_equal(16, EntryThread.find(:auth => user, :inbox => true, :start => nil, :allow_cache => true).size)
+    assert_equal(16, EntryThread.find(:auth => user, :start => nil, :allow_cache => true).size)
+    assert_equal(16, EntryThread.find(:auth => user, :inbox => true, :start => nil, :allow_cache => true).size)
+    assert_equal(16, EntryThread.find(:auth => user, :start => nil, :allow_cache => true).size)
   end
 
   test 'self.find query' do

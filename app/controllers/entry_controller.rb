@@ -165,7 +165,7 @@ class EntryController < ApplicationController
     @ctx = restore_ctx { |ctx|
       ctx.parse(params, @setting)
     }
-    @entries = EntryThread.find(@ctx.find_opt) || []
+    @entries = EntryThread.find(find_opt) || []
   end
 
   def index
@@ -192,7 +192,7 @@ class EntryController < ApplicationController
       update_checked_modified
     end
     (F2P::Config.max_skip_empty_inbox_pages + 1).times do
-      @entries = EntryThread.find(@ctx.find_opt) || []
+      @entries = EntryThread.find(find_opt) || []
       break unless @entries.empty?
       @ctx.start += @ctx.num
     end
@@ -228,7 +228,7 @@ class EntryController < ApplicationController
     if ctx = session[:ctx]
       ctx.eid = @ctx.eid
     end
-    @entries = EntryThread.find(@ctx.find_opt) || []
+    @entries = EntryThread.find(find_opt) || []
     render :action => 'list'
   end
 
@@ -449,6 +449,7 @@ class EntryController < ApplicationController
       Entry.add_pin(create_opt(:id => id))
       clear_checked_modified(id)
     end
+    flash[:allow_cache] = true
     redirect_to_entry_or_list
   end
 
@@ -461,10 +462,15 @@ class EntryController < ApplicationController
   def unpin
     id = param(:id)
     unpin_entry(id)
+    flash[:allow_cache] = true
     redirect_to_list
   end
 
 private
+
+  def find_opt
+    @ctx.find_opt.merge(:allow_cache => flash[:allow_cache])
+  end
 
   def remember_checked(threads)
     store = session[:checked] ||= {}

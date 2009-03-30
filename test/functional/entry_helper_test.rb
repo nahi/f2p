@@ -13,6 +13,19 @@ class EntryHelperTest < MyActionView::TestCaseWithController
     assert_equal('You', self_label)
   end
 
+  test "inline_meta" do
+    assert_nil(inline_meta)
+    @controller.request.stubs(:user_agent).returns('iPhone')
+    assert_match(/viewport/, inline_meta)
+  end
+
+  test "inline_stylesheet" do
+    assert(inline_stylesheet)
+    assert_no_match(/webkit/, inline_stylesheet)
+    @controller.request.stubs(:user_agent).returns('iPod')
+    assert_match(/webkit/, inline_stylesheet)
+  end
+
   test "icon_url" do
     assert_equal(F2P::Config.icon_url_base + 'star.png', icon_url(:star))
     assert_equal(F2P::Config.icon_url_base + 'foo.png', icon_url('foo.png'))

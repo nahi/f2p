@@ -82,10 +82,6 @@ module MyActionView
       ActionController::Base.relative_url_root = '/foo'
     end
 
-    def session
-      @request.session
-    end
-
     def self.inherited(testklass)
       klassname = testklass.name.sub(/Test\z/, '')
       if klass = const_get(klassname)

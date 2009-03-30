@@ -38,11 +38,11 @@ module ApplicationHelper
   }
 
   def jpmobile?
-    request.respond_to?(:mobile)
+    @controller.request.respond_to?(:mobile)
   end
 
   def iphone?
-    /(iPhone|iPod)/ =~ request.user_agent
+    /(iPhone|iPod)/ =~ @controller.request.user_agent
   end
 
   def inline_meta
@@ -54,7 +54,7 @@ __EOS__
   end
 
   def inline_stylesheet
-    return if jpmobile? and request.mobile.is_a?(Jpmobile::Mobile::Docomo)
+    return if jpmobile? and @controller.request.mobile.is_a?(Jpmobile::Mobile::Docomo)
     h1_size = setting.font_size + 1
     h2_size = setting.font_size
     body_size = setting.font_size
@@ -375,6 +375,6 @@ __EOS__
 private
 
   def session_cache(*key, &block)
-    session[key] ||= yield
+    @controller.request.session[key] ||= yield
   end
 end
