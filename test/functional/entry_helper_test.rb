@@ -287,7 +287,7 @@ class EntryHelperTest < MyActionView::TestCaseWithController
   # tests for EntryHelper
   # 
   test 'viewname' do
-    assert_equal('home entries', viewname)
+    assert_equal('home', viewname)
   end
 
   test 'twitter_username' do

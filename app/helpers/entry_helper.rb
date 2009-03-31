@@ -595,32 +595,42 @@ module EntryHelper
     start = ctx.start || 0
     num = ctx.num || 0
     links = []
-    links << menu_link(icon_tag(:previous), list_opt(ctx.link_opt(:start => start - num, :num => num)), :accesskey => '4') {
+    links << menu_link(icon_tag(:previous), list_opt(ctx.link_opt(:start => start - num, :num => num)), accesskey('4')) {
       !no_page and start - num >= 0
     }
     if opt[:for_top]
-      links << link_to(icon_tag(:bottom), '#bottom', :accesskey => '8')
+      links << link_to(icon_tag(:bottom), '#bottom', accesskey('8'))
     end
     if opt[:for_bottom]
-      links << link_to(icon_tag(:top), '#top', :accesskey => '2')
+      links << link_to(icon_tag(:top), '#top', accesskey('2'))
     end
-    links << menu_link(menu_label('inbox', '0'), link_action('inbox'), :accesskey => '0')
-    links << menu_link(menu_label('all', '1'), link_list(), :accesskey => '1')
-    links << menu_link(menu_label('me', '3'), link_user(auth.name), :accesskey => '3')
-    links << menu_link(menu_label('lists', '7'), link_list(:list => u(v(user_lists(auth.name).first, 'nickname'))), :accesskey => '7') {
+    links << menu_link(menu_label('inbox', '0'), link_action('inbox'), accesskey('0'))
+    links << menu_link(menu_label('all', '1'), link_list(), accesskey('1'))
+    links << menu_link(menu_label('me', '3'), link_user(auth.name), accesskey('3'))
+    links << menu_link(menu_label('lists', '7'), link_list(:list => u(v(user_lists(auth.name).first, 'nickname'))), accesskey('7')) {
       !ctx.list
     }
-    links << menu_link(menu_label('rooms', '9'), link_list(:room => '*'), :accesskey => '9') {
+    links << menu_link(menu_label('rooms', '9'), link_list(:room => '*'), accesskey('9')) {
       ctx.room != '*'
     }
-    links << menu_link(icon_tag(:next), list_opt(ctx.link_opt(:start => start + num, :num => num)), :accesskey => '6') { !no_page }
-    str = links.join(' ')
+    links << menu_link(icon_tag(:next), list_opt(ctx.link_opt(:start => start + num, :num => num)), accesskey('6')) { !no_page }
+    links << archive_button
+    links.join(' ')
+  end
+
+  def bottom_menu_link
+    if cell_phone? and ctx.inbox
+      label = '8.menu'
+      link_to(h("[#{label}]"), '#bottom', accesskey('8'))
+    end
+  end
+
+  def archive_button
     if ctx.inbox
       label = 'mark as read'
-      label = '5.' + label if setting.link_type == 'gwt'
-      str += button_to(label, link_action('archive'), :accesskey => '5')
+      label = '5.' + label if cell_phone?
+      submit_tag(label, accesskey('5'))
     end
-    str
   end
 
   def user_page_links(user)
@@ -649,7 +659,7 @@ module EntryHelper
   end
 
   def menu_label(label, accesskey = nil)
-    if accesskey and setting.link_type == 'gwt'
+    if accesskey and cell_phone?
       label = accesskey + '.' + label
     end
     h("[#{label}]")

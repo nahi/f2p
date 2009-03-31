@@ -41,8 +41,20 @@ module ApplicationHelper
     @controller.request.respond_to?(:mobile)
   end
 
+  def cell_phone?
+    jpmobile? and @controller.request.mobile?
+  end
+
   def iphone?
     /(iPhone|iPod)/ =~ @controller.request.user_agent
+  end
+
+  def accesskey(key)
+    @accesskey ||= {}
+    key = key.to_s
+    key = nil if @accesskey.key?(key)
+    @accesskey[key] = true
+    {:accesskey => key}
   end
 
   def inline_meta
