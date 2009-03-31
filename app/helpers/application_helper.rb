@@ -16,6 +16,7 @@ module ApplicationHelper
     'comment' => 'comment.png',
     'friend_comment' => 'user_comment.png',
     'comment_add' => 'comment_add.png',
+    'comment_edit' => 'comment_edit.png',
     'delete' => 'delete.png',
     'more' => 'add.png',
     'write' => 'pencil_add.png',

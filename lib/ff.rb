@@ -316,6 +316,19 @@ module FriendFeed
       end
     end
 
+    def edit_comment(name, remote_key, entry, comment, body)
+      uri = uri("comment")
+      query = {
+        'entry' => entry,
+        'comment' => comment,
+        'body' => body
+      }
+      client_sync(uri, name, remote_key) do |client|
+        res = post_request(client, uri, query)
+        JSON.parse(res.content)
+      end
+    end
+
     def delete_comment(name, remote_key, entry, comment, undelete = false)
       uri = uri("comment/delete")
       query = {

@@ -37,6 +37,17 @@ class Entry < Hash
       end
     end
 
+    def edit_comment(opt)
+      auth = opt[:auth]
+      id = opt[:id]
+      comment = opt[:comment]
+      body = opt[:body]
+      comment = ff_client.edit_comment(auth.name, auth.remote_key, id, comment, body)
+      if comment
+        v(comment, 'id')
+      end
+    end
+
     def delete_comment(opt)
       auth = opt[:auth]
       id = opt[:id]

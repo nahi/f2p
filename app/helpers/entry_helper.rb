@@ -471,6 +471,11 @@ module EntryHelper
     text_field_tag('body', default) + submit_tag('post')
   end
 
+  def edit_comment_form(comment)
+    default = comment.body
+    text_field_tag('body', default) + submit_tag('post')
+  end
+
   def fold_link(entry)
     msg = " (#{entry.fold_entries} more entries)"
     link_to(icon_tag(:more), list_opt(ctx.link_opt(:start => ctx.start, :num => ctx.num, :fold => 'no'))) + h(msg)
@@ -716,11 +721,18 @@ module EntryHelper
     link_to(h('Added.  UNDO?'), link_action('delete', :id => u(id), :comment => u(comment)))
   end
 
+  def edit_comment_link(comment)
+    if ctx.single?
+      if comment.nickname == auth.name or auth.name == comment.entry.nickname
+        link_to(icon_tag(:comment_edit, 'edit'), link_action('edit', :id => u(comment.entry.id), :comment => u(comment.id)))
+      end
+    end
+  end
+
   def delete_comment_link(comment)
     if ctx.single?
-      cid = v(comment, 'id')
       if comment.nickname == auth.name or auth.name == comment.entry.nickname
-        link_to(icon_tag(:delete), link_action('delete', :id => u(comment.entry.id), :comment => u(cid)), :confirm => 'Are you sure?')
+        link_to(icon_tag(:delete), link_action('delete', :id => u(comment.entry.id), :comment => u(comment.id)), :confirm => 'Are you sure?')
       end
     end
   end

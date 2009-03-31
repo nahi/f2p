@@ -285,6 +285,24 @@ class EntryController < ApplicationController
     @link_title = %Q("#{entry.title}")
   end
 
+  verify :only => :edit,
+          :method => :get,
+          :params => [:id, :comment],
+          :add_flash => {:error => 'verify failed'},
+          :redirect_to => {:action => 'inbox'}
+
+  def edit
+    @ctx = EntryContext.new(auth)
+    @ctx.eid = param(:id)
+    @ctx.comment = param(:comment)
+    @ctx.home = false
+    if ctx = session[:ctx]
+      ctx.eid = @ctx.eid
+    end
+    @entries = EntryThread.find(find_opt) || []
+    render :action => 'list'
+  end
+
   def search
     @ctx = EntryContext.new(auth)
     @ctx.viewname = 'search entries'
@@ -400,14 +418,22 @@ class EntryController < ApplicationController
 
   def add_comment
     id = param(:id)
+    comment = param(:comment)
     body = param(:body)
     if id and body
-      comment_id = Entry.add_comment(create_opt(:id => id, :body => body))
-      unpin_entry(id)
+      if comment
+        comment_id = Entry.edit_comment(create_opt(:id => id, :comment => comment, :body => body))
+        redirect_to_entry_or_list
+      else
+        comment_id = Entry.add_comment(create_opt(:id => id, :body => body))
+        unpin_entry(id)
+        flash[:added_id] = id
+        flash[:added_comment] = comment_id
+        redirect_to_list
+      end
+    else
+      redirect_to_list
     end
-    flash[:added_id] = id
-    flash[:added_comment] = comment_id
-    redirect_to_list
   end
 
   verify :only => :like,

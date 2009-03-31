@@ -312,6 +312,36 @@ class EntryControllerTest < ActionController::TestCase
     assert_redirected_to :action => 'show'
   end
 
+  test 'edit' do
+    login('user1')
+    get :edit, :id => 'df9d34df-23ff-de8e-3675-a82736ef90cc'
+    assert_redirected_to :action => 'inbox'
+    #
+    @ff.expects(:get_profile).
+      returns(read_profile('profile'))
+    @ff.expects(:get_entry).
+      returns(read_entries('entries', 'f2ptest')[0, 1])
+    get :edit, :id => 'df9d34df-23ff-de8e-3675-a82736ef90cc', :comment => 'c'
+    assert_response :success
+  end
+
+  test 'inbox then edit' do
+    login('user1')
+    @ff.expects(:get_profile).
+      returns(read_profile('profile'))
+    @ff.expects(:get_home_entries).
+      returns(read_entries('entries', 'f2ptest'))
+    get :inbox
+    assert_response :success
+    assert(session[:ctx])
+    #
+    @ff.expects(:get_entry).
+      returns(read_entries('entries', 'f2ptest')[0, 1])
+    get :edit, :id => 'df9d34df-23ff-de8e-3675-a82736ef90cc', :comment => 'c'
+    assert_response :success
+    assert_equal('df9d34df-23ff-de8e-3675-a82736ef90cc', session[:ctx].eid)
+  end
+
   test 'updated' do
     login('user1')
     get :updated
@@ -601,6 +631,24 @@ class EntryControllerTest < ActionController::TestCase
     login('user1')
     @ff.expects(:post_comment).with('user1', nil, 'id', 'body')
     post :add_comment, :id => 'id', :body => 'body'
+    assert_redirected_to :action => 'inbox'
+  end
+
+  test 'add_comment empty' do
+    login('user1')
+    post :add_comment, :id => 'id'
+    assert_redirected_to :action => 'inbox'
+  end
+
+  test 'add_comment edit' do
+    login('user1')
+    @ff.expects(:post_comment).with('user1', nil, 'id', 'body')
+    post :add_comment, :id => 'id', :body => 'body'
+    assert_redirected_to :action => 'inbox'
+    #
+    @ff.expects(:edit_comment).with('user1', nil, 'id', 'comment', 'body').
+      returns('id' => 'id')
+    post :add_comment, :id => 'id', :comment => 'comment', :body => 'body'
     assert_redirected_to :action => 'inbox'
   end
 

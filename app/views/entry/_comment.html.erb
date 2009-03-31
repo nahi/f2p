@@ -6,13 +6,18 @@
       <li class="comment">
         <%= comment_icon(comment.by_user(v(comment.entry, 'user', 'nickname'))) %>
         <%= date(v(comment, 'date'), false) if ctx.single? %>
-        <%= comment(comment) %>
-        by <%= user(comment) %>
-        <%= via(comment) -%>
-        <%= date(v(comment, 'date'), true) if ctx.list? %>
-        <%= comment_url_link(comment) -%>
-        <%= delete_comment_link(comment) -%>
-        <%= post_comment_link(comment.entry) if ctx.list? and comment == comment.entry.comments.last -%>
+        <%- if ctx.comment != comment.id -%>
+          <%= comment(comment) %>
+          by <%= user(comment) %>
+          <%= via(comment) -%>
+          <%= date(v(comment, 'date'), true) if ctx.list? %>
+          <%= comment_url_link(comment) -%>
+          <%= edit_comment_link(comment) -%>
+          <%= delete_comment_link(comment) -%>
+          <%= post_comment_link(comment.entry) if ctx.list? and comment == comment.entry.comments.last and ctx.comment.nil? -%>
+        <%- else -%>
+          <%= edit_comment_form(comment) %>
+        <%- end -%>
       </li>
     <%- end -%>
   <%- end -%>

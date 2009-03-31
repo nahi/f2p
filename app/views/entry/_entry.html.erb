@@ -24,16 +24,19 @@
   <%- if entry.comments.empty? or comment_inline?(entry) -%>
 <%= post_comment_link(entry) if ctx.list? %>
   <%- elsif ctx.single? -%>
-    <%= render :partial => 'comment', :locals => {:comments => entry.comments} %>
-  <%- else -%>
-    <%= render :partial => 'comment', :locals => {:comments => fold_comments(entry.comments)} %>
-  <%- end -%>
-  <%- if ctx.single? -%>
-    <%- form_tag({:action => 'add_comment', :id => u(entry.id)}, {:name => 'post'}) do -%>
-      <p><%= comment_icon(v(entry, 'user', 'nickname') == auth.name) %> <%= post_comment_form(entry) %></p>
+    <%- form_tag({:action => 'add_comment', :id => u(entry.id), :comment => ctx.comment ? u(ctx.comment) : nil}, {:name => 'post'}) do -%>
+      <%= render :partial => 'comment', :locals => {:comments => entry.comments} %>
+      <%- if ctx.comment.nil? -%>
+        <p>
+          <%= comment_icon(v(entry, 'user', 'nickname') == auth.name) %>
+          <%= post_comment_form(entry) %>
+        </p>
+      <%- end -%>
       <script type='text/javascript'><!--
       post.body.focus();
       //--></script>
     <%- end -%>
+  <%- else -%>
+    <%= render :partial => 'comment', :locals => {:comments => fold_comments(entry.comments)} %>
   <%- end -%>
 <%- end -%>
