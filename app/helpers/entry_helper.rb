@@ -139,7 +139,7 @@ module EntryHelper
     end
     if show_service
       if ctx.room_for
-        name = v(entry, 'service', 'name')
+        name = v(entry, 'service', 'name') if entry.service_id != 'internal'
       else
         if entry.room
           name = entry.room.nickname
@@ -148,9 +148,12 @@ module EntryHelper
           name = nil if name == v(entry, 'user', 'name')
         end
       end
-      if name
-        service_str = h("(#{name})")
-      end
+    elsif !ctx.room_for and entry.room
+      # show room name even if show_service is false
+      name = entry.room.nickname
+    end
+    if name
+      service_str = h("(#{name})")
     end
     str = inbox_str + user_str + service_str
     str += ':' unless str.empty?
