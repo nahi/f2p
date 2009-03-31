@@ -21,9 +21,7 @@
 <%= likes(entry, ctx.list?) -%>
 <%= comments(entry, ctx.list?) unless comment_inline?(entry) -%>
 <%= like_link(entry) -%>
-  <%- if entry.comments.empty? or comment_inline?(entry) -%>
-<%= post_comment_link(entry) if ctx.list? %>
-  <%- elsif ctx.single? -%>
+  <%- if ctx.single? -%>
     <%- form_tag({:action => 'add_comment', :id => u(entry.id), :comment => ctx.comment ? u(ctx.comment) : nil}, {:name => 'post'}) do -%>
       <%= render :partial => 'comment', :locals => {:comments => entry.comments} %>
       <%- if ctx.comment.nil? -%>
@@ -36,6 +34,8 @@
       post.body.focus();
       //--></script>
     <%- end -%>
+  <%- elsif entry.comments.empty? or comment_inline?(entry) -%>
+<%= post_comment_link(entry) %>
   <%- else -%>
     <%= render :partial => 'comment', :locals => {:comments => fold_comments(entry.comments)} %>
   <%- end -%>
