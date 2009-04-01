@@ -15,12 +15,12 @@
     -- <span class="comment"><%= inline_comment(entry.comments.first) %></span>
   <%- end -%>
   <%= original_link(entry) -%>
-<%= url_link(entry) -%>
-<%= reshare_link(entry) -%>
-<%= delete_link(entry) -%>
 <%= likes(entry, ctx.list?) -%>
 <%= comments(entry, ctx.list?) unless comment_inline?(entry) -%>
+<%= url_link(entry) -%>
+<%= reshare_link(entry) -%>
 <%= like_link(entry) -%>
+<%= delete_link(entry) -%>
   <%- if ctx.single? -%>
     <%- form_tag({:action => 'add_comment', :id => u(entry.id), :comment => ctx.comment ? u(ctx.comment) : nil}, {:name => 'post'}) do -%>
       <%= render :partial => 'comment', :locals => {:comments => entry.comments} %>
