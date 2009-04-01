@@ -78,7 +78,7 @@ class EntryControllerTest < ActionController::TestCase
     #
     session[:last_updated] = Time.at(Time.now - (F2P::Config.updated_expiration + 1))
     @ff.expects(:get_home_entries).
-      returns(read_entries('entries', 'f2ptest')).times(3) # +2 skipped pages
+      returns(read_entries('entries', 'f2ptest'))
     post :inbox
     assert_response :success
   end

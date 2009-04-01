@@ -389,6 +389,11 @@ __EOS__
     str.scan(Regexp.new("^.{0,#{len.to_s}}", Regexp::MULTILINE, 'u'))[0] || ''
   end
 
+  def remember_checked(entry)
+    store = @controller.request.session[:checked] ||= {}
+    store[entry.id] = entry.modified
+  end
+
 private
 
   def session_cache(*key, &block)

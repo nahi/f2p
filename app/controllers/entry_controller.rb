@@ -197,7 +197,6 @@ class EntryController < ApplicationController
       break unless @entries.empty?
       @ctx.start += @ctx.num
     end
-    remember_checked(@entries)
     session[:last_updated] = Time.now
     render :action => 'list'
   end
@@ -420,18 +419,14 @@ class EntryController < ApplicationController
     id = param(:id)
     comment = param(:comment)
     body = param(:body)
-    if id and body
-      if comment
-        comment_id = Entry.edit_comment(create_opt(:id => id, :comment => comment, :body => body))
-        redirect_to_entry_or_list
-      else
-        comment_id = Entry.add_comment(create_opt(:id => id, :body => body))
-        unpin_entry(id)
-        flash[:added_id] = id
-        flash[:added_comment] = comment_id
-        redirect_to_list
-      end
+    if comment
+      comment_id = Entry.edit_comment(create_opt(:id => id, :comment => comment, :body => body))
+      redirect_to_entry_or_list
     else
+      comment_id = Entry.add_comment(create_opt(:id => id, :body => body))
+      unpin_entry(id)
+      flash[:added_id] = id
+      flash[:added_comment] = comment_id
       redirect_to_list
     end
   end
@@ -497,15 +492,6 @@ private
 
   def find_opt
     @ctx.find_opt.merge(:allow_cache => flash[:allow_cache])
-  end
-
-  def remember_checked(threads)
-    store = session[:checked] ||= {}
-    threads.each do |t|
-      t.entries.each do |e|
-        store[e.id] = e.modified
-      end
-    end
   end
 
   def unpin_entry(id, commit = true)
