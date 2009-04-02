@@ -126,6 +126,9 @@ class EntryThread
           end
           entries
         elsif opt[:link]
+          start = (opt[:start] || 0) / 2
+          num = (opt[:num] || 0) / 2
+          opt = opt.merge(:start => start, :num => num)
           link_task = Task.run { get_link_entries(auth, opt) }
           search_task = Task.run { search_entries(auth, opt) }
           merged = wrap(link_task.result) + wrap(search_task.result)

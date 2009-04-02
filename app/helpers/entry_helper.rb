@@ -678,7 +678,7 @@ module EntryHelper
   end
 
   def comment_url_link(comment)
-    if ctx.single? and comment.view_links
+    if comment.view_links
       url_link_to(comment.view_links.first)
     end
   end
