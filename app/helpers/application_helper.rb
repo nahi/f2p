@@ -43,7 +43,7 @@ module ApplicationHelper
   end
 
   def cell_phone?
-    jpmobile? and @controller.request.mobile?
+    setting.link_type or (jpmobile? and @controller.request.mobile?)
   end
 
   def iphone?
