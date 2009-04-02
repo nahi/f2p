@@ -26,7 +26,7 @@
       <%= render :partial => 'comment', :locals => {:comments => entry.comments} %>
       <%- if ctx.comment.nil? -%>
         <p>
-          <%= comment_icon(v(entry, 'user', 'nickname') == auth.name) %>
+          <%= comment_icon(entry.nickname == auth.name) %>
           <%= post_comment_form(entry) %>
         </p>
       <%- end -%>

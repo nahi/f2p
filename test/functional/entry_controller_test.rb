@@ -447,7 +447,7 @@ class EntryControllerTest < ActionController::TestCase
   test 'add post body' do
     login('user1')
     @ff.expects(:post).with('user1', nil, 'hello', nil, nil, nil, nil, nil).
-      returns({'id' => 'foo'})
+      returns([{'id' => 'foo'}])
     post :add, :commit => 'post', :body => 'hello'
     assert_redirected_to :action => 'list'
   end
@@ -464,7 +464,7 @@ class EntryControllerTest < ActionController::TestCase
     assert(session[:ctx].inbox)
     #
     @ff.expects(:post).with('user1', nil, 'hello', nil, nil, nil, nil, nil).
-      returns({'id' => 'foo'})
+      returns([{'id' => 'foo'}])
     post :add, :commit => 'post', :body => 'hello'
     assert_redirected_to :action => 'inbox'
     assert(session[:ctx].inbox)
@@ -485,7 +485,7 @@ class EntryControllerTest < ActionController::TestCase
     assert(session[:ctx].room)
     #
     @ff.expects(:post).with('user1', nil, 'hello', nil, nil, nil, nil, 'room1').
-      returns({'id' => 'foo'})
+      returns([{'id' => 'foo'}])
     post :add, :commit => 'post', :body => 'hello', :room => 'room1'
     assert_redirected_to :action => 'list'
     assert(session[:ctx].room)
@@ -501,7 +501,7 @@ class EntryControllerTest < ActionController::TestCase
     assert(session[:ctx].list)
     #
     @ff.expects(:post).with('user1', nil, 'hello', nil, nil, nil, nil, nil).
-      returns({'id' => 'foo'})
+      returns([{'id' => 'foo'}])
     post :add, :commit => 'post', :body => 'hello'
     assert_redirected_to :action => 'list'
     assert(!session[:ctx].list)
@@ -513,7 +513,7 @@ class EntryControllerTest < ActionController::TestCase
     ApplicationController.http_client = h
     h.expects(:get_content).with('http://foo/').yields(NKF.nkf('-sm0', '<title>日本語</title>'))
     @ff.expects(:post).with('user1', nil, '日本語', 'http://foo/', 'hello', nil, nil, nil).
-      returns({'id' => 'foo'})
+      returns([{'id' => 'foo'}])
     post :add, :commit => 'post', :body => 'hello', :link => 'http://foo/'
     assert_redirected_to :action => 'list'
   end
@@ -524,7 +524,7 @@ class EntryControllerTest < ActionController::TestCase
     ApplicationController.http_client = h
     h.expects(:get_content).with('http://foo/').raises(RuntimeError.new)
     @ff.expects(:post).with('user1', nil, '(unknown)', 'http://foo/', 'hello', nil, nil, nil).
-      returns({'id' => 'foo'})
+      returns([{'id' => 'foo'}])
     post :add, :commit => 'post', :body => 'hello', :link => 'http://foo/'
     assert_redirected_to :action => 'list'
   end
@@ -533,7 +533,7 @@ class EntryControllerTest < ActionController::TestCase
     login('user1')
     file = ActionController::TestUploadedFile.new(__FILE__, 'image/png')
     @ff.expects(:post).with('user1', nil, 'hello', nil, nil, nil, [[file]], nil).
-      returns({'id' => 'foo'})
+      returns([{'id' => 'foo'}])
     post :add, :commit => 'post', :body => 'hello', :file => file
     assert_redirected_to :action => 'list'
     # not an image
@@ -552,7 +552,7 @@ class EntryControllerTest < ActionController::TestCase
            nil,
            [['http://maps.google.com/staticmap?zoom=14&size=160x80&maptype=mobile&markers=35.681382,139.766084', 'http://maps.google.com/maps?q=35.681382,139.766084+%28%E6%97%A5%E6%9C%AC%E3%80%81%E6%9D%B1%E4%BA%AC%E9%A7%85%29']],
            nil, nil).
-      returns({'id' => 'foo'})
+      returns([{'id' => 'foo'}])
     post :add,
       :commit => 'post',
       :body => 'hello',
@@ -690,7 +690,7 @@ class EntryControllerTest < ActionController::TestCase
     post :archive
     assert_redirected_to :action => 'inbox'
     # clear
-    get :pin, :id => entries.first.id
+    get :pin, :id => entries.first['id']
     assert_redirected_to :action => 'inbox'
   end
 
@@ -711,7 +711,7 @@ class EntryControllerTest < ActionController::TestCase
     assert_response :success
     assert(session[:checked])
     #
-    get :unpin, :id => entries.first.id
+    get :unpin, :id => entries.first['id']
     assert_redirected_to :action => 'inbox'
   end
 end

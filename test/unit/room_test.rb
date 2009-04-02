@@ -87,6 +87,8 @@ class RoomTest < ActiveSupport::TestCase
     #
     ff.expects(:get_room_profile).with('user1', nil, 'room1').
       returns('members' => ary.reverse)
-    assert_equal(ary, Room.members(:auth => user, :room => 'room1'))
+    members = Room.members(:auth => user, :room => 'room1')
+    assert_equal('u1', members[0].name)
+    assert_equal('u2', members[1].name)
   end
 end

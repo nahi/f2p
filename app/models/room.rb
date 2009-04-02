@@ -1,7 +1,7 @@
 require 'hash_utils'
 
 
-class Room < Hash
+class Room
   include HashUtils
 
   class << self
@@ -44,7 +44,9 @@ class Room < Hash
     def members(arg)
       auth = arg[:auth]
       room = arg[:room]
-      sort_by_name(ff_profile(auth, room)['members'] || [])
+      sort_by_name(ff_profile(auth, room)['members'] || []).map { |e|
+        EntryUser[e]
+      }
     end
 
   private
@@ -66,15 +68,11 @@ class Room < Hash
     end
   end
 
-  def id
-    v('id')
-  end
+  attr_accessor :id
+  attr_accessor :name
+  attr_accessor :nickname
 
-  def nickname
-    v('nickname')
-  end
-
-  def name
-    v('name')
+  def initialize(hash)
+    initialize_with_hash(hash, 'id', 'name', 'nickname')
   end
 end

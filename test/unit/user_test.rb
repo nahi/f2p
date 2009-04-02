@@ -144,7 +144,9 @@ class UserTest < ActiveSupport::TestCase
     #
     ff.expects(:get_profile).with('user1', nil, 'user1').
       returns('services' => ary.reverse)
-    assert_equal(ary, User.services(:auth => user, :user => 'user1'))
+    services = User.services(:auth => user, :user => 'user1')
+    assert_equal('s1', services[0].name)
+    assert_equal('s2', services[1].name)
     #
     ff.expects(:get_profile).with('user1', nil, nil).
       returns(nil)
@@ -159,11 +161,15 @@ class UserTest < ActiveSupport::TestCase
     #
     ff.expects(:get_profile).with('user1', nil, 'user1').
       returns('lists' => ary.reverse)
-    assert_equal(ary, User.lists(:auth => user, :user => 'user1'))
+    lists = User.lists(:auth => user, :user => 'user1')
+    assert_equal('l1', lists[0].name)
+    assert_equal('l2', lists[1].name)
     #
     ff.expects(:get_profile).with('user1', nil, 'user1').
       returns('lists' => ary.reverse)
-    assert_equal(ary, User.lists(:auth => user))
+    lists = User.lists(:auth => user)
+    assert_equal('l1', lists[0].name)
+    assert_equal('l2', lists[1].name)
   end
 
   test 'rooms' do
@@ -174,11 +180,15 @@ class UserTest < ActiveSupport::TestCase
     #
     ff.expects(:get_profile).with('user1', nil, 'user1').
       returns('rooms' => ary.reverse)
-    assert_equal(ary, User.rooms(:auth => user, :user => 'user1'))
+    rooms = User.rooms(:auth => user, :user => 'user1')
+    assert_equal('r1', rooms[0].name)
+    assert_equal('r2', rooms[1].name)
     #
     ff.expects(:get_profile).with('user1', nil, 'user1').
       returns('rooms' => ary.reverse)
-    assert_equal(ary, User.rooms(:auth => user))
+    rooms = User.rooms(:auth => user)
+    assert_equal('r1', rooms[0].name)
+    assert_equal('r2', rooms[1].name)
   end
 
   test 'subscriptions' do
@@ -189,10 +199,14 @@ class UserTest < ActiveSupport::TestCase
     #
     ff.expects(:get_profile).with('user1', nil, 'user1').
       returns('subscriptions' => ary.reverse)
-    assert_equal(ary, User.subscriptions(:auth => user, :user => 'user1'))
+    subscriptions = User.subscriptions(:auth => user, :user => 'user1')
+    assert_equal('u1', subscriptions[0].name)
+    assert_equal('u2', subscriptions[1].name)
     #
     ff.expects(:get_profile).with('user1', nil, 'user1').
       returns('subscriptions' => ary.reverse)
-    assert_equal(ary, User.subscriptions(:auth => user))
+    subscriptions = User.subscriptions(:auth => user)
+    assert_equal('u1', subscriptions[0].name)
+    assert_equal('u2', subscriptions[1].name)
   end
 end

@@ -41,16 +41,11 @@ class ActiveSupport::TestCase
   end
 
   def read_entries(*path_components)
-    JSON.parse(read_fixture(*path_components)).map { |e|
-      entry = Entry[e]
-      entry['comments'] = entry['comments'].map { |c|
-        comment = Comment[c]
-        comment.entry = entry
-        comment
-      }
-      entry['room'] = Room[entry['room']] if entry['room']
-      entry
-    }
+    JSON.parse(read_fixture(*path_components))
+  end
+
+  def read_mapped_entries(*path_components)
+    read_entries(*path_components).map { |e| Entry[e] }
   end
 
   def read_profile(*path_components)

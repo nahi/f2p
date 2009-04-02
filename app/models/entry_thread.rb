@@ -331,16 +331,7 @@ class EntryThread
 
     def wrap(entries)
       return EMPTY if entries.nil?
-      entries.map { |hash|
-        entry = Entry[hash]
-        entry['comments'] = entry['comments'].map { |hash|
-          comment = Comment[hash]
-          comment.entry = entry
-          comment
-        }
-        entry['room'] = Room[entry['room']] if entry['room']
-        entry
-      }
+      entries.map { |e| Entry[e] }
     end
 
     def filter_hidden(entries)
@@ -389,7 +380,7 @@ class EntryThread
 
     def tag(entry, opt)
       t = [entry.user_id, entry.room]
-      t << entry.service_id unless opt[:merge_service]
+      t << entry.service.id unless opt[:merge_service]
       t
     end
 

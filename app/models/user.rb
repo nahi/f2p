@@ -61,25 +61,25 @@ class User < ActiveRecord::Base
     def services(arg)
       auth = arg[:auth]
       user = arg[:user]
-      sort_by_name(ff_profile(auth, user)['services'] || [])
+      sort_by_name(ff_profile(auth, user)['services'] || []).map { |e| Service[e] }
     end
 
     def lists(arg)
       auth = arg[:auth]
       user = arg[:user] || auth.name
-      sort_by_name(ff_profile(auth, user)['lists'] || [])
+      sort_by_name(ff_profile(auth, user)['lists'] || []).map { |e| List[e] }
     end
 
     def rooms(arg)
       auth = arg[:auth]
       user = arg[:user] || auth.name
-      sort_by_name(ff_profile(auth, user)['rooms'] || [])
+      sort_by_name(ff_profile(auth, user)['rooms'] || []).map { |e| Room[e] }
     end
 
     def subscriptions(arg)
       auth = arg[:auth]
       user = arg[:user] || auth.name
-      sort_by_name(ff_profile(auth, user)['subscriptions'] || [])
+      sort_by_name(ff_profile(auth, user)['subscriptions'] || []).map { |e| EntryUser[e] }
     end
 
   private

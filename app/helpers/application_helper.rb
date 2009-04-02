@@ -125,6 +125,10 @@ __EOS__
     SELF_LABEL
   end
 
+  def now
+    @now ||= Time.now.localtime
+  end
+
   def icon_url(name)
     F2P::Config.icon_url_base + (ICON_NAME[name.to_s] || name.to_s)
   end
@@ -174,22 +178,22 @@ __EOS__
   end
 
   def service_icon(service, link = nil)
-    icon_url = v(service, 'iconUrl')
-    name = v(service, 'name')
-    link ||= v(service, 'profileUrl')
-    if icon_url and name
+    icon_url = service.icon_url
+    name = service.name
+    link ||= service.profile_url
+    if service.icon_url and service.name
       if link
         label = "filter by #{name}"
-        link_to(image_tag(icon_url, :alt => h(name), :title => h(label)), link)
+        link_to(image_tag(service.icon_url, :alt => h(name), :title => h(label)), link)
       else
-        image_tag(icon_url, :alt => h(name), :title => h(name))
+        image_tag(service.icon_url, :alt => h(name), :title => h(name))
       end
     end
   end
 
   def list_name(nickname)
-    if found = user_lists(auth.name).find { |e| v(e, 'nickname') == nickname }
-      v(found, 'name')
+    if found = user_lists(auth.name).find { |e| e.nickname == nickname }
+      found.name
     end
   end
 
@@ -280,22 +284,20 @@ __EOS__
   end
 
   def user(user)
-    user_id = v(user, 'id')
-    nickname = v(user, 'nickname')
-    name = v(user, 'name')
-    if nickname == auth.name
+    name = user.name
+    if user.nickname == auth.name
       name = self_label
     end
-    link_to(h(name), :controller => 'entry', :action => 'list', :user => u(nickname || user_id))
+    link_to(h(name), :controller => 'entry', :action => 'list', :user => u(user.nickname || user.id))
   end
 
   def via(via)
-    name = v(via, 'name')
-    link = v(via, 'url')
-    if link
-      %Q[via #{link_to(h(name), link)}]
-    elsif name
-      %Q[via #{h(name)}]
+    if via
+      if via.url
+        %Q[via #{link_to(h(via.name), via.url)}]
+      elsif via.name
+        %Q[via #{h(via.name)}]
+      end
     end
   end
 
@@ -304,7 +306,7 @@ __EOS__
   end
 
   def title_date
-    h(Time.now.strftime("%H:%M"))
+    h(now.strftime("%H:%M"))
   end
 
   def date(time, compact = true)
@@ -312,7 +314,7 @@ __EOS__
     unless time.is_a?(Time)
       time = Time.parse(time.to_s).localtime
     end
-    elapsed = Time.now - time
+    elapsed = now - time
     format = nil
     if !compact
       if elapsed > YEAR_THRESHOLD
@@ -348,7 +350,7 @@ __EOS__
 
   def elapsed(time)
     if time
-      Time.now - time
+      now - time
     end
   end
 

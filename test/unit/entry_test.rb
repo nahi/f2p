@@ -122,7 +122,7 @@ class EntryTest < ActiveSupport::TestCase
   end
 
   test 'similar? same_origin?' do
-    entries = read_entries('entries', 'f2ptest')
+    entries = read_mapped_entries('entries', 'f2ptest')
     # same user_id, same published_at
     e1 = e2 = entries[0]
     assert(e1.similar?(e2))
@@ -130,114 +130,114 @@ class EntryTest < ActiveSupport::TestCase
     # 9 sec
     e1 = entries[1]
     e2 = e1.dup
-    e2['link'] = nil
-    e2['title'] = 'hello world'
-    e2['published'] = Time.at(Time.parse(e1['published']) + 9).xmlschema
+    e2.link = 'foo'
+    e2.title = 'hello world'
+    e2.instance_eval { @published_at = Time.at(e1.published_at + 9) }
     assert(e1.similar?(e2))
     assert(e2.similar?(e1))
     # 10 sec
     e1 = entries[2]
     e2 = e1.dup
-    e2['link'] = nil
-    e2['title'] = 'hello world'
-    e2['published'] = Time.at(Time.parse(e1['published']) + 10).xmlschema
+    e2.link = 'foo'
+    e2.title = 'hello world'
+    e2.instance_eval { @published_at = Time.at(e1.published_at + 10) }
     assert(!e1.similar?(e2))
     assert(!e2.similar?(e1))
   end
 
   test 'similar? same_link?' do
-    entries = read_entries('entries', 'f2ptest')
+    entries = read_mapped_entries('entries', 'f2ptest')
     e1 = e2 = entries[0]
-    e2['user'] = e1['user'].dup
-    e2['user']['id'] = 'unknown'
-    e2['title'] = 'unknown'
+    e2.user = e1.user.dup
+    e2.user.id = 'unknown'
+    e2.title = 'unknown'
     assert(e1.similar?(e2))
     assert(e2.similar?(e1))
     # 
     e1 = entries[1]
     e2 = e1.dup
-    e2['user'] = e1['user'].dup
-    e2['user']['id'] = 'unknown'
-    e2['link'] = e1['link'].reverse
-    e2['title'] = 'unknown'
+    e2.user = e1.user.dup
+    e2.user.id = 'unknown'
+    e2.link = e1.link.reverse
+    e2.title = 'unknown'
     assert(!e1.similar?(e2))
     assert(!e2.similar?(e1))
   end
 
   test 'similar? similar_title?' do
-    entries = read_entries('entries', 'f2ptest')
+    entries = read_mapped_entries('entries', 'f2ptest')
     e1 = e2 = entries[0]
-    e2['user'] = e1['user'].dup
-    e2['user']['id'] = 'unknown'
-    e2['link'] = e1['link'].reverse
+    e2.user = e1.user.dup
+    e2.user.id = 'unknown'
+    e2.link = e1.link.reverse
     assert(e1.similar?(e2))
     assert(e2.similar?(e1))
     # e2 part_of e1
     e1 = entries[1]
     e2 = e1.dup
-    e2['user'] = e1['user'].dup
-    e2['user']['id'] = 'unknown'
-    e2['link'] = e1['link'].reverse
-    e1['title'] = 'abcdefghijk'
-    e2['title'] = 'defghi'
+    e2.user = e1.user.dup
+    e2.user.id = 'unknown'
+    e2.link = e1.link.reverse
+    e1.title = 'abcdefghijk'
+    e2.title = 'defghi'
     assert(e1.similar?(e2))
     assert(e2.similar?(e1))
     # e1 part_of e2
     e1 = entries[1]
     e2 = e1.dup
-    e2['user'] = e1['user'].dup
-    e2['user']['id'] = 'unknown'
-    e2['link'] = e1['link'].reverse
-    e1['title'] = 'defghi'
-    e2['title'] = 'abcdefghijk'
+    e2.user = e1.user.dup
+    e2.user.id = 'unknown'
+    e2.link = e1.link.reverse
+    e1.title = 'defghi'
+    e2.title = 'abcdefghijk'
     assert(e1.similar?(e2))
     assert(e2.similar?(e1))
     # not e1 part_of e2
     e1 = entries[1]
     e2 = e1.dup
-    e2['user'] = e1['user'].dup
-    e2['user']['id'] = 'unknown'
-    e2['link'] = e1['link'].reverse
-    e1['title'] = 'defgh' # too short
-    e2['title'] = 'abcdefghijk'
+    e2.user = e1.user.dup
+    e2.user.id = 'unknown'
+    e2.link = e1.link.reverse
+    e1.title = 'defgh' # too short
+    e2.title = 'abcdefghijk'
     assert(!e1.similar?(e2))
     assert(!e2.similar?(e1))
   end
 
   test 'service_identity' do
-    entries = read_entries('entries', 'f2ptest')
+    entries = read_mapped_entries('entries', 'f2ptest')
     assert_equal(['twitter', nil], entries.first.service_identity)
   end
 
   test 'modified' do
-    entries = read_entries('entries', 'f2ptest')
+    entries = read_mapped_entries('entries', 'f2ptest')
     # no comments and likes
-    e = entries.find { |i| i['id'] == "58d3aa1c-519c-4ac2-8181-299de3a83d6d" }
-    assert_equal('2009-03-18T03:13:29Z', e['updated'])
+    e = entries.find { |i| i.id == "58d3aa1c-519c-4ac2-8181-299de3a83d6d" }
+    assert_equal('2009-03-18T03:13:29Z', e.updated)
     assert_equal('2009-03-18T03:13:29Z', e.modified)
     # has comments
     e = entries[1]
-    assert_equal('2009-03-18T08:44:34Z', e['updated'])
+    assert_equal('2009-03-18T08:44:34Z', e.updated)
     assert_equal('2009-03-18T08:44:35Z', e.modified) # added 1 sec later!
     # has likes
     e = entries[0]
-    assert_equal('2009-03-18T08:41:50Z', e['updated'])
+    assert_equal('2009-03-18T08:41:50Z', e.updated)
     assert_equal('2009-03-18T08:51:08Z', e.modified)
   end
 
   test 'modified_at' do
-    entries = read_entries('entries', 'f2ptest')
-    assert_equal('2009-03-18T08:51:08Z', entries.first.modified_at.xmlschema)
+    entries = read_mapped_entries('entries', 'f2ptest')
+    assert_equal('2009-03-18T17:51:08+09:00', entries.first.modified_at.xmlschema)
   end
 
   test 'attrs' do
-    entries = read_entries('entries', 'f2ptest')
+    entries = read_mapped_entries('entries', 'f2ptest')
     e = entries.first
     assert_equal("df9d34df-23ff-de8e-3675-a82736ef90cc", e.id)
     assert_equal("へー http://online.wsj.com/article/SB123735124997967063.html", e.title)
     assert_equal("http://twitter.com/tkudos/statuses/1347347755", e.link)
-    assert_equal('2009-03-18T08:41:50Z', e.published_at.xmlschema)
-    assert_equal('twitter', e.service_id)
+    assert_equal('2009-03-18T17:41:50+09:00', e.published_at.xmlschema)
+    assert_equal('twitter', e.service.id)
     assert_equal('9a46f9b0-0775-11dd-9e68-003048343a40', e.user_id)
     assert_equal('tkudo', e.nickname)
     assert_nil(e.room)
@@ -247,7 +247,7 @@ class EntryTest < ActiveSupport::TestCase
   end
 
   test 'media' do
-    entries = read_entries('entries', 'f2ptest')
+    entries = read_mapped_entries('entries', 'f2ptest')
     e = entries.find { |e| e.id == "260e9e92-0559-4b2d-8487-f98481f967dc" }
     assert_equal(2, e.medias.size)
   end

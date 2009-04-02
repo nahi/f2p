@@ -1,9 +1,9 @@
 require 'hash_utils'
 
 
-class Entry < Hash
-  extend HashUtils
+class Entry
   include HashUtils
+  EMPTY = [].freeze
 
   class << self
     def create(opt)
@@ -14,9 +14,9 @@ class Entry < Hash
       images = opt[:images]
       files = opt[:files]
       room = opt[:room]
-      entries = ff_client.post(auth.name, auth.remote_key, body, link, comment, images, files, room)
-      if entries
-        v(entries.first, 'id')
+      entry = ff_client.post(auth.name, auth.remote_key, body, link, comment, images, files, room)
+      if entry
+        entry.first['id']
       end
     end
 
@@ -33,7 +33,7 @@ class Entry < Hash
       body = opt[:body]
       comment = ff_client.post_comment(auth.name, auth.remote_key, id, body)
       if comment
-        v(comment, 'id')
+        comment['id']
       end
     end
 
@@ -44,7 +44,7 @@ class Entry < Hash
       body = opt[:body]
       comment = ff_client.edit_comment(auth.name, auth.remote_key, id, comment, body)
       if comment
-        v(comment, 'id')
+        comment['id']
       end
     end
 
@@ -94,8 +94,45 @@ class Entry < Hash
     end
   end
 
+  attr_accessor :id
+  attr_accessor :title
+  attr_accessor :link
+  attr_accessor :updated
+  attr_accessor :published
+  attr_accessor :service
+  attr_accessor :user
+  attr_accessor :medias
+  attr_accessor :comments
+  attr_accessor :likes
+  attr_accessor :via
+  attr_accessor :room
+  attr_accessor :geo
+  attr_accessor :friend_of
+
   attr_accessor :view_pinned
   attr_accessor :view_inbox
+  attr_accessor :view_links
+
+  def initialize(hash)
+    initialize_with_hash(hash, 'id', 'title', 'link', 'updated', 'published')
+    @service = Service[hash['service']]
+    @user = EntryUser[hash['user']]
+    @medias = (hash['media'] || EMPTY).map { |e| Media[e] }
+    @comments = (hash['comments'] || EMPTY).map { |e|
+      c = Comment[e]
+      c.entry = self
+      c
+    }
+    @likes = (hash['likes'] || EMPTY).map { |e| Like[e] }
+    @via = Via[hash['via']]
+    @room = Room[hash['room']]
+    @geo = Geo[hash['geo']]
+    @friend_of = EntryUser[hash['friendof']]
+    @hidden = hash['hidden'] || false
+    @view_pinned = nil
+    @view_inbox = nil
+    @view_likns = nil
+  end
 
   def similar?(rhs)
     result = false
@@ -106,73 +143,39 @@ class Entry < Hash
   end
 
   def service_identity
-    [service_id, room]
+    [service.id, room]
   end
-  
+
+  def published_at
+    @published_at ||= Time.parse(published).localtime
+  end
+
   def modified_at
-    @modified_at ||= Time.parse(modified)
+    @modified_at ||= Time.parse(modified).localtime
   end
 
   def modified
-    @modified ||= nil
     return @modified if @modified
-    @modified = v('updated')
+    @modified = self.updated || self.published
     unless comments.empty?
-      @modified = [@modified, comments.last['date']].max
+      @modified = [@modified, comments.last.date].max
     end
     unless likes.empty?
-      @modified = [@modified, likes.last['date']].max
+      @modified = [@modified, likes.last.date].max
     end
     @modified
   end
 
-  def id
-    v('id')
-  end
-
-  def title
-    v('title')
-  end
-
-  def link
-    v('link')
-  end
-
-  def medias
-    v('media') || []
-  end
-
-  def published_at
-    @published_at ||= Time.parse(v('published'))
-  end
-
-  def service_id
-    v('service', 'id')
+  def hidden?
+    @hidden
   end
 
   def user_id
-    v('user', 'id')
+    user.id
   end
 
-  # can be nil for imaginary friend
   def nickname
-    v('user', 'nickname')
-  end
-
-  def room
-    v('room')
-  end
-
-  def comments
-    v('comments') || []
-  end
-
-  def likes
-    v('likes') || []
-  end
-
-  def hidden?
-    v('hidden') || false
+    user.nickname
   end
 
   def self_comment_only?

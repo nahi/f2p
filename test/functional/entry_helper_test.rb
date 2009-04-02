@@ -62,34 +62,35 @@ class EntryHelperTest < MyActionView::TestCaseWithController
   end
 
   test 'service_icon' do
-    service = {
+    service = Service[
       "name"=>"FriendFeed",
       "iconUrl"=> "http://iconUrl/",
       "entryType"=>"link",
       "id"=>"internal",
       "profileUrl"=>"http://profileUrl"
-    }
+    ]
     assert_equal(%Q(<a href="http://www.google.com/gwt/n?u=http%3A%2F%2FprofileUrl"><img alt="FriendFeed" src="http://iconUrl/" title="filter by FriendFeed" /></a>), service_icon(service))
     # no link
-    service = {
+    service = Service[
       "name"=>"FriendFeed",
       "iconUrl"=> "http://iconUrl/",
       "entryType"=>"link",
       "id"=>"internal"
-    }
+    ]
     assert_equal(%Q(<img alt="FriendFeed" src="http://iconUrl/" title="FriendFeed" />), service_icon(service))
     # no icon_url
-    service = {
+    service = Service[
       "name"=>"FriendFeed",
       "entryType"=>"link",
       "id"=>"internal"
-    }
+    ]
     assert_nil(service_icon(service))
   end
 
   test 'list_name' do
+    lists = [{'nickname' => 'n1', 'name' => 'name1'}, {'nickname' => 'n2', 'name' => 'name2'}].map { |e| List[e] }
     User.expects(:lists).with(:auth => auth, :user => 'user1').
-      returns([{'nickname' => 'n1', 'name' => 'name1'}, {'nickname' => 'n2', 'name' => 'name2'}]).times(1)
+      returns(lists).times(1)
     assert_equal('name1', list_name('n1'))
     assert_equal('name1', list_name('n1'))
     assert_equal('name2', list_name('n2'))
@@ -206,19 +207,19 @@ class EntryHelperTest < MyActionView::TestCaseWithController
       "id"=>"95f306fd-0f63-47f2-88fc-8480ff10d48e",
       "profileUrl"=>"http://friendfeed.com/nahi"
     }
-    entry = {'user' => user}
+    entry = Entry['user' => user]
     assert_equal(%Q(<a href="/foo/entry/list\?user=nahi">NAKAMURA, Hiroshi</a>), user(entry))
-    user['nickname'] = 'user1'
+    entry.user.nickname = 'user1'
     assert_equal(%Q(<a href="/foo/entry/list\?user=user1">You</a>), user(entry))
   end
 
   test 'via' do
     via = {"name"=>"mail2ff", "url"=>"http://mail2ff.com/"}
-    entry = {'via' => via}
+    entry = Entry['via' => via]
     assert_equal(%Q(via <a href="http://www.google.com/gwt/n?u=http%3A%2F%2Fmail2ff.com%2F">mail2ff</a>), via(entry))
-    via['url'] = nil
+    via = {"name"=>"mail2ff", "url"=>nil}
+    entry = Entry['via' => via]
     assert_equal(%Q(via mail2ff), via(entry))
-    assert_equal(nil, nil)
   end
 
   test 'image_size' do
@@ -291,14 +292,14 @@ class EntryHelperTest < MyActionView::TestCaseWithController
   end
 
   test 'twitter_username' do
-    entry = read_entries('entries', 'twitter')[0]
+    entry = read_mapped_entries('entries', 'twitter')[0]
     assert_equal('foo', twitter_username(entry))
-    entry['service']['id'] = 'not twitter'
+    entry.service.id = 'not twitter'
     assert_nil(twitter_username(entry))
   end
 
   test 'pin_link' do
-    entry = read_entries('entries', 'twitter')[0]
+    entry = read_mapped_entries('entries', 'twitter')[0]
     ctx.inbox = true
     assert_match(/anchor.png/, pin_link(entry))
     entry.view_pinned = true
@@ -306,19 +307,19 @@ class EntryHelperTest < MyActionView::TestCaseWithController
   end
 
   test 'icon' do
-    entry = read_entries('entries', 'twitter')[0]
+    entry = read_mapped_entries('entries', 'twitter')[0]
     assert_match(/\?service=twitter/, icon(entry))
-    entry['room'] = Room['nickname' => 'n1']
+    entry.room = Room['nickname' => 'n1']
     assert_match(/\?room=n1&amp;service=twitter/, icon(entry))
   end
 
   test 'content brightkite' do
-    entry = read_entries('entries', 'brightkite')[0]
+    entry = read_mapped_entries('entries', 'brightkite')[0]
     assert_match(/maps.google.com\/staticmap/, content(entry))
   end
 
   test 'content tumblr' do
-    entry = read_entries('entries', 'tumblr')[0]
+    entry = read_mapped_entries('entries', 'tumblr')[0]
     ctx.fold = true
     assert_match(/add.png/, content(entry))
   end
