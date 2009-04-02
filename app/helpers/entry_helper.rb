@@ -708,7 +708,7 @@ module EntryHelper
 
   def edit_comment_link(comment)
     if ctx.single?
-      if comment.nickname == auth.name or auth.name == comment.entry.nickname
+      if comment.nickname == auth.name
         link_to(icon_tag(:comment_edit, 'edit'), link_action('edit', :id => u(comment.entry.id), :comment => u(comment.id)))
       end
     end
