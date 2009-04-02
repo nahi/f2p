@@ -230,7 +230,8 @@ class EntryHelperTest < MyActionView::TestCaseWithController
     Time.stubs(:now).returns(Time.mktime(2009, 1, 1, 0, 0, 0))
     assert_nil(date(nil))
     assert_equal(%Q(<span class="older">(08/01/01)</span>), date(Time.mktime(2008, 1, 1, 0, 0, 0)))
-    assert_equal(%Q(<span class="older">(01/02)</span>), date(Time.mktime(2008, 1, 2, 0, 0, 0)))
+    assert_equal(%Q(<span class="older">(01/04)</span>), date(Time.mktime(2008, 1, 4, 0, 0, 0)))
+    assert_equal(%Q(<span class="older">(08/01/03)</span>), date(Time.mktime(2008, 1, 3, 0, 0, 0)))
     assert_equal(%Q(<span class="older">(12/31)</span>), date(Time.mktime(2008, 12, 31, 7, 59, 59)))
     assert_equal(%Q(<span class="older">(08:00)</span>), date(Time.mktime(2008, 12, 31, 8, 0, 0)))
   end
@@ -244,7 +245,8 @@ class EntryHelperTest < MyActionView::TestCaseWithController
     Time.stubs(:now).returns(Time.mktime(2009, 1, 1, 0, 0, 0))
     assert_nil(date(nil))
     assert_equal(%Q(<span class="older">[08/01/01 00:00]</span>), date(Time.mktime(2008, 1, 1, 0, 0, 0), false))
-    assert_equal(%Q(<span class="older">[01/02 00:00]</span>), date(Time.mktime(2008, 1, 2, 0, 0, 0), false))
+    assert_equal(%Q(<span class="older">[01/04 00:00]</span>), date(Time.mktime(2008, 1, 4, 0, 0, 0), false))
+    assert_equal(%Q(<span class="older">[08/01/03 00:00]</span>), date(Time.mktime(2008, 1, 3, 0, 0, 0), false))
   end
 
   test 'latest' do

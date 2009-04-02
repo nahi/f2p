@@ -126,13 +126,19 @@ class EntryThread
           end
           entries
         elsif opt[:link]
-          start = (opt[:start] || 0) / 2
-          num = (opt[:num] || 0) / 2
-          opt = opt.merge(:start => start, :num => num)
+          if opt[:query]
+            start = (opt[:start] || 0) / 2
+            num = (opt[:num] || 0) / 2
+            opt = opt.merge(:start => start, :num => num)
+            search_task = Task.run { search_entries(auth, opt) }
+          end
           link_task = Task.run { get_link_entries(auth, opt) }
-          search_task = Task.run { search_entries(auth, opt) }
-          merged = wrap(link_task.result) + wrap(search_task.result)
-          merged.inject({}) { |r, e| r[e.id] = e; r }.values
+          merged = wrap(link_task.result)
+          if opt[:query]
+            merged += wrap(search_task.result)
+            merged = merged.inject({}) { |r, e| r[e.id] = e; r }.values
+          end
+          merged
         elsif opt[:query]
           wrap(Task.run { search_entries(auth, opt) }.result)
         elsif opt[:like] == 'likes'

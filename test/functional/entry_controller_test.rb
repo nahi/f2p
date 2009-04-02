@@ -279,6 +279,20 @@ class EntryControllerTest < ActionController::TestCase
     assert_response :success
   end
 
+  test 'list link query' do
+    login('user1')
+    @ff.expects(:get_url_entries).
+      with('user1', nil, 'http://foo/', {:service => nil, :num => 10, :start => 0}).
+      returns(read_entries('entries', 'f2ptest')).times(2)
+    @ff.expects(:search_entries).
+      with('user1', nil, 'foo', {:friends => nil, :room => nil, :service => nil, :from => nil, :start => 0, :num => 10}).
+      returns(read_entries('entries', 'f2ptest')).times(2)
+    get :list, :link => 'http://foo/', :query => 'foo'
+    assert_response :success
+    get :list, :link => 'http://foo/', :query => 'foo'
+    assert_response :success
+  end
+
   test 'show' do
     login('user1')
     @ff.expects(:get_profile).
