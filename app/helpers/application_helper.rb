@@ -46,6 +46,10 @@ module ApplicationHelper
     setting.link_type or (jpmobile? and @controller.request.mobile?)
   end
 
+  def i_mode?
+    jpmobile? and @controller.request.mobile.is_a?(Jpmobile::Mobile::Docomo)
+  end
+
   def iphone?
     /(iPhone|iPod)/ =~ @controller.request.user_agent
   end
@@ -130,7 +134,11 @@ __EOS__
   end
 
   def icon_url(name)
-    F2P::Config.icon_url_base + (ICON_NAME[name.to_s] || name.to_s)
+    icon_name = ICON_NAME[name.to_s]
+    if icon_name and i_mode?
+      icon_name = icon_name.sub(/.png\z/, '.gif')
+    end
+    F2P::Config.icon_url_base + (icon_name || name.to_s)
   end
 
   def icon_tag(name, alt = nil)
