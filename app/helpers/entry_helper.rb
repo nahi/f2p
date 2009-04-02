@@ -392,7 +392,11 @@ module EntryHelper
     end
   end
 
-  def user(entry)
+  def user(entry_or_comment)
+    unless entry_or_comment.respond_to?(:service)
+      return super(entry_or_comment.user)
+    end
+    entry = entry_or_comment
     if setting.twitter_comment_hack and entry.service.id == 'twitter'
       if nickname = entry.nickname
         name = entry.user.name

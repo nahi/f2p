@@ -379,12 +379,6 @@ __EOS__
     h('"') + str + h('"')
   end
 
-  def v(hash, *keywords)
-    keywords.inject(hash) { |r, k|
-      r[k] if r
-    }
-  end
-
   def fold_length(str, length)
     len = length.to_i
     return '' if len <= 0
@@ -399,6 +393,12 @@ __EOS__
 private
 
   def session_cache(*key, &block)
+    # TODO: remove; it's a migration code for changing mode from Hash to dedicated Class.
+    if value = @controller.request.session[key]
+      if value.is_a?(Array) and value.first.is_a?(Hash)
+        @controller.request.session[key] = nil
+      end
+    end
     @controller.request.session[key] ||= yield
   end
 end
