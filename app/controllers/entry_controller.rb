@@ -76,6 +76,8 @@ class EntryController < ApplicationController
       }
       if @eid
         {:auth => @auth, :id => @eid}
+      elsif @link
+        opt.merge(:link => @link, :query => @query, :merge_service => true)
       elsif @query
         opt.merge(:query => @query, :likes => @likes, :comments => @comments, :user => @user, :room => @room, :friends => @friends, :service => @service)
       elsif @like
@@ -90,8 +92,6 @@ class EntryController < ApplicationController
         opt.merge(:list => @list, :merge_service => true)
       elsif @room
         opt.merge(:room => @room, :merge_service => true)
-      elsif @link
-        opt.merge(:link => @link, :merge_service => true)
       elsif @inbox
         opt.merge(:inbox => true, :merge_service => true)
       else

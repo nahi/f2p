@@ -669,11 +669,12 @@ module EntryHelper
   end
 
   def url_link(entry)
-    if ctx.single? or ctx.query
-      link = entry.link if with_link?(entry.service)
-      link ||= entry.view_links ? entry.view_links.first : nil
-      url_link_to(link)
+    link = entry.link if with_link?(entry.service)
+    link ||= entry.view_links ? entry.view_links.first : nil
+    if entry.title.size < setting.text_folding_size
+      query = entry.title
     end
+    url_link_to(link, query)
   end
 
   def comment_url_link(comment)
@@ -682,9 +683,9 @@ module EntryHelper
     end
   end
 
-  def url_link_to(link)
+  def url_link_to(link, query = nil)
     if link and ctx.link != link
-      link_to(icon_tag(:url, 'related'), link_list(:link => link))
+      link_to(icon_tag(:url, 'related'), link_list(:link => link, :query => query))
     end
   end
 

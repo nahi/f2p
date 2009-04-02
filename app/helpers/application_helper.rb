@@ -6,7 +6,7 @@ require 'time'
 module ApplicationHelper
   APPNAME = 'f2p'
   DATE_THRESHOLD = (24 - 8).hours
-  YEAR_THRESHOLD = 1.year
+  YEAR_THRESHOLD = 1.year - 2.days
   SELF_LABEL = 'You'
   GWT_URL_BASE = 'http://www.google.com/gwt/n?u='
   ICON_NAME = {

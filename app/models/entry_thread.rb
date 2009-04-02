@@ -51,7 +51,8 @@ class EntryThread
           entries = sort_by_modified(entries)
         end
         if opt[:link]
-          entries = filter_link_entries(auth, entries)
+          # You comes first
+          entries = entries.partition { |e| e.nickname == auth.name }.flatten
         end
       end
       record_last_modified(entries)
@@ -124,6 +125,11 @@ class EntryThread
             entries += rest
           end
           entries
+        elsif opt[:link]
+          link_task = Task.run { get_link_entries(auth, opt) }
+          search_task = Task.run { search_entries(auth, opt) }
+          merged = wrap(link_task.result) + wrap(search_task.result)
+          merged.inject({}) { |r, e| r[e.id] = e; r }.values
         elsif opt[:query]
           wrap(Task.run { search_entries(auth, opt) }.result)
         elsif opt[:like] == 'likes'
@@ -142,8 +148,6 @@ class EntryThread
           wrap(Task.run { get_room_entries(auth, opt) }.result)
         elsif opt[:friends]
           wrap(Task.run { get_friends_entries(auth, opt) }.result)
-        elsif opt[:link]
-          wrap(Task.run { get_link_entries(auth, opt) }.result)
         else
           wrap(Task.run { get_home_entries(auth, opt) }.result)
         end
@@ -166,10 +170,6 @@ class EntryThread
       entries = yield
       @entries_cache[auth.name] = [opt, entries]
       entries
-    end
-
-    def filter_link_entries(auth, entries)
-      entries.partition { |e| e.nickname == auth.name }.flatten
     end
 
     def record_last_modified(entries)

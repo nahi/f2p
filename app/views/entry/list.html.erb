@@ -8,7 +8,7 @@
 <%- if flash[:message] -%>
   <p class="message"><%=h flash[:message] %></p>
 <%- end -%>
-<%- if ctx.query -%>
+<%- if ctx.query and !ctx.link -%>
   <%- form_tag({:action => 'list'}, {:name => 'post'}) do -%>
     <p><%= search_form %></p>
     <p>permalink: <%= link_to(h(url_for(search_opt.merge(:only_path => false))), search_opt) %></p>
@@ -29,7 +29,7 @@
   <%- elsif ctx.room == '*' -%>
     <p><%= room_links(ctx.user) %></p>
   <%- elsif ctx.link -%>
-    <p>entries for: <%= link_to(h(ctx.link), u(ctx.link)) %></p>
+    <p>entries related to: <%= link_to(h(ctx.link), u(ctx.link)) %></p>
   <%- end -%>
   <%- form_tag({:action => 'add'}, {:name => 'post'}) do -%>
     <p><a name="top"></a><%= post_entry_form %><%= bottom_menu_link %></p>
