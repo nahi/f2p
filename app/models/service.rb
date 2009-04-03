@@ -16,4 +16,14 @@ class Service
     @profile_url = hash['profileUrl']
     @entry_type = hash['entryType']
   end
+
+  ['internal', 'twitter', 'tumblr', 'brightkite'].each do |name|
+    define_method(name + '?') do
+      self.id == name
+    end
+  end
+
+  def service_group?
+    ['blog', 'feed'].include?(self.id)
+  end
 end

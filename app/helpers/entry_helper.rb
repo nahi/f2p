@@ -85,12 +85,11 @@ module EntryHelper
 
   def content(entry)
     common = common_content(entry)
-    case entry.service.id
-    when 'brightkite'
+    if entry.service.brightkite?
       brightkite_content(common, entry)
-    when 'twitter'
+    elsif entry.service.twitter?
       twitter_content(common, entry)
-    when 'tumblr'
+    elsif entry.service.tumblr?
       tumblr_content(common, entry)
     else
       common
@@ -134,11 +133,11 @@ module EntryHelper
     end
     if show_service
       if ctx.room_for
-        name = entry.service.name if entry.service.id != 'internal'
+        name = entry.service.name unless entry.service.internal?
       else
         if entry.room
           name = entry.room.nickname
-        elsif ['blog', 'feed'].include?(entry.service.id)
+        elsif entry.service.service_group?
           name = entry.service.name
           name = nil if name == entry.user.name
         end
@@ -160,7 +159,7 @@ module EntryHelper
   end
 
   def original_link(entry)
-    if entry.link and (!with_link?(entry.service) or entry.service.id == 'tumblr')
+    if entry.link and (!with_link?(entry.service) or entry.service.tumblr?)
       if unknown_where_to_go?(entry)
         link_content = icon_tag(:go) + h("(#{URI.parse(entry.link).host})")
       else
@@ -171,7 +170,7 @@ module EntryHelper
   end
 
   def link_content(title, entry)
-    if entry.service.id == 'tumblr'
+    if entry.service.tumblr?
       link_content_without_link(title, entry)
     else
       link_to(icon_tag(:go) + h(title), entry.link)
@@ -192,12 +191,12 @@ module EntryHelper
     if profile_url and link_url
       (profile_url.host.downcase != link_url.host.downcase)
     else
-      ['blog', 'feed', 'tumblr'].include?(entry.service.id)
+      entry.service.service_group? or entry.service.tumblr?
     end
   end
 
   def with_link?(service)
-    service.entry_type != 'message' and service.id != 'twitter'
+    service.entry_type != 'message' and !service.twitter?
   end
 
   def content_with_media(entry)
@@ -397,7 +396,7 @@ module EntryHelper
       return super(entry_or_comment.user)
     end
     entry = entry_or_comment
-    if setting.twitter_comment_hack and entry.service.id == 'twitter'
+    if setting.twitter_comment_hack and entry.service.twitter?
       if nickname = entry.nickname
         name = entry.user.name
         tw_name = twitter_username(entry)
@@ -453,7 +452,7 @@ module EntryHelper
   end
 
   def post_comment_form(entry)
-    if setting.twitter_comment_hack and entry.service.id == 'twitter' and user_status(entry.user_id) == 'public'
+    if setting.twitter_comment_hack and entry.service.twitter? and user_status(entry.user_id) == 'public'
       default = twitter_username(entry)
       unless default.empty?
         default = "@#{default} "
@@ -724,7 +723,7 @@ module EntryHelper
   end
 
   def like_link(entry)
-    if entry.nickname != auth.name or (entry.room and entry.service.id != 'internal')
+    if entry.nickname != auth.name or (entry.room and !entry.service.internal?)
       unless liked?(entry)
         link_to(icon_tag(:like), link_action('like', :id => u(entry.id)))
       end
@@ -806,7 +805,7 @@ module EntryHelper
   end
 
   def twitter_username(entry)
-    if entry.service.id == 'twitter'
+    if entry.service.twitter?
       (entry.service.profile_url || '').sub(/\A.*\//, '')
     end
   end

@@ -60,8 +60,6 @@ class EntryThread
       logger.info('[perf] record_last_modified done')
       check_inbox(auth, entries)
       logger.info('[perf] check_inbox done')
-      check_pinned(auth, entries, opt)
-      logger.info('[perf] check_pinned done')
       if opt[:inbox]
         if !first_page_option?(opt)
           entries = entries.find_all { |entry| !entry.view_pinned }
@@ -189,8 +187,12 @@ class EntryThread
 
     def record_last_modified(entries)
       found = LastModified.find_all_by_eid(entries.map { |e| e.id })
+      found_map = found.inject({}) { |r, e|
+        r[e.eid] = e
+        r
+      }
       entries.each do |entry|
-        if m = found.find { |e| entry.id == e.eid }
+        if m = found_map[entry.id]
           d = entry.modified_at
           if m.date != d
             m.date = d
@@ -206,30 +208,38 @@ class EntryThread
     end
 
     def check_inbox(auth, entries)
-      cond = [
-        'user_id = ? and last_modifieds.eid in (?)',
-        auth.id,
-        entries.map { |e| e.id }
-      ]
-      checked = CheckedModified.find(:all, :conditions => cond, :include => 'last_modified')
-      oldest = CheckedModified.find(:all, :order => 'checked asc', :limit => 1).first
+      eids = entries.map { |e| e.id }
+      checked_map = checked_map(auth, eids)
+      pinned_map = pinned_map(auth, eids)
+      if c = CheckedModified.find(:all, :order => 'checked asc', :limit => 1).first
+        oldest = c.checked
+      else
+        oldest = Time.at(0)
+      end
       entries.each do |entry|
-        if c = checked.find { |e| e.last_modified.eid == entry.id }
-          entry.view_inbox = c.checked < c.last_modified.date
+        if pinned_map.key?(entry.id)
+          entry.view_pinned = true
+          entry.view_inbox = true
         else
-          entry.view_inbox = oldest ? oldest.checked < entry.modified_at : true
+          if checked_map.key?(entry.id)
+            entry.view_inbox = checked_map[entry.id]
+          else
+            entry.view_inbox = oldest < entry.modified_at
+          end
         end
       end
     end
 
-    def check_pinned(auth, entries, opt)
-      map = pinned_map(auth, entries.map { |e| e.id })
-      entries.each do |entry|
-        if map.key?(entry.id)
-          entry.view_pinned = true
-          entry.view_inbox = true
-        end
-      end
+    def checked_map(auth, eids)
+      cond = [
+        'user_id = ? and last_modifieds.eid in (?)',
+        auth.id,
+        eids
+      ]
+      CheckedModified.find(:all, :conditions => cond, :include => 'last_modified').inject({}) { |r, e|
+        r[e.last_modified.eid] = e.checked < e.last_modified.date
+        r
+      }
     end
 
     def pinned_map(auth, eids)
@@ -238,7 +248,10 @@ class EntryThread
         auth.id,
         eids
       ]
-      Pin.find(:all, :conditions => cond).inject({}) { |r, e| r[e.eid] = true; r }
+      Pin.find(:all, :conditions => cond).inject({}) { |r, e|
+        r[e.eid] = true
+        r
+      }
     end
 
     def search_entries(auth, opt)
