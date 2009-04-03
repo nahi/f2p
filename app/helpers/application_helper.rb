@@ -147,6 +147,17 @@ __EOS__
     image_tag(icon_url(name), :alt => h(label), :title => h(label), :size => '16x16')
   end
 
+  def service_icon_tag(url, alt, title)
+    if i_mode? and %r{([^/]*)\.png\b} =~ url
+      url = icon_url($1 + '.gif')
+    end
+    image_tag(url, :alt => h(alt), :title => h(title), :size => '16x16')
+  end
+
+  def profile_image_tag(url, alt, title)
+    image_tag(url, :class => h('profile'), :alt => h(alt), :title => h(title), :size => '25x25')
+  end
+
   def write_new_link
     link_to(icon_tag(:write), :controller => 'entry', :action => 'new')
   end
@@ -192,9 +203,9 @@ __EOS__
     if service.icon_url and service.name
       if link
         label = "filter by #{name}"
-        link_to(image_tag(service.icon_url, :alt => h(name), :title => h(label)), link)
+        link_to(service_icon_tag(service.icon_url, name, label), link)
       else
-        image_tag(service.icon_url, :alt => h(name), :title => h(name))
+        service_icon_tag(service.icon_url, name, name)
       end
     end
   end
@@ -225,7 +236,7 @@ __EOS__
     url = session_cache(:room, :ff_url, nickname) {
       Room.ff_url(:auth => auth, :room => nickname)
     }
-    link_to(image_tag(image_url, :class => h('profile'), :alt => h(name), :title => h(name), :size => image_size(25, 25)), url)
+    link_to(profile_image_tag(image_url, name, name), url)
   end
 
   def room_members(nickname)
@@ -264,7 +275,7 @@ __EOS__
     url = session_cache(:user, :ff_url, nickname) {
       User.ff_url(:auth => auth, :user => nickname)
     }
-    link_to(image_tag(image_url, :class => h('profile'), :alt => h(name), :title => h(name), :size => image_size(25, 25)), url)
+    link_to(profile_image_tag(image_url, name, name), url)
   end
 
   def user_services(nickname)

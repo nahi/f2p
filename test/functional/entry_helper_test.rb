@@ -69,7 +69,7 @@ class EntryHelperTest < MyActionView::TestCaseWithController
       "id"=>"internal",
       "profileUrl"=>"http://profileUrl"
     ]
-    assert_equal(%Q(<a href="http://www.google.com/gwt/n?u=http%3A%2F%2FprofileUrl"><img alt="FriendFeed" src="http://iconUrl/" title="filter by FriendFeed" /></a>), service_icon(service))
+    assert_equal(%Q(<a href="http://www.google.com/gwt/n?u=http%3A%2F%2FprofileUrl"><img alt="FriendFeed" height="16" src="http://iconUrl/" title="filter by FriendFeed" width="16" /></a>), service_icon(service))
     # no link
     service = Service[
       "name"=>"FriendFeed",
@@ -77,7 +77,7 @@ class EntryHelperTest < MyActionView::TestCaseWithController
       "entryType"=>"link",
       "id"=>"internal"
     ]
-    assert_equal(%Q(<img alt="FriendFeed" src="http://iconUrl/" title="FriendFeed" />), service_icon(service))
+    assert_equal(%Q(<img alt="FriendFeed" height="16" src="http://iconUrl/" title="FriendFeed" width="16" />), service_icon(service))
     # no icon_url
     service = Service[
       "name"=>"FriendFeed",
