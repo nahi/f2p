@@ -55,12 +55,18 @@ class EntryThread
           entries = entries.partition { |e| e.nickname == auth.name }.flatten
         end
       end
+      logger.info('[perf] start internal data handling')
       record_last_modified(entries)
+      logger.info('[perf] record_last_modified done')
       check_inbox(auth, entries)
+      logger.info('[perf] check_inbox done')
       check_pinned(auth, entries, opt)
+      logger.info('[perf] check_pinned done')
       if opt[:inbox]
-        entries = filter_pinned_entries(auth, entries, opt)
-        entries = filter_checked_entries(auth, entries)
+        if !first_page_option?(opt)
+          entries = entries.find_all { |entry| !entry.view_pinned }
+        end
+        entries = entries.find_all { |entry| entry.view_inbox }
       end
       sort_by_service(entries, opt)
     end
@@ -172,7 +178,7 @@ class EntryThread
       if allow_cache and @entries_cache[auth.name]
         cached_opt, entries = @entries_cache[auth.name]
         if opt == cached_opt
-          logger.info("entries cache found for #{opt.inspect}")
+          logger.info("[cache] entries cache found for #{opt.inspect}")
           return entries
         end
       end
@@ -224,22 +230,6 @@ class EntryThread
           entry.view_inbox = true
         end
       end
-    end
-
-    def filter_pinned_entries(auth, entries, opt)
-      if !first_page_option?(opt)
-        entries.find_all { |entry|
-          !entry.view_pinned
-        }
-      else
-        entries
-      end
-    end
-
-    def filter_checked_entries(auth, entries)
-      entries.find_all { |entry|
-        entry.view_inbox
-      }
     end
 
     def pinned_map(auth, eids)
