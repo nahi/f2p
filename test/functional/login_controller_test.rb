@@ -1,6 +1,13 @@
 require 'test_helper'
 
 class LoginControllerTest < ActionController::TestCase
+  def setup
+    super
+    @ff = mock('ff_client')
+    ApplicationController.ff_client = @ff
+    @ff.stubs(:purge_cache)
+  end
+
   test 'index' do
     get :index
     assert_response :success

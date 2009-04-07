@@ -366,7 +366,9 @@ module FriendFeed
     def get_feed(client, uri, query = {})
       logger.info("getting entries with query: " + query.inspect)
       res = get_request(client, uri, query)
-      JSON.parse(res.content)['entries']
+      obj = JSON.parse(res.content)
+      logger.debug { JSON.pretty_generate(obj) }
+      obj['entries']
     end
   end
 end
@@ -375,6 +377,8 @@ end
 if $0 == __FILE__
   name = ARGV.shift or raise
   remote_key = ARGV.shift or raise
-  client = FriendFeed::APIClient.new
+  require 'logger'
+  logger = Logger.new('ff.log')
+  client = FriendFeed::APIClient.new(logger)
   print JSON.pretty_generate(client.get_home_entries(name, remote_key))
 end

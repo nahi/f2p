@@ -90,7 +90,7 @@ class EntryHelperTest < MyActionView::TestCaseWithController
   test 'list_name' do
     lists = [{'nickname' => 'n1', 'name' => 'name1'}, {'nickname' => 'n2', 'name' => 'name2'}].map { |e| List[e] }
     User.expects(:lists).with(:auth => auth, :user => 'user1').
-      returns(lists).times(1)
+      returns(lists).times(4)
     assert_equal('name1', list_name('n1'))
     assert_equal('name1', list_name('n1'))
     assert_equal('name2', list_name('n2'))
@@ -99,7 +99,7 @@ class EntryHelperTest < MyActionView::TestCaseWithController
 
   test 'room_name' do
     Room.expects(:ff_name).with(:auth => auth, :room => 'nick').
-      returns('name').times(1)
+      returns('name').times(4)
     assert_equal('name', room_name('nick'))
     assert_equal('name', room_name('nick'))
     assert_equal('name', room_name('nick'))
@@ -108,11 +108,11 @@ class EntryHelperTest < MyActionView::TestCaseWithController
 
   test 'room_picture' do
     Room.expects(:ff_name).with(:auth => auth, :room => 'nick').
-      returns('name').times(1)
+      returns('name').times(2)
     Room.expects(:picture_url).with(:auth => auth, :room => 'nick', :size => 'small').
-      returns('http://picture/').times(1)
+      returns('http://picture/').times(2)
     Room.expects(:ff_url).with(:auth => auth, :room => 'nick').
-      returns('http://url/').times(1)
+      returns('http://url/').times(2)
     str = %Q(<a href="http://www.google.com/gwt/n?u=http%3A%2F%2Furl%2F"><img alt="name" class="profile" height="25" src="http://picture/" title="name" width="25" /></a>)
     assert_equal(str, room_picture('nick'))
     assert_equal(str, room_picture('nick', 'small'))
@@ -121,34 +121,34 @@ class EntryHelperTest < MyActionView::TestCaseWithController
   test 'room_members' do
     members = ['u1', 'u2']
     Room.expects(:members).with(:auth => auth, :room => 'nick').
-      returns(members).times(1)
+      returns(members).times(2)
     assert_equal(members, room_members('nick'))
     assert_equal(members, room_members('nick'))
   end
 
   test 'user_name' do
     User.expects(:ff_name).with(:auth => auth, :user => 'nick').
-      returns('name').times(1)
+      returns('name').times(2)
     assert_equal('name', user_name('nick'))
     assert_equal('name', user_name('nick'))
   end
 
   test 'user_status' do
     User.expects(:status).with(:auth => auth, :user => 'nick').
-      returns('status').times(1)
+      returns('status').times(2)
     assert_equal('status', user_status('nick'))
     assert_equal('status', user_status('nick'))
   end
 
   test 'user_picture' do
     User.expects(:ff_id).with(:auth => auth, :user => 'nick').
-      returns('id').times(1)
+      returns('id').times(2)
     User.expects(:ff_name).with(:auth => auth, :user => 'nick').
-      returns('name').times(1)
+      returns('name').times(2)
     User.expects(:picture_url).with(:auth => auth, :user => 'nick', :size => 'small').
-      returns('http://picture/').times(1)
+      returns('http://picture/').times(2)
     User.expects(:ff_url).with(:auth => auth, :user => 'nick').
-      returns('http://url/').times(1)
+      returns('http://url/').times(2)
     str = %Q(<a href="http://www.google.com/gwt/n?u=http%3A%2F%2Furl%2F"><img alt="name" class="profile" height="25" src="http://picture/" title="name" width="25" /></a>)
     assert_equal(str, user_picture('nick'))
     assert_equal(str, user_picture('nick', 'small'))
@@ -156,13 +156,13 @@ class EntryHelperTest < MyActionView::TestCaseWithController
 
   test 'user_picture self' do
     User.expects(:ff_id).with(:auth => auth, :user => 'user1').
-      returns('id').times(1)
+      returns('id').times(2)
     User.expects(:ff_name).with(:auth => auth, :user => 'user1').
-      returns('name').times(1)
+      returns('name').times(2)
     User.expects(:picture_url).with(:auth => auth, :user => 'user1', :size => 'small').
-      returns('http://picture/').times(1)
+      returns('http://picture/').times(2)
     User.expects(:ff_url).with(:auth => auth, :user => 'user1').
-      returns('http://url/').times(1)
+      returns('http://url/').times(2)
     str = %Q(<a href="http://www.google.com/gwt/n?u=http%3A%2F%2Furl%2F"><img alt="You" class="profile" height="25" src="http://picture/" title="You" width="25" /></a>)
     assert_equal(str, user_picture('user1'))
     assert_equal(str, user_picture('user1', 'small'))
@@ -171,7 +171,7 @@ class EntryHelperTest < MyActionView::TestCaseWithController
   test 'user_services' do
     services = ['s1', 's2']
     User.expects(:services).with(:auth => auth, :user => 'nick').
-      returns(services).times(1)
+      returns(services).times(2)
     assert_equal(services, user_services('nick'))
     assert_equal(services, user_services('nick'))
   end
@@ -179,7 +179,7 @@ class EntryHelperTest < MyActionView::TestCaseWithController
   test 'user_rooms' do
     rooms = ['r1', 'r2']
     User.expects(:rooms).with(:auth => auth, :user => 'nick').
-      returns(rooms).times(1)
+      returns(rooms).times(2)
     assert_equal(rooms, user_rooms('nick'))
     assert_equal(rooms, user_rooms('nick'))
   end
@@ -187,7 +187,7 @@ class EntryHelperTest < MyActionView::TestCaseWithController
   test 'user_lists' do
     lists = ['l1', 'l2']
     User.expects(:lists).with(:auth => auth, :user => 'nick').
-      returns(lists).times(1)
+      returns(lists).times(2)
     assert_equal(lists, user_lists('nick'))
     assert_equal(lists, user_lists('nick'))
   end
@@ -195,7 +195,7 @@ class EntryHelperTest < MyActionView::TestCaseWithController
   test 'user_subscriptions' do
     subscriptions = ['u1', 'u2']
     User.expects(:subscriptions).with(:auth => auth, :user => 'nick').
-      returns(subscriptions).times(1)
+      returns(subscriptions).times(2)
     assert_equal(subscriptions, user_subscriptions('nick'))
     assert_equal(subscriptions, user_subscriptions('nick'))
   end

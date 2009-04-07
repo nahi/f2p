@@ -217,50 +217,34 @@ __EOS__
   end
 
   def room_name(nickname)
-    session_cache(:room, :ff_name, nickname) {
-      Room.ff_name(:auth => auth, :room => nickname)
-    }
+    Room.ff_name(:auth => auth, :room => nickname)
   end
 
   def room_description(nickname)
-    session_cache(:room, :description, nickname) {
-      Room.description(:auth => auth, :room => nickname)
-    }
+    Room.description(:auth => auth, :room => nickname)
   end
 
   def room_picture(nickname, size = 'small')
     name = room_name(nickname)
-    image_url = session_cache(:room, :pictur_url, nickname, size) {
-      Room.picture_url(:auth => auth, :room => nickname, :size => size)
-    }
-    url = session_cache(:room, :ff_url, nickname) {
-      Room.ff_url(:auth => auth, :room => nickname)
-    }
+    image_url = Room.picture_url(:auth => auth, :room => nickname, :size => size)
+    url = Room.ff_url(:auth => auth, :room => nickname)
     link_to(profile_image_tag(image_url, name, name), url)
   end
 
   def room_members(nickname)
-    session_cache(:room, :members, nickname) {
-      Room.members(:auth => auth, :room => nickname)
-    }
+    Room.members(:auth => auth, :room => nickname)
   end
 
   def user_id(nickname)
-    session_cache(:user, :ff_id, nickname) {
-      User.ff_id(:auth => auth, :user => nickname)
-    }
+    User.ff_id(:auth => auth, :user => nickname)
   end
 
   def user_name(nickname)
-    session_cache(:user, :ff_name, nickname) {
-      User.ff_name(:auth => auth, :user => nickname)
-    }
+    User.ff_name(:auth => auth, :user => nickname)
   end
 
   def user_status(nickname)
-    session_cache(:user, :status, nickname) {
-      User.status(:auth => auth, :user => nickname)
-    }
+    User.status(:auth => auth, :user => nickname)
   end
 
   def user_picture(nickname, size = 'small')
@@ -269,37 +253,25 @@ __EOS__
     if nickname == auth.name
       name = self_label
     end
-    image_url = session_cache(:user, :pictur_url, nickname, size) {
-      User.picture_url(:auth => auth, :user => nickname, :size => size)
-    }
-    url = session_cache(:user, :ff_url, nickname) {
-      User.ff_url(:auth => auth, :user => nickname)
-    }
+    image_url = User.picture_url(:auth => auth, :user => nickname, :size => size)
+    url = User.ff_url(:auth => auth, :user => nickname)
     link_to(profile_image_tag(image_url, name, name), url)
   end
 
   def user_services(nickname)
-    session_cache(:user, :services, nickname) {
-      User.services(:auth => auth, :user => nickname)
-    }
+    User.services(:auth => auth, :user => nickname)
   end
 
   def user_rooms(nickname)
-    session_cache(:user, :rooms, nickname) {
-      User.rooms(:auth => auth, :user => nickname)
-    }
+    User.rooms(:auth => auth, :user => nickname)
   end
 
   def user_lists(nickname)
-    session_cache(:user, :lists, nickname) {
-      User.lists(:auth => auth, :user => nickname)
-    }
+    User.lists(:auth => auth, :user => nickname)
   end
 
   def user_subscriptions(nickname)
-    session_cache(:user, :subscriptions, nickname) {
-      User.subscriptions(:auth => auth, :user => nickname)
-    }
+    User.subscriptions(:auth => auth, :user => nickname)
   end
 
   def user(user)
@@ -407,17 +379,5 @@ __EOS__
   def remember_checked(entry)
     store = @controller.request.session[:checked] ||= {}
     store[entry.id] = entry.modified
-  end
-
-private
-
-  def session_cache(*key, &block)
-    # TODO: remove; it's a migration code for changing mode from Hash to dedicated Class.
-    if value = @controller.request.session[key]
-      if value.is_a?(Array) and value.first.is_a?(Hash)
-        @controller.request.session[key] = nil
-      end
-    end
-    @controller.request.session[key] ||= yield
   end
 end

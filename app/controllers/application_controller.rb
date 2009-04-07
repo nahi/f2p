@@ -1,7 +1,7 @@
 # Filters added to this controller apply to all controllers in the application.
 # Likewise, all the methods added will be available for all controllers.
 
-require 'ff'
+require 'ff_daemon'
 require 'stringio'
 require 'zlib'
 
@@ -53,9 +53,7 @@ class ApplicationController < ActionController::Base
   private
 
     def create_ff_client(logger)
-      ff = FriendFeed::APIClient.new(logger, F2P::Config.friendfeed_api_key)
-      ff.http_proxy = F2P::Config.http_proxy
-      ff
+      FriendFeed::APIClientProxy.new
     end
   end
 
@@ -131,9 +129,11 @@ private
   def set_user(user)
     @user_id = session[:user_id] = user.id
     @auth = user
+    ApplicationController.ff_client.purge_cache(@auth.name)
   end
 
   def logout
+    ApplicationController.ff_client.purge_cache(@auth.name)
     @user_id = session[:user_id] = nil
     @auth = nil
     reset_session
