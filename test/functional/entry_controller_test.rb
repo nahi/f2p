@@ -371,6 +371,21 @@ class EntryControllerTest < ActionController::TestCase
     assert_response :success
   end
 
+  test 'new zoom setting' do
+    login('user1')
+    @ff.expects(:get_profile).
+      returns(read_profile('profile')).times(1)
+    assert_equal(13, @setting.google_maps_zoom)
+    #
+    get :new
+    assert_response :success
+    assert_equal(13, @setting.google_maps_zoom)
+    #
+    get :new, :zoom => 1
+    assert_response :success
+    assert_equal(1, @setting.google_maps_zoom)
+  end
+
   test 'new with gps' do
     login('user1')
     @ff.expects(:get_profile).
