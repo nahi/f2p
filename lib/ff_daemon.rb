@@ -6,19 +6,31 @@ module FriendFeed
   module ClientProxy
     def define_proxy_method(msg_id)
       define_method(msg_id) do |*arg|
-        @client.send(msg_id, *arg)
+        ClientProxy.proxy(@client, msg_id, *arg)
       end
     end
+
+    # do retry 1 time
+    def proxy(client, *sig)
+      begin
+        client.send(*sig)
+      rescue SystemCallError => e
+        client.send(*sig)
+      end
+    end
+    module_function :proxy
   end
 
   module ClientCachedProxy
     include ClientProxy
 
-    # first argument is used as a part of cache key.
+    # first argument(name) is used as a key for purge cache.
     def define_cached_proxy_method(msg_id)
       define_method(msg_id) do |*arg|
-        key = arg[0]
-        (@cache[key] ||= {})[msg_id] ||= @client.send(msg_id, *arg)
+        basekey = arg[0]
+        cachekey = [msg_id, *arg]
+        (@cache[basekey] ||= {})[cachekey] ||=
+          ClientProxy.proxy(@client, msg_id, *arg)
       end
     end
   end
