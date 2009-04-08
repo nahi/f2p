@@ -1,0 +1,4059 @@
+[
+  {
+    "comments": [
+      {
+        "body": "Would be nice to have a simple way to sort\/filter posts by services though.",
+        "id": "10acd79d-48b7-43bf-926c-218d27c14c3e",
+        "date": "2009-04-08T04:46:49Z",
+        "user": {
+          "name": "Andrew Trinh",
+          "nickname": "ancyru",
+          "id": "1b28d09a-3196-11dd-b4ac-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/ancyru"
+        }
+      },
+      {
+        "body": "Exactly :D",
+        "id": "65c882d5-d36e-473e-bbbe-bbbb661953b2",
+        "date": "2009-04-08T04:47:03Z",
+        "user": {
+          "name": "Johnny Worthington",
+          "nickname": "jworthington",
+          "id": "e15ae81c-3811-11dd-8593-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/jworthington"
+        }
+      },
+      {
+        "body": "I hadn't anticipated it, but it seems so evident now.",
+        "id": "bcedbe27-5b86-45f8-adaf-356b52e9b56d",
+        "date": "2009-04-08T04:48:55Z",
+        "user": {
+          "name": "Micah Wittman",
+          "nickname": "micahwittman",
+          "id": "c9ccf60a-2780-11dd-9b5e-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/micahwittman"
+        }
+      },
+      {
+        "body": "Some how I think people's hidden filters should be reset just because it's a new way to see FriendFeed. Before people probably just hid all these services because one person kept flooding it.",
+        "id": "8efa55d3-9230-4be3-a16b-8bdd3860aecf",
+        "date": "2009-04-08T04:51:24Z",
+        "user": {
+          "name": "Andrew Trinh",
+          "nickname": "ancyru",
+          "id": "1b28d09a-3196-11dd-b4ac-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/ancyru"
+        }
+      },
+      {
+        "body": "So let me understand this . . . it's not ok to filter posts subconsciously by service icon but it is ok to filter them using a filter?",
+        "id": "a24c9d00-bc5f-4447-a43f-88858183cb50",
+        "date": "2009-04-08T04:52:22Z",
+        "user": {
+          "name": "Lindsey is Fierce!",
+          "nickname": "eclipse115",
+          "id": "84f7bd1a-1099-11dd-9df4-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/eclipse115"
+        }
+      },
+      {
+        "body": "You're very wrong :-)",
+        "id": "731258be-fc4d-4cf8-b495-2dd9b57667c3",
+        "date": "2009-04-08T04:53:16Z",
+        "user": {
+          "name": "Neil Saunders",
+          "nickname": "neilfws",
+          "id": "23167c0c-ee44-11dc-b54c-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/neilfws"
+        }
+      },
+      {
+        "body": "I never liked how FF posts get more activity than posts from other services. I always saw FF as meta to all the services you can import so why should it matter if an item was shared on Google Reader or posted directly to FF. The other trend I don't like to see is people ripping off Reddit or Digg by copying and pasting the headline and linking directly to the article, giving no credit to the original.",
+        "id": "8cf62a35-f581-4729-ac1c-713edfce1152",
+        "date": "2009-04-08T04:54:31Z",
+        "user": {
+          "name": "Graham English",
+          "nickname": "grahamenglish",
+          "id": "80572374-0836-11dd-8840-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/grahamenglish"
+        }
+      },
+      {
+        "body": "How much were you paid to make up that crap? All the lack of service icons does is rob traffic from the services that create the content on friendfeed.  It's biting the hand that feeds.  It needlessly limits discovery of new services you may have never heard of.  Creates needless posts on friendfeed when a post may be more appropriate on the provder.  It's bad and borderline wicked and hurts the utility of friendfeed",
+        "via": {
+          "name": "fftogo",
+          "url": "http:\/\/www.fftogo.com\/"
+        },
+        "id": "06013a95-4cf9-4fe6-8aaa-05abdfcb233d",
+        "date": "2009-04-08T04:55:22Z",
+        "user": {
+          "name": "Matthew DeVries",
+          "nickname": "dariusmdev",
+          "id": "16d2419c-c4a4-11dd-96f7-003048678d04",
+          "profileUrl": "http:\/\/friendfeed.com\/dariusmdev"
+        }
+      },
+      {
+        "body": "Most of my posts seem to get attention equally. I've never noticed any one particular service being ignored",
+        "id": "355a50d8-abbc-416b-80a3-8d6e03a526d8",
+        "date": "2009-04-08T04:56:04Z",
+        "user": {
+          "name": "Lindsey is Fierce!",
+          "nickname": "eclipse115",
+          "id": "84f7bd1a-1099-11dd-9df4-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/eclipse115"
+        }
+      },
+      {
+        "body": "For me it helps sort whether content is likely to be original or shared. Now I still look for that first, and it just wastes my time, having to find it amongst the rest of the text.",
+        "id": "273d996b-5ab8-4455-9ac3-7be4240bb70c",
+        "date": "2009-04-08T05:04:38Z",
+        "user": {
+          "name": "Alix Whitmire \u2602",
+          "nickname": "ambertides",
+          "id": "6041513a-f793-11dc-b465-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/ambertides"
+        }
+      },
+      {
+        "body": "What difference does it make if the content is original or shared? If it is interesting and brings about a discussion or enlightens another user then it has served its purpose.",
+        "id": "701b994d-5f30-42ef-89da-ac8db0466e73",
+        "date": "2009-04-08T05:06:45Z",
+        "user": {
+          "name": "Andrew Trinh",
+          "nickname": "ancyru",
+          "id": "1b28d09a-3196-11dd-b4ac-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/ancyru"
+        }
+      },
+      {
+        "body": "Of course original content (and the conversations around it) matters... it's FriendFeed, not DataFeed. Stuff like Digg bugs me because it's several clicks to get to the meat, just to see if it's interesting enough to talk about. Also, I may not care about person X's tweets, but I may care about their last.fm (for example). Service identification and discrimination is valid for many and varied reasons.",
+        "id": "9f07d799-6360-42e6-90bb-20fe607a142f",
+        "date": "2009-04-08T05:09:07Z",
+        "user": {
+          "name": "Logical Extremes",
+          "nickname": "logicalextremes",
+          "id": "b36167de-0fac-11dd-a773-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/logicalextremes"
+        }
+      },
+      {
+        "body": "Andrew - if you're not going to read people's posts, why make threads?  That point has been addressed by 3 people so far.",
+        "via": {
+          "name": "fftogo",
+          "url": "http:\/\/www.fftogo.com\/"
+        },
+        "id": "7e914c51-b091-4e4b-99ba-c581e929c588",
+        "date": "2009-04-08T05:09:23Z",
+        "user": {
+          "name": "Matthew DeVries",
+          "nickname": "dariusmdev",
+          "id": "16d2419c-c4a4-11dd-96f7-003048678d04",
+          "profileUrl": "http:\/\/friendfeed.com\/dariusmdev"
+        }
+      },
+      {
+        "body": "It depends on what your purpose is, Andrew. Mine is to usually get to know individuals better.",
+        "id": "a7eb71b3-d804-41f9-82d7-ca1fba73bbc9",
+        "date": "2009-04-08T05:09:31Z",
+        "user": {
+          "name": "Alix Whitmire \u2602",
+          "nickname": "ambertides",
+          "id": "6041513a-f793-11dc-b465-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/ambertides"
+        }
+      },
+      {
+        "body": "If I want to ignore a particular service, what's the harm in that? I'm allowed to ignore particular users. Can't I use FF the way I want?",
+        "id": "d2d1a147-f851-4619-8a97-eba057ed5dae",
+        "date": "2009-04-08T05:11:25Z",
+        "user": {
+          "name": "Lindsey is Fierce!",
+          "nickname": "eclipse115",
+          "id": "84f7bd1a-1099-11dd-9df4-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/eclipse115"
+        }
+      }
+    ],
+    "title": "It's great having service icons removed from the posts, that way we focus more on the content rather than the source of the information. That way users won't ignore certain services subconsciously because they've noticed a service icon, rather users ignore a post because it's just not interesting.",
+    "published": "2009-04-08T04:46:31Z",
+    "service": {
+      "name": "FriendFeed",
+      "iconUrl": "http:\/\/friendfeed.com\/static\/images\/icons\/internal.png?v=e471e9afdf04ae568dcbddb5584fc6c0",
+      "entryType": "message",
+      "id": "internal",
+      "profileUrl": "http:\/\/friendfeed.com\/ancyru"
+    },
+    "anonymous": false,
+    "id": "e0c08faf-2fe9-495f-b820-ae4f8012768c",
+    "media": [
+
+    ],
+    "link": "http:\/\/friendfeed.com\/e\/e0c08faf-2fe9-495f-b820-ae4f8012768c",
+    "user": {
+      "name": "Andrew Trinh",
+      "nickname": "ancyru",
+      "id": "1b28d09a-3196-11dd-b4ac-003048343a40",
+      "profileUrl": "http:\/\/friendfeed.com\/ancyru"
+    },
+    "room": {
+      "name": "FriendFeed Feedback",
+      "nickname": "friendfeed-feedback",
+      "url": "http:\/\/friendfeed.com\/rooms\/friendfeed-feedback",
+      "id": "34eac2e8-946a-4e85-b731-e49f88c6170e"
+    },
+    "updated": "2009-04-08T04:46:31Z",
+    "hidden": false,
+    "likes": [
+      {
+        "date": "2009-04-08T05:09:28Z",
+        "user": {
+          "name": "Morton Fox",
+          "nickname": "mortonfox",
+          "id": "29898d64-f550-11dc-9847-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/mortonfox"
+        }
+      },
+      {
+        "date": "2009-04-08T04:52:04Z",
+        "user": {
+          "name": "Nathan Chase",
+          "nickname": "nathanchase",
+          "id": "781560f8-259c-4f1a-9e33-23e14a7152fb",
+          "profileUrl": "http:\/\/friendfeed.com\/nathanchase"
+        }
+      },
+      {
+        "date": "2009-04-08T04:49:49Z",
+        "user": {
+          "name": "Graham English",
+          "nickname": "grahamenglish",
+          "id": "80572374-0836-11dd-8840-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/grahamenglish"
+        }
+      },
+      {
+        "date": "2009-04-08T04:49:30Z",
+        "user": {
+          "name": "Dan Hsiao",
+          "nickname": "dhsiao",
+          "id": "af6b5c81-1cf1-4376-9484-772930fde69f",
+          "profileUrl": "http:\/\/friendfeed.com\/dhsiao"
+        }
+      },
+      {
+        "date": "2009-04-08T04:49:00Z",
+        "user": {
+          "name": "Zee.",
+          "nickname": "zee",
+          "id": "59905ec4-18d0-42f0-84d6-505deb525646",
+          "profileUrl": "http:\/\/friendfeed.com\/zee"
+        }
+      },
+      {
+        "date": "2009-04-08T04:48:07Z",
+        "user": {
+          "name": "Anika Malone",
+          "nickname": "faboomama",
+          "id": "a78335c4-3c7e-11dd-88bc-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/faboomama"
+        }
+      },
+      {
+        "date": "2009-04-08T04:47:03Z",
+        "user": {
+          "name": "Micah Wittman",
+          "nickname": "micahwittman",
+          "id": "c9ccf60a-2780-11dd-9b5e-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/micahwittman"
+        }
+      },
+      {
+        "date": "2009-04-08T04:46:49Z",
+        "user": {
+          "name": "Johnny Worthington",
+          "nickname": "jworthington",
+          "id": "e15ae81c-3811-11dd-8593-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/jworthington"
+        }
+      }
+    ]
+  },
+  {
+    "comments": [
+      {
+        "body": "If you unselect all subscriptions, the Subscription box will get re-populated with the 'default' setting, which is the feeds you're most active in.",
+        "id": "e9dc1e91-1222-4ddc-a3cc-70d8d710d87a",
+        "date": "2009-04-08T04:48:20Z",
+        "user": {
+          "name": "Dan Hsiao",
+          "nickname": "dhsiao",
+          "id": "af6b5c81-1cf1-4376-9484-772930fde69f",
+          "profileUrl": "http:\/\/friendfeed.com\/dhsiao"
+        }
+      }
+    ],
+    "title": "How do you change your Friendfeed Subscriptions back to 'default' (in the new beta)?",
+    "published": "2009-04-08T02:48:39Z",
+    "service": {
+      "name": "FriendFeed",
+      "iconUrl": "http:\/\/friendfeed.com\/static\/images\/icons\/internal.png?v=e471e9afdf04ae568dcbddb5584fc6c0",
+      "entryType": "message",
+      "id": "internal",
+      "profileUrl": "http:\/\/friendfeed.com\/zee"
+    },
+    "anonymous": false,
+    "id": "d121724e-e359-4347-8dbf-92794909e5ab",
+    "media": [
+
+    ],
+    "link": "http:\/\/friendfeed.com\/e\/d121724e-e359-4347-8dbf-92794909e5ab",
+    "user": {
+      "name": "Zee.",
+      "nickname": "zee",
+      "id": "59905ec4-18d0-42f0-84d6-505deb525646",
+      "profileUrl": "http:\/\/friendfeed.com\/zee"
+    },
+    "room": {
+      "name": "FriendFeed Feedback",
+      "nickname": "friendfeed-feedback",
+      "url": "http:\/\/friendfeed.com\/rooms\/friendfeed-feedback",
+      "id": "34eac2e8-946a-4e85-b731-e49f88c6170e"
+    },
+    "updated": "2009-04-08T02:48:39Z",
+    "hidden": false,
+    "likes": [
+
+    ]
+  },
+  {
+    "comments": [
+      {
+        "body": "or \"reply to\"",
+        "id": "51134010-297a-4af9-ab35-853de93bb3c7",
+        "date": "2009-04-08T03:25:34Z",
+        "user": {
+          "name": "BEX BETA",
+          "nickname": "leblondb",
+          "id": "55be0a3c-a878-11dd-ac53-003048678d04",
+          "profileUrl": "http:\/\/friendfeed.com\/leblondb"
+        }
+      },
+      {
+        "body": "Notices",
+        "id": "61145c15-97a0-49ed-96eb-9ce3e402bb90",
+        "date": "2009-04-08T03:30:25Z",
+        "user": {
+          "name": "Stupid FFer (aka Tina)",
+          "nickname": "isthisstupid",
+          "id": "fc255b78-55c6-11dd-89e9-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/isthisstupid"
+        }
+      },
+      {
+        "body": "Well it's a message directed at them.",
+        "id": "8b14b546-a975-464f-9404-2f6a183e2cc8",
+        "date": "2009-04-08T03:30:55Z",
+        "user": {
+          "name": "Andrew Trinh",
+          "nickname": "ancyru",
+          "id": "1b28d09a-3196-11dd-b4ac-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/ancyru"
+        }
+      },
+      {
+        "body": "\"Messages Directed At You\" is a bit long.",
+        "id": "43188b31-e0a2-4d89-9430-f8072d2d43ec",
+        "date": "2009-04-08T03:31:08Z",
+        "user": {
+          "name": "Johnny Worthington",
+          "nickname": "jworthington",
+          "id": "e15ae81c-3811-11dd-8593-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/jworthington"
+        }
+      },
+      {
+        "body": "Confused. Is it really public for all to see or something?",
+        "id": "e721833d-5dd2-4e8d-a885-e308254b54f8",
+        "date": "2009-04-08T03:31:22Z",
+        "user": {
+          "name": "Rahsheen \u2122",
+          "nickname": "rahsheen",
+          "id": "3df81dd6-0b1e-11dd-8d34-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/rahsheen"
+        }
+      },
+      {
+        "body": "Yeah, \"private conversations\" is how I think of it. They should remove \"my feed\" from the default, though.",
+        "id": "efd4b8f2-a1a9-4c32-b7de-51fac30f12ba",
+        "date": "2009-04-08T03:31:43Z",
+        "user": {
+          "name": "Robert Scoble",
+          "nickname": "scobleizer",
+          "id": "251dca2e-e33f-11dc-8d47-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/scobleizer"
+        }
+      },
+      {
+        "body": "It is only public if you post it to your Homefeed along with sharing it with the other person.",
+        "id": "c2c0906d-015f-4f24-84b3-ba7188b3add5",
+        "date": "2009-04-08T03:34:11Z",
+        "user": {
+          "name": "Mathew\u2122",
+          "nickname": "mathewballard",
+          "id": "161f565c-4bb6-11dd-b698-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/mathewballard"
+        }
+      },
+      {
+        "body": "Oh, that's news to me ! I'll be careful now.",
+        "id": "f46f8535-e5f2-4800-b7e3-18bed838fd5c",
+        "date": "2009-04-08T03:36:03Z",
+        "user": {
+          "name": "Ahsan Ali",
+          "nickname": "highandwild",
+          "id": "f26d5329-618a-41de-b66e-83e4e41b7bd3",
+          "profileUrl": "http:\/\/friendfeed.com\/highandwild"
+        }
+      },
+      {
+        "body": "Agree with Robert, my feed should be removed by default but then new users have to be informed that it's still a possibility.",
+        "id": "0e2f98d7-17ee-4a97-81a2-9d7a9579bc74",
+        "date": "2009-04-08T03:39:53Z",
+        "user": {
+          "name": "Andrew Trinh",
+          "nickname": "ancyru",
+          "id": "1b28d09a-3196-11dd-b4ac-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/ancyru"
+        }
+      },
+      {
+        "body": "Andrew: if you post from the DM page, it is removed by default. It only appears when you create a DM from the mainpage.",
+        "id": "9637846c-d621-497d-a4b2-4c3c59a523c5",
+        "date": "2009-04-08T03:42:16Z",
+        "user": {
+          "name": "Stupid FFer (aka Tina)",
+          "nickname": "isthisstupid",
+          "id": "fc255b78-55c6-11dd-89e9-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/isthisstupid"
+        }
+      },
+      {
+        "body": "I suppose, I can't think of how many times I'd go to the DM page to send though. Just have to keep it in mind then.",
+        "id": "7e65b9b2-a8ed-4a85-8137-2a1f216bb5c4",
+        "date": "2009-04-08T03:44:20Z",
+        "user": {
+          "name": "Andrew Trinh",
+          "nickname": "ancyru",
+          "id": "1b28d09a-3196-11dd-b4ac-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/ancyru"
+        }
+      },
+      {
+        "body": "I agree with Scoble: \"Private Conversations\" is perfect.",
+        "id": "1ac727fb-0991-4360-91ef-9dd4450e7358",
+        "date": "2009-04-08T03:47:20Z",
+        "user": {
+          "name": "Ahsan Ali",
+          "nickname": "highandwild",
+          "id": "f26d5329-618a-41de-b66e-83e4e41b7bd3",
+          "profileUrl": "http:\/\/friendfeed.com\/highandwild"
+        }
+      },
+      {
+        "body": "But, the conversations might not be private. You can post to your feed, a room, and send a message to someone as a flag of sorts...",
+        "id": "2d5ab30d-d97e-4382-9e4c-282eb1ddb653",
+        "date": "2009-04-08T03:48:05Z",
+        "user": {
+          "name": "Stupid FFer (aka Tina)",
+          "nickname": "isthisstupid",
+          "id": "fc255b78-55c6-11dd-89e9-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/isthisstupid"
+        }
+      },
+      {
+        "body": "So .. do we want this functionality ? Is this supposed to be the equivalent of the twitter @reply & dm combined ?",
+        "id": "4a935ad4-c9c3-4c7d-acee-8127b6cbabff",
+        "date": "2009-04-08T03:50:59Z",
+        "user": {
+          "name": "Ahsan Ali",
+          "nickname": "highandwild",
+          "id": "f26d5329-618a-41de-b66e-83e4e41b7bd3",
+          "profileUrl": "http:\/\/friendfeed.com\/highandwild"
+        }
+      },
+      {
+        "body": "The DM function in FF is amazingly flexible, and now that I've seen it and used it this way I truly wouldn't want it restricted to a one-to-one private only option.",
+        "id": "7c5e4224-2fe7-4bfe-8552-c64312f1b028",
+        "date": "2009-04-08T03:56:14Z",
+        "user": {
+          "name": "Stupid FFer (aka Tina)",
+          "nickname": "isthisstupid",
+          "id": "fc255b78-55c6-11dd-89e9-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/isthisstupid"
+        }
+      },
+      {
+        "body": "Well, all I'm asking for is a clear delineation between the two functions ... Imagine your everyday Joe Tweeter trying to figure this all out.",
+        "id": "58dbae7d-1170-4eb9-85e9-7c9de931b8e0",
+        "date": "2009-04-08T03:59:06Z",
+        "user": {
+          "name": "Ahsan Ali",
+          "nickname": "highandwild",
+          "id": "f26d5329-618a-41de-b66e-83e4e41b7bd3",
+          "profileUrl": "http:\/\/friendfeed.com\/highandwild"
+        }
+      },
+      {
+        "body": "My understanding is in Twitter you have to specifically go to the DM page to send one, so someone from that background wouldn't likely have an issue...",
+        "id": "9c646c38-18a1-42da-a6b9-7a1998b7ccf9",
+        "date": "2009-04-08T04:01:46Z",
+        "user": {
+          "name": "Stupid FFer (aka Tina)",
+          "nickname": "isthisstupid",
+          "id": "fc255b78-55c6-11dd-89e9-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/isthisstupid"
+        }
+      },
+      {
+        "body": "@Tina Actually, this ties in with your suggestion of sending 'DMs' to a complete List. If you send a 'Direct' Message to entire Lists, is 'Direct' the appropriate word ?",
+        "id": "3fb50111-2540-4a82-970d-76d2dfb90d81",
+        "date": "2009-04-08T04:03:34Z",
+        "user": {
+          "name": "Ahsan Ali",
+          "nickname": "highandwild",
+          "id": "f26d5329-618a-41de-b66e-83e4e41b7bd3",
+          "profileUrl": "http:\/\/friendfeed.com\/highandwild"
+        }
+      },
+      {
+        "body": "Where is it? Did I miss it? I don't see it anywhere obvious but it IS late and I am very tired.",
+        "id": "ff580906-5a30-4fab-a762-a68ce9fc95da",
+        "date": "2009-04-08T04:12:23Z",
+        "user": {
+          "name": "Internet Strategist",
+          "nickname": "growmap",
+          "id": "32869e28-bce9-11dd-8ca7-003048678d04",
+          "profileUrl": "http:\/\/friendfeed.com\/growmap"
+        }
+      }
+    ],
+    "title": "I think \"Direct Messages\" is a misleading label. It should be called \"Direct Conversations\" or \"1-on-1 Conversations\".",
+    "published": "2009-04-08T03:12:04Z",
+    "service": {
+      "name": "FriendFeed",
+      "iconUrl": "http:\/\/friendfeed.com\/static\/images\/icons\/internal.png?v=e471e9afdf04ae568dcbddb5584fc6c0",
+      "entryType": "message",
+      "id": "internal",
+      "profileUrl": "http:\/\/friendfeed.com\/highandwild"
+    },
+    "anonymous": false,
+    "id": "2a58a3de-a8fb-43fc-9524-79d3532dd40e",
+    "media": [
+
+    ],
+    "link": "http:\/\/friendfeed.com\/e\/2a58a3de-a8fb-43fc-9524-79d3532dd40e",
+    "user": {
+      "name": "Ahsan Ali",
+      "nickname": "highandwild",
+      "id": "f26d5329-618a-41de-b66e-83e4e41b7bd3",
+      "profileUrl": "http:\/\/friendfeed.com\/highandwild"
+    },
+    "room": {
+      "name": "FriendFeed Feedback",
+      "nickname": "friendfeed-feedback",
+      "url": "http:\/\/friendfeed.com\/rooms\/friendfeed-feedback",
+      "id": "34eac2e8-946a-4e85-b731-e49f88c6170e"
+    },
+    "updated": "2009-04-08T03:12:04Z",
+    "hidden": false,
+    "likes": [
+      {
+        "date": "2009-04-08T04:11:33Z",
+        "user": {
+          "name": "Internet Strategist",
+          "nickname": "growmap",
+          "id": "32869e28-bce9-11dd-8ca7-003048678d04",
+          "profileUrl": "http:\/\/friendfeed.com\/growmap"
+        }
+      },
+      {
+        "date": "2009-04-08T03:43:14Z",
+        "user": {
+          "name": "David Cook",
+          "nickname": "skizzlizzit",
+          "id": "d0de616c-1615-11dd-8497-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/skizzlizzit"
+        }
+      },
+      {
+        "date": "2009-04-08T03:12:19Z",
+        "user": {
+          "name": "Larry Hudson",
+          "nickname": "larryhudson",
+          "id": "46f114fa-6790-11dd-adf9-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/larryhudson"
+        }
+      }
+    ]
+  },
+  {
+    "comments": [
+
+    ],
+    "title": "How do you create lists in the new FF Beta?",
+    "published": "2009-04-08T04:09:01Z",
+    "service": {
+      "name": "FriendFeed",
+      "iconUrl": "http:\/\/friendfeed.com\/static\/images\/icons\/internal.png?v=e471e9afdf04ae568dcbddb5584fc6c0",
+      "entryType": "message",
+      "id": "internal",
+      "profileUrl": "http:\/\/friendfeed.com\/havaslash"
+    },
+    "anonymous": false,
+    "id": "e3eed429-da7e-4ca0-8fb8-8378ea940b9e",
+    "media": [
+
+    ],
+    "link": "http:\/\/friendfeed.com\/e\/e3eed429-da7e-4ca0-8fb8-8378ea940b9e",
+    "user": {
+      "name": "\u30c3 Havaslash",
+      "nickname": "havaslash",
+      "id": "c2f79850-1068-11dd-8a30-003048343a40",
+      "profileUrl": "http:\/\/friendfeed.com\/havaslash"
+    },
+    "room": {
+      "name": "FriendFeed Feedback",
+      "nickname": "friendfeed-feedback",
+      "url": "http:\/\/friendfeed.com\/rooms\/friendfeed-feedback",
+      "id": "34eac2e8-946a-4e85-b731-e49f88c6170e"
+    },
+    "updated": "2009-04-08T04:09:01Z",
+    "hidden": false,
+    "likes": [
+
+    ]
+  },
+  {
+    "comments": [
+      {
+        "body": "1.8 MB of feed????",
+        "id": "663b4912-da5a-44bc-81c0-3fcac1c3df58",
+        "date": "2009-04-08T03:49:35Z",
+        "user": {
+          "name": "atanas",
+          "nickname": "gaspiman",
+          "id": "ec673006-2b4d-11dd-ab90-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/gaspiman"
+        }
+      },
+      {
+        "body": "Its a feed of all the Links in my twitter friends' timeline. So yeah, its huge :( I want to import it into FF so that the dupe detector (when it starts working again) collapses dupe links.",
+        "id": "110ae14c-a6d7-4288-a250-2f56e743e928",
+        "date": "2009-04-08T03:52:01Z",
+        "user": {
+          "name": "Ahsan Ali",
+          "nickname": "highandwild",
+          "id": "f26d5329-618a-41de-b66e-83e4e41b7bd3",
+          "profileUrl": "http:\/\/friendfeed.com\/highandwild"
+        }
+      }
+    ],
+    "title": "I have a Problem: I am trying to import a large feed into a private group (tweetlinkmonster.com) but either it says \"We could not download the given page\" or \"Unable to reach Custom RSS\/Atom servers\". I can do a wget on the feed and download it fine. It is 1.8mb. Help !",
+    "published": "2009-04-08T03:27:58Z",
+    "service": {
+      "name": "FriendFeed",
+      "iconUrl": "http:\/\/friendfeed.com\/static\/images\/icons\/internal.png?v=e471e9afdf04ae568dcbddb5584fc6c0",
+      "entryType": "message",
+      "id": "internal",
+      "profileUrl": "http:\/\/friendfeed.com\/highandwild"
+    },
+    "anonymous": false,
+    "id": "3bf75c57-6b98-450f-a914-43ad06d439a5",
+    "media": [
+
+    ],
+    "link": "http:\/\/friendfeed.com\/e\/3bf75c57-6b98-450f-a914-43ad06d439a5",
+    "user": {
+      "name": "Ahsan Ali",
+      "nickname": "highandwild",
+      "id": "f26d5329-618a-41de-b66e-83e4e41b7bd3",
+      "profileUrl": "http:\/\/friendfeed.com\/highandwild"
+    },
+    "room": {
+      "name": "FriendFeed Feedback",
+      "nickname": "friendfeed-feedback",
+      "url": "http:\/\/friendfeed.com\/rooms\/friendfeed-feedback",
+      "id": "34eac2e8-946a-4e85-b731-e49f88c6170e"
+    },
+    "updated": "2009-04-08T03:27:58Z",
+    "hidden": false,
+    "likes": [
+
+    ]
+  },
+  {
+    "comments": [
+      {
+        "body": "I didn't think of this! I guess that's true. Cool!",
+        "id": "495f2fd2-8476-46a7-8ab3-e202f3f56612",
+        "date": "2009-04-08T03:27:57Z",
+        "user": {
+          "name": "Jandy Stone",
+          "nickname": "faithx5",
+          "id": "11f4e7f1-2033-482a-b0c1-4c4b10781c80",
+          "profileUrl": "http:\/\/friendfeed.com\/faithx5"
+        }
+      },
+      {
+        "body": "Yes, it's now considered a single cocoon. If one is private? Like the Confessions' one?",
+        "id": "defc46bc-f842-4f8e-bd4c-d66d428ac12b",
+        "date": "2009-04-08T03:28:56Z",
+        "user": {
+          "name": "Zu_ElijahBailey",
+          "nickname": "zjemily",
+          "id": "ac085244-4ce3-11dd-a7d3-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/zjemily"
+        }
+      },
+      {
+        "body": "For a private group, I'm not too sure. I know that if you share a DM and to a feed then everyone in those feeds can see it.",
+        "id": "d4d90571-7d59-4805-a364-c2139b55e723",
+        "date": "2009-04-08T03:29:49Z",
+        "user": {
+          "name": "Andrew Trinh",
+          "nickname": "ancyru",
+          "id": "1b28d09a-3196-11dd-b4ac-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/ancyru"
+        }
+      },
+      {
+        "body": "I guess if you're sharing to a private feed, you wouldn't necessarily post it to a public feed as well.",
+        "id": "8028c735-b124-4478-8141-eff84c092231",
+        "date": "2009-04-08T03:30:06Z",
+        "user": {
+          "name": "Andrew Trinh",
+          "nickname": "ancyru",
+          "id": "1b28d09a-3196-11dd-b4ac-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/ancyru"
+        }
+      },
+      {
+        "body": "how about to add option of \"posting to an email\" ?",
+        "id": "2caa9956-4859-49cb-bf13-cfded3d38dca",
+        "date": "2009-04-08T03:36:57Z",
+        "user": {
+          "name": "friendfeed.com\/PetrBuben",
+          "nickname": "petrbuben",
+          "id": "a20ec5df-2363-4c0c-9750-38c8a039f8b0",
+          "profileUrl": "http:\/\/friendfeed.com\/petrbuben"
+        }
+      }
+    ],
+    "title": "I love how posting a message to several feeds at once now allow you to receive comments in each room and merges them all together.",
+    "published": "2009-04-08T03:19:40Z",
+    "service": {
+      "name": "FriendFeed",
+      "iconUrl": "http:\/\/friendfeed.com\/static\/images\/icons\/internal.png?v=e471e9afdf04ae568dcbddb5584fc6c0",
+      "entryType": "message",
+      "id": "internal",
+      "profileUrl": "http:\/\/friendfeed.com\/ancyru"
+    },
+    "anonymous": false,
+    "id": "ded5eedf-b602-4146-b810-0de444e63e60",
+    "media": [
+
+    ],
+    "link": "http:\/\/friendfeed.com\/e\/ded5eedf-b602-4146-b810-0de444e63e60",
+    "user": {
+      "name": "Andrew Trinh",
+      "nickname": "ancyru",
+      "id": "1b28d09a-3196-11dd-b4ac-003048343a40",
+      "profileUrl": "http:\/\/friendfeed.com\/ancyru"
+    },
+    "room": {
+      "name": "FriendFeed Feedback",
+      "nickname": "friendfeed-feedback",
+      "url": "http:\/\/friendfeed.com\/rooms\/friendfeed-feedback",
+      "id": "34eac2e8-946a-4e85-b731-e49f88c6170e"
+    },
+    "updated": "2009-04-08T03:19:40Z",
+    "hidden": false,
+    "likes": [
+      {
+        "date": "2009-04-08T05:10:58Z",
+        "user": {
+          "name": "Morton Fox",
+          "nickname": "mortonfox",
+          "id": "29898d64-f550-11dc-9847-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/mortonfox"
+        }
+      },
+      {
+        "date": "2009-04-08T04:13:37Z",
+        "user": {
+          "name": "Rachel Lea Fox",
+          "nickname": "phoenix",
+          "id": "abbc45cf-3204-4362-b403-495973882010",
+          "profileUrl": "http:\/\/friendfeed.com\/phoenix"
+        }
+      },
+      {
+        "date": "2009-04-08T03:34:57Z",
+        "user": {
+          "name": "Andy Bakun",
+          "nickname": "thwartedefforts",
+          "id": "3683eefc-305a-11dd-b460-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/thwartedefforts"
+        }
+      },
+      {
+        "date": "2009-04-08T03:30:12Z",
+        "user": {
+          "name": "Alfredo",
+          "nickname": "fredygamer",
+          "id": "84f8bee4-ff3d-11dc-a470-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/fredygamer"
+        }
+      },
+      {
+        "date": "2009-04-08T03:29:29Z",
+        "user": {
+          "name": "B.E. (BJ) Johnson",
+          "nickname": "bjjohnson",
+          "id": "3a523774-b2ff-4d29-8762-7c7cb07786c6",
+          "profileUrl": "http:\/\/friendfeed.com\/bjjohnson"
+        }
+      },
+      {
+        "date": "2009-04-08T03:28:47Z",
+        "user": {
+          "name": "Stupid FFer (aka Tina)",
+          "nickname": "isthisstupid",
+          "id": "fc255b78-55c6-11dd-89e9-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/isthisstupid"
+        }
+      },
+      {
+        "date": "2009-04-08T03:28:19Z",
+        "user": {
+          "name": "Zu_ElijahBailey",
+          "nickname": "zjemily",
+          "id": "ac085244-4ce3-11dd-a7d3-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/zjemily"
+        }
+      },
+      {
+        "date": "2009-04-08T03:28:11Z",
+        "user": {
+          "name": "Micah Wittman",
+          "nickname": "micahwittman",
+          "id": "c9ccf60a-2780-11dd-9b5e-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/micahwittman"
+        }
+      },
+      {
+        "date": "2009-04-08T03:27:16Z",
+        "user": {
+          "name": "Jandy Stone",
+          "nickname": "faithx5",
+          "id": "11f4e7f1-2033-482a-b0c1-4c4b10781c80",
+          "profileUrl": "http:\/\/friendfeed.com\/faithx5"
+        }
+      },
+      {
+        "date": "2009-04-08T03:20:04Z",
+        "user": {
+          "name": "MLx",
+          "nickname": "mlx",
+          "id": "99331e3e-f4d1-11dc-9f26-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/mlx"
+        }
+      }
+    ]
+  },
+  {
+    "comments": [
+      {
+        "body": "I think the users are more important than the source, no?",
+        "id": "99ea3605-a129-419a-a26d-339c9553d624",
+        "date": "2009-04-07T19:45:28Z",
+        "user": {
+          "name": "Pat Hawks",
+          "nickname": "pathawks",
+          "id": "ec034dce-f4a8-11dc-8903-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/pathawks"
+        }
+      },
+      {
+        "body": "I think there is no reason we can't have both",
+        "id": "fa22845e-4e61-4aef-82ee-c18fec194610",
+        "date": "2009-04-07T19:46:47Z",
+        "user": {
+          "name": "Lindsey is Fierce!",
+          "nickname": "eclipse115",
+          "id": "84f7bd1a-1099-11dd-9df4-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/eclipse115"
+        }
+      },
+      {
+        "body": "What lindsey said.",
+        "id": "0f3f9758-2565-40eb-b606-366b6f52a2af",
+        "date": "2009-04-07T19:47:01Z",
+        "user": {
+          "name": "Alex Gawley",
+          "nickname": "agawley",
+          "id": "0d64286d-27d3-4089-9c5d-e0274513c95f",
+          "profileUrl": "http:\/\/friendfeed.com\/agawley"
+        }
+      },
+      {
+        "body": "Agreed.",
+        "id": "c90f8173-e61a-4dcf-b2e6-058e63519050",
+        "date": "2009-04-07T19:48:29Z",
+        "user": {
+          "name": "xero",
+          "nickname": "jokeyxero",
+          "id": "7aa1ca26-2233-11dd-9539-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/jokeyxero"
+        }
+      },
+      {
+        "body": "And I think certain users' more interesting content can come from specific services. You may be more interested in my Flickr photos than my tweets or my Google Reader shares than my Brightkite updates. It's a lot harder at a glance now to tell which posts are worth my attention and which aren't.",
+        "id": "79f18e9c-3c28-44bc-83ff-8e7661ad640f",
+        "date": "2009-04-07T19:50:28Z",
+        "user": {
+          "name": "Scott of Two Countries",
+          "nickname": "maplestar",
+          "id": "00b595ee-49b6-11dd-9c86-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/maplestar"
+        }
+      },
+      {
+        "body": "(And not to pick on specific services, because for another user, their most interesting content MAY show up from Twitter or Brightkite, depending on how they use those services.)",
+        "id": "a92f198d-befa-4a51-a9ec-9866cb06801e",
+        "date": "2009-04-07T19:51:16Z",
+        "user": {
+          "name": "Scott of Two Countries",
+          "nickname": "maplestar",
+          "id": "00b595ee-49b6-11dd-9c86-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/maplestar"
+        }
+      },
+      {
+        "body": "I prefer the new focus on the user and think having the source in text is excellent.",
+        "id": "4434ee4d-eef0-4c36-86a8-9647f1f1cf18",
+        "date": "2009-04-07T19:51:58Z",
+        "user": {
+          "name": "Niklas Morberg",
+          "nickname": "morberg",
+          "id": "302e7e42-11e6-11dd-9630-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/morberg"
+        }
+      },
+      {
+        "body": "I agree with Lindsey",
+        "id": "f4f1927e-26b1-4cf2-bb08-3976039d86c0",
+        "date": "2009-04-07T19:55:21Z",
+        "user": {
+          "name": "Luis Enrique Le\u00f3n",
+          "nickname": "leleonb",
+          "id": "2bf853e3-e43e-4567-aa1b-d5434bb1ae3b",
+          "profileUrl": "http:\/\/friendfeed.com\/leleonb"
+        }
+      },
+      {
+        "body": "For me is important a visual tip to differentiate quickly between the twitter posts and the delicious bookmarks for example , they are different qualities of content",
+        "id": "70c90f73-abfe-40b8-964f-b9dbb830e217",
+        "date": "2009-04-07T19:59:58Z",
+        "user": {
+          "name": "Luis Enrique Le\u00f3n",
+          "nickname": "leleonb",
+          "id": "2bf853e3-e43e-4567-aa1b-d5434bb1ae3b",
+          "profileUrl": "http:\/\/friendfeed.com\/leleonb"
+        }
+      },
+      {
+        "body": "Disagree.",
+        "id": "8655d554-5b18-4d7e-ada3-64ad132e8145",
+        "date": "2009-04-07T20:01:59Z",
+        "user": {
+          "name": "coldbrew",
+          "nickname": "coldbrew",
+          "id": "081036f0-7369-11dd-b0c4-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/coldbrew"
+        }
+      },
+      {
+        "body": "What's more important, the source or the content? If I tweet a link, is that more or less important than saving it as a del.icio.us bookmark?",
+        "id": "ed8f42b0-d5b1-4a8c-bfbf-3eec2967951f",
+        "date": "2009-04-07T20:05:10Z",
+        "user": {
+          "name": "Pat Hawks",
+          "nickname": "pathawks",
+          "id": "ec034dce-f4a8-11dc-8903-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/pathawks"
+        }
+      },
+      {
+        "body": "pat - it depends on the user that is reading it and the person that is publishing it. The key issue for me is that it is _different_.",
+        "id": "041768e4-60f4-4c26-9974-69118c1cf964",
+        "date": "2009-04-07T23:39:29Z",
+        "user": {
+          "name": "Alex Gawley",
+          "nickname": "agawley",
+          "id": "0d64286d-27d3-4089-9c5d-e0274513c95f",
+          "profileUrl": "http:\/\/friendfeed.com\/agawley"
+        }
+      },
+      {
+        "body": "I agree with you, Alex: having the service there is REALLY helpful to me when parsing.",
+        "id": "c0930468-1848-460c-8180-88f31c31a089",
+        "date": "2009-04-07T23:45:53Z",
+        "user": {
+          "name": "Jennie Lin",
+          "nickname": "jennielin",
+          "id": "79344b43-3484-4407-be44-3c47446bdbec",
+          "profileUrl": "http:\/\/friendfeed.com\/jennielin"
+        }
+      },
+      {
+        "body": "@Pat The users are more important yes, but they needn't have \/killed\/ the service icons. Perhaps they could show the service icons in a smaller size than the user picture ?",
+        "id": "9f563ac9-ea3d-49de-a916-4759a24a0156",
+        "date": "2009-04-08T03:17:00Z",
+        "user": {
+          "name": "Ahsan Ali",
+          "nickname": "highandwild",
+          "id": "f26d5329-618a-41de-b66e-83e4e41b7bd3",
+          "profileUrl": "http:\/\/friendfeed.com\/highandwild"
+        }
+      },
+      {
+        "body": "If you tweet a link, it's most likely tinyurl'ed, so a delicious bookmark, with it's title and everything, is much more valuable.",
+        "id": "1f57f75f-747e-492b-be03-41f3ef8c0c12",
+        "date": "2009-04-08T03:36:18Z",
+        "user": {
+          "name": "Andy Bakun",
+          "nickname": "thwartedefforts",
+          "id": "3683eefc-305a-11dd-b460-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/thwartedefforts"
+        }
+      }
+    ],
+    "title": "FF-team, I think de-emphasising the service so much is wrong. I was just looking at my iGoogle gadget just now and realised that the little service icons are important visual clues when parsing my feed.",
+    "published": "2009-04-07T19:44:51Z",
+    "service": {
+      "name": "FriendFeed",
+      "iconUrl": "http:\/\/friendfeed.com\/static\/images\/icons\/internal.png?v=e471e9afdf04ae568dcbddb5584fc6c0",
+      "entryType": "message",
+      "id": "internal",
+      "profileUrl": "http:\/\/friendfeed.com\/agawley"
+    },
+    "anonymous": false,
+    "id": "2170ba61-7751-4cf3-a583-a7f162ccd6c8",
+    "media": [
+
+    ],
+    "link": "http:\/\/friendfeed.com\/e\/2170ba61-7751-4cf3-a583-a7f162ccd6c8",
+    "user": {
+      "name": "Alex Gawley",
+      "nickname": "agawley",
+      "id": "0d64286d-27d3-4089-9c5d-e0274513c95f",
+      "profileUrl": "http:\/\/friendfeed.com\/agawley"
+    },
+    "room": {
+      "name": "FriendFeed Feedback",
+      "nickname": "friendfeed-feedback",
+      "url": "http:\/\/friendfeed.com\/rooms\/friendfeed-feedback",
+      "id": "34eac2e8-946a-4e85-b731-e49f88c6170e"
+    },
+    "updated": "2009-04-07T19:44:51Z",
+    "hidden": false,
+    "likes": [
+      {
+        "date": "2009-04-08T03:15:48Z",
+        "user": {
+          "name": "Ahsan Ali",
+          "nickname": "highandwild",
+          "id": "f26d5329-618a-41de-b66e-83e4e41b7bd3",
+          "profileUrl": "http:\/\/friendfeed.com\/highandwild"
+        }
+      },
+      {
+        "date": "2009-04-07T21:41:14Z",
+        "user": {
+          "name": "Iv\u00e1n Rivera",
+          "nickname": "brucknerite",
+          "id": "62503f22-a120-11dd-8454-00304865cd52",
+          "profileUrl": "http:\/\/friendfeed.com\/brucknerite"
+        }
+      },
+      {
+        "date": "2009-04-07T21:11:10Z",
+        "user": {
+          "name": "xero",
+          "nickname": "jokeyxero",
+          "id": "7aa1ca26-2233-11dd-9539-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/jokeyxero"
+        }
+      },
+      {
+        "date": "2009-04-07T20:43:29Z",
+        "user": {
+          "name": "Kol Tregaskes",
+          "nickname": "koltregaskes",
+          "id": "5369601c-f9fd-11dc-ad69-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/koltregaskes"
+        }
+      },
+      {
+        "date": "2009-04-07T20:07:18Z",
+        "user": {
+          "name": "edythe",
+          "nickname": "furry",
+          "id": "5b140bd6-e432-11dc-86ec-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/furry"
+        }
+      },
+      {
+        "date": "2009-04-07T19:59:34Z",
+        "user": {
+          "name": "Logical Extremes",
+          "nickname": "logicalextremes",
+          "id": "b36167de-0fac-11dd-a773-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/logicalextremes"
+        }
+      },
+      {
+        "date": "2009-04-07T19:53:55Z",
+        "user": {
+          "name": "Chris Charabaruk",
+          "nickname": "coldacid",
+          "id": "9f7452c2-4c97-11dd-a7d3-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/coldacid"
+        }
+      },
+      {
+        "date": "2009-04-07T19:52:00Z",
+        "user": {
+          "name": "Andy Bakun",
+          "nickname": "thwartedefforts",
+          "id": "3683eefc-305a-11dd-b460-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/thwartedefforts"
+        }
+      },
+      {
+        "date": "2009-04-07T19:51:48Z",
+        "user": {
+          "name": "Scott of Two Countries",
+          "nickname": "maplestar",
+          "id": "00b595ee-49b6-11dd-9c86-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/maplestar"
+        }
+      },
+      {
+        "date": "2009-04-07T19:49:51Z",
+        "user": {
+          "name": "James Myatt",
+          "nickname": "nzbuu",
+          "id": "142241ec-8190-11dd-9fc3-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/nzbuu"
+        }
+      },
+      {
+        "date": "2009-04-07T19:49:23Z",
+        "user": {
+          "name": "Lindsey is Fierce!",
+          "nickname": "eclipse115",
+          "id": "84f7bd1a-1099-11dd-9df4-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/eclipse115"
+        }
+      }
+    ]
+  },
+  {
+    "comments": [
+      {
+        "body": "\"p\" for pause?",
+        "id": "fd534782-a844-47ca-b478-d821d4c237a1",
+        "date": "2009-04-08T03:17:33Z",
+        "user": {
+          "name": "Alfredo",
+          "nickname": "fredygamer",
+          "id": "84f8bee4-ff3d-11dc-a470-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/fredygamer"
+        }
+      },
+      {
+        "body": "p is for message box and P is for the To: field in the message box (currently).",
+        "id": "6fb03830-9539-4603-9271-239354269ea9",
+        "date": "2009-04-08T03:18:31Z",
+        "user": {
+          "name": "Andrew Trinh",
+          "nickname": "ancyru",
+          "id": "1b28d09a-3196-11dd-b4ac-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/ancyru"
+        }
+      },
+      {
+        "body": "you're right. i didn't know that",
+        "id": "12970a4c-3ab0-40d8-a239-f53231a4a0d7",
+        "date": "2009-04-08T03:20:04Z",
+        "user": {
+          "name": "Alfredo",
+          "nickname": "fredygamer",
+          "id": "84f8bee4-ff3d-11dc-a470-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/fredygamer"
+        }
+      },
+      {
+        "body": "me too... this is one of the first things I suggested",
+        "id": "42b21c0c-d25f-4c67-a112-a7ad10f3af50",
+        "date": "2009-04-08T03:20:16Z",
+        "user": {
+          "name": "Michael Hocter",
+          "nickname": "desaturated",
+          "id": "cb771624-4d0e-4f02-951d-727757457e30",
+          "profileUrl": "http:\/\/friendfeed.com\/desaturated"
+        }
+      },
+      {
+        "body": "Constantly moving the mouse about or scrolling doesn't cut it. There needs to be quick access to the pause button.",
+        "id": "ad91ff11-9236-41e9-b6fd-6b9c7ed260d2",
+        "date": "2009-04-08T03:21:55Z",
+        "user": {
+          "name": "Andrew Trinh",
+          "nickname": "ancyru",
+          "id": "1b28d09a-3196-11dd-b4ac-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/ancyru"
+        }
+      },
+      {
+        "body": "And key combo gh does Go to my Home feed.",
+        "id": "9c9f557a-ac34-40ae-ae55-304d651771fc",
+        "date": "2009-04-08T03:23:21Z",
+        "user": {
+          "name": "Micah Wittman",
+          "nickname": "micahwittman",
+          "id": "c9ccf60a-2780-11dd-9b5e-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/micahwittman"
+        }
+      },
+      {
+        "body": "If we're going to list them \/ focuses on the search box. ;)",
+        "via": {
+          "name": "IM",
+          "url": "http:\/\/friendfeed.com\/about\/im"
+        },
+        "id": "418ac3d7-f3f6-4e6b-8a56-bbaa6f2fec88",
+        "date": "2009-04-08T03:24:32Z",
+        "user": {
+          "name": "Andrew Trinh",
+          "nickname": "ancyru",
+          "id": "1b28d09a-3196-11dd-b4ac-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/ancyru"
+        }
+      },
+      {
+        "body": "That would be nice! :)",
+        "id": "4d016390-b444-4e6a-bc09-bbe147138e7b",
+        "date": "2009-04-08T03:27:12Z",
+        "user": {
+          "name": "TheHenry",
+          "nickname": "thehenry",
+          "id": "c0894a82-8e94-11dd-817f-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/thehenry"
+        }
+      }
+    ],
+    "title": "Although it's still beta and more features are coming soon, I think FF should quickly add a keyboard shortcut to pause the real-time feed.",
+    "published": "2009-04-08T03:16:20Z",
+    "service": {
+      "name": "FriendFeed",
+      "iconUrl": "http:\/\/friendfeed.com\/static\/images\/icons\/internal.png?v=e471e9afdf04ae568dcbddb5584fc6c0",
+      "entryType": "message",
+      "id": "internal",
+      "profileUrl": "http:\/\/friendfeed.com\/ancyru"
+    },
+    "anonymous": false,
+    "id": "ad7e8c98-200b-4476-a749-bd53064fc4bf",
+    "media": [
+
+    ],
+    "link": "http:\/\/friendfeed.com\/e\/ad7e8c98-200b-4476-a749-bd53064fc4bf",
+    "user": {
+      "name": "Andrew Trinh",
+      "nickname": "ancyru",
+      "id": "1b28d09a-3196-11dd-b4ac-003048343a40",
+      "profileUrl": "http:\/\/friendfeed.com\/ancyru"
+    },
+    "room": {
+      "name": "FriendFeed Feedback",
+      "nickname": "friendfeed-feedback",
+      "url": "http:\/\/friendfeed.com\/rooms\/friendfeed-feedback",
+      "id": "34eac2e8-946a-4e85-b731-e49f88c6170e"
+    },
+    "updated": "2009-04-08T03:16:20Z",
+    "hidden": false,
+    "likes": [
+      {
+        "date": "2009-04-08T05:11:01Z",
+        "user": {
+          "name": "Morton Fox",
+          "nickname": "mortonfox",
+          "id": "29898d64-f550-11dc-9847-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/mortonfox"
+        }
+      },
+      {
+        "date": "2009-04-08T04:21:53Z",
+        "user": {
+          "name": "Hutch Carpenter",
+          "nickname": "bhc3",
+          "id": "836481f2-f39f-11dc-8371-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/bhc3"
+        }
+      },
+      {
+        "date": "2009-04-08T03:27:49Z",
+        "user": {
+          "name": "edythe",
+          "nickname": "furry",
+          "id": "5b140bd6-e432-11dc-86ec-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/furry"
+        }
+      },
+      {
+        "date": "2009-04-08T03:27:04Z",
+        "user": {
+          "name": "TheHenry",
+          "nickname": "thehenry",
+          "id": "c0894a82-8e94-11dd-817f-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/thehenry"
+        }
+      },
+      {
+        "date": "2009-04-08T03:26:49Z",
+        "user": {
+          "name": "Rahsheen \u2122",
+          "nickname": "rahsheen",
+          "id": "3df81dd6-0b1e-11dd-8d34-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/rahsheen"
+        }
+      },
+      {
+        "date": "2009-04-08T03:19:34Z",
+        "user": {
+          "name": "Michael Hocter",
+          "nickname": "desaturated",
+          "id": "cb771624-4d0e-4f02-951d-727757457e30",
+          "profileUrl": "http:\/\/friendfeed.com\/desaturated"
+        }
+      },
+      {
+        "date": "2009-04-08T03:17:11Z",
+        "user": {
+          "name": "Alfredo",
+          "nickname": "fredygamer",
+          "id": "84f8bee4-ff3d-11dc-a470-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/fredygamer"
+        }
+      }
+    ]
+  },
+  {
+    "comments": [
+
+    ],
+    "title": "\u201cBtw, speaking of http:\/\/friendfeed.com\/settings... (thanks, Anika) Anyone else get a dual record in reviewing your sub mods?\u201d",
+    "published": "2009-04-08T03:18:25Z",
+    "service": {
+      "name": "FriendFeed",
+      "iconUrl": "http:\/\/friendfeed.com\/static\/images\/icons\/internal.png?v=e471e9afdf04ae568dcbddb5584fc6c0",
+      "entryType": "link",
+      "id": "internal",
+      "profileUrl": "http:\/\/friendfeed.com\/bigstarlet"
+    },
+    "anonymous": false,
+    "id": "070ee111-dff0-4ddb-abec-c9b29790aeef",
+    "media": [
+      {
+        "player": null,
+        "title": "dualblock.jpg",
+        "enclosures": null,
+        "content": [
+          {
+            "url": "http:\/\/friendfeed.s3.amazonaws.com\/d77e9b9ffb71e8a8214e0d05196e9bf871206832",
+            "type": "image\/jpeg"
+          }
+        ],
+        "link": "http:\/\/friendfeed.com\/e\/14a81ab4-b157-430a-b011-fce42e23d890\/Btw-speaking-of-http-friendfeed-com-settings\/",
+        "thumbnails": [
+          {
+            "url": "http:\/\/i.friendfeed.com\/a304d5992cbeb1fda8863fd83effa7ee506287c3",
+            "height": 105,
+            "width": 525
+          }
+        ]
+      }
+    ],
+    "link": "http:\/\/friendfeed.com\/e\/14a81ab4-b157-430a-b011-fce42e23d890\/Btw-speaking-of-http-friendfeed-com-settings\/",
+    "user": {
+      "name": "Helen Sventitsky",
+      "nickname": "bigstarlet",
+      "id": "03068fb8-10d3-11dd-b4d7-003048343a40",
+      "profileUrl": "http:\/\/friendfeed.com\/bigstarlet"
+    },
+    "room": {
+      "name": "FriendFeed Feedback",
+      "nickname": "friendfeed-feedback",
+      "url": "http:\/\/friendfeed.com\/rooms\/friendfeed-feedback",
+      "id": "34eac2e8-946a-4e85-b731-e49f88c6170e"
+    },
+    "updated": "2009-04-08T03:18:25Z",
+    "hidden": false,
+    "likes": [
+      {
+        "date": "2009-04-08T03:19:49Z",
+        "user": {
+          "name": "Zu_ElijahBailey",
+          "nickname": "zjemily",
+          "id": "ac085244-4ce3-11dd-a7d3-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/zjemily"
+        }
+      }
+    ]
+  },
+  {
+    "comments": [
+      {
+        "body": "I think you'd have to 'reshare' it - but that means posting it twice to FF. Interesting idea, though.",
+        "id": "f7b19fd9-c974-4c6c-abff-0003a50959a1",
+        "date": "2009-04-08T03:14:44Z",
+        "user": {
+          "name": "Ahsan Ali",
+          "nickname": "highandwild",
+          "id": "f26d5329-618a-41de-b66e-83e4e41b7bd3",
+          "profileUrl": "http:\/\/friendfeed.com\/highandwild"
+        }
+      }
+    ],
+    "title": "New Feature suggestion.  I'd like to be able to go back to one of my last updates and send it to Twitter.",
+    "published": "2009-04-08T02:17:08Z",
+    "service": {
+      "name": "FriendFeed",
+      "iconUrl": "http:\/\/friendfeed.com\/static\/images\/icons\/internal.png?v=e471e9afdf04ae568dcbddb5584fc6c0",
+      "entryType": "message",
+      "id": "internal",
+      "profileUrl": "http:\/\/friendfeed.com\/tad"
+    },
+    "anonymous": false,
+    "id": "153cb205-ded0-48d6-bb4a-88683b3ffe4c",
+    "media": [
+
+    ],
+    "link": "http:\/\/friendfeed.com\/e\/153cb205-ded0-48d6-bb4a-88683b3ffe4c",
+    "user": {
+      "name": "Tad, Between Jobs",
+      "nickname": "tad",
+      "id": "7f7c90ce-f530-11dc-a141-003048343a40",
+      "profileUrl": "http:\/\/friendfeed.com\/tad"
+    },
+    "room": {
+      "name": "FriendFeed Feedback",
+      "nickname": "friendfeed-feedback",
+      "url": "http:\/\/friendfeed.com\/rooms\/friendfeed-feedback",
+      "id": "34eac2e8-946a-4e85-b731-e49f88c6170e"
+    },
+    "updated": "2009-04-08T02:17:08Z",
+    "hidden": false,
+    "likes": [
+      {
+        "date": "2009-04-08T03:14:22Z",
+        "user": {
+          "name": "Ahsan Ali",
+          "nickname": "highandwild",
+          "id": "f26d5329-618a-41de-b66e-83e4e41b7bd3",
+          "profileUrl": "http:\/\/friendfeed.com\/highandwild"
+        }
+      }
+    ]
+  },
+  {
+    "comments": [
+      {
+        "body": "Closed my browser (reopened) and it's gone. Weird. :(",
+        "id": "ccc389b9-05db-49bf-b2b6-bcf9fb12a09d",
+        "date": "2009-04-08T03:06:43Z",
+        "user": {
+          "name": "AJ Batac",
+          "nickname": "ajbatac",
+          "id": "0feec200-0cd2-4a9e-8db2-fed45085ab77",
+          "profileUrl": "http:\/\/friendfeed.com\/ajbatac"
+        }
+      },
+      {
+        "body": "video driver updated?",
+        "id": "a9a2e0ac-4ce5-49ae-ab6b-06520bf2138e",
+        "date": "2009-04-08T03:12:03Z",
+        "user": {
+          "name": "Mike VanLare (slayerboy)",
+          "nickname": "slayerboy",
+          "id": "f583dfe2-9a59-11dd-a786-00304865cd52",
+          "profileUrl": "http:\/\/friendfeed.com\/slayerboy"
+        }
+      },
+      {
+        "body": "yeah prolly video driver",
+        "id": "12b8aea3-1fe3-45db-b040-c03ac79b9710",
+        "date": "2009-04-08T03:14:08Z",
+        "user": {
+          "name": "AJ Batac",
+          "nickname": "ajbatac",
+          "id": "0feec200-0cd2-4a9e-8db2-fed45085ab77",
+          "profileUrl": "http:\/\/friendfeed.com\/ajbatac"
+        }
+      }
+    ],
+    "title": "Whoa! My mouse pointer blinks like crazy when on FriendFeed. :( (Firefox 3.0.8\/Windows XP)",
+    "published": "2009-04-08T03:04:42Z",
+    "service": {
+      "name": "FriendFeed",
+      "iconUrl": "http:\/\/friendfeed.com\/static\/images\/icons\/internal.png?v=e471e9afdf04ae568dcbddb5584fc6c0",
+      "entryType": "message",
+      "id": "internal",
+      "profileUrl": "http:\/\/friendfeed.com\/ajbatac"
+    },
+    "anonymous": false,
+    "id": "8d3396e6-3d82-45cf-b15a-fb93d73026e7",
+    "media": [
+
+    ],
+    "link": "http:\/\/friendfeed.com\/e\/8d3396e6-3d82-45cf-b15a-fb93d73026e7",
+    "user": {
+      "name": "AJ Batac",
+      "nickname": "ajbatac",
+      "id": "0feec200-0cd2-4a9e-8db2-fed45085ab77",
+      "profileUrl": "http:\/\/friendfeed.com\/ajbatac"
+    },
+    "room": {
+      "name": "FriendFeed Feedback",
+      "nickname": "friendfeed-feedback",
+      "url": "http:\/\/friendfeed.com\/rooms\/friendfeed-feedback",
+      "id": "34eac2e8-946a-4e85-b731-e49f88c6170e"
+    },
+    "updated": "2009-04-08T03:04:42Z",
+    "hidden": false,
+    "likes": [
+
+    ]
+  },
+  {
+    "comments": [
+      {
+        "body": "We definitely need the service icons back.",
+        "id": "e5d21e76-0e76-44fb-9f3a-90a966672a04",
+        "date": "2009-04-08T03:13:27Z",
+        "user": {
+          "name": "Ahsan Ali",
+          "nickname": "highandwild",
+          "id": "f26d5329-618a-41de-b66e-83e4e41b7bd3",
+          "profileUrl": "http:\/\/friendfeed.com\/highandwild"
+        }
+      }
+    ],
+    "title": "Backtype comments are particularly confusing without the service icon.  It looks like Garry is selling his own bike: https:\/\/beta.friendfeed.com\/garrytan\/5bf75e10\/unfortunately-for-sale-my-cruiser-bike-sigh",
+    "published": "2009-04-08T02:19:21Z",
+    "service": {
+      "name": "FriendFeed",
+      "iconUrl": "http:\/\/friendfeed.com\/static\/images\/icons\/internal.png?v=e471e9afdf04ae568dcbddb5584fc6c0",
+      "entryType": "message",
+      "id": "internal",
+      "profileUrl": "http:\/\/friendfeed.com\/brlewis"
+    },
+    "anonymous": false,
+    "id": "9304a702-dfed-4c7d-b190-1873627c8fb9",
+    "media": [
+
+    ],
+    "link": "http:\/\/friendfeed.com\/e\/9304a702-dfed-4c7d-b190-1873627c8fb9",
+    "user": {
+      "name": "Bruce Lewis",
+      "nickname": "brlewis",
+      "id": "1fa8c370-7ff0-41cc-b885-7bd08a1dbc86",
+      "profileUrl": "http:\/\/friendfeed.com\/brlewis"
+    },
+    "room": {
+      "name": "FriendFeed Feedback",
+      "nickname": "friendfeed-feedback",
+      "url": "http:\/\/friendfeed.com\/rooms\/friendfeed-feedback",
+      "id": "34eac2e8-946a-4e85-b731-e49f88c6170e"
+    },
+    "updated": "2009-04-08T02:19:21Z",
+    "hidden": false,
+    "likes": [
+      {
+        "date": "2009-04-08T03:13:31Z",
+        "user": {
+          "name": "Ahsan Ali",
+          "nickname": "highandwild",
+          "id": "f26d5329-618a-41de-b66e-83e4e41b7bd3",
+          "profileUrl": "http:\/\/friendfeed.com\/highandwild"
+        }
+      },
+      {
+        "date": "2009-04-08T02:30:42Z",
+        "user": {
+          "name": "Zu_ElijahBailey",
+          "nickname": "zjemily",
+          "id": "ac085244-4ce3-11dd-a7d3-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/zjemily"
+        }
+      }
+    ]
+  },
+  {
+    "comments": [
+      {
+        "body": "Haven't you always been able to do that? Click on a feed link, say my profile, and at the top it tells you which lists it is in such as the Home list (add\/edit).",
+        "id": "302985d3-f0af-4cf5-a11f-73793c45f8b2",
+        "date": "2009-04-08T02:51:09Z",
+        "user": {
+          "name": "Andrew Trinh",
+          "nickname": "ancyru",
+          "id": "1b28d09a-3196-11dd-b4ac-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/ancyru"
+        }
+      },
+      {
+        "body": "but then i need to reorganise everyone into that home feed rather than just make one of my other lists the default home feed. Facebook has the functionality, you just drag one of your lists up to the top to make it your home feed list",
+        "id": "a6387a2c-26bf-44d6-8748-c480ca964b04",
+        "date": "2009-04-08T02:54:57Z",
+        "user": {
+          "name": "Zee.",
+          "nickname": "zee",
+          "id": "59905ec4-18d0-42f0-84d6-505deb525646",
+          "profileUrl": "http:\/\/friendfeed.com\/zee"
+        }
+      },
+      {
+        "body": "I suppose that would make life easier, quickly defaulting a list that's SFW.",
+        "id": "f50a2328-6248-438c-b0cb-26519596c64e",
+        "date": "2009-04-08T03:01:09Z",
+        "user": {
+          "name": "Andrew Trinh",
+          "nickname": "ancyru",
+          "id": "1b28d09a-3196-11dd-b4ac-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/ancyru"
+        }
+      }
+    ],
+    "title": "Please let us change what our default 'home' filter\/list is.",
+    "published": "2009-04-08T02:49:17Z",
+    "service": {
+      "name": "FriendFeed",
+      "iconUrl": "http:\/\/friendfeed.com\/static\/images\/icons\/internal.png?v=e471e9afdf04ae568dcbddb5584fc6c0",
+      "entryType": "message",
+      "id": "internal",
+      "profileUrl": "http:\/\/friendfeed.com\/zee"
+    },
+    "anonymous": false,
+    "id": "4f4bd8f0-e611-4311-9feb-8d2c7613b1d9",
+    "media": [
+
+    ],
+    "link": "http:\/\/friendfeed.com\/e\/4f4bd8f0-e611-4311-9feb-8d2c7613b1d9",
+    "user": {
+      "name": "Zee.",
+      "nickname": "zee",
+      "id": "59905ec4-18d0-42f0-84d6-505deb525646",
+      "profileUrl": "http:\/\/friendfeed.com\/zee"
+    },
+    "room": {
+      "name": "FriendFeed Feedback",
+      "nickname": "friendfeed-feedback",
+      "url": "http:\/\/friendfeed.com\/rooms\/friendfeed-feedback",
+      "id": "34eac2e8-946a-4e85-b731-e49f88c6170e"
+    },
+    "updated": "2009-04-08T02:49:17Z",
+    "hidden": false,
+    "likes": [
+      {
+        "date": "2009-04-08T03:02:43Z",
+        "user": {
+          "name": "Mark Trapp",
+          "nickname": "itafroma",
+          "id": "7a5222de-fb76-11dc-8db0-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/itafroma"
+        }
+      },
+      {
+        "date": "2009-04-08T02:55:06Z",
+        "user": {
+          "name": "Rahsheen \u2122",
+          "nickname": "rahsheen",
+          "id": "3df81dd6-0b1e-11dd-8d34-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/rahsheen"
+        }
+      },
+      {
+        "date": "2009-04-08T02:51:22Z",
+        "user": {
+          "name": "Mathew\u2122",
+          "nickname": "mathewballard",
+          "id": "161f565c-4bb6-11dd-b698-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/mathewballard"
+        }
+      }
+    ]
+  },
+  {
+    "comments": [
+      {
+        "body": "want :)",
+        "id": "02ab42f5-81ee-42e0-ade2-e7b9dd50f68d",
+        "date": "2009-04-07T18:50:16Z",
+        "user": {
+          "name": "Meryn Stol",
+          "nickname": "meryn",
+          "id": "93d2131e-f1de-11dc-b138-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/meryn"
+        }
+      },
+      {
+        "body": "Good idea.",
+        "id": "c5469f7b-d3d5-40dd-a862-8adc57269bac",
+        "date": "2009-04-07T18:51:41Z",
+        "user": {
+          "name": "Roberto Bonini",
+          "nickname": "rbonini",
+          "id": "652bc308-08b2-11dd-8d34-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/rbonini"
+        }
+      },
+      {
+        "body": "I wish I could \"Like\" this multiple times!",
+        "id": "a31354a8-eb31-43f6-9008-b61373517dd0",
+        "date": "2009-04-07T18:52:08Z",
+        "user": {
+          "name": "Pat Hawks",
+          "nickname": "pathawks",
+          "id": "ec034dce-f4a8-11dc-8903-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/pathawks"
+        }
+      },
+      {
+        "body": "@Pat - just continue to comment on it to keep the awareness level high :)",
+        "id": "d9566414-4a79-4aa5-acd7-05150bca71e8",
+        "date": "2009-04-07T18:52:44Z",
+        "user": {
+          "name": "Nathan Chase",
+          "nickname": "nathanchase",
+          "id": "781560f8-259c-4f1a-9e33-23e14a7152fb",
+          "profileUrl": "http:\/\/friendfeed.com\/nathanchase"
+        }
+      },
+      {
+        "body": "Maybe I could be that guy that just keeps commenting \"Bump\"",
+        "id": "e2d85101-7dfa-4886-acff-9bd944b111a9",
+        "date": "2009-04-07T18:55:56Z",
+        "user": {
+          "name": "Pat Hawks",
+          "nickname": "pathawks",
+          "id": "ec034dce-f4a8-11dc-8903-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/pathawks"
+        }
+      },
+      {
+        "body": "you could be that guy Pat. :)",
+        "id": "90b51b1d-f733-4aa4-bb95-33fc934d99e5",
+        "date": "2009-04-07T19:12:49Z",
+        "user": {
+          "name": "Nathan Chase",
+          "nickname": "nathanchase",
+          "id": "781560f8-259c-4f1a-9e33-23e14a7152fb",
+          "profileUrl": "http:\/\/friendfeed.com\/nathanchase"
+        }
+      },
+      {
+        "body": "Bret, Paul... what do you guys think?",
+        "id": "3d2e4e23-8500-4839-84a1-8695d5ceea5c",
+        "date": "2009-04-07T19:37:33Z",
+        "user": {
+          "name": "Nathan Chase",
+          "nickname": "nathanchase",
+          "id": "781560f8-259c-4f1a-9e33-23e14a7152fb",
+          "profileUrl": "http:\/\/friendfeed.com\/nathanchase"
+        }
+      },
+      {
+        "body": "Nathan - DM them :)",
+        "id": "42b4f47a-b60d-4bfe-abc2-5fde95347f60",
+        "date": "2009-04-07T19:38:34Z",
+        "user": {
+          "name": "Roberto Bonini",
+          "nickname": "rbonini",
+          "id": "652bc308-08b2-11dd-8d34-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/rbonini"
+        }
+      },
+      {
+        "body": "@Roberto - I would if they subscribed to me. :)",
+        "id": "54935002-1491-4c54-9d92-d559301ec95f",
+        "date": "2009-04-07T19:39:13Z",
+        "user": {
+          "name": "Nathan Chase",
+          "nickname": "nathanchase",
+          "id": "781560f8-259c-4f1a-9e33-23e14a7152fb",
+          "profileUrl": "http:\/\/friendfeed.com\/nathanchase"
+        }
+      },
+      {
+        "body": "Ah. Right",
+        "id": "289a81fe-eb19-48ac-a812-efa588923599",
+        "date": "2009-04-07T19:43:42Z",
+        "user": {
+          "name": "Roberto Bonini",
+          "nickname": "rbonini",
+          "id": "652bc308-08b2-11dd-8d34-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/rbonini"
+        }
+      },
+      {
+        "body": "I just figure eventually they'll see the post, since it's in all of the FriendFeed Feedback rooms",
+        "id": "45798e49-9f0b-476c-9bbc-7e4bc567a029",
+        "date": "2009-04-07T19:44:48Z",
+        "user": {
+          "name": "Nathan Chase",
+          "nickname": "nathanchase",
+          "id": "781560f8-259c-4f1a-9e33-23e14a7152fb",
+          "profileUrl": "http:\/\/friendfeed.com\/nathanchase"
+        }
+      },
+      {
+        "body": "Bump :-P",
+        "id": "b6479311-99a8-4e01-9895-ed34f18aa35e",
+        "date": "2009-04-07T19:48:22Z",
+        "user": {
+          "name": "Pat Hawks",
+          "nickname": "pathawks",
+          "id": "ec034dce-f4a8-11dc-8903-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/pathawks"
+        }
+      },
+      {
+        "body": "Yes it would.",
+        "id": "9a85b2ad-a1d2-47f6-92f2-e1e32130525b",
+        "date": "2009-04-08T02:43:33Z",
+        "user": {
+          "name": "Mathew\u2122",
+          "nickname": "mathewballard",
+          "id": "161f565c-4bb6-11dd-b698-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/mathewballard"
+        }
+      }
+    ],
+    "title": "I think it would be really useful to have a mechanism that allows us to sort our subscriptions by their last usage date, or by level of engagement via commenting or liking - that way we could see who are the \"ghosts\" of FriendFeed, and unsubscribe to those folks accordingly - especially now that real-time is the paradigm for the future",
+    "published": "2009-04-07T18:48:29Z",
+    "service": {
+      "name": "FriendFeed",
+      "iconUrl": "http:\/\/friendfeed.com\/static\/images\/icons\/internal.png?v=e471e9afdf04ae568dcbddb5584fc6c0",
+      "entryType": "message",
+      "id": "internal",
+      "profileUrl": "http:\/\/friendfeed.com\/nathanchase"
+    },
+    "anonymous": false,
+    "id": "8235a5c5-a426-4189-86ba-c776ff63ba27",
+    "media": [
+      {
+        "player": null,
+        "title": "sortFF.png",
+        "enclosures": null,
+        "content": [
+          {
+            "url": "http:\/\/friendfeed.s3.amazonaws.com\/6868c1e886d5cec96448b1ed8cae14892d30febf",
+            "type": "image\/png"
+          }
+        ],
+        "link": "http:\/\/friendfeed.com\/e\/8235a5c5-a426-4189-86ba-c776ff63ba27",
+        "thumbnails": [
+          {
+            "url": "http:\/\/i.friendfeed.com\/128dba405a2efe5bf73b54148e9e53571106a35b",
+            "height": 157,
+            "width": 525
+          }
+        ]
+      }
+    ],
+    "link": "http:\/\/friendfeed.com\/e\/8235a5c5-a426-4189-86ba-c776ff63ba27",
+    "user": {
+      "name": "Nathan Chase",
+      "nickname": "nathanchase",
+      "id": "781560f8-259c-4f1a-9e33-23e14a7152fb",
+      "profileUrl": "http:\/\/friendfeed.com\/nathanchase"
+    },
+    "room": {
+      "name": "FriendFeed Feedback",
+      "nickname": "friendfeed-feedback",
+      "url": "http:\/\/friendfeed.com\/rooms\/friendfeed-feedback",
+      "id": "34eac2e8-946a-4e85-b731-e49f88c6170e"
+    },
+    "updated": "2009-04-07T18:48:29Z",
+    "hidden": false,
+    "likes": [
+      {
+        "date": "2009-04-08T03:12:52Z",
+        "user": {
+          "name": "Ahsan Ali",
+          "nickname": "highandwild",
+          "id": "f26d5329-618a-41de-b66e-83e4e41b7bd3",
+          "profileUrl": "http:\/\/friendfeed.com\/highandwild"
+        }
+      },
+      {
+        "date": "2009-04-08T02:54:39Z",
+        "user": {
+          "name": "J. Abdul-Qahhar",
+          "nickname": "djinn1973",
+          "id": "1e53a112-44ad-11dd-a934-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/djinn1973"
+        }
+      },
+      {
+        "date": "2009-04-08T02:49:20Z",
+        "user": {
+          "name": "Andrew Trinh",
+          "nickname": "ancyru",
+          "id": "1b28d09a-3196-11dd-b4ac-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/ancyru"
+        }
+      },
+      {
+        "date": "2009-04-08T02:44:06Z",
+        "user": {
+          "name": "The Ghost of Penguin Past",
+          "nickname": "bitseybloom",
+          "id": "8863da9a-37f6-11dd-8593-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/bitseybloom"
+        }
+      },
+      {
+        "date": "2009-04-08T02:43:24Z",
+        "user": {
+          "name": "Mathew\u2122",
+          "nickname": "mathewballard",
+          "id": "161f565c-4bb6-11dd-b698-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/mathewballard"
+        }
+      },
+      {
+        "date": "2009-04-08T00:33:19Z",
+        "user": {
+          "name": "Voyagerfan5761",
+          "nickname": "voyagerfan5761",
+          "id": "a6698db1-f016-49cd-a923-290d0954b18c",
+          "profileUrl": "http:\/\/friendfeed.com\/voyagerfan5761"
+        }
+      },
+      {
+        "date": "2009-04-07T21:27:56Z",
+        "user": {
+          "name": "Kelly W.",
+          "nickname": "spacecat",
+          "id": "45fdfb94-5c9b-11dd-8697-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/spacecat"
+        }
+      },
+      {
+        "date": "2009-04-07T21:10:28Z",
+        "user": {
+          "name": "Alan Le",
+          "nickname": "a7an",
+          "id": "4f5dc6a0-e4a6-11dc-9a9a-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/a7an"
+        }
+      },
+      {
+        "date": "2009-04-07T20:41:54Z",
+        "user": {
+          "name": "Baturalp Torun",
+          "nickname": "bet3",
+          "id": "fcef9e41-b60c-4ad1-90c0-a8d0be652c44",
+          "profileUrl": "http:\/\/friendfeed.com\/bet3"
+        }
+      },
+      {
+        "date": "2009-04-07T20:05:41Z",
+        "user": {
+          "name": "Brett Cannon",
+          "nickname": "brettsky",
+          "id": "8835ced4-53a7-4a1b-a038-7a2ec1cb6d57",
+          "profileUrl": "http:\/\/friendfeed.com\/brettsky"
+        }
+      },
+      {
+        "date": "2009-04-07T19:38:04Z",
+        "user": {
+          "name": "Stupid FFer (aka Tina)",
+          "nickname": "isthisstupid",
+          "id": "fc255b78-55c6-11dd-89e9-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/isthisstupid"
+        }
+      },
+      {
+        "date": "2009-04-07T19:15:59Z",
+        "user": {
+          "name": "Yolanda",
+          "nickname": "yolanda",
+          "id": "6c98ed34-f13b-11dc-9220-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/yolanda"
+        }
+      },
+      {
+        "date": "2009-04-07T19:14:02Z",
+        "user": {
+          "name": "RAPatton",
+          "nickname": "pattonroberta",
+          "id": "0488a1c0-e47b-11dc-870c-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/pattonroberta"
+        }
+      },
+      {
+        "date": "2009-04-07T19:06:21Z",
+        "user": {
+          "name": "sandhal",
+          "nickname": "sandhal",
+          "id": "842a70f0-57d7-11dd-83e7-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/sandhal"
+        }
+      },
+      {
+        "date": "2009-04-07T19:04:20Z",
+        "user": {
+          "name": "AJ Batac",
+          "nickname": "ajbatac",
+          "id": "0feec200-0cd2-4a9e-8db2-fed45085ab77",
+          "profileUrl": "http:\/\/friendfeed.com\/ajbatac"
+        }
+      },
+      {
+        "date": "2009-04-07T19:00:02Z",
+        "user": {
+          "name": "Alfredo",
+          "nickname": "fredygamer",
+          "id": "84f8bee4-ff3d-11dc-a470-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/fredygamer"
+        }
+      },
+      {
+        "date": "2009-04-07T18:52:12Z",
+        "user": {
+          "name": "Majento",
+          "nickname": "majento",
+          "id": "fb8b799a-333e-11dd-87df-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/majento"
+        }
+      },
+      {
+        "date": "2009-04-07T18:51:52Z",
+        "user": {
+          "name": "Pat Hawks",
+          "nickname": "pathawks",
+          "id": "ec034dce-f4a8-11dc-8903-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/pathawks"
+        }
+      },
+      {
+        "date": "2009-04-07T18:51:36Z",
+        "user": {
+          "name": "Roberto Bonini",
+          "nickname": "rbonini",
+          "id": "652bc308-08b2-11dd-8d34-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/rbonini"
+        }
+      },
+      {
+        "date": "2009-04-07T18:51:25Z",
+        "user": {
+          "name": "M F",
+          "nickname": "emmeffe",
+          "id": "4bdab2de-4051-11dd-a965-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/emmeffe"
+        }
+      },
+      {
+        "date": "2009-04-07T18:50:12Z",
+        "user": {
+          "name": "Meryn Stol",
+          "nickname": "meryn",
+          "id": "93d2131e-f1de-11dc-b138-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/meryn"
+        }
+      },
+      {
+        "date": "2009-04-07T18:48:47Z",
+        "user": {
+          "name": "Kol Tregaskes",
+          "nickname": "koltregaskes",
+          "id": "5369601c-f9fd-11dc-ad69-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/koltregaskes"
+        }
+      }
+    ]
+  },
+  {
+    "comments": [
+      {
+        "body": "You can do that now. Just put the name of the group in the To: box, or navigate to the profile page of the group and share from there. You must be subscribed to a group to share to it.",
+        "id": "f5e32182-c901-4136-b44f-c0d922d56fad",
+        "date": "2009-04-08T02:25:43Z",
+        "user": {
+          "name": "Bret Taylor",
+          "nickname": "bret",
+          "id": "f48b0440-ca0c-4f66-991c-4d5f6a078eaf",
+          "profileUrl": "http:\/\/friendfeed.com\/bret"
+        }
+      }
+    ],
+    "title": "to enhance the use of public group...I thinks ff need to add a new feature: send a link\/message\/image to a public group",
+    "published": "2009-04-08T02:17:45Z",
+    "service": {
+      "name": "FriendFeed",
+      "iconUrl": "http:\/\/friendfeed.com\/static\/images\/icons\/internal.png?v=e471e9afdf04ae568dcbddb5584fc6c0",
+      "entryType": "message",
+      "id": "internal",
+      "profileUrl": "http:\/\/friendfeed.com\/lookon"
+    },
+    "anonymous": false,
+    "id": "5086bf25-2164-458b-a9e9-c6b181f49c8f",
+    "media": [
+
+    ],
+    "link": "http:\/\/friendfeed.com\/e\/5086bf25-2164-458b-a9e9-c6b181f49c8f",
+    "user": {
+      "name": "kang",
+      "nickname": "lookon",
+      "id": "135858e6-3834-11dd-9a5d-003048343a40",
+      "profileUrl": "http:\/\/friendfeed.com\/lookon"
+    },
+    "room": {
+      "name": "FriendFeed Feedback",
+      "nickname": "friendfeed-feedback",
+      "url": "http:\/\/friendfeed.com\/rooms\/friendfeed-feedback",
+      "id": "34eac2e8-946a-4e85-b731-e49f88c6170e"
+    },
+    "updated": "2009-04-08T02:17:45Z",
+    "hidden": false,
+    "likes": [
+
+    ]
+  },
+  {
+    "comments": [
+      {
+        "body": "That will make things easier when looking at my referral logs. without having to actually visit the url to find out.",
+        "id": "3b925729-c6ca-49c2-9ae4-a1a306c13c6d",
+        "date": "2009-04-08T00:36:56Z",
+        "user": {
+          "name": "April Russo",
+          "nickname": "app103",
+          "id": "7577262e-97de-11dd-96be-00304865cd52",
+          "profileUrl": "http:\/\/friendfeed.com\/app103"
+        }
+      },
+      {
+        "body": "That's one very big advantage, yes.",
+        "id": "3d154a8c-fe57-4d60-a823-6f27a5d9a96a",
+        "date": "2009-04-08T00:51:48Z",
+        "user": {
+          "name": "Voyagerfan5761",
+          "nickname": "voyagerfan5761",
+          "id": "a6698db1-f016-49cd-a923-290d0954b18c",
+          "profileUrl": "http:\/\/friendfeed.com\/voyagerfan5761"
+        }
+      },
+      {
+        "body": "Agreed!",
+        "id": "854c6b65-82c1-43e1-8b7a-c910069575a0",
+        "date": "2009-04-08T02:22:48Z",
+        "user": {
+          "name": "Bill Sodeman",
+          "nickname": "billso",
+          "id": "2db5eaf2-277a-11dd-a306-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/billso"
+        }
+      }
+    ],
+    "title": "One of my favorite things about the beta FriendFeed UI is the new permalinks that actually reveal the owner of each item. The old \/e\/long-bin2hex-identifier-here links were not very user-friendly.",
+    "published": "2009-04-08T00:32:55Z",
+    "service": {
+      "name": "FriendFeed",
+      "iconUrl": "http:\/\/friendfeed.com\/static\/images\/icons\/internal.png?v=e471e9afdf04ae568dcbddb5584fc6c0",
+      "entryType": "message",
+      "id": "internal",
+      "profileUrl": "http:\/\/friendfeed.com\/voyagerfan5761"
+    },
+    "anonymous": false,
+    "id": "88eb2a2e-7173-4f0a-b01b-2a44c972f289",
+    "media": [
+
+    ],
+    "link": "http:\/\/friendfeed.com\/e\/88eb2a2e-7173-4f0a-b01b-2a44c972f289",
+    "user": {
+      "name": "Voyagerfan5761",
+      "nickname": "voyagerfan5761",
+      "id": "a6698db1-f016-49cd-a923-290d0954b18c",
+      "profileUrl": "http:\/\/friendfeed.com\/voyagerfan5761"
+    },
+    "room": {
+      "name": "I \u2665 the New Friendfeed UI",
+      "nickname": "i-the-new-friendfeed-ui",
+      "url": "http:\/\/friendfeed.com\/rooms\/i-the-new-friendfeed-ui",
+      "id": "bc111581-f4a1-46d6-8c25-da6eb6f00af7"
+    },
+    "updated": "2009-04-08T00:32:55Z",
+    "hidden": false,
+    "likes": [
+      {
+        "date": "2009-04-08T04:23:54Z",
+        "user": {
+          "name": "Hutch Carpenter",
+          "nickname": "bhc3",
+          "id": "836481f2-f39f-11dc-8371-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/bhc3"
+        }
+      },
+      {
+        "date": "2009-04-08T03:41:10Z",
+        "user": {
+          "name": "Chris Heath",
+          "nickname": "ccheath",
+          "id": "7d56e698-4600-11dd-9876-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/ccheath"
+        }
+      },
+      {
+        "date": "2009-04-08T02:41:20Z",
+        "user": {
+          "name": "Mathew\u2122",
+          "nickname": "mathewballard",
+          "id": "161f565c-4bb6-11dd-b698-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/mathewballard"
+        }
+      },
+      {
+        "date": "2009-04-08T00:38:53Z",
+        "user": {
+          "name": "Pat Hawks",
+          "nickname": "pathawks",
+          "id": "ec034dce-f4a8-11dc-8903-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/pathawks"
+        }
+      },
+      {
+        "date": "2009-04-08T00:35:57Z",
+        "user": {
+          "name": "April Russo",
+          "nickname": "app103",
+          "id": "7577262e-97de-11dd-96be-00304865cd52",
+          "profileUrl": "http:\/\/friendfeed.com\/app103"
+        }
+      },
+      {
+        "date": "2009-04-08T00:33:22Z",
+        "user": {
+          "name": "Kol Tregaskes",
+          "nickname": "koltregaskes",
+          "id": "5369601c-f9fd-11dc-ad69-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/koltregaskes"
+        }
+      },
+      {
+        "date": "2009-04-08T00:33:20Z",
+        "user": {
+          "name": "Bec Rowe @d0tski",
+          "nickname": "d0tski",
+          "id": "56a02e1e-419c-11dd-ba9a-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/d0tski"
+        }
+      }
+    ]
+  },
+  {
+    "comments": [
+      {
+        "body": "Different display modes: timeline view, ordered\/customized view (like I explained above), standard view (how it is now), visual view (shows urls you post in your feed with a visual preview like sqworl, youtube playlists can be viewed within ff)",
+        "id": "b9fbbe14-5466-41b5-9a2c-c63524731c2e",
+        "date": "2009-04-08T01:16:07Z",
+        "user": {
+          "name": "Jay Neff",
+          "nickname": "jayneff",
+          "id": "c4b8f422-433f-11dd-a201-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/jayneff"
+        }
+      },
+      {
+        "body": "The ability to enable content links, for example my content from digg being brought into my feed is no longer linked to the digg url",
+        "id": "ec39df99-698e-45db-93a7-e82ccf858934",
+        "date": "2009-04-08T01:46:28Z",
+        "user": {
+          "name": "Jay Neff",
+          "nickname": "jayneff",
+          "id": "c4b8f422-433f-11dd-a201-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/jayneff"
+        }
+      }
+    ],
+    "title": "I would love to have the ability to order content posted in groups. It could be draggable, so you can reorder your group's feed. For example, I want to prioritize the content I post in my group above what comes in from google news rss, etc.",
+    "published": "2009-04-08T01:11:50Z",
+    "service": {
+      "name": "FriendFeed",
+      "iconUrl": "http:\/\/friendfeed.com\/static\/images\/icons\/internal.png?v=e471e9afdf04ae568dcbddb5584fc6c0",
+      "entryType": "message",
+      "id": "internal",
+      "profileUrl": "http:\/\/friendfeed.com\/jayneff"
+    },
+    "anonymous": false,
+    "id": "beaff0a3-63ad-47f9-9c69-fb70e76850b1",
+    "media": [
+
+    ],
+    "link": "http:\/\/friendfeed.com\/e\/beaff0a3-63ad-47f9-9c69-fb70e76850b1",
+    "user": {
+      "name": "Jay Neff",
+      "nickname": "jayneff",
+      "id": "c4b8f422-433f-11dd-a201-003048343a40",
+      "profileUrl": "http:\/\/friendfeed.com\/jayneff"
+    },
+    "room": {
+      "name": "FriendFeed Feedback",
+      "nickname": "friendfeed-feedback",
+      "url": "http:\/\/friendfeed.com\/rooms\/friendfeed-feedback",
+      "id": "34eac2e8-946a-4e85-b731-e49f88c6170e"
+    },
+    "updated": "2009-04-08T01:11:50Z",
+    "hidden": false,
+    "likes": [
+
+    ]
+  },
+  {
+    "comments": [
+      {
+        "body": "I think you can find it at http:\/\/beta.friendfeed.com\/ now ?",
+        "id": "be5c962d-992c-4e87-94f3-a9215612fdac",
+        "date": "2009-04-08T01:21:03Z",
+        "user": {
+          "name": "Jay Neff",
+          "nickname": "jayneff",
+          "id": "c4b8f422-433f-11dd-a201-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/jayneff"
+        }
+      },
+      {
+        "body": "no jay that's \/home and is a feed of all subscribers you keep in your \/home feed\/list - the \/everything is just that a living river of all friendfeed activity - i mainly use it to search all friendfeed and would be interesting to setup a filter against that...",
+        "id": "f14b30b3-d19e-4cce-a60a-dbaf7d961c83",
+        "date": "2009-04-08T01:44:00Z",
+        "user": {
+          "name": "mike \"glemak\" dunn",
+          "nickname": "glemak",
+          "id": "c05cad45-516e-4055-a94b-c5b385578d28",
+          "profileUrl": "http:\/\/friendfeed.com\/glemak"
+        }
+      }
+    ],
+    "title": "so i've looked around the ff beta & can't seem to locate \"everyone\" as in http:\/\/friendfeed.com\/public - did it go away?",
+    "published": "2009-04-07T23:48:45Z",
+    "service": {
+      "name": "FriendFeed",
+      "iconUrl": "http:\/\/friendfeed.com\/static\/images\/icons\/internal.png?v=e471e9afdf04ae568dcbddb5584fc6c0",
+      "entryType": "message",
+      "id": "internal",
+      "profileUrl": "http:\/\/friendfeed.com\/glemak"
+    },
+    "anonymous": false,
+    "id": "96b5db40-2dea-499a-ad65-2c9496f996c9",
+    "media": [
+
+    ],
+    "link": "http:\/\/friendfeed.com\/e\/96b5db40-2dea-499a-ad65-2c9496f996c9",
+    "user": {
+      "name": "mike \"glemak\" dunn",
+      "nickname": "glemak",
+      "id": "c05cad45-516e-4055-a94b-c5b385578d28",
+      "profileUrl": "http:\/\/friendfeed.com\/glemak"
+    },
+    "room": {
+      "name": "FriendFeed Feedback",
+      "nickname": "friendfeed-feedback",
+      "url": "http:\/\/friendfeed.com\/rooms\/friendfeed-feedback",
+      "id": "34eac2e8-946a-4e85-b731-e49f88c6170e"
+    },
+    "updated": "2009-04-07T23:48:45Z",
+    "hidden": false,
+    "likes": [
+      {
+        "date": "2009-04-08T01:19:25Z",
+        "user": {
+          "name": "Jay Neff",
+          "nickname": "jayneff",
+          "id": "c4b8f422-433f-11dd-a201-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/jayneff"
+        }
+      },
+      {
+        "date": "2009-04-07T23:51:56Z",
+        "user": {
+          "name": "Kol Tregaskes",
+          "nickname": "koltregaskes",
+          "id": "5369601c-f9fd-11dc-ad69-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/koltregaskes"
+        }
+      }
+    ]
+  },
+  {
+    "comments": [
+      {
+        "body": "I believe that's a known issue, but you can manually refresh your services yourself.",
+        "id": "d7776bd6-0631-4881-b13c-93fb4af299cf",
+        "date": "2009-04-07T06:50:02Z",
+        "user": {
+          "name": "Bec Rowe @d0tski",
+          "nickname": "d0tski",
+          "id": "56a02e1e-419c-11dd-ba9a-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/d0tski"
+        }
+      },
+      {
+        "body": "Plus that isn't always a FriendFeed issue. API limits from other services dictate such things sometimes",
+        "id": "91f367b4-e607-44c5-857e-16aee9c6e520",
+        "date": "2009-04-07T06:50:55Z",
+        "user": {
+          "name": "Johnny Worthington",
+          "nickname": "jworthington",
+          "id": "e15ae81c-3811-11dd-8593-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/jworthington"
+        }
+      },
+      {
+        "body": "how does one refresh their services?",
+        "id": "c388b85c-d98f-4287-a074-fd6f19d9fa91",
+        "date": "2009-04-07T07:01:07Z",
+        "user": {
+          "name": "lear web design",
+          "nickname": "learwebdesign",
+          "id": "82120bfa-f249-11dc-ba9d-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/learwebdesign"
+        }
+      },
+      {
+        "body": "figured it out nevermind....but that's still lame to manually refresh.",
+        "id": "aa2ac5b1-b374-4ffd-9bd0-121926760164",
+        "date": "2009-04-07T07:07:32Z",
+        "user": {
+          "name": "lear web design",
+          "nickname": "learwebdesign",
+          "id": "82120bfa-f249-11dc-ba9d-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/learwebdesign"
+        }
+      },
+      {
+        "body": "services that support friendfeeds SUP will be updated very quickly..those who dont will take quite a while...",
+        "id": "15198c2c-caf6-438f-a86b-586bafa9e894",
+        "date": "2009-04-07T11:04:34Z",
+        "user": {
+          "name": "Chris Hofmann",
+          "nickname": "krz9000",
+          "id": "010b8f38-dad7-11dc-8d84-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/krz9000"
+        }
+      },
+      {
+        "body": "I think it is a fundamental design problem with RSS (and the way it is used) -- most feeds here are RSS based - and are therefore pull based. The only guaranteed way to determine if anything has changed is to poll the site that has the data. In order to limit load the polled site limits the frequency of polls. Any RSS reader would have essentially the same latency issues.",
+        "id": "43867c5d-24be-4461-944c-8b131d8fd92b",
+        "date": "2009-04-07T12:28:16Z",
+        "user": {
+          "name": "Brian Sullivan",
+          "nickname": "briansullivan",
+          "id": "07d38d3a-2789-11dd-9b5e-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/briansullivan"
+        }
+      },
+      {
+        "body": "The problem isn't on FriendFeeds end. Its on the place its being imported from who have set limits etc.",
+        "id": "2ec7c4fe-ac18-464e-9590-af55877eec05",
+        "date": "2009-04-07T12:34:22Z",
+        "user": {
+          "name": "Nicholas James",
+          "nickname": "profitbaron",
+          "id": "b99bd83e-453d-11dd-83f3-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/profitbaron"
+        }
+      },
+      {
+        "body": "I am with brian sullivan, he explained it very well.",
+        "id": "401a418b-5439-41b5-b255-88dac1d8c365",
+        "date": "2009-04-07T12:37:08Z",
+        "user": {
+          "name": "abdellah",
+          "nickname": "abdellah",
+          "id": "80bcc218-0a5e-11dd-90ed-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/abdellah"
+        }
+      },
+      {
+        "body": "I only call something a \"fundamental design problem\" if it requires an incompatible change to fix.  SUP fixes the problem without requiring any incompatible change, so I wouldn't call it a fundamental design problem with Atom or RSS.  Any feed reader could use SUP to solve the same latency issues for sites that support SUP.",
+        "id": "5c46e40f-4d25-4c7b-9f31-40716fc631a0",
+        "date": "2009-04-07T12:45:48Z",
+        "user": {
+          "name": "Bruce Lewis",
+          "nickname": "brlewis",
+          "id": "1fa8c370-7ff0-41cc-b885-7bd08a1dbc86",
+          "profileUrl": "http:\/\/friendfeed.com\/brlewis"
+        }
+      },
+      {
+        "body": "Bruce SUP don't solve the problem , it reduce the latency no more, and we have to remember that not all service have implemented SUP.",
+        "id": "b6dc9a2c-4b28-4971-9038-0c93b9e0aa2a",
+        "date": "2009-04-07T12:56:07Z",
+        "user": {
+          "name": "abdellah",
+          "nickname": "abdellah",
+          "id": "80bcc218-0a5e-11dd-90ed-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/abdellah"
+        }
+      },
+      {
+        "body": "Bruce -- but doesn't that require every single site providing a feed to change?",
+        "id": "028a117d-39ba-4041-93d7-dfb4bca09561",
+        "date": "2009-04-07T12:58:33Z",
+        "user": {
+          "name": "Brian Sullivan",
+          "nickname": "briansullivan",
+          "id": "07d38d3a-2789-11dd-9b5e-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/briansullivan"
+        }
+      },
+      {
+        "body": "Brian, yes, it does require that sites change.  So even though I don't call it a fundamental design problem with feeds, it is fair to call it a missing feature.  Abdellah, what do you mean it doesn't reduce latency?  In my experience it does, dramatically.",
+        "id": "36425aa3-68dd-4979-8d2c-944742ce3b56",
+        "date": "2009-04-07T18:47:43Z",
+        "user": {
+          "name": "Bruce Lewis",
+          "nickname": "brlewis",
+          "id": "1fa8c370-7ff0-41cc-b885-7bd08a1dbc86",
+          "profileUrl": "http:\/\/friendfeed.com\/brlewis"
+        }
+      },
+      {
+        "body": "Bruce I said, it doesn't solve the problem, it reduce the latency that all. the pb isn't to optimize the latency regarding a service X but regarding a set of service where some haven't even implemented the SUP.",
+        "id": "a5a48b3b-69bf-4153-afec-2ecd96ae11ac",
+        "date": "2009-04-07T21:31:11Z",
+        "user": {
+          "name": "abdellah",
+          "nickname": "abdellah",
+          "id": "80bcc218-0a5e-11dd-90ed-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/abdellah"
+        }
+      },
+      {
+        "body": "Yeah, for that you have to scale up both FriendFeed and the other service.  For latency to be 1\/2 hour you need to do 2N requests per hour, where N is the number of feeds imported.",
+        "id": "c040c505-fc48-49ca-a2c7-9477194fcce5",
+        "date": "2009-04-08T01:29:30Z",
+        "user": {
+          "name": "Bruce Lewis",
+          "nickname": "brlewis",
+          "id": "1fa8c370-7ff0-41cc-b885-7bd08a1dbc86",
+          "profileUrl": "http:\/\/friendfeed.com\/brlewis"
+        }
+      }
+    ],
+    "title": "why does it take so long for posts to come in from the different social networks.  it shouldn't take over an hour for each post to come in, that's too much.",
+    "published": "2009-04-07T06:49:15Z",
+    "service": {
+      "name": "FriendFeed",
+      "iconUrl": "http:\/\/friendfeed.com\/static\/images\/icons\/internal.png?v=e471e9afdf04ae568dcbddb5584fc6c0",
+      "entryType": "message",
+      "id": "internal",
+      "profileUrl": "http:\/\/friendfeed.com\/learwebdesign"
+    },
+    "anonymous": false,
+    "id": "9e3b7d97-c7ca-4126-a512-1fe1e1906862",
+    "media": [
+
+    ],
+    "link": "http:\/\/friendfeed.com\/e\/9e3b7d97-c7ca-4126-a512-1fe1e1906862",
+    "user": {
+      "name": "lear web design",
+      "nickname": "learwebdesign",
+      "id": "82120bfa-f249-11dc-ba9d-003048343a40",
+      "profileUrl": "http:\/\/friendfeed.com\/learwebdesign"
+    },
+    "room": {
+      "name": "FriendFeed Feedback",
+      "nickname": "friendfeed-feedback",
+      "url": "http:\/\/friendfeed.com\/rooms\/friendfeed-feedback",
+      "id": "34eac2e8-946a-4e85-b731-e49f88c6170e"
+    },
+    "updated": "2009-04-07T06:49:15Z",
+    "hidden": false,
+    "likes": [
+      {
+        "date": "2009-04-07T18:48:14Z",
+        "user": {
+          "name": "Kol Tregaskes",
+          "nickname": "koltregaskes",
+          "id": "5369601c-f9fd-11dc-ad69-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/koltregaskes"
+        }
+      },
+      {
+        "date": "2009-04-07T11:09:32Z",
+        "user": {
+          "name": "Rob Sellen",
+          "nickname": "robsellen",
+          "id": "a1026f1c-c1a3-11dd-9ca2-003048678d04",
+          "profileUrl": "http:\/\/friendfeed.com\/robsellen"
+        }
+      },
+      {
+        "date": "2009-04-07T11:07:46Z",
+        "user": {
+          "name": "Tyson Key",
+          "nickname": "vmlemon",
+          "id": "7eefb2e4-a9fd-11dd-82a4-003048678d04",
+          "profileUrl": "http:\/\/friendfeed.com\/vmlemon"
+        }
+      },
+      {
+        "date": "2009-04-07T09:54:13Z",
+        "user": {
+          "name": "sandhal",
+          "nickname": "sandhal",
+          "id": "842a70f0-57d7-11dd-83e7-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/sandhal"
+        }
+      }
+    ]
+  },
+  {
+    "comments": [
+
+    ],
+    "title": "Do you know you can be simultaneously logged in and logged out on one computer? It might help people tremendously, trying to see what \"others\" see from their profile \/FB for example\/ while adjusting different privacy levels. ...just use also Chrome. it doesnt know about IE etc",
+    "published": "2009-04-07T22:10:39Z",
+    "service": {
+      "name": "FriendFeed",
+      "iconUrl": "http:\/\/friendfeed.com\/static\/images\/icons\/internal.png?v=e471e9afdf04ae568dcbddb5584fc6c0",
+      "entryType": "message",
+      "id": "internal",
+      "profileUrl": "http:\/\/friendfeed.com\/petrbuben"
+    },
+    "anonymous": false,
+    "id": "c49dce77-a12c-41e2-820c-2ad859d1090c",
+    "media": [
+      {
+        "player": null,
+        "title": "chrome3.jpg",
+        "enclosures": null,
+        "content": [
+          {
+            "url": "http:\/\/friendfeed.s3.amazonaws.com\/084a9734be702cabccf15f898afd1a38daa23ecb",
+            "type": "image\/jpeg"
+          }
+        ],
+        "link": "http:\/\/friendfeed.com\/e\/c49dce77-a12c-41e2-820c-2ad859d1090c",
+        "thumbnails": [
+          {
+            "url": "http:\/\/i.friendfeed.com\/9a99a072b3d0e99aa9b013ad264cb5b08e60e62f",
+            "height": 175,
+            "width": 115
+          }
+        ]
+      }
+    ],
+    "link": "http:\/\/friendfeed.com\/e\/c49dce77-a12c-41e2-820c-2ad859d1090c",
+    "user": {
+      "name": "friendfeed.com\/PetrBuben",
+      "nickname": "petrbuben",
+      "id": "a20ec5df-2363-4c0c-9750-38c8a039f8b0",
+      "profileUrl": "http:\/\/friendfeed.com\/petrbuben"
+    },
+    "room": {
+      "name": "FriendFeed Feedback",
+      "nickname": "friendfeed-feedback",
+      "url": "http:\/\/friendfeed.com\/rooms\/friendfeed-feedback",
+      "id": "34eac2e8-946a-4e85-b731-e49f88c6170e"
+    },
+    "updated": "2009-04-07T22:10:39Z",
+    "hidden": false,
+    "likes": [
+      {
+        "date": "2009-04-08T01:24:35Z",
+        "user": {
+          "name": "Jay Neff",
+          "nickname": "jayneff",
+          "id": "c4b8f422-433f-11dd-a201-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/jayneff"
+        }
+      }
+    ]
+  },
+  {
+    "comments": [
+      {
+        "body": "Sorry, wrong room. I meant to post to FF beta.",
+        "id": "5f85d27c-7980-45a4-bf6b-e7ad4aa6cf7d",
+        "date": "2009-04-08T01:22:19Z",
+        "user": {
+          "name": "Peter Kelley",
+          "nickname": "yellek",
+          "id": "040fd5a6-43e9-11dd-b232-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/yellek"
+        }
+      }
+    ],
+    "title": "The edit description box for feeds that used to be rooms needs to show that the previously entered text is too long visually. I was trying to figure out why the box wouldn't update, checked my keyboard and everything :) It turned out that the room description text that I had already entered was too long.",
+    "published": "2009-04-08T01:18:10Z",
+    "service": {
+      "name": "FriendFeed",
+      "iconUrl": "http:\/\/friendfeed.com\/static\/images\/icons\/internal.png?v=e471e9afdf04ae568dcbddb5584fc6c0",
+      "entryType": "message",
+      "id": "internal",
+      "profileUrl": "http:\/\/friendfeed.com\/yellek"
+    },
+    "anonymous": false,
+    "id": "f56b1a2a-273e-4a91-9c89-12a95be0975a",
+    "media": [
+
+    ],
+    "link": "http:\/\/friendfeed.com\/e\/f56b1a2a-273e-4a91-9c89-12a95be0975a",
+    "user": {
+      "name": "Peter Kelley",
+      "nickname": "yellek",
+      "id": "040fd5a6-43e9-11dd-b232-003048343a40",
+      "profileUrl": "http:\/\/friendfeed.com\/yellek"
+    },
+    "room": {
+      "name": "FriendFeed Feedback",
+      "nickname": "friendfeed-feedback",
+      "url": "http:\/\/friendfeed.com\/rooms\/friendfeed-feedback",
+      "id": "34eac2e8-946a-4e85-b731-e49f88c6170e"
+    },
+    "updated": "2009-04-08T01:18:10Z",
+    "hidden": false,
+    "likes": [
+
+    ]
+  },
+  {
+    "comments": [
+      {
+        "body": "I think it would be very useful for somebody to be able to comment on my invite. Thus, they do not have to join the room to say something about it.",
+        "id": "108fa447-5905-4975-9ef1-67b566c6c69b",
+        "date": "2009-04-08T01:15:50Z",
+        "user": {
+          "name": "Rishabh Mishra (p248)",
+          "nickname": "possible248",
+          "id": "32aef17e-ec8e-11dc-a0bd-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/possible248"
+        }
+      }
+    ],
+    "title": "Shouldn't FriendFeed Room Invites be the same thing as direct messages?",
+    "published": "2009-04-08T01:15:29Z",
+    "service": {
+      "name": "FriendFeed",
+      "iconUrl": "http:\/\/friendfeed.com\/static\/images\/icons\/internal.png?v=e471e9afdf04ae568dcbddb5584fc6c0",
+      "entryType": "message",
+      "id": "internal",
+      "profileUrl": "http:\/\/friendfeed.com\/possible248"
+    },
+    "anonymous": false,
+    "id": "29e63116-2ef5-45f9-9edf-824e551b45a4",
+    "media": [
+
+    ],
+    "link": "http:\/\/friendfeed.com\/e\/29e63116-2ef5-45f9-9edf-824e551b45a4",
+    "user": {
+      "name": "Rishabh Mishra (p248)",
+      "nickname": "possible248",
+      "id": "32aef17e-ec8e-11dc-a0bd-003048343a40",
+      "profileUrl": "http:\/\/friendfeed.com\/possible248"
+    },
+    "room": {
+      "name": "FriendFeed Feedback",
+      "nickname": "friendfeed-feedback",
+      "url": "http:\/\/friendfeed.com\/rooms\/friendfeed-feedback",
+      "id": "34eac2e8-946a-4e85-b731-e49f88c6170e"
+    },
+    "updated": "2009-04-08T01:15:29Z",
+    "hidden": false,
+    "likes": [
+
+    ]
+  },
+  {
+    "comments": [
+
+    ],
+    "title": "I'm trying to figure out why I can't reshare on the beta site. I posted something to twitterusers (using fftogo) that I now want to reshare to my own feed. Halp!",
+    "published": "2009-04-08T01:09:21Z",
+    "service": {
+      "name": "FriendFeed",
+      "iconUrl": "http:\/\/friendfeed.com\/static\/images\/icons\/internal.png?v=e471e9afdf04ae568dcbddb5584fc6c0",
+      "entryType": "message",
+      "id": "internal",
+      "profileUrl": "http:\/\/friendfeed.com\/voyagerfan5761"
+    },
+    "anonymous": false,
+    "id": "a263447d-3e09-4a0c-9145-4d0500bf580f",
+    "media": [
+
+    ],
+    "link": "http:\/\/friendfeed.com\/e\/a263447d-3e09-4a0c-9145-4d0500bf580f",
+    "user": {
+      "name": "Voyagerfan5761",
+      "nickname": "voyagerfan5761",
+      "id": "a6698db1-f016-49cd-a923-290d0954b18c",
+      "profileUrl": "http:\/\/friendfeed.com\/voyagerfan5761"
+    },
+    "room": {
+      "name": "FriendFeed Feedback",
+      "nickname": "friendfeed-feedback",
+      "url": "http:\/\/friendfeed.com\/rooms\/friendfeed-feedback",
+      "id": "34eac2e8-946a-4e85-b731-e49f88c6170e"
+    },
+    "updated": "2009-04-08T01:09:21Z",
+    "hidden": false,
+    "likes": [
+
+    ]
+  },
+  {
+    "comments": [
+      {
+        "body": "Much of the reason people get into Twitter is because they see the apps in the iPhone store or on other peoples phones or computers.  Also, it would be a good way to make money without having to charge for the web interface",
+        "id": "0a7d0649-8a8f-44cf-a30a-727dc7ba71b2",
+        "date": "2009-04-07T20:23:15Z",
+        "user": {
+          "name": "Sweyn",
+          "nickname": "sweyn",
+          "id": "48e37bd4-1265-11dd-ac10-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/sweyn"
+        }
+      },
+      {
+        "body": "Twitter needs apps because their base product is so lacking.  What are some ideas for apps that could be specific to FF?",
+        "id": "01b63ddd-ef29-4e6c-ba8b-9869d363a26a",
+        "date": "2009-04-07T22:07:22Z",
+        "user": {
+          "name": "Andy Bakun",
+          "nickname": "thwartedefforts",
+          "id": "3683eefc-305a-11dd-b460-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/thwartedefforts"
+        }
+      },
+      {
+        "body": "If Twhirl fixed its jumping up and down bug it would be a great app for FF.",
+        "id": "34ccebe3-91f0-40c8-8ae0-360292dd1124",
+        "date": "2009-04-07T22:08:38Z",
+        "user": {
+          "name": "Kol Tregaskes",
+          "nickname": "koltregaskes",
+          "id": "5369601c-f9fd-11dc-ad69-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/koltregaskes"
+        }
+      },
+      {
+        "body": "I think mobile applications are very important for Friendfeed.  Twittter thrives on that.  FFToGo.com is OK but native apps are very important.  I think we also need to find a very good desktop client because Twhirl still seems hard to use to me even though I do use it.",
+        "id": "4ae126ee-e385-4f8a-b710-ebc7cec93111",
+        "date": "2009-04-07T23:33:30Z",
+        "user": {
+          "name": "Sweyn",
+          "nickname": "sweyn",
+          "id": "48e37bd4-1265-11dd-ac10-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/sweyn"
+        }
+      }
+    ],
+    "title": "One major problem with Friendfeed right now is the lack of 3rd-party apps.  I think that in order to become a mainstream service, Friendfeed needs to convince developers to to make apps for them.  I would play $20 for a Windows Mobile Friendfeed app so Friendfeed could plant seeds for development and get paid back later.",
+    "published": "2009-04-07T02:09:22Z",
+    "service": {
+      "name": "FriendFeed",
+      "iconUrl": "http:\/\/friendfeed.com\/static\/images\/icons\/internal.png?v=e471e9afdf04ae568dcbddb5584fc6c0",
+      "entryType": "message",
+      "id": "internal",
+      "profileUrl": "http:\/\/friendfeed.com\/sweyn"
+    },
+    "anonymous": false,
+    "id": "303788e8-00e5-48e0-89dc-a97dcf9a5232",
+    "media": [
+
+    ],
+    "link": "http:\/\/friendfeed.com\/e\/303788e8-00e5-48e0-89dc-a97dcf9a5232",
+    "user": {
+      "name": "Sweyn",
+      "nickname": "sweyn",
+      "id": "48e37bd4-1265-11dd-ac10-003048343a40",
+      "profileUrl": "http:\/\/friendfeed.com\/sweyn"
+    },
+    "room": {
+      "name": "FriendFeed Feedback",
+      "nickname": "friendfeed-feedback",
+      "url": "http:\/\/friendfeed.com\/rooms\/friendfeed-feedback",
+      "id": "34eac2e8-946a-4e85-b731-e49f88c6170e"
+    },
+    "updated": "2009-04-07T02:09:22Z",
+    "hidden": false,
+    "likes": [
+      {
+        "date": "2009-04-07T22:09:50Z",
+        "user": {
+          "name": "Kevin Whalen",
+          "nickname": "kevinwhalen",
+          "id": "5396a5a6-ac4d-11dd-a0ba-003048678d04",
+          "profileUrl": "http:\/\/friendfeed.com\/kevinwhalen"
+        }
+      },
+      {
+        "date": "2009-04-07T22:07:52Z",
+        "user": {
+          "name": "Kol Tregaskes",
+          "nickname": "koltregaskes",
+          "id": "5369601c-f9fd-11dc-ad69-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/koltregaskes"
+        }
+      },
+      {
+        "date": "2009-04-07T20:23:55Z",
+        "user": {
+          "name": "Baturalp Torun",
+          "nickname": "bet3",
+          "id": "fcef9e41-b60c-4ad1-90c0-a8d0be652c44",
+          "profileUrl": "http:\/\/friendfeed.com\/bet3"
+        }
+      },
+      {
+        "date": "2009-04-07T02:26:38Z",
+        "user": {
+          "name": "Chris Thomson",
+          "nickname": "chris24",
+          "id": "1ef105ae-9552-454d-bba3-9d74ff32edb3",
+          "profileUrl": "http:\/\/friendfeed.com\/chris24"
+        }
+      },
+      {
+        "date": "2009-04-07T02:14:58Z",
+        "user": {
+          "name": "ivanfilios (Ivan Abrego)",
+          "nickname": "ivanfilios",
+          "id": "aa295a58-4712-11dd-b38c-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/ivanfilios"
+        }
+      },
+      {
+        "date": "2009-04-07T02:10:48Z",
+        "user": {
+          "name": "AJ Batac",
+          "nickname": "ajbatac",
+          "id": "0feec200-0cd2-4a9e-8db2-fed45085ab77",
+          "profileUrl": "http:\/\/friendfeed.com\/ajbatac"
+        }
+      },
+      {
+        "date": "2009-04-07T02:10:17Z",
+        "user": {
+          "name": "Stupid FFer (aka Tina)",
+          "nickname": "isthisstupid",
+          "id": "fc255b78-55c6-11dd-89e9-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/isthisstupid"
+        }
+      }
+    ]
+  },
+  {
+    "comments": [
+
+    ],
+    "title": "I get more useful information from Twitter's \"Find People\" search than I do in FF's \"invite\" or beta FFs \"peoplesearch\"",
+    "published": "2009-04-07T23:14:46Z",
+    "service": {
+      "name": "FriendFeed",
+      "iconUrl": "http:\/\/friendfeed.com\/static\/images\/icons\/internal.png?v=e471e9afdf04ae568dcbddb5584fc6c0",
+      "entryType": "message",
+      "id": "internal",
+      "profileUrl": "http:\/\/friendfeed.com\/ghodmode"
+    },
+    "anonymous": false,
+    "id": "cb2a6998-ae8e-4fb5-b602-9f0b8792b631",
+    "media": [
+
+    ],
+    "link": "http:\/\/friendfeed.com\/e\/cb2a6998-ae8e-4fb5-b602-9f0b8792b631",
+    "user": {
+      "name": "Ghodmode",
+      "nickname": "ghodmode",
+      "id": "28f2710c-f944-11dc-b9bf-003048343a40",
+      "profileUrl": "http:\/\/friendfeed.com\/ghodmode"
+    },
+    "room": {
+      "name": "FriendFeed Feedback",
+      "nickname": "friendfeed-feedback",
+      "url": "http:\/\/friendfeed.com\/rooms\/friendfeed-feedback",
+      "id": "34eac2e8-946a-4e85-b731-e49f88c6170e"
+    },
+    "updated": "2009-04-07T23:14:46Z",
+    "hidden": false,
+    "likes": [
+      {
+        "date": "2009-04-07T23:21:16Z",
+        "user": {
+          "name": "Kol Tregaskes",
+          "nickname": "koltregaskes",
+          "id": "5369601c-f9fd-11dc-ad69-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/koltregaskes"
+        }
+      }
+    ]
+  },
+  {
+    "comments": [
+      {
+        "body": "Not anything i need i guess",
+        "id": "7f77b0b4-747a-4a60-99c1-cbd26aec2be4",
+        "date": "2009-04-07T22:03:58Z",
+        "user": {
+          "name": "Peder Stray",
+          "nickname": "peder",
+          "id": "d6aac9d6-f5fa-11dc-ae22-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/peder"
+        }
+      },
+      {
+        "body": "Nein ;o)",
+        "id": "688e230d-41e7-4e81-a55d-d3a7d292bf3e",
+        "date": "2009-04-07T22:04:29Z",
+        "user": {
+          "name": "Rob Sellen",
+          "nickname": "robsellen",
+          "id": "a1026f1c-c1a3-11dd-9ca2-003048678d04",
+          "profileUrl": "http:\/\/friendfeed.com\/robsellen"
+        }
+      },
+      {
+        "body": "I'd like to have the ability to translate stuff in English.",
+        "id": "750f3fe3-c5db-4f0f-8c1b-5130408028b0",
+        "date": "2009-04-07T22:06:18Z",
+        "user": {
+          "name": "Kol Tregaskes",
+          "nickname": "koltregaskes",
+          "id": "5369601c-f9fd-11dc-ad69-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/koltregaskes"
+        }
+      },
+      {
+        "body": "oh yeas. definitely",
+        "id": "5929d135-87c1-4d98-bff7-effd9db9fe9e",
+        "date": "2009-04-07T22:06:29Z",
+        "user": {
+          "name": "friendfeed.com\/PetrBuben",
+          "nickname": "petrbuben",
+          "id": "a20ec5df-2363-4c0c-9750-38c8a039f8b0",
+          "profileUrl": "http:\/\/friendfeed.com\/petrbuben"
+        }
+      },
+      {
+        "body": "Yes!",
+        "id": "127cd3e0-141d-4e26-abaa-6c5ff952c519",
+        "date": "2009-04-07T22:06:33Z",
+        "user": {
+          "name": "Alex Scoble",
+          "nickname": "itblogger",
+          "id": "fb86e966-5c60-11dd-8697-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/itblogger"
+        }
+      },
+      {
+        "body": "\u0434\u0430",
+        "id": "556a2279-f8ed-43d1-a45c-988c2605e511",
+        "date": "2009-04-07T22:10:32Z",
+        "user": {
+          "name": "Kursat Sevim",
+          "nickname": "antibiotic",
+          "id": "b906e348-4bf8-11dd-884d-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/antibiotic"
+        }
+      },
+      {
+        "body": "Yes! People will finally understand what important things I'm posting about all day long... ;-)",
+        "id": "a2af8140-050e-4c12-876f-f50021802c5e",
+        "date": "2009-04-07T22:13:04Z",
+        "user": {
+          "name": "Ton Zijp",
+          "nickname": "zijperspace",
+          "id": "b579cc9a-3b90-11dd-be72-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/zijperspace"
+        }
+      },
+      {
+        "body": "Ton, hehe.",
+        "id": "b95d4d00-97f5-484c-bcd1-eeb24f5dbbec",
+        "date": "2009-04-07T22:20:59Z",
+        "user": {
+          "name": "Kol Tregaskes",
+          "nickname": "koltregaskes",
+          "id": "5369601c-f9fd-11dc-ad69-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/koltregaskes"
+        }
+      }
+    ],
+    "title": "Would you like an option for auto-translating text in FriendFeed to a choose language?",
+    "published": "2009-04-07T22:02:39Z",
+    "service": {
+      "name": "FriendFeed",
+      "iconUrl": "http:\/\/friendfeed.com\/static\/images\/icons\/internal.png?v=e471e9afdf04ae568dcbddb5584fc6c0",
+      "entryType": "message",
+      "id": "internal",
+      "profileUrl": "http:\/\/friendfeed.com\/koltregaskes"
+    },
+    "anonymous": false,
+    "id": "fb62cf8d-a4ea-4fc6-8b88-cea9a6aa1601",
+    "media": [
+
+    ],
+    "link": "http:\/\/friendfeed.com\/e\/fb62cf8d-a4ea-4fc6-8b88-cea9a6aa1601",
+    "user": {
+      "name": "Kol Tregaskes",
+      "nickname": "koltregaskes",
+      "id": "5369601c-f9fd-11dc-ad69-003048343a40",
+      "profileUrl": "http:\/\/friendfeed.com\/koltregaskes"
+    },
+    "room": {
+      "name": "FriendFeed Feedback",
+      "nickname": "friendfeed-feedback",
+      "url": "http:\/\/friendfeed.com\/rooms\/friendfeed-feedback",
+      "id": "34eac2e8-946a-4e85-b731-e49f88c6170e"
+    },
+    "updated": "2009-04-07T22:02:39Z",
+    "hidden": false,
+    "likes": [
+      {
+        "date": "2009-04-07T22:23:24Z",
+        "user": {
+          "name": "RAPatton",
+          "nickname": "pattonroberta",
+          "id": "0488a1c0-e47b-11dc-870c-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/pattonroberta"
+        }
+      },
+      {
+        "date": "2009-04-07T22:12:15Z",
+        "user": {
+          "name": "Ton Zijp",
+          "nickname": "zijperspace",
+          "id": "b579cc9a-3b90-11dd-be72-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/zijperspace"
+        }
+      },
+      {
+        "date": "2009-04-07T22:10:10Z",
+        "user": {
+          "name": "Abby Martin",
+          "nickname": "whynaut",
+          "id": "936e0838-2c53-11dd-be28-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/whynaut"
+        }
+      },
+      {
+        "date": "2009-04-07T22:06:42Z",
+        "user": {
+          "name": "M F",
+          "nickname": "emmeffe",
+          "id": "4bdab2de-4051-11dd-a965-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/emmeffe"
+        }
+      },
+      {
+        "date": "2009-04-07T22:06:29Z",
+        "user": {
+          "name": "Alex Scoble",
+          "nickname": "itblogger",
+          "id": "fb86e966-5c60-11dd-8697-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/itblogger"
+        }
+      },
+      {
+        "date": "2009-04-07T22:02:47Z",
+        "user": {
+          "name": "edythe",
+          "nickname": "furry",
+          "id": "5b140bd6-e432-11dc-86ec-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/furry"
+        }
+      }
+    ]
+  },
+  {
+    "comments": [
+      {
+        "body": "The dup detector works well (in the old FF UI) so it must be possible?  It would help keep feeds (rooms\/groups) tidier perhaps.",
+        "id": "3b5efd02-b1e1-4460-a829-e7a433c834bd",
+        "date": "2009-04-07T21:45:17Z",
+        "user": {
+          "name": "Kol Tregaskes",
+          "nickname": "koltregaskes",
+          "id": "5369601c-f9fd-11dc-ad69-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/koltregaskes"
+        }
+      },
+      {
+        "body": "That will be a great future to have--how Digg implements it.",
+        "id": "2cb1f153-dd23-44f4-857d-50fe49a81130",
+        "date": "2009-04-07T21:48:07Z",
+        "user": {
+          "name": "Zehra Nasif",
+          "nickname": "zehranasif",
+          "id": "e06dfbee-a781-11dd-9039-003048678d04",
+          "profileUrl": "http:\/\/friendfeed.com\/zehranasif"
+        }
+      },
+      {
+        "body": "FF could do better than Digg as it could check the link in the title?",
+        "id": "a321fb0a-555b-49a0-b7a8-33a7af2461b2",
+        "date": "2009-04-07T21:51:02Z",
+        "user": {
+          "name": "Kol Tregaskes",
+          "nickname": "koltregaskes",
+          "id": "5369601c-f9fd-11dc-ad69-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/koltregaskes"
+        }
+      },
+      {
+        "body": "Tha sounds like a great idea",
+        "id": "de77e32b-11c9-484c-a10d-81bed31de120",
+        "date": "2009-04-07T21:51:40Z",
+        "user": {
+          "name": "ivanfilios (Ivan Abrego)",
+          "nickname": "ivanfilios",
+          "id": "aa295a58-4712-11dd-b38c-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/ivanfilios"
+        }
+      },
+      {
+        "body": "It might be the same article, but possible a totally new conversation. If you knew about the other conversation, you probably wouldn't post it again I think.",
+        "id": "81ee843e-c70d-411c-94cf-eba57fa74c6d",
+        "date": "2009-04-07T21:52:16Z",
+        "user": {
+          "name": "Meryn Stol",
+          "nickname": "meryn",
+          "id": "93d2131e-f1de-11dc-b138-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/meryn"
+        }
+      },
+      {
+        "body": "So this would be for Rooms only?",
+        "id": "f4dd3e24-181b-4633-becc-b6170cce4ba8",
+        "date": "2009-04-07T21:52:21Z",
+        "user": {
+          "name": "Brian Sullivan",
+          "nickname": "briansullivan",
+          "id": "07d38d3a-2789-11dd-9b5e-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/briansullivan"
+        }
+      },
+      {
+        "body": "Multiple conversations around the same article is a fact of life.",
+        "id": "45fc9b1d-3f10-47b7-8b45-16d2635e2050",
+        "date": "2009-04-07T21:53:14Z",
+        "user": {
+          "name": "Meryn Stol",
+          "nickname": "meryn",
+          "id": "93d2131e-f1de-11dc-b138-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/meryn"
+        }
+      },
+      {
+        "body": "A warning would be very helpful, since now I first have to search to see if it's posted before.  Or even better, tell me if the link has been posted by ANY feed I subscribe to, including friends.  Then I can just go comment on an existing post instead of posting my own thing.",
+        "id": "75a3519a-ff0d-4822-9d44-5f2853bfc938",
+        "date": "2009-04-07T21:56:12Z",
+        "user": {
+          "name": "Daniel Sims",
+          "nickname": "dsims",
+          "id": "93937120-5c0c-11dd-8697-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/dsims"
+        }
+      },
+      {
+        "body": "Meryn, in that feed yes.  So you go to share something, e.g. via the bookmarklet, it checks on the feed(s) you have selected to post to if the article is already there, and if so, notifies you that it's already shared, do you wish to continue.  Or something like that? :-)",
+        "id": "5ad11d49-9194-4c41-8c7c-d2042c6b97d7",
+        "date": "2009-04-07T21:58:57Z",
+        "user": {
+          "name": "Kol Tregaskes",
+          "nickname": "koltregaskes",
+          "id": "5369601c-f9fd-11dc-ad69-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/koltregaskes"
+        }
+      },
+      {
+        "body": "Since the people you are subscribed to may not be the same as those subscribed to you it doesn't really make much sense to search your feed to determine whether you should post something or not. Just post and let the readers sort it out is my philosophy.",
+        "id": "a6f14b48-7241-4b70-a5f0-d70d4ba5c4e4",
+        "date": "2009-04-07T21:59:25Z",
+        "user": {
+          "name": "Brian Sullivan",
+          "nickname": "briansullivan",
+          "id": "07d38d3a-2789-11dd-9b5e-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/briansullivan"
+        }
+      },
+      {
+        "body": "Daniel, I'd be happy to search only the feeds you have selected to post to.",
+        "id": "3aa81b27-3127-41f9-b617-a9ad9f335e9d",
+        "date": "2009-04-07T22:00:01Z",
+        "user": {
+          "name": "Kol Tregaskes",
+          "nickname": "koltregaskes",
+          "id": "5369601c-f9fd-11dc-ad69-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/koltregaskes"
+        }
+      },
+      {
+        "body": "Brian, I'm thinking of rooms (groups) mainly.  If it checked those rooms (groups) to see if it's already there and warn you, that would be helpful, no?",
+        "id": "7a86c3a8-a89c-4c7f-a5ae-281ea25972a4",
+        "date": "2009-04-07T22:00:41Z",
+        "user": {
+          "name": "Kol Tregaskes",
+          "nickname": "koltregaskes",
+          "id": "5369601c-f9fd-11dc-ad69-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/koltregaskes"
+        }
+      },
+      {
+        "body": "Brian, that is true, but thanks to the magic of FriendFeed, people who subscribe to me see what I commented or liked.  At the minimum, it would be nice to know what the people I follow said about the same thing, especially if it was already discussed to death a few days before.",
+        "id": "cff5c5b1-868b-4c2f-a0c9-e678eecc2241",
+        "date": "2009-04-07T22:02:29Z",
+        "user": {
+          "name": "Daniel Sims",
+          "nickname": "dsims",
+          "id": "93937120-5c0c-11dd-8697-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/dsims"
+        }
+      },
+      {
+        "body": "I'd love to see that feature across the site.",
+        "id": "31f96c28-78e4-4d86-a9bb-a681db3d6854",
+        "date": "2009-04-07T22:07:49Z",
+        "user": {
+          "name": "Bill Sodeman",
+          "nickname": "billso",
+          "id": "2db5eaf2-277a-11dd-a306-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/billso"
+        }
+      },
+      {
+        "body": "Kol -- yes the Room check would be useful",
+        "id": "c5610504-3e6c-4034-8b27-d5615a228174",
+        "date": "2009-04-07T22:08:29Z",
+        "user": {
+          "name": "Brian Sullivan",
+          "nickname": "briansullivan",
+          "id": "07d38d3a-2789-11dd-9b5e-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/briansullivan"
+        }
+      },
+      {
+        "body": "Yes. It would be cool to have this and that it work dependable. The current dupe detector in FF does not work reliably.",
+        "id": "25c1c0f9-a16e-4e73-a301-a36ae3155b8b",
+        "date": "2009-04-07T22:15:03Z",
+        "user": {
+          "name": "Alex Scoble",
+          "nickname": "itblogger",
+          "id": "fb86e966-5c60-11dd-8697-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/itblogger"
+        }
+      },
+      {
+        "body": "No need, but might be useful in rooms.",
+        "id": "fda9bfbf-dea2-480d-967c-c1a5a3594bf8",
+        "date": "2009-04-07T22:16:35Z",
+        "user": {
+          "name": "Ton Zijp",
+          "nickname": "zijperspace",
+          "id": "b579cc9a-3b90-11dd-be72-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/zijperspace"
+        }
+      }
+    ],
+    "title": "Is there a need to have FF tell you if an article you are sharing has already been posted in that feed?  For example in rooms\/groups.",
+    "published": "2009-04-07T21:45:06Z",
+    "service": {
+      "name": "FriendFeed",
+      "iconUrl": "http:\/\/friendfeed.com\/static\/images\/icons\/internal.png?v=e471e9afdf04ae568dcbddb5584fc6c0",
+      "entryType": "message",
+      "id": "internal",
+      "profileUrl": "http:\/\/friendfeed.com\/koltregaskes"
+    },
+    "anonymous": false,
+    "id": "0a557e8f-abef-43e7-94da-01a07c05d006",
+    "media": [
+
+    ],
+    "link": "http:\/\/friendfeed.com\/e\/0a557e8f-abef-43e7-94da-01a07c05d006",
+    "user": {
+      "name": "Kol Tregaskes",
+      "nickname": "koltregaskes",
+      "id": "5369601c-f9fd-11dc-ad69-003048343a40",
+      "profileUrl": "http:\/\/friendfeed.com\/koltregaskes"
+    },
+    "room": {
+      "name": "FriendFeed Feedback",
+      "nickname": "friendfeed-feedback",
+      "url": "http:\/\/friendfeed.com\/rooms\/friendfeed-feedback",
+      "id": "34eac2e8-946a-4e85-b731-e49f88c6170e"
+    },
+    "updated": "2009-04-07T21:45:06Z",
+    "hidden": false,
+    "likes": [
+      {
+        "date": "2009-04-08T01:24:21Z",
+        "user": {
+          "name": "Jay Neff",
+          "nickname": "jayneff",
+          "id": "c4b8f422-433f-11dd-a201-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/jayneff"
+        }
+      },
+      {
+        "date": "2009-04-07T22:16:42Z",
+        "user": {
+          "name": "The Ghost of Penguin Past",
+          "nickname": "bitseybloom",
+          "id": "8863da9a-37f6-11dd-8593-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/bitseybloom"
+        }
+      },
+      {
+        "date": "2009-04-07T22:16:12Z",
+        "user": {
+          "name": "Ton Zijp",
+          "nickname": "zijperspace",
+          "id": "b579cc9a-3b90-11dd-be72-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/zijperspace"
+        }
+      },
+      {
+        "date": "2009-04-07T22:14:36Z",
+        "user": {
+          "name": "Alex Scoble",
+          "nickname": "itblogger",
+          "id": "fb86e966-5c60-11dd-8697-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/itblogger"
+        }
+      },
+      {
+        "date": "2009-04-07T22:12:23Z",
+        "user": {
+          "name": "M F",
+          "nickname": "emmeffe",
+          "id": "4bdab2de-4051-11dd-a965-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/emmeffe"
+        }
+      },
+      {
+        "date": "2009-04-07T22:06:58Z",
+        "user": {
+          "name": "Daniel Sims",
+          "nickname": "dsims",
+          "id": "93937120-5c0c-11dd-8697-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/dsims"
+        }
+      },
+      {
+        "date": "2009-04-07T22:01:54Z",
+        "user": {
+          "name": "Jorg Jansen",
+          "nickname": "jorgjansen",
+          "id": "783c2766-831d-41d1-84ff-7afbe8c9427e",
+          "profileUrl": "http:\/\/friendfeed.com\/jorgjansen"
+        }
+      },
+      {
+        "date": "2009-04-07T21:51:17Z",
+        "user": {
+          "name": "ivanfilios (Ivan Abrego)",
+          "nickname": "ivanfilios",
+          "id": "aa295a58-4712-11dd-b38c-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/ivanfilios"
+        }
+      },
+      {
+        "date": "2009-04-07T21:48:39Z",
+        "user": {
+          "name": "Pat Hawks",
+          "nickname": "pathawks",
+          "id": "ec034dce-f4a8-11dc-8903-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/pathawks"
+        }
+      },
+      {
+        "date": "2009-04-07T21:48:08Z",
+        "user": {
+          "name": "Zehra Nasif",
+          "nickname": "zehranasif",
+          "id": "e06dfbee-a781-11dd-9039-003048678d04",
+          "profileUrl": "http:\/\/friendfeed.com\/zehranasif"
+        }
+      }
+    ]
+  },
+  {
+    "comments": [
+
+    ],
+    "title": "\u201cAhlak dersi vermeye kalkan birinin, ba\u015fkas\u0131n\u0131n blogundaki mesaj\u0131 aynen kopyalamas\u0131, hatta \"bana mesaj at\u0131n\" deyip de kopyalad\u0131\u011f\u0131 adam\u0131n e-posta adresini vermesi ahlakl\u0131 m\u0131d\u0131r?\u201d",
+    "published": "2009-04-07T21:52:10Z",
+    "service": {
+      "name": "FriendFeed",
+      "iconUrl": "http:\/\/friendfeed.com\/static\/images\/icons\/internal.png?v=e471e9afdf04ae568dcbddb5584fc6c0",
+      "entryType": "link",
+      "id": "internal",
+      "profileUrl": "http:\/\/friendfeed.com\/wolkanca"
+    },
+    "anonymous": false,
+    "id": "69c90067-475d-4380-b3d6-a702fa1a64c6",
+    "media": [
+
+    ],
+    "link": "http:\/\/friendfeed.com\/e\/74897f9f-dbfd-412a-87ae-6ae3d840fae2\/Ahlak-dersi-vermeye-kalkan-birinin-ba-kas-n-n\/",
+    "user": {
+      "name": "Volkan Y\u0131lmaz(wolkanca)",
+      "nickname": "wolkanca",
+      "id": "6b5cf008-e607-11dc-9e4c-003048343a40",
+      "profileUrl": "http:\/\/friendfeed.com\/wolkanca"
+    },
+    "room": {
+      "name": "FriendFeed Feedback",
+      "nickname": "friendfeed-feedback",
+      "url": "http:\/\/friendfeed.com\/rooms\/friendfeed-feedback",
+      "id": "34eac2e8-946a-4e85-b731-e49f88c6170e"
+    },
+    "updated": "2009-04-07T21:52:10Z",
+    "hidden": false,
+    "likes": [
+
+    ]
+  },
+  {
+    "comments": [
+      {
+        "body": "Making it hard to do something like http:\/\/beta.friendfeed.com\/search?q=from:bret,jim,paul,sanjeev,ana,kfury,tudor,casey,gburd,dhsiao,bgolub+-room:newsyc,xoogle-startups,kuler-colors,amazondeals,lalakers,steelers-pittsburgh",
+        "id": "c703c16a-c5eb-4fdf-be92-a05c602bfe1b",
+        "date": "2009-04-07T21:12:57Z",
+        "user": {
+          "name": "Pat Hawks",
+          "nickname": "pathawks",
+          "id": "ec034dce-f4a8-11dc-8903-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/pathawks"
+        }
+      },
+      {
+        "body": "You can use the minus character (-) to exclude things if that helps, Pat?  For example if I want to exclude anything with comments from me I can put \"'koltregaskes\" in comment by field.",
+        "id": "c4312480-ede3-462f-a909-b2727470a2db",
+        "date": "2009-04-07T21:39:31Z",
+        "user": {
+          "name": "Kol Tregaskes",
+          "nickname": "koltregaskes",
+          "id": "5369601c-f9fd-11dc-ad69-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/koltregaskes"
+        }
+      },
+      {
+        "body": "Right, just like the example I posted. But how to exclude any post from any room without listing all possible rooms?",
+        "id": "5ca190a0-4a6a-4901-8be4-00fa8c8b9222",
+        "date": "2009-04-07T21:40:26Z",
+        "user": {
+          "name": "Pat Hawks",
+          "nickname": "pathawks",
+          "id": "ec034dce-f4a8-11dc-8903-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/pathawks"
+        }
+      }
+    ],
+    "title": "Is there a filter to exclude anything from any room? Otherwise, rooms can only be excluded individually...",
+    "published": "2009-04-07T21:12:45Z",
+    "service": {
+      "name": "FriendFeed",
+      "iconUrl": "http:\/\/friendfeed.com\/static\/images\/icons\/internal.png?v=e471e9afdf04ae568dcbddb5584fc6c0",
+      "entryType": "message",
+      "id": "internal",
+      "profileUrl": "http:\/\/friendfeed.com\/pathawks"
+    },
+    "anonymous": false,
+    "id": "402e6e16-61ba-4f3f-a05b-e78d261ba2c8",
+    "media": [
+
+    ],
+    "link": "http:\/\/friendfeed.com\/e\/402e6e16-61ba-4f3f-a05b-e78d261ba2c8",
+    "user": {
+      "name": "Pat Hawks",
+      "nickname": "pathawks",
+      "id": "ec034dce-f4a8-11dc-8903-003048343a40",
+      "profileUrl": "http:\/\/friendfeed.com\/pathawks"
+    },
+    "room": {
+      "name": "FriendFeed Feedback",
+      "nickname": "friendfeed-feedback",
+      "url": "http:\/\/friendfeed.com\/rooms\/friendfeed-feedback",
+      "id": "34eac2e8-946a-4e85-b731-e49f88c6170e"
+    },
+    "updated": "2009-04-07T21:12:45Z",
+    "hidden": false,
+    "likes": [
+      {
+        "date": "2009-04-08T01:24:46Z",
+        "user": {
+          "name": "Jay Neff",
+          "nickname": "jayneff",
+          "id": "c4b8f422-433f-11dd-a201-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/jayneff"
+        }
+      },
+      {
+        "date": "2009-04-07T21:38:24Z",
+        "user": {
+          "name": "Kol Tregaskes",
+          "nickname": "koltregaskes",
+          "id": "5369601c-f9fd-11dc-ad69-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/koltregaskes"
+        }
+      }
+    ]
+  },
+  {
+    "comments": [
+      {
+        "body": "Interesting idea, Tina- distribution lists.",
+        "id": "45a5bd85-a3c1-4895-9d6a-b4ce68641dc0",
+        "date": "2009-04-07T15:47:39Z",
+        "user": {
+          "name": "Kol Tregaskes",
+          "nickname": "koltregaskes",
+          "id": "5369601c-f9fd-11dc-ad69-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/koltregaskes"
+        }
+      },
+      {
+        "body": "indeed.",
+        "id": "31d50a46-a470-457c-a45c-a35343793a4c",
+        "date": "2009-04-07T15:47:46Z",
+        "user": {
+          "name": "vijay",
+          "nickname": "dffrnt",
+          "id": "f7e5b35c-0dbc-11dd-a773-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/dffrnt"
+        }
+      },
+      {
+        "body": "Feeds\/Rooms are almost what you are talking about, almost.",
+        "id": "936b9706-b7e5-4997-91c3-06419dfd88c5",
+        "date": "2009-04-07T15:48:26Z",
+        "user": {
+          "name": "Alex Scoble",
+          "nickname": "itblogger",
+          "id": "fb86e966-5c60-11dd-8697-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/itblogger"
+        }
+      },
+      {
+        "body": "Isn't that called email? just sayin.",
+        "id": "787a18e4-d0a7-49ef-b089-ad4b3ddb9e8e",
+        "date": "2009-04-07T15:48:30Z",
+        "user": {
+          "name": "Brian Daniel Eisenberg",
+          "nickname": "infinitelymeta",
+          "id": "c810625a-f3de-11dc-b674-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/infinitelymeta"
+        }
+      },
+      {
+        "body": "Bret Taylor mentioned that was on the to-do list during the press conference. Should be on its way.",
+        "id": "92d54061-6064-4d6c-af26-f8a766635592",
+        "date": "2009-04-07T15:48:58Z",
+        "user": {
+          "name": "Nathan Chase",
+          "nickname": "nathanchase",
+          "id": "781560f8-259c-4f1a-9e33-23e14a7152fb",
+          "profileUrl": "http:\/\/friendfeed.com\/nathanchase"
+        }
+      },
+      {
+        "body": "You can DM to a room, I think.",
+        "id": "07af7558-ebb6-4886-b241-a70a38ef2fac",
+        "date": "2009-04-07T15:49:35Z",
+        "user": {
+          "name": "Mohomed Abdullahi",
+          "nickname": "genieyclo",
+          "id": "00268190-5ef8-11dd-85cc-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/genieyclo"
+        }
+      },
+      {
+        "body": "While you could use e-mail to spread that information, people like myself don't enjoy getting shared links via e-mail.  Distribution Lists would be an awesome idea to quickly share information with a select group.  I like the idea.",
+        "id": "0098cb93-3c32-48bd-b213-ff635d039478",
+        "date": "2009-04-07T15:50:16Z",
+        "user": {
+          "name": "Joshua",
+          "nickname": "joshuajones",
+          "id": "3ac81b7a-29a0-11dd-92fc-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/joshuajones"
+        }
+      },
+      {
+        "body": "Brian, these services are all similar to a fashion, but they are used differently. Having some sort of messaging integration in to friendfeed is very key to the survivability of the service, I think. There have been many times when I wished I could talk directly to one person about something and instead had to bring the conversation outside to gtalk or MSN Live which can be an unwieldy process at best.",
+        "id": "97e7e7d4-fd3c-45c7-95ef-b7479ae776d0",
+        "date": "2009-04-07T15:50:53Z",
+        "user": {
+          "name": "Alex Scoble",
+          "nickname": "itblogger",
+          "id": "fb86e966-5c60-11dd-8697-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/itblogger"
+        }
+      },
+      {
+        "body": "Yes.  Much easier than typing in all the names.  Just like an email list.",
+        "id": "40834b11-bbfd-4cbb-abf2-31e2f43a4ee4",
+        "date": "2009-04-07T15:50:58Z",
+        "user": {
+          "name": "Rodfather",
+          "nickname": "rodfather",
+          "id": "5facb090-47b9-11dd-93ef-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/rodfather"
+        }
+      },
+      {
+        "body": "Nathan Chase, do you have a link to that to-do list? I'm curious what else is on it.",
+        "id": "47836653-a671-4296-a4f2-a966d363eb00",
+        "date": "2009-04-07T15:51:34Z",
+        "user": {
+          "name": "Rochelle",
+          "nickname": "rochelles",
+          "id": "c1fc17bc-11aa-11dd-85d3-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/rochelles"
+        }
+      },
+      {
+        "body": "DM to a Room requires people \"Accept\" your \"invite\". Not so in lists.",
+        "id": "ee8a92a2-cc17-496a-ac27-2f90bddc60b6",
+        "date": "2009-04-07T15:51:37Z",
+        "user": {
+          "name": "vijay",
+          "nickname": "dffrnt",
+          "id": "f7e5b35c-0dbc-11dd-a773-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/dffrnt"
+        }
+      },
+      {
+        "body": "Almost Alex, but not quite. Brian, it pretty much is email, but I don't have the email addy for everyone I follow on FF. You can DM a room (though it's not a DM anymore, just a normal post), but not everyone I want to talk to is in that room. And Rodfather: that's it *exactly*. It just makes sense (to me) to have lists serve multiple purposes like that. One list, two different uses.",
+        "id": "4de81f39-06cb-4266-9b79-430670621522",
+        "date": "2009-04-07T15:51:38Z",
+        "user": {
+          "name": "Stupid FFer (aka Tina)",
+          "nickname": "isthisstupid",
+          "id": "fc255b78-55c6-11dd-89e9-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/isthisstupid"
+        }
+      },
+      {
+        "body": "I haven't found a use yet to DM someone in Friendfeed oddly enough.  In a work context, I could certainly see the need.  What are some everyday use cases where you just wouldn't use email?",
+        "id": "4211d779-033e-43fe-b153-63f34e4028fe",
+        "date": "2009-04-07T15:52:48Z",
+        "user": {
+          "name": "Lou Paglia",
+          "nickname": "loupaglia",
+          "id": "64c8b7de-f153-11dc-97d0-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/loupaglia"
+        }
+      },
+      {
+        "body": "Lou, I follow 1300 people: I don't have email addresses for everyone. Actually, I only have email addresses for maybe 20 at best. If I'm already encouraged to break people up into lists, why not make those lists usable in more than one way?",
+        "id": "e86755d4-80b3-4071-92e4-bc8a8aec5e23",
+        "date": "2009-04-07T15:55:10Z",
+        "user": {
+          "name": "Stupid FFer (aka Tina)",
+          "nickname": "isthisstupid",
+          "id": "fc255b78-55c6-11dd-89e9-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/isthisstupid"
+        }
+      },
+      {
+        "body": "@Alex @Tina You both make good points, and I agree that in the context of snacking on the FF river, it's too hard for a crowd hanging out in the river to go off into the corner and have a conversation. In that respect, what Tina proposes is exactly what is needed.",
+        "id": "84055bdb-feaf-4ce7-abb5-edb3e678d2dd",
+        "date": "2009-04-07T15:57:47Z",
+        "user": {
+          "name": "Brian Daniel Eisenberg",
+          "nickname": "infinitelymeta",
+          "id": "c810625a-f3de-11dc-b674-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/infinitelymeta"
+        }
+      },
+      {
+        "body": "@Rochelle: I think Nathan and I saw it in the same place, Scoble's videos of the demo. You have to go to scobleizer.blip.tv to see them.",
+        "id": "71b04612-117a-407b-9b34-25505cf95c54",
+        "date": "2009-04-07T16:01:23Z",
+        "user": {
+          "name": "Alejandro S.",
+          "nickname": "alejandroz",
+          "id": "d98876e8-fd99-11dc-baff-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/alejandroz"
+        }
+      },
+      {
+        "body": "@Tina: good idea!",
+        "id": "0a3e67f9-31d6-4a38-b5c1-6fa6a3cbb598",
+        "date": "2009-04-07T16:04:41Z",
+        "user": {
+          "name": ".LAG",
+          "nickname": "boycaught",
+          "id": "fc06c882-9df7-4ed3-9da2-54ac2b64d795",
+          "profileUrl": "http:\/\/friendfeed.com\/boycaught"
+        }
+      },
+      {
+        "body": "Currently, FF is on a pull-model, i.e subscription. We subscribe to feeds. DMs are push, if I'm not wrong. Therefore, from a architectural perspective, I'm not sure if its such a good idea to mix these models. Perhaps FF can do it in an easy way... but it just goes against the whole subscription\/pull model. Please correct me if I'm wrong.",
+        "id": "e831c3a0-8882-4b2d-b638-a57e5363ab39",
+        "date": "2009-04-07T16:42:34Z",
+        "user": {
+          "name": "Ahsan Ali",
+          "nickname": "highandwild",
+          "id": "f26d5329-618a-41de-b66e-83e4e41b7bd3",
+          "profileUrl": "http:\/\/friendfeed.com\/highandwild"
+        }
+      },
+      {
+        "body": "Plurk has cliches that do this and I love the feature over there, type one thing instead of a bunch of name. Hopefully it'll show up here",
+        "id": "87f173b1-5c67-4dcd-bb36-4639cb7ed158",
+        "date": "2009-04-07T16:46:57Z",
+        "user": {
+          "name": "BCK",
+          "nickname": "boredcollegekid",
+          "id": "b20fee2e-e49f-11dc-a93a-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/boredcollegekid"
+        }
+      },
+      {
+        "body": "During press conference (just watched on blip.tv), Bret noted that is on...oh, Nathan said this already. Oops. *grin*",
+        "id": "246885b6-db5b-4581-a8d7-7cca33c40b3b",
+        "date": "2009-04-07T21:34:42Z",
+        "user": {
+          "name": "Ken Kennedy",
+          "nickname": "kenzoid",
+          "id": "cfef2090-2554-11dd-9ea9-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/kenzoid"
+        }
+      }
+    ],
+    "title": "You know what would be nice? The ability to DM to a list. Say I make a list of people called SoapMakers, and I find a great soap making resource. I'd like to be able to enter the list name SoapMakers in the 'To' field, and this link would be DM'd to anyone on my SoapMakers list that I'm subscribed to.",
+    "published": "2009-04-07T15:47:18Z",
+    "service": {
+      "name": "FriendFeed",
+      "iconUrl": "http:\/\/friendfeed.com\/static\/images\/icons\/internal.png?v=e471e9afdf04ae568dcbddb5584fc6c0",
+      "entryType": "message",
+      "id": "internal",
+      "profileUrl": "http:\/\/friendfeed.com\/isthisstupid"
+    },
+    "anonymous": false,
+    "id": "50090d2e-157a-4a29-b73c-9381ebc8afe0",
+    "media": [
+
+    ],
+    "link": "http:\/\/friendfeed.com\/e\/50090d2e-157a-4a29-b73c-9381ebc8afe0",
+    "user": {
+      "name": "Stupid FFer (aka Tina)",
+      "nickname": "isthisstupid",
+      "id": "fc255b78-55c6-11dd-89e9-003048343a40",
+      "profileUrl": "http:\/\/friendfeed.com\/isthisstupid"
+    },
+    "room": {
+      "name": "FriendFeed Feedback",
+      "nickname": "friendfeed-feedback",
+      "url": "http:\/\/friendfeed.com\/rooms\/friendfeed-feedback",
+      "id": "34eac2e8-946a-4e85-b731-e49f88c6170e"
+    },
+    "updated": "2009-04-07T15:47:18Z",
+    "hidden": false,
+    "likes": [
+      {
+        "date": "2009-04-07T22:32:18Z",
+        "user": {
+          "name": "Ton Zijp",
+          "nickname": "zijperspace",
+          "id": "b579cc9a-3b90-11dd-be72-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/zijperspace"
+        }
+      },
+      {
+        "date": "2009-04-07T16:47:40Z",
+        "user": {
+          "name": "Ahsan Ali",
+          "nickname": "highandwild",
+          "id": "f26d5329-618a-41de-b66e-83e4e41b7bd3",
+          "profileUrl": "http:\/\/friendfeed.com\/highandwild"
+        }
+      },
+      {
+        "date": "2009-04-07T16:45:30Z",
+        "user": {
+          "name": "Barry Wynn",
+          "nickname": "barrywynn",
+          "id": "a06c2774-4457-11dd-9c2a-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/barrywynn"
+        }
+      },
+      {
+        "date": "2009-04-07T16:10:01Z",
+        "user": {
+          "name": "Chris White",
+          "nickname": "cristoblanco",
+          "id": "e56ef838-f1a1-4d3e-9742-b078bd8a46a3",
+          "profileUrl": "http:\/\/friendfeed.com\/cristoblanco"
+        }
+      },
+      {
+        "date": "2009-04-07T16:07:39Z",
+        "user": {
+          "name": "Abby Martin",
+          "nickname": "whynaut",
+          "id": "936e0838-2c53-11dd-be28-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/whynaut"
+        }
+      },
+      {
+        "date": "2009-04-07T16:04:53Z",
+        "user": {
+          "name": "It's Katie",
+          "nickname": "kekibird",
+          "id": "e3ab70bc-b027-11dd-8d99-003048678d04",
+          "profileUrl": "http:\/\/friendfeed.com\/kekibird"
+        }
+      },
+      {
+        "date": "2009-04-07T15:59:28Z",
+        "user": {
+          "name": "Brian Daniel Eisenberg",
+          "nickname": "infinitelymeta",
+          "id": "c810625a-f3de-11dc-b674-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/infinitelymeta"
+        }
+      },
+      {
+        "date": "2009-04-07T15:55:23Z",
+        "user": {
+          "name": "Mark VandenBerg",
+          "nickname": "mvandenberg",
+          "id": "ee463e96-4545-11dd-a546-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/mvandenberg"
+        }
+      },
+      {
+        "date": "2009-04-07T15:53:29Z",
+        "user": {
+          "name": "Jimbooo",
+          "nickname": "jimbooo",
+          "id": "cf6a80cc-c137-11dd-aed4-003048678d04",
+          "profileUrl": "http:\/\/friendfeed.com\/jimbooo"
+        }
+      },
+      {
+        "date": "2009-04-07T15:51:48Z",
+        "user": {
+          "name": "Greg GuitarBuster",
+          "nickname": "texasguitarbuster",
+          "id": "465df4f4-c938-11dd-8551-003048678d04",
+          "profileUrl": "http:\/\/friendfeed.com\/texasguitarbuster"
+        }
+      },
+      {
+        "date": "2009-04-07T15:51:01Z",
+        "user": {
+          "name": "Manuela",
+          "nickname": "pushkin",
+          "id": "ff164a24-47c3-11dd-93ef-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/pushkin"
+        }
+      },
+      {
+        "date": "2009-04-07T15:50:19Z",
+        "user": {
+          "name": "Joshua",
+          "nickname": "joshuajones",
+          "id": "3ac81b7a-29a0-11dd-92fc-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/joshuajones"
+        }
+      },
+      {
+        "date": "2009-04-07T15:49:46Z",
+        "user": {
+          "name": "Mitch",
+          "nickname": "mitch",
+          "id": "e30cd3f0-5769-4feb-bcef-0fba11781d24",
+          "profileUrl": "http:\/\/friendfeed.com\/mitch"
+        }
+      },
+      {
+        "date": "2009-04-07T15:49:06Z",
+        "user": {
+          "name": "Rodfather",
+          "nickname": "rodfather",
+          "id": "5facb090-47b9-11dd-93ef-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/rodfather"
+        }
+      },
+      {
+        "date": "2009-04-07T15:48:23Z",
+        "user": {
+          "name": "Lindsey is Fierce!",
+          "nickname": "eclipse115",
+          "id": "84f7bd1a-1099-11dd-9df4-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/eclipse115"
+        }
+      },
+      {
+        "date": "2009-04-07T15:47:53Z",
+        "user": {
+          "name": "Alex Scoble",
+          "nickname": "itblogger",
+          "id": "fb86e966-5c60-11dd-8697-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/itblogger"
+        }
+      },
+      {
+        "date": "2009-04-07T15:47:41Z",
+        "user": {
+          "name": "vijay",
+          "nickname": "dffrnt",
+          "id": "f7e5b35c-0dbc-11dd-a773-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/dffrnt"
+        }
+      },
+      {
+        "date": "2009-04-07T15:47:34Z",
+        "user": {
+          "name": "Boris Gordon",
+          "nickname": "boztek",
+          "id": "4bc44af2-1b13-11dd-9050-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/boztek"
+        }
+      },
+      {
+        "date": "2009-04-07T15:47:32Z",
+        "user": {
+          "name": "Kol Tregaskes",
+          "nickname": "koltregaskes",
+          "id": "5369601c-f9fd-11dc-ad69-003048343a40",
+          "profileUrl": "http:\/\/friendfeed.com\/koltregaskes"
+        }
+      }
+    ]
+  }
+]

@@ -196,6 +196,20 @@ class EntryThreadTest < ActiveSupport::TestCase
     EntryThread.find(:auth => user, :room => 'room1')
   end
 
+  test 'self.find room chunk' do
+    user = User.find_by_name('user1')
+    ff = mock('ff_client')
+    ApplicationController.ff_client = ff
+    #
+    ff.expects(:get_room_entries).with('user1', nil, 'room1', {:start => nil, :num => nil, :service => nil}).
+      returns(read_entries('entries', 'room'))
+    threads = EntryThread.find(:auth => user, :room => 'room1')
+    assert_equal(
+      [3, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1],
+      threads.map { |t| t.entries.size }
+    )
+  end
+
   test 'self.find friends' do
     user = User.find_by_name('user1')
     ff = mock('ff_client')
