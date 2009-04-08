@@ -1,0 +1,65 @@
+<%- if ctx.query and !ctx.link -%>
+  <%- form_tag({:action => 'list'}, {:name => 'post'}) do -%>
+    <p><%= search_form %></p>
+    <p>permalink: <%= link_to(h(url_for(search_opt.merge(:only_path => false))), search_opt) %></p>
+  <%- end -%>
+  <script type='text/javascript'><!--
+  post.query.focus();
+  //--></script>
+<%- else -%>
+  <%- if ctx.user_for -%>
+    <p><%= user_picture(ctx.user_for) %> <%= h(user_name(ctx.user_for)) %> <%= link_to(h('[profile]'), '#profile') %></p>
+    <p><%= user_page_links(ctx.user_for) %></p>
+  <%- end -%>
+  <%- if ctx.room_for -%>
+    <p><%= room_picture(ctx.room_for) %> <%= h(room_name(ctx.room_for)) %> <%= link_to(h('[profile]'), '#profile') %></p>
+  <%- end -%>
+  <%- if ctx.list -%>
+    <p><%= list_links %></p>
+  <%- elsif ctx.room == '*' -%>
+    <p><%= room_links(ctx.user) %></p>
+  <%- elsif ctx.link -%>
+    <p>entries related to: <%= link_to(h(ctx.link), u(ctx.link)) %></p>
+  <%- end -%>
+  <%- form_tag({:action => 'add'}, {:name => 'post'}) do -%>
+    <p><a name="top"></a><%= post_entry_form %><%= bottom_menu_link %></p>
+  <%- end -%>
+<%- end -%>
+<%- if !ctx.inbox or !cell_phone? -%>
+  <%- form_tag(link_action('archive')) do -%>
+    <p><a name="top"></a><%= page_links(:for_top => true) %></p>
+  <%- end -%>
+<%- end -%>
+<div class="listings">
+  <%- @entries.each do |thread| -%>
+    <div class="<%= cycle('thread1', 'thread2') %>">
+      <p><%= render :partial => 'entry', :locals => {:entry => thread.root, :root_user => nil, :root_service => nil} %></p>
+      <%- remember_checked(thread.root) if ctx.inbox -%>
+      <%- if thread.chunked? -%>
+        <ul>
+          <li><%= icon_tag(:related) %> <%= thread.related_entries.size %> related entries</li>
+          <% fold_entries(thread.related_entries).each do |entry| -%>
+            <%- if entry.respond_to?(:fold_entries) -%>
+              <%= fold_link(entry) %>
+            <%- else -%>
+              <li><%= render :partial => 'entry', :locals => {:entry => entry, :root_user => thread.root.user_id, :root_service => thread.root.service_identity} %></li>
+              <%- remember_checked(entry) if ctx.inbox and !entry.respond_to?(:fold_entries) -%>
+            <%- end -%>
+          <%- end -%>
+        </ul>
+      <%- end -%>
+    </div>
+  <%- end -%>
+  <%- if @entries.size == 0 -%>
+    <p>No feed is good feed.</p>
+  <%- end -%>
+</div>
+<%- form_tag(link_action('archive')) do -%>
+  <p><a name="bottom"></a><%= page_links(:for_bottom => true) %></p>
+<%- end -%>
+<%- if ctx.user_for -%>
+  <p><%= render :partial => 'profile', :locals => {:user => ctx.user_for} %></p>
+<%- end -%>
+<%- if ctx.room_for -%>
+  <p><%= render :partial => 'room', :locals => {:room => ctx.room_for} %></p>
+<%- end -%>

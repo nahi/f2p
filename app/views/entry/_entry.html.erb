@@ -1,42 +1,39 @@
-<%- if entry.respond_to?(:fold_entries) -%>
-  <%= fold_link(entry) %>
-<%- else -%>
-  <%= pin_link(entry) -%>
-  <%= icon(entry) %>
-  <%= published(entry, false) if ctx.single? -%>
-  <%- if ctx.home and !ctx.inbox and entry.view_inbox -%>
-    <span class="inbox"><%= inbox_label(entry) %></span>
-  <%- end -%>
-  <%= author_link(entry, (root_user.nil? or root_user != entry.user_id), (root_service.nil? or root_service != entry.service_identity)) %>
-  <%= original_link(entry) -%>
-  <%= content(entry) %>
-  <%= via(entry) -%>
-  <%= published(entry, true) if ctx.list? -%>
-  <%- if comment_inline?(entry) -%>
-    -- <span class="comment"><%= inline_comment(entry.comments.first) %></span>
-  <%- end -%>
-<%= likes(entry, ctx.list?) -%>
-<%= comments(entry, ctx.list?) unless comment_inline?(entry) -%>
+<%= pin_link(entry) -%>
+<%= icon(entry) %>
+<%- if ctx.home and !ctx.inbox and entry.view_inbox -%>
+  <span class="inbox"><%= inbox_label(entry) %></span>
+<%- end -%>
+<%= author_link(entry, (root_user != entry.user_id), (root_service != entry.service_identity)) %>
+<%= original_link(entry) -%>
+<%= content(entry) %>
+<%= via(entry) -%>
+<%= published(entry, true) -%>
+<%- if comment_inline?(entry) -%>
+  -- <span class="comment"><%= inline_comment(entry.comments.first) %></span>
+<%- end -%>
+<%= likes(entry, true) -%>
+<%= comments(entry, true) unless comment_inline?(entry) -%>
 <%= url_link(entry) -%>
 <%= reshare_link(entry) -%>
 <%= like_link(entry) -%>
-<%= delete_link(entry) -%>
-  <%- if ctx.single? -%>
-    <%- form_tag({:action => 'add_comment', :id => u(entry.id), :comment => ctx.comment ? u(ctx.comment) : nil}, {:name => 'post'}) do -%>
-      <%= render :partial => 'comment', :locals => {:comments => entry.comments} %>
-      <%- if ctx.comment.nil? -%>
-        <p>
-          <%= comment_icon(entry.nickname == auth.name) %>
-          <%= post_comment_form(entry) %>
-        </p>
-      <%- end -%>
-      <script type='text/javascript'><!--
-      post.body.focus();
-      //--></script>
-    <%- end -%>
-  <%- elsif entry.comments.empty? or comment_inline?(entry) -%>
+<%- if entry.comments.empty? or comment_inline?(entry) -%>
 <%= post_comment_link(entry) %>
-  <%- else -%>
-    <%= render :partial => 'comment', :locals => {:comments => fold_comments(entry.comments)} %>
-  <%- end -%>
+<%- else -%>
+  <ul>
+    <%- fold_comments(entry.comments).each do |comment| -%>
+      <%- if comment.respond_to?(:fold_entries) -%>
+        <li><%= fold_comment_link(comment) %></li>
+      <%- else -%>
+        <li class="comment">
+          <%= comment_icon(comment.by_user(comment.entry.nickname)) %>
+          <%= comment(comment) %>
+          by <%= user(comment) %>
+          <%= via(comment) -%>
+          <%= date(comment.date, true) %>
+          <%= comment_url_link(comment) -%>
+          <%= post_comment_link(comment.entry) if comment == entry.comments.last and ctx.comment.nil? -%>
+        </li>
+      <%- end -%>
+    <%- end -%>
+  </ul>
 <%- end -%>

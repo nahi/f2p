@@ -689,7 +689,7 @@ module EntryHelper
   end
 
   def delete_link(entry)
-    if ctx.single? and entry.nickname == auth.name
+    if entry.nickname == auth.name
       link_to(icon_tag(:delete), link_action('delete', :id => u(entry.id)), :confirm => 'Are you sure?')
     end
   end
@@ -707,18 +707,14 @@ module EntryHelper
   end
 
   def edit_comment_link(comment)
-    if ctx.single?
-      if comment.nickname == auth.name
-        link_to(icon_tag(:comment_edit, 'edit'), link_action('edit', :id => u(comment.entry.id), :comment => u(comment.id)))
-      end
+    if comment.nickname == auth.name
+      link_to(icon_tag(:comment_edit, 'edit'), link_action('edit', :id => u(comment.entry.id), :comment => u(comment.id)))
     end
   end
 
   def delete_comment_link(comment)
-    if ctx.single?
-      if comment.nickname == auth.name or auth.name == comment.entry.nickname
-        link_to(icon_tag(:delete), link_action('delete', :id => u(comment.entry.id), :comment => u(comment.id)), :confirm => 'Are you sure?')
-      end
+    if comment.nickname == auth.name or auth.name == comment.entry.nickname
+      link_to(icon_tag(:delete), link_action('delete', :id => u(comment.entry.id), :comment => u(comment.id)), :confirm => 'Are you sure?')
     end
   end
 
@@ -760,14 +756,6 @@ module EntryHelper
       super()
       @entry_id = entry_id
       @fold_entries = fold_entries
-    end
-
-    def user_id
-      nil
-    end
-
-    def service_identity
-      nil
     end
   end
 
