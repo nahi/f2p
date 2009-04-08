@@ -55,10 +55,10 @@ module EntryHelper
   end
 
   def pin_link(entry)
-    if ctx.inbox or ctx.single? or entry.view_pinned
+    if ctx.inbox or ctx.single?
       if entry.view_pinned
         link_to(icon_tag(:pinned, 'unpin'), link_action('unpin', :id => entry.id))
-      else
+      elsif entry.unread?
         link_to(icon_tag(:pin), link_action('pin', :id => entry.id))
       end
     end
@@ -541,28 +541,31 @@ module EntryHelper
   end
 
   def user_links(user)
+    max = F2P::Config.max_friend_list_num
     users = user_subscriptions(user)
     users = users.find_all { |e| e.nickname and e.nickname != auth.name }
-    links_if_exists("#{users.size} subscriptions: ", users, F2P::Config.max_friend_list_num) { |e|
+    links_if_exists("#{users.size} subscriptions: ", users, max) { |e|
       label = "[#{e.name}]"
       link_to(h(label), link_user(e.nickname))
     }
   end
 
   def imaginary_user_links(user)
+    max = F2P::Config.max_friend_list_num
     users = user_subscriptions(user)
     users = users.find_all { |e| !e.nickname }
-    links_if_exists("#{users.size} imaginary friends: ", users, F2P::Config.max_friend_list_num) { |e|
+    links_if_exists("#{users.size} imaginary friends: ", users, max) { |e|
       label = "<#{e.name}>"
       link_to(h(label), link_user(e.id))
     }
   end
 
   def member_links(room)
+    max = F2P::Config.max_friend_list_num
     members = room_members(room)
     me, rest = members.partition { |e| e.nickname == auth.name }
     members = me + rest
-    links_if_exists("(#{members.size} members) ", members, F2P::Config.max_friend_list_num) { |e|
+    links_if_exists("(#{members.size} members) ", members, max) { |e|
       label = "[#{e.name}]"
       if e.nickname
         link_to(h(label), link_user(e.nickname))
@@ -571,9 +574,11 @@ module EntryHelper
   end
 
   def links_if_exists(label, enum, max = nil, &block)
-    ary = enum.collect { |v| yield(v) }
-    if max and ary.size > max + 1
-      ary = ary[0, max] << "... #{ary.size - max} more"
+    if max and enum.size > max + 1
+      ary = enum[0, max].collect { |v| yield(v) }
+      ary << "... #{enum.size - max} more"
+    else
+      ary = enum.collect { |v| yield(v) }
     end
     str = ary.join(' ')
     str = h(label) + str unless str.empty?

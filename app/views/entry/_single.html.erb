@@ -8,8 +8,7 @@
       <%= published(entry, false) -%>
       <%= author_link(entry, true, true) %>
       <%= original_link(entry) -%>
-      <%= content(entry) %>
-      <%= via(entry) -%>
+<%= content(entry) -%> <%= via(entry) %>
 <%= likes(entry, false) -%>
 <%= comments(entry, false) -%>
 <%= url_link(entry) -%>
@@ -23,10 +22,8 @@
               <%= comment_icon(comment.by_user(comment.entry.nickname)) %>
               <%= date(comment.date, false) %>
               <%- if ctx.comment != comment.id -%>
-                <%= comment(comment) %>
-                by <%= user(comment) %>
-                <%= via(comment) -%>
-                <%= comment_url_link(comment) -%>
+                <%= comment(comment) %> by <%= user(comment) %> <%= via(comment) %>
+<%= comment_url_link(comment) -%>
 <%= edit_comment_link(comment) -%>
 <%= delete_comment_link(comment) -%>
               <%- else -%>

@@ -40,21 +40,8 @@ class EntryThread
       auth = opt[:auth]
       return nil unless auth
       opt.delete(:auth)
-      if opt[:id]
-        entries = fetch_single_entry_as_array(auth, opt)
-      else
-        entries = fetch_list_entries(auth, opt)
-        entries = filter_hidden(entries)
-        if opt[:inbox]
-          entries = sort_by_detection(entries)
-        else
-          entries = sort_by_modified(entries)
-        end
-        if opt[:link]
-          # You comes first
-          entries = entries.partition { |e| e.nickname == auth.name }.flatten
-        end
-      end
+      logger.info('[perf] start entries fetch')
+      entries = fetch_entries(auth, opt)
       logger.info('[perf] start internal data handling')
       record_last_modified(entries)
       logger.info('[perf] record_last_modified done')
@@ -103,33 +90,58 @@ class EntryThread
       ActiveRecord::Base.logger
     end
 
+    def fetch_entries(auth, opt)
+      if opt[:id]
+        fetch_single_entry_as_array(auth, opt)
+      else
+        if opt[:inbox]
+          entries = fetch_inbox_entries(auth, opt)
+          entries = filter_hidden(entries)
+          entries = sort_by_detection(entries)
+        else
+          entries = fetch_list_entries(auth, opt)
+          entries = filter_hidden(entries)
+          entries = sort_by_modified(entries)
+        end
+        if opt[:link]
+          # You comes first
+          entries = entries.partition { |e| e.nickname == auth.name }.flatten
+        end
+        entries
+      end
+    end
+
     def fetch_single_entry_as_array(auth, opt)
       wrap(Task.run { get_entry(auth, opt) }.result)
     end
 
+    def fetch_inbox_entries(auth, opt)
+      cache_entries(auth, opt) {
+        list_task = Task.run {
+          get_home_entries(auth, opt)
+        }
+        if first_page_option?(opt)
+          pinned = Pin.find_all_by_user_id(auth.id).map { |e| e.eid }
+          unless pinned.empty?
+            pin_task =  Task.run {
+              get_entries(auth, :ids => pinned)
+            }
+            pinned_entries = wrap(pin_task.result)
+          end
+        end
+        entries = wrap(list_task.result)
+        if pinned_entries
+          all = entries.map { |e| e.id }
+          rest = pinned_entries.find_all { |e| !all.include?(e.id) }
+          entries += rest
+        end
+        entries
+      }
+    end
+
     def fetch_list_entries(auth, opt)
       cache_entries(auth, opt) {
-        if opt[:inbox]
-          list_task = Task.run {
-            get_home_entries(auth, opt)
-          }
-          if first_page_option?(opt)
-            pinned = Pin.find_all_by_user_id(auth.id).map { |e| e.eid }
-            unless pinned.empty?
-              pin_task =  Task.run {
-                get_entries(auth, :ids => pinned)
-              }
-              pinned_entries = wrap(pin_task.result)
-            end
-          end
-          entries = wrap(list_task.result)
-          if pinned_entries
-            all = entries.map { |e| e.id }
-            rest = pinned_entries.find_all { |e| !all.include?(e.id) }
-            entries += rest
-          end
-          entries
-        elsif opt[:link]
+        if opt[:link]
           if opt[:query]
             start = (opt[:start] || 0) / 2
             num = (opt[:num] || 0) / 2

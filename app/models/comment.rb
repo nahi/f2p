@@ -32,4 +32,8 @@ class Comment
   def by_user(nickname)
     self.nickname == nickname
   end
+
+  def last?
+    self.entry.comments.last == self
+  end
 end

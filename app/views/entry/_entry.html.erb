@@ -5,8 +5,7 @@
 <%- end -%>
 <%= author_link(entry, (root_user != entry.user_id), (root_service != entry.service_identity)) %>
 <%= original_link(entry) -%>
-<%= content(entry) %>
-<%= via(entry) -%>
+<%= content(entry) %> <%= via(entry) %>
 <%= published(entry, true) -%>
 <%- if comment_inline?(entry) -%>
   -- <span class="comment"><%= inline_comment(entry.comments.first) %></span>
@@ -26,12 +25,10 @@
       <%- else -%>
         <li class="comment">
           <%= comment_icon(comment.by_user(comment.entry.nickname)) %>
-          <%= comment(comment) %>
-          by <%= user(comment) %>
-          <%= via(comment) -%>
-          <%= date(comment.date, true) %>
-          <%= comment_url_link(comment) -%>
-          <%= post_comment_link(comment.entry) if comment == entry.comments.last and ctx.comment.nil? -%>
+          <%= comment(comment) %> by <%= user(comment) %> <%= via(comment) %>
+<%= date(comment.date, true) -%>
+<%= comment_url_link(comment) -%>
+<%= post_comment_link(comment.entry) if comment.last? -%>
         </li>
       <%- end -%>
     <%- end -%>

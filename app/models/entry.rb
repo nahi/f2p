@@ -183,6 +183,10 @@ class Entry
     cs.size == 1 and self.user_id == cs.first.user_id
   end
 
+  def unread?
+    view_inbox and !view_pinned
+  end
+
 private
 
   def same_origin?(rhs)

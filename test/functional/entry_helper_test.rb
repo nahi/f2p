@@ -303,6 +303,7 @@ class EntryHelperTest < MyActionView::TestCaseWithController
   test 'pin_link' do
     entry = read_mapped_entries('entries', 'twitter')[0]
     ctx.inbox = true
+    entry.view_inbox = true
     assert_match(/anchor.png/, pin_link(entry))
     entry.view_pinned = true
     assert_match(/tick.png/, pin_link(entry))

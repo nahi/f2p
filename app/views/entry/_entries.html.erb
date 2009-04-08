@@ -43,7 +43,7 @@
               <%= fold_link(entry) %>
             <%- else -%>
               <li><%= render :partial => 'entry', :locals => {:entry => entry, :root_user => thread.root.user_id, :root_service => thread.root.service_identity} %></li>
-              <%- remember_checked(entry) if ctx.inbox and !entry.respond_to?(:fold_entries) -%>
+              <%- remember_checked(entry) if ctx.inbox -%>
             <%- end -%>
           <%- end -%>
         </ul>
