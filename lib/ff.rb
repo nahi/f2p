@@ -284,6 +284,7 @@ module FriendFeed
       if files
         files.each_with_index do |file, idx|
           file, file_link = file
+          file = StringIO.new(file.to_s) unless file.respond_to?(:read)
           query["file#{idx}"] = file
           query["file#{idx}_link"] = file_link
         end
