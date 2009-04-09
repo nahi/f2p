@@ -51,7 +51,7 @@ module FriendFeed
     define_proxy_method :get_discussion
     define_proxy_method :get_url_entries
     define_proxy_method :search_entries
-    define_proxy_method :post
+    #define_proxy_method :post
     define_proxy_method :delete
     define_proxy_method :post_comment
     define_proxy_method :edit_comment
@@ -68,6 +68,17 @@ module FriendFeed
 
     def initialize
       @client = DRb::DRbObject.new(nil, F2P::Config.friendfeed_api_daemon_drb_uri)
+    end
+
+    # need custom wrapping for dispatching IO.
+    def post(name, remote_key, title, link = nil, comment = nil, images = nil, files = nil, room = nil)
+      if files
+        files = files.map { |file, file_link|
+          file = file.read if file.respond_to?(:read)
+          [file, file_link]
+        }
+      end
+      @client.post(name, remote_key, title, link, comment, images, files, room)
     end
   end
 
