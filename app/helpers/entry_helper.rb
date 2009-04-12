@@ -673,16 +673,18 @@ module EntryHelper
   end
 
   def url_link(entry)
-    link = entry.link if with_link?(entry.service)
-    link ||= entry.view_links ? entry.view_links.first : nil
-    if entry.title.size < setting.text_folding_size
-      query = entry.title
+    if ctx.single?
+      link = entry.link if with_link?(entry.service)
+      link ||= entry.view_links ? entry.view_links.first : nil
+      if entry.title.size < setting.text_folding_size
+        query = entry.title
+      end
+      url_link_to(link, query)
     end
-    url_link_to(link, query)
   end
 
   def comment_url_link(comment)
-    if comment.view_links
+    if ctx.single? and comment.view_links
       url_link_to(comment.view_links.first)
     end
   end
