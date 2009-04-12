@@ -99,6 +99,16 @@ class EntryControllerTest < ActionController::TestCase
       returns(read_profile('profile')).times(1)
     @ff.expects(:get_home_entries).
       returns([]).then.returns(read_entries('entries', 'f2ptest')).times(2)
+    get :inbox, :start => 1
+    assert_response :success
+  end
+
+  test 'inbox no skip initial page' do
+    login('user1')
+    @ff.expects(:get_profile).
+      returns(read_profile('profile')).times(1)
+    @ff.expects(:get_home_entries).
+      returns([]).then.returns(read_entries('entries', 'f2ptest')).times(1)
     get :inbox
     assert_response :success
   end

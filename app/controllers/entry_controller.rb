@@ -192,7 +192,8 @@ class EntryController < ApplicationController
     if updated_expired(Time.now)
       update_checked_modified
     end
-    (F2P::Config.max_skip_empty_inbox_pages + 1).times do
+    retry_times = @ctx.start.zero? ? 0 : F2P::Config.max_skip_empty_inbox_pages
+    (retry_times + 1).times do
       @entries = EntryThread.find(find_opt) || []
       break unless @entries.empty?
       @ctx.start += @ctx.num
