@@ -379,7 +379,7 @@ class EntryThread
       buf = entries.dup
       while !buf.empty?
         entry = buf.shift
-        result << (t = EntryThread.new(entry))
+        result << (t = EntryThread.new)
         group = [entry]
         kinds = similar_entries(buf, entry)
         group += kinds
@@ -397,7 +397,9 @@ class EntryThread
         end
         group += kinds
         buf -= kinds
-        t.add(*sort_by_modified(group))
+        sorted = sort_by_modified(group)
+        t.add(*sorted)
+        t.root = sorted.first
       end
       result
     end
@@ -418,11 +420,11 @@ class EntryThread
   end
 
   # root is included in entries, too.
-  attr_reader :root
+  attr_accessor :root
   attr_reader :entries
 
-  def initialize(root)
-    @root = root
+  def initialize
+    @root = nil
     @entries = []
   end
 
