@@ -101,6 +101,7 @@ class EntryControllerTest < ActionController::TestCase
       returns([]).then.returns(read_entries('entries', 'f2ptest')).times(2)
     get :inbox, :start => 1
     assert_response :success
+    assert_equal(21, session[:ctx].start)
   end
 
   test 'inbox no skip initial page' do
@@ -111,6 +112,7 @@ class EntryControllerTest < ActionController::TestCase
       returns([]).then.returns(read_entries('entries', 'f2ptest')).times(1)
     get :inbox
     assert_response :success
+    assert_equal(0, session[:ctx].start)
   end
 
   test 'list home' do

@@ -193,10 +193,11 @@ class EntryController < ApplicationController
       update_checked_modified
     end
     retry_times = @ctx.start.zero? ? 0 : F2P::Config.max_skip_empty_inbox_pages
-    (retry_times + 1).times do
-      @entries = EntryThread.find(find_opt) || []
+    @entries = EntryThread.find(find_opt) || []
+    retry_times.times do
       break unless @entries.empty?
       @ctx.start += @ctx.num
+      @entries = EntryThread.find(find_opt) || []
     end
     session[:last_updated] = Time.now
     render :action => 'list'
