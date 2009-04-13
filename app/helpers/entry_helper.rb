@@ -64,7 +64,7 @@ module EntryHelper
     end
   end
 
-  def icon(entry)
+  def icon(entry, hide_feedname = false)
     service = entry.service
     if ctx.user
       user = entry.nickname || entry.user_id
@@ -86,7 +86,7 @@ module EntryHelper
     else
       str = service_icon(service, link)
     end
-    if entry.service.service_group?
+    if !hide_feedname and entry.service.service_group?
       name = entry.service.name
       name = nil if name == entry.user.name
     end
@@ -152,7 +152,7 @@ module EntryHelper
   end
 
   def emphasize_as_inbox?(entry)
-    ctx.home and !ctx.inbox and entry.view_inbox
+    ctx.home and !ctx.inbox and (entry.view_inbox or entry.view_pinned)
   end
 
   def original_link(entry)
@@ -537,7 +537,11 @@ module EntryHelper
     rooms = user_rooms(user)
     links_if_exists('rooms: ', rooms) { |e|
       label = "[#{e.name}]"
-      link_to(h(label), link_list(:room => u(e.nickname)))
+      if e.nickname == ctx.room_for
+        h(label)
+      else
+        link_to(h(label), link_list(:room => u(e.nickname)))
+      end
     }
   end
 

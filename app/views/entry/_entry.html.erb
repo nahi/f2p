@@ -1,5 +1,5 @@
 <%= pin_link(entry) -%>
-<%= icon(entry) %>
+<%= icon(entry, !!root_user) %>
 <%= original_link(entry) -%>
 <%= content(entry) %>
  <%= author_link(entry) if root_user != entry.user_id %>
