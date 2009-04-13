@@ -74,6 +74,13 @@ module FriendFeed
 
   private
 
+    def uri(part)
+      begin
+        URI.parse(File.join(url_base, part))
+      rescue URI::InvalidURIError
+      end
+    end
+
     def create_client(name, remote_key)
       UserClient.new(name, remote_key, @logger, @http_proxy)
     end
@@ -139,8 +146,8 @@ module FriendFeed
 
   private
 
-    def uri(part)
-      uri = URI.parse(File.join(URL_BASE, part))
+    def url_base
+      URL_BASE
     end
   end
 
@@ -166,6 +173,7 @@ module FriendFeed
 
     def get_profile(name, remote_key, user = nil)
       uri = uri("user/#{user || name}/profile")
+      return nil unless uri
       client_sync(uri, name, remote_key) do |client|
         JSON.parse(get_request(client, uri).content)
       end
@@ -173,6 +181,7 @@ module FriendFeed
 
     def get_room_profile(name, remote_key, room)
       uri = uri("room/#{room}/profile")
+      return nil unless uri
       client_sync(uri, name, remote_key) do |client|
         JSON.parse(get_request(client, uri).content)
       end
@@ -180,6 +189,7 @@ module FriendFeed
 
     def get_entry(name, remote_key, eid, opt = {})
       uri = uri("feed/entry/#{eid}")
+      return nil unless uri
       client_sync(uri, name, remote_key) do |client|
         get_feed(client, uri, opt)
       end
@@ -202,6 +212,7 @@ module FriendFeed
 
     def get_list_entries(name, remote_key, list, opt = {})
       uri = uri("feed/list/#{list}")
+      return nil unless uri
       client_sync(uri, name, remote_key) do |client|
         get_feed(client, uri, opt)
       end
@@ -209,6 +220,7 @@ module FriendFeed
 
     def get_user_entries(name, remote_key, user, opt = {})
       uri = uri("feed/user/#{user}")
+      return nil unless uri
       client_sync(uri, name, remote_key) do |client|
         get_feed(client, uri, opt)
       end
@@ -216,6 +228,7 @@ module FriendFeed
 
     def get_friends_entries(name, remote_key, user, opt = {})
       uri = uri("feed/user/#{user}/friends")
+      return nil unless uri
       client_sync(uri, name, remote_key) do |client|
         get_feed(client, uri, opt)
       end
@@ -227,6 +240,7 @@ module FriendFeed
       else
         uri = uri("feed/room/#{room}")
       end
+      return nil unless uri
       client_sync(uri, name, remote_key) do |client|
         get_feed(client, uri, opt)
       end
@@ -234,6 +248,7 @@ module FriendFeed
 
     def get_comments(name, remote_key, user, opt = {})
       uri = uri("feed/user/#{user}/comments")
+      return nil unless uri
       client_sync(uri, name, remote_key) do |client|
         get_feed(client, uri, opt)
       end
@@ -241,6 +256,7 @@ module FriendFeed
 
     def get_likes(name, remote_key, user, opt = {})
       uri = uri("feed/user/#{user}/likes")
+      return nil unless uri
       client_sync(uri, name, remote_key) do |client|
         get_feed(client, uri, opt)
       end
@@ -248,6 +264,7 @@ module FriendFeed
 
     def get_discussion(name, remote_key, user, opt = {})
       uri = uri("feed/user/#{user}/discussion")
+      return nil unless uri
       client_sync(uri, name, remote_key) do |client|
         get_feed(client, uri, opt)
       end
@@ -360,8 +377,8 @@ module FriendFeed
 
   private
 
-    def uri(part)
-      uri = URI.parse(File.join(URL_BASE, part))
+    def url_base
+      URL_BASE
     end
 
     def get_feed(client, uri, query = {})
