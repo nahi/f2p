@@ -251,4 +251,11 @@ class EntryTest < ActiveSupport::TestCase
     e = entries.find { |e| e.id == "260e9e92-0559-4b2d-8487-f98481f967dc" }
     assert_equal(2, e.medias.size)
   end
+
+  test 'twitter_username' do
+    entry = read_mapped_entries('entries', 'twitter')[0]
+    assert_equal('foo', entry.twitter_username)
+    entry = read_mapped_entries('entries', 'f2ptest')[1]
+    assert_nil(entry.twitter_username)
+  end
 end

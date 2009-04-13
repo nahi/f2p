@@ -293,13 +293,6 @@ class EntryHelperTest < MyActionView::TestCaseWithController
     assert_equal('home', viewname)
   end
 
-  test 'twitter_username' do
-    entry = read_mapped_entries('entries', 'twitter')[0]
-    assert_equal('foo', twitter_username(entry))
-    entry.service.id = 'not twitter'
-    assert_nil(twitter_username(entry))
-  end
-
   test 'pin_link' do
     entry = read_mapped_entries('entries', 'twitter')[0]
     ctx.inbox = true

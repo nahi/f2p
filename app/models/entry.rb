@@ -109,6 +109,8 @@ class Entry
   attr_accessor :geo
   attr_accessor :friend_of
 
+  attr_accessor :twitter_username
+  attr_accessor :twitter_reply_to
   attr_accessor :view_pinned
   attr_accessor :view_inbox
   attr_accessor :view_links
@@ -129,9 +131,17 @@ class Entry
     @geo = Geo[hash['geo']]
     @friend_of = EntryUser[hash['friendof']]
     @hidden = hash['hidden'] || false
+    @twitter_username = nil
+    @twitter_reply_to = nil
     @view_pinned = nil
     @view_inbox = nil
     @view_likns = nil
+    if self.service and self.service.twitter?
+      @twitter_username = (self.service.profile_url || '').sub(/\A.*\//, '')
+      if /@([a-zA-Z0-9_]+)/ =~ self.title
+        @twitter_reply_to = $1
+      end
+    end
   end
 
   def similar?(rhs)
@@ -140,6 +150,10 @@ class Entry
       result ||= same_origin?(rhs)
     end
     result ||= same_link?(rhs) || similar_title?(rhs)
+    if self.service.twitter? and rhs.service.twitter?
+      result ||= self.twitter_reply_to == rhs.twitter_username || self.twitter_username == rhs.twitter_reply_to
+    end
+    result
   end
 
   def service_identity

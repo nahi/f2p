@@ -407,7 +407,7 @@ module EntryHelper
     if setting.twitter_comment_hack and entry.service.twitter?
       if nickname = entry.nickname
         name = entry.user.name
-        tw_name = twitter_username(entry)
+        tw_name = entry.twitter_username
         if name != tw_name
           if nickname == auth.name
             name = self_label
@@ -461,7 +461,7 @@ module EntryHelper
 
   def post_comment_form(entry)
     if setting.twitter_comment_hack and entry.service.twitter? and user_status(entry.user_id) == 'public'
-      default = twitter_username(entry)
+      default = entry.twitter_username
       unless default.empty?
         default = "@#{default} "
       end
@@ -810,12 +810,6 @@ module EntryHelper
 
   def comment_inline?(entry)
     ctx.list? and entry.self_comment_only?
-  end
-
-  def twitter_username(entry)
-    if entry.service.twitter?
-      (entry.service.profile_url || '').sub(/\A.*\//, '')
-    end
   end
 
   def gps_link(*arg)
