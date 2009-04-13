@@ -208,7 +208,7 @@ class EntryController < ApplicationController
   end
 
   verify :only => :archive,
-          :method => :post,
+          :method => [:get, :post],
           :add_flash => {:error => 'verify failed'},
           :redirect_to => {:action => 'inbox'}
   def archive
