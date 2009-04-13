@@ -36,6 +36,7 @@ module ApplicationHelper
     'top' => 'arrow_up.png',
     'map' => 'map.png',
     'help' => 'help.png',
+    'group' => 'group.png',
   }
 
   def jpmobile?
@@ -208,6 +209,20 @@ __EOS__
         service_icon_tag(service.icon_url, name, name)
       end
     end
+  end
+
+  def room_icon(service, room, link = nil)
+    if link
+      label = "filter by #{room}"
+    else
+      label = room
+    end
+    if service.internal?
+      icon = icon_tag(:group, label)
+    else
+      icon = service_icon_tag(service.icon_url, room, label)
+    end
+    link_to(icon, link)
   end
 
   def list_name(nickname)

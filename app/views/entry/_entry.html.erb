@@ -1,11 +1,9 @@
 <%= pin_link(entry) -%>
 <%= icon(entry) %>
-<%- if ctx.home and !ctx.inbox and entry.view_inbox -%>
-  <span class="inbox"><%= inbox_label(entry) %></span>
-<%- end -%>
-<%= author_link(entry, (root_user != entry.user_id), (root_service != entry.service_identity)) %>
 <%= original_link(entry) -%>
-<%= content(entry) %> <%= via(entry) %>
+<%= content(entry) %>
+ <%= author_link(entry) if root_user != entry.user_id %>
+ <%= via(entry) %>
 <%= published(entry, true) -%>
 <%- if comment_inline?(entry) -%>
   -- <span class="comment"><%= inline_comment(entry.comments.first) %></span>

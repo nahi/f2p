@@ -33,7 +33,7 @@
 <div class="listings">
   <%- @entries.each do |thread| -%>
     <div class="<%= cycle('thread1', 'thread2') %>">
-      <p><%= render :partial => 'entry', :locals => {:entry => thread.root, :root_user => nil, :root_service => nil} %></p>
+      <p><%= render :partial => 'entry', :locals => {:entry => thread.root, :root_user => nil} %></p>
       <%- remember_checked(thread.root) if ctx.inbox -%>
       <%- if thread.chunked? -%>
         <ul>
@@ -42,7 +42,7 @@
             <%- if entry.respond_to?(:fold_entries) -%>
               <%= fold_link(entry) %>
             <%- else -%>
-              <li><%= render :partial => 'entry', :locals => {:entry => entry, :root_user => thread.root.user_id, :root_service => thread.root.service_identity} %></li>
+              <li><%= render :partial => 'entry', :locals => {:entry => entry, :root_user => thread.root.user_id} %></li>
               <%- remember_checked(entry) if ctx.inbox -%>
             <%- end -%>
           <%- end -%>

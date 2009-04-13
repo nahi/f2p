@@ -6,9 +6,10 @@
       <%= pin_link(entry) -%>
       <%= icon(entry) %>
       <%= published(entry, false) -%>
-      <%= author_link(entry, true, true) %>
       <%= original_link(entry) -%>
-<%= content(entry) -%> <%= via(entry) %>
+<%= content(entry) -%>
+ <%= author_link(entry) %>
+ <%= via(entry) %>
 <%= likes(entry, false) -%>
 <%= comments(entry, false) -%>
 <%= url_link(entry) -%>

@@ -69,10 +69,31 @@ module EntryHelper
     if ctx.user
       user = entry.nickname || entry.user_id
     end
+    link = link_user(user, :service => u(service.id))
     if entry.room
-      room = entry.room.nickname
+      link[:room] = entry.room.nickname
     end
-    service_icon(service, link_user(user, :room => u(room), :service => u(service.id)))
+    if entry.room and entry.room.nickname != ctx.room_for
+      name = entry.room.nickname
+      if ctx.room_for
+        if entry.service.internal?
+          name = nil
+        else
+          name = entry.service.name
+        end
+      end
+      str = room_icon(service, entry.room.nickname, link)
+    else
+      str = service_icon(service, link)
+    end
+    if entry.service.service_group?
+      name = entry.service.name
+      name = nil if name == entry.user.name
+    end
+    if name
+      str += h("(#{name})")
+    end
+    str
   end
 
   def media_tag(entry, url, opt = {})
@@ -126,36 +147,12 @@ module EntryHelper
     end
   end
 
-  def author_link(entry, show_user, show_service)
-    inbox_str = user_str = service_str = ''
-    if show_user
-      user_str += user(entry) + (friend_of(entry) || '')
-    end
-    if show_service
-      if ctx.room_for
-        name = entry.service.name unless entry.service.internal?
-      else
-        if entry.room
-          name = entry.room.nickname
-        elsif entry.service.service_group?
-          name = entry.service.name
-          name = nil if name == entry.user.name
-        end
-      end
-    elsif !ctx.room_for and entry.room
-      # show room name even if show_service is false
-      name = entry.room.nickname
-    end
-    if name
-      service_str = h("(#{name})")
-    end
-    str = inbox_str + user_str + service_str
-    str += ':' unless str.empty?
-    str
+  def author_link(entry)
+    h('by ') + user(entry) + (friend_of(entry) || '')
   end
 
-  def inbox_label(entry)
-    h('[inbox] ')
+  def emphasize_as_inbox?(entry)
+    ctx.home and !ctx.inbox and entry.view_inbox
   end
 
   def original_link(entry)
@@ -378,7 +375,11 @@ module EntryHelper
   end
 
   def published(entry, compact = false)
-    date(entry.published_at, compact)
+    str = date(entry.published_at, compact)
+    if emphasize_as_inbox?(entry)
+      str = content_tag('span', str, :class => 'inbox')
+    end
+    str
   end
 
   def modified_if(entry, compact)
