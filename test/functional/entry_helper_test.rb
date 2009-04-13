@@ -318,7 +318,7 @@ class EntryHelperTest < MyActionView::TestCaseWithController
     Room.expects(:status).with(:auth => auth, :room => 'n1').
       returns('public')
     entry.room = Room['nickname' => 'n1']
-    assert_match(/\?room=n1&amp;service=twitter/, icon(entry))
+    assert_match(/\?room=n1/, icon(entry))
   end
 
   test 'content brightkite' do
