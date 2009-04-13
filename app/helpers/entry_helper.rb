@@ -90,11 +90,11 @@ module EntryHelper
       name = entry.service.name
       name = nil if name == entry.user.name
     end
-    if entry_status(entry) != 'public'
-      str += icon_tag(:private)
-    end
     if name
       str += h("(#{name})")
+    end
+    if entry_status(entry) != 'public'
+      str += icon_tag(:private)
     end
     str
   end
