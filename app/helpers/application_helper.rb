@@ -37,6 +37,7 @@ module ApplicationHelper
     'map' => 'map.png',
     'help' => 'help.png',
     'group' => 'group.png',
+    'private' => 'bullet_key.png',
   }
 
   def jpmobile?
@@ -225,6 +226,16 @@ __EOS__
     link_to(icon, link)
   end
 
+  def entry_status(entry)
+    if entry.room
+      room_status(entry.room.nickname)
+    elsif entry.nickname
+      user_status(entry.nickname)
+    else # imaginary user
+      'private'
+    end
+  end
+
   def list_name(nickname)
     if found = user_lists(auth.name).find { |e| e.nickname == nickname }
       found.name
@@ -233,6 +244,10 @@ __EOS__
 
   def room_name(nickname)
     Room.ff_name(:auth => auth, :room => nickname)
+  end
+
+  def room_status(nickname)
+    Room.status(:auth => auth, :room => nickname)
   end
 
   def room_description(nickname)
