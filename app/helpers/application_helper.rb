@@ -37,7 +37,7 @@ module ApplicationHelper
     'map' => 'map.png',
     'help' => 'help.png',
     'group' => 'group.png',
-    'private' => 'bullet_key.png',
+    'private' => 'shield.png',
   }
 
   def jpmobile?
@@ -90,7 +90,7 @@ __EOS__
   .latest2 { color: #C00; }
   .latest3 { color: #900; }
   .older { color: #008; }
-  .comment { color: #333; }
+  .comment { color: #666; }
   .inbox { font-weight: bold; }
   div.listings .thread1 { padding-bottom: 0.8ex; background-color: #EEE; }
   div.listings .thread2 { padding-bottom: 0.8ex; }

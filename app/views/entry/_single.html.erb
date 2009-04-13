@@ -17,9 +17,9 @@
 <%= like_link(entry) -%>
 <%= delete_link(entry) -%>
       <%- form_tag({:action => 'add_comment', :id => u(entry.id), :comment => ctx.comment ? u(ctx.comment) : nil}, {:name => 'post'}) do -%>
-        <ul>
+        <ul class="comment">
           <%- entry.comments.each do |comment| -%>
-            <li class="comment">
+            <li>
               <%= comment_icon(comment.by_user(comment.entry.nickname)) %>
               <%= date(comment.date, false) %>
               <%- if ctx.comment != comment.id -%>

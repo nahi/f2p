@@ -69,11 +69,15 @@ module EntryHelper
     if ctx.user
       user = entry.nickname || entry.user_id
     end
-    link = link_user(user, :service => u(service.id))
-    if entry.room
-      link[:room] = entry.room.nickname
+    room_entry = (entry.room and entry.room.nickname != ctx.room_for)
+    if room_entry
+      link = link_user(user, :room => u(entry.room.nickname))
+    elsif entry.room
+      link = link_user(user, :room => u(entry.room.nickname), :service => u(service.id))
+    else
+      link = link_user(user, :service => u(service.id))
     end
-    if entry.room and entry.room.nickname != ctx.room_for
+    if room_entry
       name = entry.room.nickname
       if ctx.room_for
         if entry.service.internal?

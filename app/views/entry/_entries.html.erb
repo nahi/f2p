@@ -33,7 +33,7 @@
 <div class="listings">
   <%- @entries.each do |thread| -%>
     <div class="<%= cycle('thread1', 'thread2') %>">
-      <p><%= render :partial => 'entry', :locals => {:entry => thread.root, :root_user => nil} %></p>
+      <%= render :partial => 'entry', :locals => {:entry => thread.root, :root_user => nil} %>
       <%- remember_checked(thread.root) if ctx.inbox -%>
       <%- if thread.chunked? -%>
         <ul>

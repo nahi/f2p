@@ -9,7 +9,7 @@
   <p class="message"><%=h flash[:message] %></p>
 <%- end -%>
 <%- if ctx.list? -%>
-  <p><%= render :partial => 'entries', :locals => {:entries => @entries} %></p>
+  <%= render :partial => 'entries', :locals => {:entries => @entries} %>
 <%- else -%>
-  <p><%= render :partial => 'single', :locals => {:entries => @entries} %></p>
+  <%= render :partial => 'single', :locals => {:entries => @entries} %>
 <%- end -%>

@@ -16,17 +16,17 @@
 <%- if entry.comments.empty? or comment_inline?(entry) -%>
 <%= post_comment_link(entry) %>
 <%- else -%>
-  <ul>
+  <ul class="comment">
     <%- fold_comments(entry.comments).each do |comment| -%>
       <%- if comment.respond_to?(:fold_entries) -%>
         <li><%= fold_comment_link(comment) %></li>
       <%- else -%>
-        <li class="comment">
+        <li>
           <%= comment_icon(comment.by_user(comment.entry.nickname)) %>
           <%= comment(comment) %> by <%= user(comment) %> <%= via(comment) %>
 <%= date(comment.date, true) -%>
 <%= comment_url_link(comment) -%>
-<%= post_comment_link(comment.entry) if comment.last? -%>
+<%= post_comment_link(comment.entry) if comment.last? %>
         </li>
       <%- end -%>
     <%- end -%>
