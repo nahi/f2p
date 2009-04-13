@@ -66,9 +66,7 @@ module ApplicationHelper
 
   def inline_meta
     if iphone?
-      <<__EOS__
-<meta name="viewport" content="width=device-width; initial-scale=1.0" />
-__EOS__
+      content_tag('meta', nil, :name => 'viewport', :content => 'width=device-width; initial-scale=1.0')
     end
   end
 
@@ -77,8 +75,7 @@ __EOS__
     h1_size = setting.font_size + 1
     h2_size = setting.font_size
     body_size = setting.font_size
-    <<__EOS__
-<style type="text/css">
+    content = <<__EOS__
   h1 { font-size: #{h1_size}pt; }
   h2 { font-size: #{h2_size}pt; }
   body { font-size: #{body_size}pt; }
@@ -104,8 +101,8 @@ __EOS__
     margin-bottom: 0pt;
   }
   #{ inline_stylesheet_iphone }
-</style>
 __EOS__
+    content_tag('style', content, :type => "text/css")
   end
 
   def inline_stylesheet_iphone
@@ -352,21 +349,22 @@ __EOS__
         format = "(%H:%M)"
       end
     end
-    body = h(time.strftime(format))
+    body = time.strftime(format)
     latest(time, body)
   end
 
   def latest(time, body)
     case elapsed(time)
     when (-1.hour)..(1.hour) # may have a time lag
-      %Q[<span class="latest1">#{body}</span>]
+      klass = 'latest1'
     when 0..3.hour
-      %Q[<span class="latest2">#{body}</span>]
+      klass = 'latest2'
     when 0..6.hour
-      %Q[<span class="latest3">#{body}</span>]
+      klass = 'latest3'
     else
-      %Q[<span class="older">#{body}</span>]
+      klass = 'older'
     end
+    content_tag('span', h(body), :class => klass)
   end
 
   def elapsed(time)
