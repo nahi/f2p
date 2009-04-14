@@ -8,6 +8,7 @@ class LoginController < ApplicationController
   filter_parameter_logging :remote_key
 
   def index
+    @tz = F2P::Config.timezone
     if ensure_login
       redirect_to :controller => 'entry'
     end
@@ -24,8 +25,10 @@ class LoginController < ApplicationController
     if request.method == :post
       name = param(:name)
       remote_key = param(:remote_key)
+      tz = param(:tz)
       if user = User.validate(name, remote_key)
         set_user(user)
+        set_timezone(tz)
         if params = session[:redirect_to_after_authenticate]
           session[:redirect_to_after_authenticate] = nil
           redirect_to url_for(params)

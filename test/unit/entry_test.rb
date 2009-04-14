@@ -227,7 +227,7 @@ class EntryTest < ActiveSupport::TestCase
 
   test 'modified_at' do
     entries = read_mapped_entries('entries', 'f2ptest')
-    assert_equal('2009-03-18T17:51:08+09:00', entries.first.modified_at.xmlschema)
+    assert_equal('2009-03-18T08:51:08Z', entries.first.modified_at.xmlschema)
   end
 
   test 'attrs' do
@@ -236,7 +236,7 @@ class EntryTest < ActiveSupport::TestCase
     assert_equal("df9d34df-23ff-de8e-3675-a82736ef90cc", e.id)
     assert_equal("へー http://online.wsj.com/article/SB123735124997967063.html", e.title)
     assert_equal("http://twitter.com/tkudos/statuses/1347347755", e.link)
-    assert_equal('2009-03-18T17:41:50+09:00', e.published_at.xmlschema)
+    assert_equal('2009-03-18T08:41:50Z', e.published_at.xmlschema)
     assert_equal('twitter', e.service.id)
     assert_equal('9a46f9b0-0775-11dd-9e68-003048343a40', e.user_id)
     assert_equal('tkudo', e.nickname)

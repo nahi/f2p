@@ -128,8 +128,12 @@ __EOS__
     SELF_LABEL
   end
 
+  def timezone
+    session[:timezone] || F2P::Config.timezone
+  end
+
   def now
-    @now ||= Time.now.localtime
+    @now ||= Time.now.in_time_zone(timezone)
   end
 
   def icon_url(name)
@@ -330,7 +334,7 @@ __EOS__
   def date(time, compact = true)
     return unless time
     unless time.is_a?(Time)
-      time = Time.parse(time.to_s).localtime
+      time = Time.parse(time.to_s)
     end
     elapsed = now - time
     format = nil
@@ -349,7 +353,7 @@ __EOS__
         format = "(%H:%M)"
       end
     end
-    body = time.strftime(format)
+    body = time.in_time_zone(timezone).strftime(format)
     latest(time, body)
   end
 

@@ -7,6 +7,7 @@
     FriendFeed user nickname: <%= text_field_tag 'name' %><br />
     Remote key(NOT A PASSWORD): <%= password_field_tag 'remote_key' %><br />
     Do NOT enter your FriendFeed PASSWORD here.  You can check <%= link_to('your remote key', 'https://friendfeed.com/account/api') %> from PC you are using for FriendFeed login.<br />
+    TimeZone: <%= timezone_select_tag('tz', @tz) %><br />
     <%= submit_tag 'login' %>
   </p>
 <%- end -%>

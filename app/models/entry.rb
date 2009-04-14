@@ -161,11 +161,11 @@ class Entry
   end
 
   def published_at
-    @published_at ||= Time.parse(published).localtime
+    @published_at ||= Time.parse(published)
   end
 
   def modified_at
-    @modified_at ||= Time.parse(modified).localtime
+    @modified_at ||= Time.parse(modified)
   end
 
   def modified

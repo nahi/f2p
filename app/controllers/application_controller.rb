@@ -132,6 +132,10 @@ private
     ApplicationController.ff_client.purge_cache(@auth.name)
   end
 
+  def set_timezone(tz)
+    session[:timezone] = tz
+  end
+
   def logout
     ApplicationController.ff_client.purge_cache(@auth.name)
     @user_id = session[:user_id] = nil
