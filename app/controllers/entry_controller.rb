@@ -196,7 +196,12 @@ class EntryController < ApplicationController
     @entries = EntryThread.find(find_opt) || []
     retry_times.times do
       break unless @entries.empty?
-      @ctx.start += @ctx.num
+      if param(:direction) == 'rewind'
+        break if @ctx.start - @ctx.num < 0
+        @ctx.start -= @ctx.num
+      else
+        @ctx.start += @ctx.num
+      end
       @entries = EntryThread.find(find_opt) || []
     end
     session[:last_updated] = Time.now
@@ -332,7 +337,7 @@ class EntryController < ApplicationController
     @lat = param(:lat)
     @long = param(:long)
     @address = param(:address)
-    @setting.google_maps_zoom = intparam(:zoom)
+    @setting.google_maps_zoom = intparam(:zoom) if intparam(:zoom)
     @placemark = nil
     if param(:commit) == 'search'
       do_location_search

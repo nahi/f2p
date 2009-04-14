@@ -602,7 +602,7 @@ module EntryHelper
     start = ctx.start || 0
     num = ctx.num || 0
     links = []
-    links << menu_link(icon_tag(:previous), list_opt(ctx.link_opt(:start => start - num, :num => num)), accesskey('4')) {
+    links << menu_link(icon_tag(:previous), list_opt(ctx.link_opt(:start => start - num, :num => num, :direction => 'rewind')), accesskey('4')) {
       !no_page and start - num >= 0
     }
     if opt[:for_top]

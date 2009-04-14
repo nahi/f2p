@@ -441,6 +441,23 @@ class EntryControllerTest < ActionController::TestCase
     assert_redirected_to :action => 'list'
   end
 
+  test 'reshare zoom reset' do
+    login('user1')
+    #
+    @ff.expects(:get_profile).
+      returns(read_profile('profile')).times(1)
+    @ff.expects(:get_entry).
+      returns(read_entries('entries', 'f2ptest')[0, 1]).times(1)
+    #
+    get :reshare, :eid => 'df9d34df-23ff-de8e-3675-a82736ef90cc'
+    assert_response :success
+    #
+    @ff.expects(:post).with('user1', nil, 'hello', nil, nil, nil, nil, nil).
+      returns([{'id' => 'foo'}])
+    post :add, :commit => 'post', :body => 'hello'
+    assert_equal(13, session[:setting].google_maps_zoom)
+  end
+
   test 'search' do
     login('user1')
     @ff.expects(:get_profile).
