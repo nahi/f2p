@@ -456,6 +456,24 @@ module EntryHelper
     str
   end
 
+  def search_drilldown_links
+    opt = search_opt
+    links = []
+    likes = opt[:likes].to_i + 1
+    links << menu_link(h("[likes >= #{likes}]"), opt.merge(:likes => likes))
+    comments = opt[:comments].to_i + 1
+    links << menu_link(h("[comments >= #{comments}]"), opt.merge(:comments => comments))
+    mine_opt = opt.merge(:user => 'me')
+    mine_opt.delete(:friends)
+    links << menu_link(h('[mine]'), mine_opt) {
+      opt[:user] != 'me'
+    }
+    links << menu_link(h('[FriendFeed entry]'), opt.merge(:service => 'internal')) {
+      opt[:service] != 'internal'
+    }
+    h('drill down on: ') + links.join(' ')
+  end
+
   def post_entry_form
     str = ''
     str += hidden_field_tag('room', ctx.room_for) + h(ctx.room_for) + ': ' if ctx.room_for
@@ -666,7 +684,7 @@ module EntryHelper
     links << menu_link(menu_label('commented'), link_list(:comment => 'commented', :user => ctx.user_for)) {
       ctx.comment != 'commented'
     }
-    'filter: ' + links.join(' ')
+    h('filter: ') + links.join(' ')
   end
 
   def menu_label(label, accesskey = nil)
