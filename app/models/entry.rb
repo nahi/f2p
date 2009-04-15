@@ -128,7 +128,7 @@ class Entry
     @likes = (hash['likes'] || EMPTY).map { |e| Like[e] }
     @via = Via[hash['via']]
     @room = Room[hash['room']]
-    @geo = Geo[hash['geo']]
+    @geo = Geo[hash['geo']] || extract_geo_from_google_staticmap_url(@medias)
     @friend_of = EntryUser[hash['friendof']]
     @hidden = hash['hidden'] || false
     @twitter_username = nil
@@ -198,6 +198,17 @@ class Entry
   end
 
 private
+
+  def extract_geo_from_google_staticmap_url(medias)
+    medias.each do |m|
+      m.contents.each do |c|
+        if /maps.google.com\/staticmap\b.*\bmarkers=([0-9\.]+),([0-9\.]+)\b/ =~ c.url
+          return Geo['lat' => $1, 'long' => $2]
+        end
+      end
+    end
+    nil
+  end
 
   def same_origin?(rhs)
     (self.published_at - rhs.published_at).abs < 10.seconds

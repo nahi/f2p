@@ -157,6 +157,22 @@ module GoogleMaps
       url
     end
 
+    def staticmap_markers_url(maptype, markers, opt = {})
+      width = opt[:width] || 160
+      height = opt[:height] || 80
+      markers = markers.collect { |lat, long, color, atoz|
+        if color and atoz
+          rest = color + atoz
+        end
+        [lat, long, rest].join(',')
+      }.join('|')
+      url = "http://maps.google.com/staticmap?size=#{width}x#{height}&maptype=#{maptype}&markers=#{markers}"
+      if @key
+        url += "&key=#{@key}"
+      end
+      url
+    end
+
     def link_url(lat, long, title = nil)
       if title
         title = '+' + ERB::Util.u("(#{unwrap_title(title)})")

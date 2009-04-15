@@ -39,6 +39,9 @@ class EntryThread
     def find(opt = {})
       auth = opt[:auth]
       return nil unless auth
+      unless opt.key?(:merge_entry)
+        opt[:merge_entry] = true
+      end
       opt.delete(:auth)
       logger.info('[perf] start entries fetch')
       entries = fetch_entries(auth, opt)
@@ -53,7 +56,13 @@ class EntryThread
         end
         entries = entries.find_all { |entry| entry.view_inbox }
       end
-      sort_by_service(entries, opt)
+      if opt[:merge_entry]
+        sort_by_service(entries, opt)
+      else
+        entries.map { |e|
+          EntryThread.new(e)
+        }
+      end
     end
 
     def update_checked_modified(auth, hash)
@@ -96,11 +105,15 @@ class EntryThread
       else
         if opt[:inbox]
           entries = fetch_inbox_entries(auth, opt)
-          entries = filter_hidden(entries)
-          entries = sort_by_detection(entries)
         else
           entries = fetch_list_entries(auth, opt)
-          entries = filter_hidden(entries)
+        end
+        entries = filter_hidden(entries)
+        if opt[:inbox]
+          entries = sort_by_detection(entries)
+        elsif opt[:ids]
+          entries = sort_by_ids(entries, opt[:ids])
+        else
           entries = sort_by_modified(entries)
         end
         if opt[:link]
@@ -141,7 +154,9 @@ class EntryThread
 
     def fetch_list_entries(auth, opt)
       cache_entries(auth, opt) {
-        if opt[:link]
+        if opt[:ids]
+          wrap(Task.run { get_entries(auth, opt) }.result)
+        elsif opt[:link]
           if opt[:query]
             start = (opt[:start] || 0) / 2
             num = (opt[:num] || 0) / 2
@@ -184,6 +199,7 @@ class EntryThread
       allow_cache = opt[:allow_cache]
       opt = opt.dup
       opt.delete(:allow_cache)
+      opt.delete(:merge_entry)
       opt.delete(:merge_service)
       if allow_cache and @entries_cache[auth.name]
         cached_opt, entries = @entries_cache[auth.name]
@@ -367,6 +383,11 @@ class EntryThread
       entries
     end
 
+    def sort_by_ids(entries, ids)
+      map = entries.inject({}) { |r, e| r[e.id] = e; r }
+      ids.map { |id| map[id] }
+    end
+
     def sort_by_modified(entries)
       sorted = entries.sort_by { |e|
         [e.modified, e.id].join('-') # join e.id for stable sort
@@ -423,9 +444,10 @@ class EntryThread
   attr_accessor :root
   attr_reader :entries
 
-  def initialize
-    @root = nil
+  def initialize(root = nil)
+    @root = root
     @entries = []
+    @entries << @root if @root
   end
 
   def related_entries

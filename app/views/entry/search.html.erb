@@ -5,8 +5,10 @@
     from friends of: <%= text_field_tag('friends', ctx.friends) %><br />
     from user: <%= text_field_tag('user', ctx.user) %><br />
     from service: <%= text_field_tag('service', ctx.service) %><br />
-    likes: <%= likes_select_tag('likes', ctx.likes) %><br />
-    comments: <%= likes_select_tag('comments', ctx.comments) %><br />
+    with likes: <%= likes_select_tag('likes', ctx.likes) %><br />
+    with comments: <%= likes_select_tag('comments', ctx.comments) %><br />
+    <br />
+    entries in page: <%= text_field_tag('num', ctx.num) %><br />
     <%= submit_tag 'search' %>
   </p>
 <%- end -%>

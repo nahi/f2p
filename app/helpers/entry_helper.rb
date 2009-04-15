@@ -267,6 +267,18 @@ module EntryHelper
     link_to(media_tag(entry, tb, :alt => h(address), :title => h(address), :size => image_size(F2P::Config.google_maps_width, F2P::Config.google_maps_height)), link)
   end
 
+  def google_maps_markers_link(entries)
+    generator = GoogleMaps::URLGenerator.new(F2P::Config.google_maps_api_key)
+    markers = entries.map { |e|
+      [e.geo.lat, e.geo.long]
+    }
+    tb = generator.staticmap_markers_url(F2P::Config.google_maps_maptype, markers, :width => F2P::Config.google_maps_width, :height => F2P::Config.google_maps_height)
+    ids = entries.sort { |a, b|
+      a.published_at <=> b.published_at
+    }.map { |e| e.id }.join(',')
+    link_to(media_tag(nil, tb, :size => image_size(F2P::Config.google_maps_width, F2P::Config.google_maps_height)), link_list(:ids => ids))
+  end
+
   def brightkite_content(common, entry)
     if geo = entry.geo
       point = GoogleMaps::Point.new(entry.title, geo.lat, geo.long)
@@ -472,6 +484,22 @@ module EntryHelper
       opt[:service] != 'internal'
     }
     h('drill down on: ') + links.join(' ')
+  end
+
+  def geo_markers_link(threads)
+    found = []
+    geo = {}
+    threads.each do |t|
+      t.entries.each do |e|
+        if e.geo
+          found << e
+          geo[[e.geo.lat, e.geo.long]] = true
+        end
+      end
+    end
+    if geo.keys.size >= 2
+      google_maps_markers_link(found)
+    end
   end
 
   def post_entry_form
@@ -787,6 +815,7 @@ module EntryHelper
     search_opt = list_opt(hash)
     search_opt[:friends] = 'me' if ctx.home
     search_opt[:room] = nil if search_opt[:room] == '*'
+    search_opt[:num] = ctx.num if ctx.num != @setting.entries_in_page
     search_opt
   end
 
