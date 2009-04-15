@@ -212,7 +212,11 @@ module EntryHelper
     end
     str = display.collect { |media|
       title = media.title
-      link = media.link
+      if entry.service.internal?
+        link = extract_first_media_link(media)
+      else
+        link = media.link
+      end
       tbs = media.thumbnails
       safe_content = nil
       if tbs and tbs.first
