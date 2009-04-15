@@ -159,9 +159,10 @@ module FriendFeed
 
     def validate(name, remote_key)
       uri = uri('validate')
-      client_sync(uri, name, remote_key) do |client|
-        get_request(client, uri).status == 200
-      end
+      res = client_sync(uri, name, remote_key) { |client|
+        get_request(client, uri)
+      }
+      res.status == 200
     end
 
     # size: small, medium, or large.
@@ -177,70 +178,58 @@ module FriendFeed
     def get_profile(name, remote_key, user = nil)
       uri = uri("user/#{user || name}/profile")
       return nil unless uri
-      client_sync(uri, name, remote_key) do |client|
-        res = get_request(client, uri)
-        if res.status == 200
-          JSON.parse(res.content)
-        end
+      res = client_sync(uri, name, remote_key) { |client|
+        get_request(client, uri)
+      }
+      if res.status == 200
+        JSON.parse(res.content)
       end
     end
 
     def get_room_profile(name, remote_key, room)
       uri = uri("room/#{room}/profile")
       return nil unless uri
-      client_sync(uri, name, remote_key) do |client|
+      res = client_sync(uri, name, remote_key) { |client|
         res = get_request(client, uri)
-        if res.status == 200
-          JSON.parse(res.content)
-        end
+      }
+      if res.status == 200
+        JSON.parse(res.content)
       end
     end
 
     def get_entry(name, remote_key, eid, opt = {})
       uri = uri("feed/entry/#{eid}")
       return nil unless uri
-      client_sync(uri, name, remote_key) do |client|
-        get_feed(client, uri, opt)
-      end
+      get_feed(uri, name, remote_key, opt)
     end
 
     def get_entries(name, remote_key, eids, opt = {})
       uri = uri("feed/entry")
       opt = opt.merge(:entry_id => eids.join(','))
-      client_sync(uri, name, remote_key) do |client|
-        get_feed(client, uri, opt)
-      end
+      get_feed(uri, name, remote_key, opt)
     end
 
     def get_home_entries(name, remote_key, opt = {})
       uri = uri("feed/home")
-      client_sync(uri, name, remote_key) do |client|
-        get_feed(client, uri, opt)
-      end
+      get_feed(uri, name, remote_key, opt)
     end
 
     def get_list_entries(name, remote_key, list, opt = {})
       uri = uri("feed/list/#{list}")
       return nil unless uri
-      client_sync(uri, name, remote_key) do |client|
-        get_feed(client, uri, opt)
-      end
+      get_feed(uri, name, remote_key, opt)
     end
 
     def get_user_entries(name, remote_key, user, opt = {})
       uri = uri("feed/user/#{user}")
       return nil unless uri
-      client_sync(uri, name, remote_key) do |client|
-        get_feed(client, uri, opt)
-      end
+      get_feed(uri, name, remote_key, opt)
     end
 
     def get_friends_entries(name, remote_key, user, opt = {})
       uri = uri("feed/user/#{user}/friends")
       return nil unless uri
-      client_sync(uri, name, remote_key) do |client|
-        get_feed(client, uri, opt)
-      end
+      get_feed(uri, name, remote_key, opt)
     end
 
     def get_room_entries(name, remote_key, room = nil, opt = {})
@@ -250,49 +239,37 @@ module FriendFeed
         uri = uri("feed/room/#{room}")
       end
       return nil unless uri
-      client_sync(uri, name, remote_key) do |client|
-        get_feed(client, uri, opt)
-      end
+      get_feed(uri, name, remote_key, opt)
     end
 
     def get_comments(name, remote_key, user, opt = {})
       uri = uri("feed/user/#{user}/comments")
       return nil unless uri
-      client_sync(uri, name, remote_key) do |client|
-        get_feed(client, uri, opt)
-      end
+      get_feed(uri, name, remote_key, opt)
     end
 
     def get_likes(name, remote_key, user, opt = {})
       uri = uri("feed/user/#{user}/likes")
       return nil unless uri
-      client_sync(uri, name, remote_key) do |client|
-        get_feed(client, uri, opt)
-      end
+      get_feed(uri, name, remote_key, opt)
     end
 
     def get_discussion(name, remote_key, user, opt = {})
       uri = uri("feed/user/#{user}/discussion")
       return nil unless uri
-      client_sync(uri, name, remote_key) do |client|
-        get_feed(client, uri, opt)
-      end
+      get_feed(uri, name, remote_key, opt)
     end
 
     def get_url_entries(name, remote_key, url, opt = {})
       uri = uri("feed/url")
       query = opt.merge(:url => url)
-      client_sync(uri, name, remote_key) do |client|
-        get_feed(client, uri, query)
-      end
+      get_feed(uri, name, remote_key, opt)
     end
 
     def search_entries(name, remote_key, query, opt = {})
       uri = uri("feed/search")
       opt = opt.merge(:q => query)
-      client_sync(uri, name, remote_key) do |client|
-        get_feed(client, uri, opt)
-      end
+      get_feed(uri, name, remote_key, opt)
     end
 
     def post(name, remote_key, title, link = nil, comment = nil, images = nil, files = nil, room = nil)
@@ -390,9 +367,11 @@ module FriendFeed
       URL_BASE
     end
 
-    def get_feed(client, uri, query = {})
+    def get_feed(uri, name, remote_key, query = {})
       logger.info("getting entries with query: " + query.inspect)
-      res = get_request(client, uri, query)
+      res = client_sync(uri, name, remote_key) { |client|
+        get_request(client, uri, query)
+      }
       if res.status == 200
         obj = JSON.parse(res.content)
         logger.debug { JSON.pretty_generate(obj) }
