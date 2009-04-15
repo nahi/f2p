@@ -113,6 +113,9 @@ module FriendFeed
       ext = { 'Accept-Encoding' => 'gzip' }
       query = query.merge(:apikey => @apikey) if @apikey
       res = client.get(uri, query, ext)
+      if res.status != 200
+        logger.warn("got status #{res.status}: #{res.inspect}")
+      end
       enc = res.header['content-encoding']
       if enc and enc[0] and enc[0].downcase == 'gzip'
         c = Zlib::GzipReader.wrap(StringIO.new(res.content)) { |gz| gz.read }
@@ -175,7 +178,10 @@ module FriendFeed
       uri = uri("user/#{user || name}/profile")
       return nil unless uri
       client_sync(uri, name, remote_key) do |client|
-        JSON.parse(get_request(client, uri).content)
+        res = get_request(client, uri)
+        if res.status == 200
+          JSON.parse(res.content)
+        end
       end
     end
 
@@ -183,7 +189,10 @@ module FriendFeed
       uri = uri("room/#{room}/profile")
       return nil unless uri
       client_sync(uri, name, remote_key) do |client|
-        JSON.parse(get_request(client, uri).content)
+        res = get_request(client, uri)
+        if res.status == 200
+          JSON.parse(res.content)
+        end
       end
     end
 
@@ -384,9 +393,11 @@ module FriendFeed
     def get_feed(client, uri, query = {})
       logger.info("getting entries with query: " + query.inspect)
       res = get_request(client, uri, query)
-      obj = JSON.parse(res.content)
-      logger.debug { JSON.pretty_generate(obj) }
-      obj['entries']
+      if res.status == 200
+        obj = JSON.parse(res.content)
+        logger.debug { JSON.pretty_generate(obj) }
+        obj['entries']
+      end
     end
   end
 end
