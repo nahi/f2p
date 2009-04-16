@@ -619,6 +619,15 @@ class EntryControllerTest < ActionController::TestCase
     assert_redirected_to :action => 'list'
   end
 
+  test 'add post location without body' do
+    login('user1')
+    post :add,
+      :commit => 'post',
+      :lat => '35.681382', :long => '139.766084', :address => '日本、東京駅',
+      :zoom => 14
+    assert_response :success
+  end
+
   test 'delete' do
     login('user1')
     @ff.expects(:delete).with('user1', nil, 'df9d34df-23ff-de8e-3675-a82736ef90cc', false)
