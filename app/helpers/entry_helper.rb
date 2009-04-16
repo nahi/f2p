@@ -509,7 +509,7 @@ module EntryHelper
       end
     end
     if found.size > 1
-      google_maps_markers_link(found)
+      google_maps_markers_link(found[0, 26])
     end
   end
 
