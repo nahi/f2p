@@ -28,72 +28,35 @@ class User < ActiveRecord::Base
       end
     end
 
-    def ff_id(arg)
-      auth = arg[:auth]
-      user = arg[:user]
-      ff_profile(auth, user)['id']
-    end
-
-    def ff_name(arg)
-      auth = arg[:auth]
-      user = arg[:user]
-      ff_profile(auth, user)['name']
-    end
-
-    def ff_url(arg)
-      auth = arg[:auth]
-      user = arg[:user]
-      ff_profile(auth, user)['profileUrl']
-    end
-
-    def status(arg)
-      auth = arg[:auth]
-      user = arg[:user]
-      ff_profile(auth, user)['status']
-    end
-
-    def picture_url(arg)
-      user = arg[:user]
-      size = arg[:size] || 'small'
-      ff_picture_url(user, size)
-    end
-
-    def services(arg)
-      auth = arg[:auth]
-      user = arg[:user]
-      sort_by_name(ff_profile(auth, user)['services'] || []).map { |e| Service[e] }
-    end
-
-    def lists(arg)
-      auth = arg[:auth]
-      user = arg[:user] || auth.name
-      sort_by_name(ff_profile(auth, user)['lists'] || []).map { |e| List[e] }
-    end
-
-    def rooms(arg)
-      auth = arg[:auth]
-      user = arg[:user] || auth.name
-      sort_by_name(ff_profile(auth, user)['rooms'] || []).map { |e| Room[e] }
-    end
-
-    def subscriptions(arg)
-      auth = arg[:auth]
-      user = arg[:user] || auth.name
-      sort_by_name(ff_profile(auth, user)['subscriptions'] || []).map { |e| EntryUser[e] }
-    end
-
-  private
-
     def ff_picture_url(user, size = 'small')
       ff_client.get_user_picture_url(user, size)
     end
 
     def ff_profile(auth, user)
-      ff_client.get_profile(auth.name, auth.remote_key, user) || {}
+      convert_profile(ff_client.get_profile(auth.name, auth.remote_key, user) || {})
+    end
+
+  private
+
+    def convert_profile(profile)
+      profile = profile.dup
+      if list = profile['services']
+        profile['services'] = sort_by_name(list.map { |e| Service[e] })
+      end
+      if list = profile['lists']
+        profile['lists'] = sort_by_name(list.map { |e| List[e] })
+      end
+      if list = profile['rooms']
+        profile['rooms'] = sort_by_name(list.map { |e| Room[e] })
+      end
+      if list = profile['subscriptions']
+        profile['subscriptions'] = sort_by_name(list.map { |e| EntryUser[e] })
+      end
+      profile
     end
 
     def sort_by_name(lists)
-      lists.sort_by { |e| e['name'] }
+      lists.sort_by { |e| e.name }
     end
 
     def ff_client

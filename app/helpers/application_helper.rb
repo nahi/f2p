@@ -243,39 +243,49 @@ __EOS__
     end
   end
 
+  def room_profile(nickname)
+    @room_profile ||= {}
+    @room_profile[nickname] ||= Room.ff_profile(auth, nickname)
+  end
+
   def room_name(nickname)
-    Room.ff_name(:auth => auth, :room => nickname)
+    room_profile(nickname)['name']
   end
 
   def room_status(nickname)
-    Room.status(:auth => auth, :room => nickname)
+    room_profile(nickname)['status']
   end
 
   def room_description(nickname)
-    Room.description(:auth => auth, :room => nickname)
+    room_profile(nickname)['description']
   end
 
   def room_picture(nickname, size = 'small')
     name = room_name(nickname)
-    image_url = Room.picture_url(:auth => auth, :room => nickname, :size => size)
-    url = Room.ff_url(:auth => auth, :room => nickname)
+    image_url = Room.ff_picture_url(nickname, size)
+    url = room_profile(nickname)['url']
     link_to(profile_image_tag(image_url, name, name), url)
   end
 
   def room_members(nickname)
-    Room.members(:auth => auth, :room => nickname)
+    room_profile(nickname)['members']
+  end
+
+  def user_profile(nickname)
+    @user_profile ||= {}
+    @user_profile[nickname] ||= User.ff_profile(auth, nickname)
   end
 
   def user_id(nickname)
-    User.ff_id(:auth => auth, :user => nickname)
+    user_profile(nickname)['id']
   end
 
   def user_name(nickname)
-    User.ff_name(:auth => auth, :user => nickname)
+    user_profile(nickname)['name']
   end
 
   def user_status(nickname)
-    User.status(:auth => auth, :user => nickname)
+    user_profile(nickname)['status']
   end
 
   def user_picture(nickname, size = 'small')
@@ -284,25 +294,25 @@ __EOS__
     if nickname == auth.name
       name = self_label
     end
-    image_url = User.picture_url(:auth => auth, :user => nickname, :size => size)
-    url = User.ff_url(:auth => auth, :user => nickname)
+    image_url = User.ff_picture_url(nickname, size)
+    url = user_profile(nickname)['profileUrl']
     link_to(profile_image_tag(image_url, name, name), url)
   end
 
   def user_services(nickname)
-    User.services(:auth => auth, :user => nickname)
+    user_profile(nickname)['services']
   end
 
   def user_rooms(nickname)
-    User.rooms(:auth => auth, :user => nickname)
+    user_profile(nickname)['rooms']
   end
 
   def user_lists(nickname)
-    User.lists(:auth => auth, :user => nickname)
+    user_profile(nickname)['lists']
   end
 
   def user_subscriptions(nickname)
-    User.subscriptions(:auth => auth, :user => nickname)
+    user_profile(nickname)['subscriptions']
   end
 
   def user(user)

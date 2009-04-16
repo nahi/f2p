@@ -8,6 +8,7 @@ class EntryThreadTest < ActiveSupport::TestCase
     #
     ff.expects(:get_home_entries).with('user1', nil, {:num => nil, :start => nil, :service => nil}).
       returns(read_entries('entries', 'f2ptest')).times(2)
+    ff.stubs(:get_profile)
     2.times do
       threads = EntryThread.find(:auth => user, :inbox => true, :start => nil)
       assert_equal(
@@ -40,6 +41,7 @@ class EntryThreadTest < ActiveSupport::TestCase
     #
     ff.expects(:get_home_entries).with('user1', nil, {:num => nil, :start => 20, :service => nil}).
       returns(read_entries('entries', 'f2ptest'))
+    ff.stubs(:get_profile)
     threads = EntryThread.find(:auth => user, :inbox => true, :start => 20)
     assert_equal(
       [1, 2, 1, 1, 4, 1, 2, 6, 3, 1, 3, 1, 1, 1, 1, 1],
@@ -70,6 +72,7 @@ class EntryThreadTest < ActiveSupport::TestCase
       returns(read_entries('entries', 'f2ptest')[2..-1]).times(2)
     ff.expects(:get_entries).with('user1', nil, ['df9d34df-23ff-de8e-3675-a82736ef90cc', '19ec8fb0-3776-4447-a814-cac6b129db6f', 'foobar']).
       returns(read_entries('entries', 'f2ptest')[0, 2]).times(2)
+    ff.stubs(:get_profile)
     2.times do
       threads = EntryThread.find(:auth => user, :inbox => true, :start => nil)
       assert_equal(
@@ -86,6 +89,7 @@ class EntryThreadTest < ActiveSupport::TestCase
     #
     ff.expects(:get_home_entries).with('user1', nil, {:num => nil, :start => nil, :service => nil}).
       returns(read_entries('entries', 'f2ptest')).times(1) # 1 time only
+    ff.stubs(:get_profile)
     2.times do
       threads = EntryThread.find(:auth => user, :inbox => true, :start => nil, :allow_cache => true)
       assert_equal(
@@ -102,6 +106,7 @@ class EntryThreadTest < ActiveSupport::TestCase
     #
     ff.expects(:get_home_entries).with('user1', nil, {:num => nil, :start => nil, :service => nil}).
       returns(read_entries('entries', 'f2ptest'))
+    ff.stubs(:get_profile)
     threads = EntryThread.find(:auth => user, :start => nil)
     assert_equal(
       [1, 2, 1, 1, 1, 4, 2, 6, 3, 1, 3, 1, 1, 1, 1, 1],
@@ -116,6 +121,7 @@ class EntryThreadTest < ActiveSupport::TestCase
     #
     ff.expects(:get_home_entries).with('user1', nil, {:num => nil, :start => nil, :service => nil}).
       returns(read_entries('entries', 'f2ptest')).times(4) # no cache used
+    ff.stubs(:get_profile)
     assert_equal(16, EntryThread.find(:auth => user, :inbox => true, :start => nil, :allow_cache => true).size)
     assert_equal(16, EntryThread.find(:auth => user, :start => nil, :allow_cache => true).size)
     assert_equal(16, EntryThread.find(:auth => user, :inbox => true, :start => nil, :allow_cache => true).size)
@@ -129,6 +135,7 @@ class EntryThreadTest < ActiveSupport::TestCase
     #
     ff.expects(:search_entries).with('user1', nil, 'foobar', {:from => nil, :room => nil, :friends => nil, :start => nil, :num => nil, :service => nil}).
       returns(read_entries('entries', 'f2ptest'))
+    ff.stubs(:get_profile)
     threads = EntryThread.find(:auth => user, :query => 'foobar')
     assert_equal(
       [1, 2, 1, 1, 1, 4, 2, 6, 3, 1, 3, 1, 1, 1, 1, 1],
@@ -143,6 +150,7 @@ class EntryThreadTest < ActiveSupport::TestCase
     #
     ff.expects(:get_entry).with('user1', nil, 'foobar').
       returns(read_entries('entries', 'f2ptest'))
+    ff.stubs(:get_profile)
     assert_equal(16, EntryThread.find(:auth => user, :id => 'foobar').size)
   end
 
@@ -153,6 +161,7 @@ class EntryThreadTest < ActiveSupport::TestCase
     #
     ff.expects(:get_likes).with('user1', nil, 'user2', {:start => nil, :num => nil, :service => nil}).
       returns([])
+    ff.stubs(:get_profile)
     EntryThread.find(:auth => user, :user => 'user2', :like => 'likes')
   end
 
@@ -163,6 +172,7 @@ class EntryThreadTest < ActiveSupport::TestCase
     #
     ff.expects(:search_entries).with('user1', nil, '', {:from => nil, :start => nil, :num => nil, :likes => 1, :service => nil}).
       returns([])
+    ff.stubs(:get_profile)
     EntryThread.find(:auth => user, :like => 'liked')
   end
 
@@ -173,6 +183,7 @@ class EntryThreadTest < ActiveSupport::TestCase
     #
     ff.expects(:get_user_entries).with('user1', nil, 'user2', {:start => nil, :num => nil, :service => nil}).
       returns([])
+    ff.stubs(:get_profile)
     EntryThread.find(:auth => user, :user => 'user2')
   end
 
@@ -183,6 +194,7 @@ class EntryThreadTest < ActiveSupport::TestCase
     #
     ff.expects(:get_list_entries).with('user1', nil, 'list1', {:start => nil, :num => nil, :service => nil}).
       returns([])
+    ff.stubs(:get_profile)
     EntryThread.find(:auth => user, :list => 'list1')
   end
 
@@ -193,6 +205,7 @@ class EntryThreadTest < ActiveSupport::TestCase
     #
     ff.expects(:get_room_entries).with('user1', nil, 'room1', {:start => nil, :num => nil, :service => nil}).
       returns([])
+    ff.stubs(:get_profile)
     EntryThread.find(:auth => user, :room => 'room1')
   end
 
@@ -203,6 +216,7 @@ class EntryThreadTest < ActiveSupport::TestCase
     #
     ff.expects(:get_room_entries).with('user1', nil, 'room1', {:start => nil, :num => nil, :service => nil}).
       returns(read_entries('entries', 'room'))
+    ff.stubs(:get_profile)
     threads = EntryThread.find(:auth => user, :room => 'room1')
     assert_equal(
       [3, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1],
@@ -217,6 +231,7 @@ class EntryThreadTest < ActiveSupport::TestCase
     #
     ff.expects(:get_friends_entries).with('user1', nil, 'user2', {:start => nil, :num => nil, :service => nil}).
       returns([])
+    ff.stubs(:get_profile)
     EntryThread.find(:auth => user, :friends => 'user2')
   end
 
@@ -227,6 +242,7 @@ class EntryThreadTest < ActiveSupport::TestCase
     #
     ff.expects(:get_url_entries).with('user1', nil, 'http://www.example.org/', {:start => nil, :num => nil, :service => nil}).
       returns([])
+    ff.stubs(:get_profile)
     EntryThread.find(:auth => user, :link => 'http://www.example.org/')
   end
 
@@ -238,6 +254,7 @@ class EntryThreadTest < ActiveSupport::TestCase
     #
     ff.expects(:get_home_entries).with('user1', nil, {:num => nil, :start => nil, :service => nil}).
       returns(list)
+    ff.stubs(:get_profile)
     threads = EntryThread.find(:auth => user, :inbox => true, :start => nil)
     hash = {}
     threads.each do |t|
@@ -252,6 +269,7 @@ class EntryThreadTest < ActiveSupport::TestCase
     list[0]['updated'] = Time.now.xmlschema
     ff.expects(:get_home_entries).with('user1', nil, {:num => nil, :start => nil, :service => nil}).
       returns(list)
+    ff.stubs(:get_profile)
     threads = EntryThread.find(:auth => user, :inbox => true, :start => nil)
     assert_equal(1, threads.size)
   end
@@ -262,6 +280,7 @@ class EntryThreadTest < ActiveSupport::TestCase
     ApplicationController.ff_client = ff
     #
     ff.expects(:get_home_entries).with('user1', nil, {:num => nil, :start => nil, :service => nil}).raises(Timeout::Error.new)
+    ff.stubs(:get_profile)
     assert(EntryThread.find(:auth => user, :inbox => true, :start => nil).empty?)
   end
 end
