@@ -212,7 +212,7 @@ module EntryHelper
     end
     str = display.collect { |media|
       title = media.title
-      if entry.service.internal?
+      if direct_image_link?(entry, media)
         link = extract_first_media_link(media)
       else
         link = media.link
@@ -246,9 +246,24 @@ module EntryHelper
     str
   end
 
+  def direct_image_link?(entry, media)
+    if entry.service.internal?
+      if c = media.contents.first
+        if tb = media.thumbnails.first
+          if tb.width == c.width and tb.height == c.height
+            return false
+          end
+        end
+      end
+      true
+    else
+      false
+    end
+  end
+
   def extract_first_media_link(media)
-    if media.contents.first
-      link = media.contents.first.url
+    if c = media.contents.first
+      link = c.url
     end
     if media.enclosures.first
       link ||= media.enclosures.first['url']
