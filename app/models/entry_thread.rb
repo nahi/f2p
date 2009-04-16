@@ -443,7 +443,10 @@ class EntryThread
     def cache_user_profile(auth, entries)
       tasks = []
       entries.each do |e|
-        tasks << Task.run { User.ff_profile(auth, e.nickname) }
+        # room entries contain unaccessible user profile.
+        unless e.room
+          tasks << Task.run { User.ff_profile(auth, e.nickname) }
+        end
       end
       tasks.each do |t|
         t.result rescue nil
