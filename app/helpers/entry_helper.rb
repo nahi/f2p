@@ -488,16 +488,12 @@ module EntryHelper
 
   def geo_markers_link(threads)
     found = []
-    geo = {}
     threads.each do |t|
       t.entries.each do |e|
-        if e.geo
-          found << e
-          geo[[e.geo.lat, e.geo.long]] = true
-        end
+        found << e if e.geo
       end
     end
-    if geo.keys.size >= 2
+    if found.size > 1
       google_maps_markers_link(found)
     end
   end
