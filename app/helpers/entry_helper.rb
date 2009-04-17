@@ -78,7 +78,7 @@ module EntryHelper
       link = link_user(user, :service => u(service.id))
     end
     if room_entry
-      name = entry.room.nickname
+      name = entry.room.name
       if ctx.room_for
         if entry.service.internal?
           name = nil

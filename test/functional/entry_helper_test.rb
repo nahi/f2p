@@ -299,11 +299,15 @@ class EntryHelperTest < MyActionView::TestCaseWithController
       returns({'status' => 'public'})
     entry = read_mapped_entries('entries', 'twitter')[0]
     assert_match(/\?service=twitter/, icon(entry))
-    #
+  end
+
+  test 'icon for room' do
     Room.expects(:ff_profile).with(auth, 'n1').
       returns({'status' => 'public'})
-    entry.room = Room['nickname' => 'n1']
+    entry = read_mapped_entries('entries', 'twitter')[0]
+    entry.room = Room['nickname' => 'n1', 'name' => 'nn11']
     assert_match(/\?room=n1/, icon(entry))
+    assert_match(/\(nn11\)/, icon(entry))
   end
 
   test 'content brightkite' do
