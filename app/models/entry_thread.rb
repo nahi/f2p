@@ -441,16 +441,9 @@ class EntryThread
     end
 
     def cache_user_profile(auth, entries)
-      tasks = []
-      entries.each do |e|
-        # room entries contain unaccessible user profile.
-        unless e.room
-          tasks << Task.run { User.ff_profile(auth, e.nickname) }
-        end
-      end
-      tasks.each do |t|
-        t.result rescue nil
-      end
+      # room entries contain unaccessible user profile.
+      users = entries.map { |e| e.nickname unless e.room }.compact.uniq
+      User.ff_profiles(auth, users)
     end
   end
 

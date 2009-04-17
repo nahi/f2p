@@ -4,7 +4,9 @@ class EntryControllerTest < ActionController::TestCase
   def setup
     super
     @ff = mock('ff_client')
-    @ff.stubs(:get_profile).returns(read_profile('profile'))
+    profile = read_profile('profile')
+    @ff.stubs(:get_profile).returns(profile)
+    @ff.stubs(:get_profiles).returns([profile])
     ApplicationController.ff_client = @ff
   end
 

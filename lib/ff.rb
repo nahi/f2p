@@ -200,14 +200,26 @@ module FriendFeed
       "http://friendfeed.com/rooms/#{name}/picture?size=#{size}"
     end
 
-    def get_profile(name, remote_key, user = nil)
-      uri = uri("user/#{user || name}/profile")
+    def get_profile(name, remote_key, user)
+      uri = uri("user/#{user}/profile")
       return nil unless uri
       res = client_sync(uri, name, remote_key) { |client|
         get_request(client, uri)
       }
       if res.status == 200
         JSON.parse(res.content)
+      end
+    end
+
+    def get_profiles(name, remote_key, users)
+      uri = uri("profiles")
+      query = { 'nickname' => users.join(',') }
+      return nil unless uri
+      res = client_sync(uri, name, remote_key) { |client|
+        get_request(client, uri, query)
+      }
+      if res.status == 200
+        JSON.parse(res.content)['profiles']
       end
     end
 
@@ -412,6 +424,10 @@ if $0 == __FILE__
   remote_key = ARGV.shift or raise
   require 'logger'
   logger = Logger.new('ff.log')
-  client = FriendFeed::APIClient.new(logger)
-  print JSON.pretty_generate(client.get_home_entries(name, remote_key))
+  #client = FriendFeed::APIClient.new(logger)
+  #print JSON.pretty_generate(client.get_home_entries(name, remote_key))
+  client = FriendFeed::ChannelClient.new(name, remote_key, logger)
+  while true
+    print JSON.pretty_generate(client.get_home_entries(:timeout => 60))
+  end
 end
