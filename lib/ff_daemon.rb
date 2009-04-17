@@ -143,7 +143,7 @@ module FriendFeed
         start() if @thread.nil? or !@thread.alive?
         @inbox.synchronize do
           entries = @inbox[start, num]
-          if entries.size == num
+          if entries and entries.size == num
             @last_access = Time.now
             entries
           else
