@@ -176,7 +176,7 @@ class EntryController < ApplicationController
     @ctx = restore_ctx { |ctx|
       ctx.parse(params, @setting)
     }
-    @entries = EntryThread.find(find_opt) || []
+    @entries = find_entry_thread(find_opt)
   end
 
   def index
@@ -199,7 +199,7 @@ class EntryController < ApplicationController
       update_checked_modified
     end
     retry_times = @ctx.start.zero? ? 0 : F2P::Config.max_skip_empty_inbox_pages
-    @entries = EntryThread.find(find_opt) || []
+    @entries = find_entry_thread(find_opt)
     retry_times.times do
       break unless @entries.empty?
       if param(:direction) == 'rewind'
@@ -208,7 +208,7 @@ class EntryController < ApplicationController
       else
         @ctx.start += @ctx.num
       end
-      @entries = EntryThread.find(find_opt) || []
+      @entries = find_entry_thread(find_opt)
     end
     session[:last_updated] = Time.now
     render :action => 'list'
@@ -241,7 +241,7 @@ class EntryController < ApplicationController
     if ctx = session[:ctx]
       ctx.eid = @ctx.eid
     end
-    @entries = EntryThread.find(find_opt) || []
+    @entries = find_entry_thread(find_opt)
     render :action => 'list'
   end
 
@@ -287,7 +287,7 @@ class EntryController < ApplicationController
     @ctx.room = param(:room)
     @eid = param(:eid)
     opt = create_opt(:id => @eid)
-    t = EntryThread.find(opt).first
+    t = find_entry_thread(opt).first
     if t.nil?
       redirect_to_list
       return
@@ -311,7 +311,7 @@ class EntryController < ApplicationController
     if ctx = session[:ctx]
       ctx.eid = @ctx.eid
     end
-    @entries = EntryThread.find(find_opt) || []
+    @entries = find_entry_thread(find_opt)
     render :action => 'list'
   end
 
@@ -592,5 +592,9 @@ private
     if @placemark.nil? and @address and @lat and @long
       @placemark = GoogleMaps::Point.new(@address, @lat, @long)
     end
+  end
+
+  def find_entry_thread(opt)
+    EntryThread.find(opt) || []
   end
 end

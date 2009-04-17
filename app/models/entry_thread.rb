@@ -56,7 +56,6 @@ class EntryThread
         end
         entries = entries.find_all { |entry| entry.view_inbox }
       end
-      cache_user_profile(auth, entries)
       if opt[:merge_entry]
         sort_by_service(entries, opt)
       else
@@ -438,12 +437,6 @@ class EntryThread
 
     def first_page_option?(opt)
       opt[:start].nil? or opt[:start] == 0
-    end
-
-    def cache_user_profile(auth, entries)
-      # room entries contain unaccessible user profile.
-      users = entries.map { |e| e.nickname unless e.room }.compact.uniq
-      User.ff_profiles(auth, users)
     end
   end
 

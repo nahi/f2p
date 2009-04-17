@@ -243,6 +243,10 @@ __EOS__
     end
   end
 
+  def room_profiles(nicknames)
+    nicknames.map { |nickname| room_profile(nickname) }
+  end
+
   def room_profile(nickname)
     @room_profile ||= {}
     @room_profile[nickname] ||= Room.ff_profile(auth, nickname)
@@ -269,6 +273,16 @@ __EOS__
 
   def room_members(nickname)
     room_profile(nickname)['members']
+  end
+
+  def user_profiles(nicknames)
+    @user_profile ||= {}
+    if nicknames.any? { |e| @user_profile[e].nil? }
+      User.ff_profiles(auth, nicknames).each do |profile|
+        @user_profile[profile['nickname']] = profile
+      end
+    end
+    nicknames.map { |nickname| @user_profile[nickname] }
   end
 
   def user_profile(nickname)

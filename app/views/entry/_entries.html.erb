@@ -1,3 +1,4 @@
+<%- cache_profile(@entries) -%>
 <%- if ctx.query and !ctx.link -%>
   <%- form_tag({:action => 'list'}, {:name => 'post'}) do -%>
     <p><%= search_form %></p>

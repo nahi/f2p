@@ -38,6 +38,22 @@ module EntryHelper
     @ctx
   end
 
+  def cache_profile(entries)
+    users = []
+    rooms = []
+    entries.each do |t|
+      t.entries.each do |e|
+        if e.room
+          rooms << e.room.nickname
+        else
+          users << e.nickname if e.nickname
+        end
+      end
+    end
+    user_profiles(users.uniq)
+    room_profiles(rooms.uniq)
+  end
+
   def link_action(action, opt = {})
     { :controller => 'entry', :action => action }.merge(opt)
   end
