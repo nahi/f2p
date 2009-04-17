@@ -133,21 +133,46 @@ module FriendFeed
   class ChannelClient < BaseClient
     URL_BASE = 'http://chan.friendfeed.com/api/'
 
-    def get_token
-      uri = uri("updates")
-      query = { :format => 'json', :timeout => 0 }
-      JSON.parse(get_request(client, uri, query).content)['update']['token']
+    attr_reader :name
+    attr_reader :remote_key
+
+    def initialize(name, remote_key, logger = nil)
+      super(logger)
+      @name = name
+      @remote_key = remote_key
     end
 
-    def get_home_entries(name, remote_key, token, opt = {})
+    def initialize_token
+      @token = get_token()
+    end
+
+    def get_home_entries(opt = {})
+      initialize_token unless @token
       uri = uri("updates/home")
-      query = opt.merge(:token => token, :format => 'json')
-      client_sync(uri, name, remote_key) do |client|
-        JSON.parse(get_request(client, uri, query).content)
+      query = opt.merge(:token => @token, :format => 'json')
+      res = client_sync(uri, @name, @remote_key) { |client|
+        get_request(client, uri, query)
+      }
+      if res.status == 200
+        obj = JSON.parse(res.content)
+        logger.debug { JSON.pretty_generate(obj) }
+        @token = obj['update']['token']
+        obj
       end
     end
 
   private
+
+    def get_token
+      uri = uri("updates")
+      query = { :format => 'json', :timeout => 0 }
+      res = client_sync(uri, @name, @remote_key) { |client|
+        get_request(client, uri, query)
+      }
+      if res.status == 200
+        JSON.parse(res.content)['update']['token']
+      end
+    end
 
     def url_base
       URL_BASE
