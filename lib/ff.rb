@@ -128,6 +128,18 @@ module FriendFeed
       query = query.merge(:apikey => @apikey) if @apikey
       client.post(uri, query)
     end
+
+    def get_feed(uri, name, remote_key, query = {})
+      logger.info("getting entries with query: " + query.inspect)
+      res = client_sync(uri, name, remote_key) { |client|
+        get_request(client, uri, query)
+      }
+      if res.status == 200
+        obj = JSON.parse(res.content)
+        logger.debug { JSON.pretty_generate(obj) }
+        obj['entries']
+      end
+    end
   end
 
   class ChannelClient < BaseClient
@@ -147,6 +159,11 @@ module FriendFeed
     end
 
     def get_home_entries(opt = {})
+      uri = URI.parse('https://friendfeed.com/api/feed/home')
+      get_feed(uri, @name, @remote_key, opt)
+    end
+
+    def updated_home_entries(opt = {})
       initialize_token unless @token
       uri = uri("updates/home")
       query = opt.merge(:token => @token, :format => 'json')
@@ -403,18 +420,6 @@ module FriendFeed
     def url_base
       URL_BASE
     end
-
-    def get_feed(uri, name, remote_key, query = {})
-      logger.info("getting entries with query: " + query.inspect)
-      res = client_sync(uri, name, remote_key) { |client|
-        get_request(client, uri, query)
-      }
-      if res.status == 200
-        obj = JSON.parse(res.content)
-        logger.debug { JSON.pretty_generate(obj) }
-        obj['entries']
-      end
-    end
   end
 end
 
@@ -428,6 +433,6 @@ if $0 == __FILE__
   #print JSON.pretty_generate(client.get_home_entries(name, remote_key))
   client = FriendFeed::ChannelClient.new(name, remote_key, logger)
   while true
-    print JSON.pretty_generate(client.get_home_entries(:timeout => 60))
+    print JSON.pretty_generate(client.updated_home_entries(:timeout => 10))
   end
 end

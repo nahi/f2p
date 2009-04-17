@@ -131,7 +131,7 @@ class EntryThread
     def fetch_inbox_entries(auth, opt)
       cache_entries(auth, opt) {
         list_task = Task.run {
-          get_home_entries(auth, opt)
+          get_inbox_entries(auth, opt[:start], opt[:num])
         }
         if first_page_option?(opt)
           pinned = Pin.find_all_by_user_id(auth.id).map { |e| e.eid }
@@ -291,6 +291,10 @@ class EntryThread
       search[:likes] = opt[:likes] if opt[:likes]
       search[:comments] = opt[:comments] if opt[:comments]
       ff_client.search_entries(auth.name, auth.remote_key, query, search)
+    end
+
+    def get_inbox_entries(auth, start, num)
+      ff_client.get_inbox_entries(auth.name, auth.remote_key, start, num)
     end
 
     def get_home_entries(auth, opt)

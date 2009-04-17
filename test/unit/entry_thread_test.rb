@@ -6,7 +6,7 @@ class EntryThreadTest < ActiveSupport::TestCase
     ff = mock('ff_client')
     ApplicationController.ff_client = ff
     #
-    ff.expects(:get_home_entries).with('user1', nil, {:num => nil, :start => nil, :service => nil}).
+    ff.expects(:get_inbox_entries).with('user1', nil, nil, nil).
       returns(read_entries('entries', 'f2ptest')).times(2)
     ff.stubs(:get_profiles)
     2.times do
@@ -39,7 +39,7 @@ class EntryThreadTest < ActiveSupport::TestCase
     ff = mock('ff_client')
     ApplicationController.ff_client = ff
     #
-    ff.expects(:get_home_entries).with('user1', nil, {:num => nil, :start => 20, :service => nil}).
+    ff.expects(:get_inbox_entries).with('user1', nil, 20, nil).
       returns(read_entries('entries', 'f2ptest'))
     ff.stubs(:get_profiles)
     threads = EntryThread.find(:auth => user, :inbox => true, :start => 20)
@@ -68,7 +68,7 @@ class EntryThreadTest < ActiveSupport::TestCase
     ff = mock('ff_client')
     ApplicationController.ff_client = ff
     #
-    ff.expects(:get_home_entries).with('user1', nil, {:num => nil, :start => nil, :service => nil}).
+    ff.expects(:get_inbox_entries).with('user1', nil, nil, nil).
       returns(read_entries('entries', 'f2ptest')[2..-1]).times(2)
     ff.expects(:get_entries).with('user1', nil, ['df9d34df-23ff-de8e-3675-a82736ef90cc', '19ec8fb0-3776-4447-a814-cac6b129db6f', 'foobar']).
       returns(read_entries('entries', 'f2ptest')[0, 2]).times(2)
@@ -87,7 +87,7 @@ class EntryThreadTest < ActiveSupport::TestCase
     ff = mock('ff_client')
     ApplicationController.ff_client = ff
     #
-    ff.expects(:get_home_entries).with('user1', nil, {:num => nil, :start => nil, :service => nil}).
+    ff.expects(:get_inbox_entries).with('user1', nil, nil, nil).
       returns(read_entries('entries', 'f2ptest')).times(1) # 1 time only
     ff.stubs(:get_profiles)
     2.times do
@@ -119,8 +119,10 @@ class EntryThreadTest < ActiveSupport::TestCase
     ff = mock('ff_client')
     ApplicationController.ff_client = ff
     #
-    ff.expects(:get_home_entries).with('user1', nil, {:num => nil, :start => nil, :service => nil}).
-      returns(read_entries('entries', 'f2ptest')).times(4) # no cache used
+    ff.expects(:get_inbox_entries).with('user1', nil, nil, nil).
+      returns(read_entries('entries', 'f2ptest')).times(2) # no cache used
+    ff.expects(:get_home_entries).with('user1', nil, :num => nil, :start => nil, :service => nil).
+      returns(read_entries('entries', 'f2ptest')).times(2) # no cache used
     ff.stubs(:get_profiles)
     assert_equal(16, EntryThread.find(:auth => user, :inbox => true, :start => nil, :allow_cache => true).size)
     assert_equal(16, EntryThread.find(:auth => user, :start => nil, :allow_cache => true).size)
@@ -252,7 +254,7 @@ class EntryThreadTest < ActiveSupport::TestCase
     ApplicationController.ff_client = ff
     list = read_entries('entries', 'f2ptest')
     #
-    ff.expects(:get_home_entries).with('user1', nil, {:num => nil, :start => nil, :service => nil}).
+    ff.expects(:get_inbox_entries).with('user1', nil, nil, nil).
       returns(list)
     ff.stubs(:get_profiles)
     threads = EntryThread.find(:auth => user, :inbox => true, :start => nil)
@@ -267,7 +269,7 @@ class EntryThreadTest < ActiveSupport::TestCase
     EntryThread.update_checked_modified(user, hash)
     #
     list[0]['updated'] = Time.now.xmlschema
-    ff.expects(:get_home_entries).with('user1', nil, {:num => nil, :start => nil, :service => nil}).
+    ff.expects(:get_inbox_entries).with('user1', nil, nil, nil).
       returns(list)
     ff.stubs(:get_profiles)
     threads = EntryThread.find(:auth => user, :inbox => true, :start => nil)
@@ -279,7 +281,7 @@ class EntryThreadTest < ActiveSupport::TestCase
     ff = mock('ff_client')
     ApplicationController.ff_client = ff
     #
-    ff.expects(:get_home_entries).with('user1', nil, {:num => nil, :start => nil, :service => nil}).raises(Timeout::Error.new)
+    ff.expects(:get_inbox_entries).with('user1', nil, nil, nil).raises(Timeout::Error.new)
     ff.stubs(:get_profiles)
     assert(EntryThread.find(:auth => user, :inbox => true, :start => nil).empty?)
   end

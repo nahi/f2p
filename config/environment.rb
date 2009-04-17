@@ -24,6 +24,10 @@ module F2P
       attr_accessor :friendfeed_api_key
       attr_accessor :friendfeed_api_timeout
       attr_accessor :friendfeed_api_daemon_drb_uri
+      attr_accessor :friendfeed_api_use_channel
+      attr_accessor :friendfeed_api_channel_timeout
+      attr_accessor :friendfeed_api_channel_cache_size
+      attr_accessor :friendfeed_api_channel_lifetime
 
       attr_accessor :google_maps_maptype
       attr_accessor :google_maps_zoom
@@ -129,6 +133,10 @@ Rails::Initializer.run do |config|
   # don't touch this.  apikey needs to be private.
   F2P::Config.friendfeed_api_key = nil
   F2P::Config.friendfeed_api_daemon_drb_uri = 'druby://localhost:17171'
+  F2P::Config.friendfeed_api_use_channel = true
+  F2P::Config.friendfeed_api_channel_timeout = 60
+  F2P::Config.friendfeed_api_channel_cache_size = 512
+  F2P::Config.friendfeed_api_channel_lifetime = 60 * 60
 
   F2P::Config.google_maps_maptype = 'mobile'
   F2P::Config.google_maps_zoom = 13

@@ -49,7 +49,7 @@ class EntryControllerTest < ActionController::TestCase
     login('user1')
     @ff.expects(:get_profile).
       returns(read_profile('profile')).times(1)
-    @ff.expects(:get_home_entries).
+    @ff.expects(:get_inbox_entries).
       returns(read_entries('entries', 'f2ptest')).times(2)
     get :inbox
     assert_response :success
@@ -61,7 +61,7 @@ class EntryControllerTest < ActionController::TestCase
     login('user1')
     @ff.expects(:get_profile).
       returns(read_profile('profile')).times(1)
-    @ff.expects(:get_home_entries).
+    @ff.expects(:get_inbox_entries).
       returns(read_entries('entries', 'f2ptest')).times(1)
     get :inbox
     assert_response :success
@@ -73,13 +73,13 @@ class EntryControllerTest < ActionController::TestCase
     login('user1')
     @ff.expects(:get_profile).
       returns(read_profile('profile')).times(1)
-    @ff.expects(:get_home_entries).
+    @ff.expects(:get_inbox_entries).
       returns(read_entries('entries', 'f2ptest')).times(1)
     post :inbox
     assert_response :success
     #
     session[:last_updated] = Time.at(Time.now - (F2P::Config.updated_expiration + 1))
-    @ff.expects(:get_home_entries).
+    @ff.expects(:get_inbox_entries).
       returns(read_entries('entries', 'f2ptest'))
     post :inbox
     assert_response :success
@@ -89,7 +89,7 @@ class EntryControllerTest < ActionController::TestCase
     login('user1')
     @ff.expects(:get_profile).
       returns(read_profile('profile')).times(1)
-    @ff.expects(:get_home_entries).
+    @ff.expects(:get_inbox_entries).
       returns(read_entries('entries', 'f2ptest')).times(1)
     get :inbox, :start => 20, :num => 20
     assert_response :success
@@ -99,7 +99,7 @@ class EntryControllerTest < ActionController::TestCase
     login('user1')
     @ff.expects(:get_profile).
       returns(read_profile('profile')).times(1)
-    @ff.expects(:get_home_entries).
+    @ff.expects(:get_inbox_entries).
       returns([]).then.returns(read_entries('entries', 'f2ptest')).times(2)
     get :inbox, :start => 1
     assert_response :success
@@ -110,7 +110,7 @@ class EntryControllerTest < ActionController::TestCase
     login('user1')
     @ff.expects(:get_profile).
       returns(read_profile('profile')).times(1)
-    @ff.expects(:get_home_entries).
+    @ff.expects(:get_inbox_entries).
       returns([]).then.returns(read_entries('entries', 'f2ptest')).times(1)
     get :inbox
     assert_response :success
@@ -357,7 +357,7 @@ class EntryControllerTest < ActionController::TestCase
     login('user1')
     @ff.expects(:get_profile).
       returns(read_profile('profile'))
-    @ff.expects(:get_home_entries).
+    @ff.expects(:get_inbox_entries).
       returns(read_entries('entries', 'f2ptest'))
     get :inbox
     assert_response :success
@@ -516,7 +516,7 @@ class EntryControllerTest < ActionController::TestCase
     login('user1')
     @ff.expects(:get_profile).
       returns(read_profile('profile')).times(1)
-    @ff.expects(:get_home_entries).
+    @ff.expects(:get_inbox_entries).
       returns(read_entries('entries', 'f2ptest')).times(1)
     get :inbox
     assert_response :success
@@ -750,7 +750,7 @@ class EntryControllerTest < ActionController::TestCase
     entries = read_entries('entries', 'f2ptest')
     @ff.expects(:get_profile).
       returns(read_profile('profile')).times(1)
-    @ff.expects(:get_home_entries).
+    @ff.expects(:get_inbox_entries).
       returns(entries).times(1)
     get :inbox
     assert_response :success
@@ -774,7 +774,7 @@ class EntryControllerTest < ActionController::TestCase
     entries = read_entries('entries', 'f2ptest')
     @ff.expects(:get_profile).
       returns(read_profile('profile')).times(1)
-    @ff.expects(:get_home_entries).
+    @ff.expects(:get_inbox_entries).
       returns(entries).times(1)
     get :inbox
     assert_response :success

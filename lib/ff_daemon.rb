@@ -1,5 +1,6 @@
 require 'ff'
 require 'drb/drb'
+require 'monitor'
 
 
 module FriendFeed
@@ -41,6 +42,7 @@ module FriendFeed
     define_proxy_method :validate
     define_proxy_method :get_entry
     define_proxy_method :get_entries
+    define_proxy_method :get_inbox_entries
     define_proxy_method :get_home_entries
     define_proxy_method :get_list_entries
     define_proxy_method :get_user_entries
@@ -86,7 +88,89 @@ module FriendFeed
   class APIDaemon
     extend ClientCachedProxy
 
+    class Channel
+      attr_reader :client
+      attr_accessor :timeout
+      attr_accessor :cache_size
+      attr_accessor :lifetime
+
+      def initialize(name, remote_key, logger)
+        @name = name
+        @logger = logger
+        @client = FriendFeed::ChannelClient.new(name, remote_key, logger)
+        @timeout = 60
+        @cache_size = 512
+        @lifetime = 600
+        @inbox = []
+        @inbox.extend(MonitorMixin)
+        @stopping = false
+        @thread = nil
+        @logger.info("channel initialized for #{@name}")
+      end
+
+      def start
+        @stopping = false
+        @logger.info("channel started for #{@name}")
+        @client.initialize_token
+        @inbox.synchronize do
+          @inbox.replace(@client.get_home_entries(:start => 0, :num => @cache_size))
+        end
+        @last_access = Time.now
+        @thread = Thread.new {
+          while !@stopping
+            @logger.debug("channel start long polling for #{@name}")
+            updated = @client.updated_home_entries(:timeout => @timeout)
+            update_inbox(updated['entries'])
+            if Time.now > @last_access + @lifetime
+              @stopping = true
+              @logger.info("channel for #{@name} stopping...")
+              @thread = nil
+            end
+          end
+        }
+        @stopping = false
+      end
+
+      def stop
+        @stopping = true
+        # TODO: uglish
+        @thread.kill rescue nil
+        @thread = nil
+        @logger.info("channel for #{@name} stopped")
+      end
+
+      def inbox(start, num)
+        start() if @thread.nil? or !@thread.alive?
+        @inbox.synchronize do
+          entries = @inbox[start, num]
+          if entries.size == num
+            @last_access = Time.now
+            entries
+          else
+            @client.get_home_entries(:start => start, :num => num)
+          end
+        end
+      end
+
+    private
+
+      def update_inbox(entries)
+        return if entries.empty?
+        ids = entries.collect { |e| e['id'] }
+        @inbox.synchronize do
+          @inbox.delete_if { |i| ids.include?(i['id']) }
+          @inbox[0, 0] = entries
+          @inbox.replace(@inbox[0, @cache_size])
+        end
+        @logger.info("channel updated for #{@name}")
+      end
+    end
+
     attr_reader :client
+    attr_accessor :use_channel
+    attr_accessor :channel_timeout
+    attr_accessor :channel_cache_size
+    attr_accessor :channel_lifetime
 
     define_proxy_method :validate
     define_proxy_method :get_entry
@@ -117,11 +201,20 @@ module FriendFeed
 
     def initialize(logger = nil)
       @client = FriendFeed::APIClient.new(logger)
+      @logger = @client.logger
+      @use_channel = false
+      @channel_timeout = 60
+      @channel_cache_size = 512
+      @channel = {}
       @cache = {}
     end
 
     def purge_cache(key)
       @cache.delete(key)
+      if @channel.key?(key)
+        @channel[key].stop
+        @channel.delete(key)
+      end
       nil
     end
 
@@ -135,7 +228,7 @@ module FriendFeed
     def get_profiles(name, remote_key, users)
       basekey = name
       cache = ((@cache ||= {})[basekey] ||= {})[:get_profile] ||= {}
-      unless users.all? { |e| cache[e] }
+      if users.any? { |e| cache[e].nil? }
         profiles = ClientProxy.proxy(@client, :get_profiles, name, remote_key, users)
         profiles.each do |profile|
           cache[profile['nickname']] = profile
@@ -143,35 +236,40 @@ module FriendFeed
       end
       users.map { |e| cache[e] }
     end
+
+    def get_inbox_entries(*arg)
+      if @use_channel
+        realtime_inbox_entries(*arg)
+      else
+        plain_get_inbox_entries(*arg)
+      end
+    end
+
+    def plain_get_inbox_entries(name, remote_key, start, num)
+      get_home_entries(name, remote_key, :start => start, :num => num)
+    end
+
+    def realtime_inbox_entries(name, remote_key, start, num)
+      unless @channel.key?(name)
+        @channel[name] = Channel.new(name, remote_key, @logger)
+        @channel[name].timeout = @channel_timeout
+        @channel[name].cache_size = @channel_cache_size
+        @channel[name].lifetime = @channel_lifetime
+        @channel[name].start
+      end
+      @channel[name].inbox(start || 0, num || @channel_cache_size)
+    end
   end
 end
 
 
 if $0 == __FILE__
-  require 'webrick'
-
-  env = File.expand_path('../config/environment', File.dirname(__FILE__))
-  require env
-  unless $DEBUG
-    puts $$
-    WEBrick::Daemon.start
-    File.umask 007
-    STDERR.reopen(open('stderr', 'a'))
-  end
-
-  front = FriendFeed::APIDaemon.new
-  front.client.logger = RAILS_DEFAULT_LOGGER
-  front.client.apikey = F2P::Config.friendfeed_api_key
-  front.client.http_proxy = F2P::Config.http_proxy
-  DRb.start_service(F2P::Config.friendfeed_api_daemon_drb_uri, front)
-
-  if $DEBUG
-    p "Started."
-    gets
-  else
-    STDIN.reopen('/dev/null')
-    STDOUT.reopen('/dev/null', 'w')
-    STDERR.reopen('/dev/null', 'w')
-    DRb.thread.join
-  end
+  require 'logger'
+  name = ARGV.shift or raise
+  remote_key = ARGV.shift or raise
+  daemon = FriendFeed::APIDaemon.new#(Logger.new(STDERR))
+  daemon.channel_timeout = 1
+  p daemon.get_inbox_entries(name, remote_key, 0, 10).size
+  sleep 10
+  p daemon.get_inbox_entries(name, remote_key, 200, 10).size
 end
