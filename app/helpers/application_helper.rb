@@ -71,7 +71,7 @@ module ApplicationHelper
   end
 
   def inline_stylesheet
-    return if jpmobile? and @controller.request.mobile.is_a?(Jpmobile::Mobile::Docomo)
+    return if i_mode?
     h1_size = setting.font_size + 1
     h2_size = setting.font_size
     body_size = setting.font_size

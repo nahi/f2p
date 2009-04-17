@@ -39,6 +39,7 @@
     </p>
   <%- end -%>
   <%- @entries.each do |thread| -%>
+    <%= "<hr />" if i_mode? -%>
     <div class="<%= cycle('thread1', 'thread2') %>">
       <%= render :partial => 'entry', :locals => {:entry => thread.root, :root_user => nil} %>
       <%- remember_checked(thread.root) if ctx.inbox -%>
@@ -57,6 +58,7 @@
       <%- end -%>
     </div>
   <%- end -%>
+  <%= "<hr />" if i_mode? -%>
   <%- if @entries.size == 0 -%>
     <p>No feed is good feed.</p>
   <%- end -%>
