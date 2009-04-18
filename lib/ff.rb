@@ -147,11 +147,13 @@ module FriendFeed
 
     attr_reader :name
     attr_reader :remote_key
+    attr_accessor :timeout
 
     def initialize(name, remote_key, logger = nil)
       super(logger)
       @name = name
       @remote_key = remote_key
+      @timeout = 60
     end
 
     def initialize_token
@@ -166,8 +168,9 @@ module FriendFeed
     def updated_home_entries(opt = {})
       initialize_token unless @token
       uri = uri("updates/home")
-      query = opt.merge(:token => @token, :format => 'json')
+      query = opt.merge(:token => @token, :timeout => @timeout, :format => 'json')
       res = client_sync(uri, @name, @remote_key) { |client|
+        client.receive_timeout = @timeout * 1.1
         get_request(client, uri, query)
       }
       if res.status == 200

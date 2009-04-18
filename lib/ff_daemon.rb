@@ -111,32 +111,39 @@ module FriendFeed
       def start
         @stopping = false
         @logger.info("channel started for #{@name}")
+        
         @client.initialize_token
         @inbox.synchronize do
           @inbox.replace(@client.get_home_entries(:start => 0, :num => @cache_size))
         end
         @last_access = Time.now
         @thread = Thread.new {
-          while !@stopping
-            @logger.debug("channel start long polling for #{@name}")
-            updated = @client.updated_home_entries(:timeout => @timeout)
-            update_inbox(updated['entries'])
-            if Time.now > @last_access + @lifetime
-              @stopping = true
-              @logger.info("channel for #{@name} stopping...")
-              @thread = nil
+          begin
+            while !@stopping
+              @logger.debug("channel start long polling for #{@name}")
+              @client.timeout = @timeout
+              updated = @client.updated_home_entries()
+              update_inbox(updated['entries'])
+              if Time.now > @last_access + @lifetime
+                @logger.info("channel for #{@name} stopping by time limit...")
+                @stopping = true
+                @thread = nil
+              end
             end
+          rescue Exception => e
+            @logger.warn(e)
           end
+          @logger.info("channel for #{@name} stopped")
         }
         @stopping = false
       end
 
       def stop
+        @logger.info("channel for #{@name} stopping by request...")
         @stopping = true
         # TODO: uglish
         @thread.kill rescue nil
         @thread = nil
-        @logger.info("channel for #{@name} stopped")
       end
 
       def inbox(start, num)
