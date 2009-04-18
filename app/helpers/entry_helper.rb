@@ -700,6 +700,9 @@ module EntryHelper
     links << menu_link(menu_label('rooms', '9'), link_list(:room => '*'), accesskey('9')) {
       ctx.room != '*'
     }
+    links << menu_link(menu_label('pin'), link_list(:label => u('pin'))) {
+      ctx.label != 'pin'
+    }
     links << menu_link(icon_tag(:next), list_opt(ctx.link_opt(:start => start + num, :num => num)), accesskey('6')) { !no_page }
     links << archive_button
     links.join(' ')

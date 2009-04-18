@@ -17,6 +17,7 @@ class EntryController < ApplicationController
     attr_accessor :like
     attr_accessor :comment
     attr_accessor :link
+    attr_accessor :label
     attr_accessor :service
     attr_accessor :start
     attr_accessor :num
@@ -31,7 +32,7 @@ class EntryController < ApplicationController
     def initialize(auth)
       @auth = auth
       @viewname = nil
-      @eid = @eids = @query = @user = @list = @room = @friends = @like = @comment = @link = @service = @start = @num = @likes = @comments = nil
+      @eid = @eids = @query = @user = @list = @room = @friends = @like = @comment = @link = @label = @service = @start = @num = @likes = @comments = nil
       @fold = false
       @inbox = false
       @home = true
@@ -51,6 +52,7 @@ class EntryController < ApplicationController
       @like = param(:like)
       @comment = param(:comment)
       @link = param(:link)
+      @label = param(:label)
       @service = param(:service)
       @start = (param(:start) || '0').to_i
       @num = intparam(:num) || setting.entries_in_page
@@ -58,7 +60,7 @@ class EntryController < ApplicationController
       @comments = intparam(:comments)
       @fold = (param(:fold) != 'no')
       @inbox = false
-      @home = !(@query or @like or @comment or @user or @friends or @list or @room or @link)
+      @home = !(@query or @like or @comment or @user or @friends or @list or @room or @link or @label)
     end
 
     def single?
@@ -84,6 +86,8 @@ class EntryController < ApplicationController
         opt.merge(:ids => @eids, :merge_entry => false)
       elsif @link
         opt.merge(:link => @link, :query => @query, :merge_service => true)
+      elsif @label
+        opt.merge(:label => @label)
       elsif @query
         opt.merge(:query => @query, :likes => @likes, :comments => @comments, :user => @user, :room => @room, :friends => @friends, :service => @service, :merge_entry => false)
       elsif @like
@@ -112,7 +116,7 @@ class EntryController < ApplicationController
 
     def reset_for_new
       # keep @room
-      @eid = @eids = @query = @user = @list = @friends = @like = @comment = @link = @service = nil
+      @eid = @eids = @query = @user = @list = @friends = @like = @comment = @link = @label = @service = nil
       @fold = true
     end
 
@@ -128,6 +132,7 @@ class EntryController < ApplicationController
         :like => @like,
         :comment => @comment,
         :link => @link,
+        :label => @label,
         :service => @service,
         :fold => @fold ? nil : 'no'
       }

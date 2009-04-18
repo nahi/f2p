@@ -51,9 +51,6 @@ class EntryThread
       check_inbox(auth, entries)
       logger.info('[perf] check_inbox done')
       if opt[:inbox]
-        if !first_page_option?(opt)
-          entries = entries.find_all { |entry| !entry.view_pinned }
-        end
         entries = entries.find_all { |entry| entry.view_inbox }
       end
       if opt[:merge_entry]
@@ -103,11 +100,7 @@ class EntryThread
       if opt[:id]
         fetch_single_entry_as_array(auth, opt)
       else
-        if opt[:inbox]
-          entries = fetch_inbox_entries(auth, opt)
-        else
-          entries = fetch_list_entries(auth, opt)
-        end
+        entries = fetch_list_entries(auth, opt)
         entries = filter_hidden(entries)
         if opt[:inbox]
           entries = sort_by_detection(entries)
@@ -128,33 +121,13 @@ class EntryThread
       wrap(Task.run { get_entry(auth, opt) }.result)
     end
 
-    def fetch_inbox_entries(auth, opt)
-      cache_entries(auth, opt) {
-        list_task = Task.run {
-          get_inbox_entries(auth, opt[:start], opt[:num])
-        }
-        if first_page_option?(opt)
-          pinned = Pin.find_all_by_user_id(auth.id).map { |e| e.eid }
-          unless pinned.empty?
-            pin_task =  Task.run {
-              get_entries(auth, :ids => pinned)
-            }
-            pinned_entries = wrap(pin_task.result)
-          end
-        end
-        entries = wrap(list_task.result)
-        if pinned_entries
-          all = entries.map { |e| e.id }
-          rest = pinned_entries.find_all { |e| !all.include?(e.id) }
-          entries += rest
-        end
-        entries
-      }
-    end
-
     def fetch_list_entries(auth, opt)
       cache_entries(auth, opt) {
-        if opt[:ids]
+        if opt[:inbox]
+          start = opt[:start]
+          num = opt[:num]
+          wrap(Task.run { get_inbox_entries(auth, start, num) }.result)
+        elsif opt[:ids]
           wrap(Task.run { get_entries(auth, opt) }.result)
         elsif opt[:link]
           if opt[:query]
@@ -170,6 +143,8 @@ class EntryThread
             merged = merged.inject({}) { |r, e| r[e.id] = e; r }.values
           end
           merged
+        elsif opt[:label] == 'pin'
+          wrap(Task.run { pinned_entries(auth, opt) }.result)
         elsif opt[:query]
           wrap(Task.run { search_entries(auth, opt) }.result)
         elsif opt[:like] == 'likes'
@@ -280,6 +255,13 @@ class EntryThread
         r[e.eid] = true
         r
       }
+    end
+
+    def pinned_entries(auth, opt)
+      pinned = Pin.find_all_by_user_id(auth.id).map { |e| e.eid }
+      unless pinned.empty?
+        get_entries(auth, :ids => pinned)
+      end
     end
 
     def search_entries(auth, opt)

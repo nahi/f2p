@@ -70,13 +70,11 @@ class EntryThreadTest < ActiveSupport::TestCase
     #
     ff.expects(:get_inbox_entries).with('user1', nil, nil, nil).
       returns(read_entries('entries', 'f2ptest')[2..-1]).times(2)
-    ff.expects(:get_entries).with('user1', nil, ['df9d34df-23ff-de8e-3675-a82736ef90cc', '19ec8fb0-3776-4447-a814-cac6b129db6f', 'foobar']).
-      returns(read_entries('entries', 'f2ptest')[0, 2]).times(2)
     ff.stubs(:get_profiles)
     2.times do
       threads = EntryThread.find(:auth => user, :inbox => true, :start => nil)
       assert_equal(
-        [1, 2, 1, 4, 1, 2, 6, 3, 1, 3, 1, 1, 1, 1, 1, 1],
+        [1, 1, 1, 4, 1, 2, 6, 3, 1, 3, 1, 1, 1, 1, 1],
         threads.map { |t| t.entries.size }
       )
     end
