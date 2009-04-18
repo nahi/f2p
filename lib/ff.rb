@@ -173,7 +173,7 @@ module FriendFeed
         client.receive_timeout = @timeout * 1.1
         get_request(client, uri, query)
       }
-      if res.status == 200
+      if res.status == 200 and !res.content.empty?
         obj = JSON.parse(res.content)
         logger.debug { JSON.pretty_generate(obj) }
         @token = obj['update']['token']

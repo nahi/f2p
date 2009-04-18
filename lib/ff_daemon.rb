@@ -123,7 +123,7 @@ module FriendFeed
               @logger.debug("channel start long polling for #{@name}")
               @client.timeout = @timeout
               updated = @client.updated_home_entries()
-              update_inbox(updated['entries'])
+              update_inbox(updated['entries']) if updated
               if Time.now > @last_access + @lifetime
                 @logger.info("channel for #{@name} stopping by time limit...")
                 @stopping = true
