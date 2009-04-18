@@ -176,7 +176,7 @@ class EntryThread
       opt.delete(:allow_cache)
       opt.delete(:merge_entry)
       opt.delete(:merge_service)
-      if allow_cache and @entries_cache[auth.name]
+      if allow_cache and @entries_cache[auth.name] and opt[:label] != 'pin'
         cached_opt, entries = @entries_cache[auth.name]
         if opt == cached_opt
           logger.info("[cache] entries cache found for #{opt.inspect}")
@@ -224,6 +224,7 @@ class EntryThread
           entry.view_pinned = true
           entry.view_inbox = true
         else
+          entry.view_pinned = false
           if checked_map.key?(entry.id)
             entry.view_inbox = checked_map[entry.id]
           else

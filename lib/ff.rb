@@ -432,10 +432,10 @@ if $0 == __FILE__
   remote_key = ARGV.shift or raise
   require 'logger'
   logger = Logger.new('ff.log')
-  #client = FriendFeed::APIClient.new(logger)
-  #print JSON.pretty_generate(client.get_home_entries(name, remote_key))
-  client = FriendFeed::ChannelClient.new(name, remote_key, logger)
-  while true
-    print JSON.pretty_generate(client.updated_home_entries(:timeout => 10))
-  end
+  client = FriendFeed::APIClient.new(logger)
+  print JSON.pretty_generate(client.get_home_entries(name, remote_key))
+#  client = FriendFeed::ChannelClient.new(name, remote_key, logger)
+#  while true
+#    print JSON.pretty_generate(client.updated_home_entries(:timeout => 10))
+#  end
 end
