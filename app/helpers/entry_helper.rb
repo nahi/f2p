@@ -590,7 +590,7 @@ module EntryHelper
 
   def list_links
     user = auth.name
-    str = h('lists: ') + menu_link(h('[Home]'), link_list()) { !ctx.home }
+    str = h('Lists: ') + menu_link(h('[Home]'), link_list()) { !ctx.home }
     lists = user_lists(user)
     unless lists.empty?
       str += ' ' + lists.collect { |e|
