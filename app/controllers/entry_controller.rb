@@ -60,7 +60,7 @@ class EntryController < ApplicationController
       @comments = intparam(:comments)
       @fold = (param(:fold) != 'no')
       @inbox = false
-      @home = !(@query or @like or @comment or @user or @friends or @list or @room or @link or @label)
+      @home = !(@inbox or @query or @like or @comment or @user or @friends or @list or @room or @link or @label)
     end
 
     def single?
@@ -198,6 +198,7 @@ class EntryController < ApplicationController
       ctx.start = (param(:start) || '0').to_i
       ctx.num = intparam(:num) || @setting.entries_in_page
       ctx.inbox = true
+      ctx.home = false
       ctx.fold = param(:fold) != 'no'
     }
     if updated_expired(Time.now)

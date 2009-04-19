@@ -52,6 +52,8 @@ class EntryThread
       logger.info('[perf] check_inbox done')
       if opt[:inbox]
         entries = entries.find_all { |entry| entry.view_inbox }
+      elsif opt[:label] == 'pin'
+        entries = entries.find_all { |entry| entry.view_pinned }
       end
       if opt[:merge_entry]
         sort_by_service(entries, opt)
@@ -176,7 +178,7 @@ class EntryThread
       opt.delete(:allow_cache)
       opt.delete(:merge_entry)
       opt.delete(:merge_service)
-      if allow_cache and @entries_cache[auth.name] and opt[:label] != 'pin'
+      if allow_cache and @entries_cache[auth.name]
         cached_opt, entries = @entries_cache[auth.name]
         if opt == cached_opt
           logger.info("[cache] entries cache found for #{opt.inspect}")

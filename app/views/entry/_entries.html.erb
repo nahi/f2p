@@ -9,7 +9,7 @@
   post.query.focus();
   //--></script>
 <%- else -%>
-  <%- if ctx.list -%>
+  <%- if ctx.home or ctx.list -%>
     <p><%= list_links %></p>
   <%- elsif ctx.room -%>
     <p><%= room_links(ctx.user) %></p>

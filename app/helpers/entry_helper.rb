@@ -39,7 +39,7 @@ module EntryHelper
   end
 
   def cache_profile(entries)
-    users = []
+    users = [auth.name]
     rooms = []
     entries.each do |t|
       t.entries.each do |e|
@@ -175,7 +175,7 @@ module EntryHelper
   end
 
   def emphasize_as_inbox?(entry)
-    ctx.home and !ctx.inbox and (entry.view_inbox or entry.view_pinned)
+    ctx.home and (entry.view_inbox or entry.view_pinned)
   end
 
   def original_link(entry)
@@ -590,15 +590,19 @@ module EntryHelper
 
   def list_links
     user = auth.name
+    str = h('lists: ') + menu_link(h('[Home]'), link_list()) { !ctx.home }
     lists = user_lists(user)
-    links_if_exists('lists: ', lists) { |e|
-      label = "[#{e.name}]"
-      if ctx.list == e.nickname
-        h(label)
-      else
-        link_to(h(label), link_list(:list => u(e.nickname)))
-      end
-    }
+    unless lists.empty?
+      str += ' ' + lists.collect { |e|
+        label = "[#{e.name}]"
+        if ctx.list == e.nickname
+          h(label)
+        else
+          link_to(h(label), link_list(:list => u(e.nickname)))
+        end
+      }.join(' ')
+    end
+    str
   end
 
   def zoom_select_tag(varname, default)
@@ -622,7 +626,7 @@ module EntryHelper
 
   def room_links(user)
     rooms = user_rooms(user)
-    links_if_exists('rooms: ', rooms) { |e|
+    links_if_exists('Rooms: ', rooms) { |e|
       label = "[#{e.name}]"
       if e.nickname == ctx.room_for
         h(label)
@@ -694,13 +698,10 @@ module EntryHelper
     links << menu_link(menu_label('inbox', '0'), link_action('inbox'), accesskey('0'))
     links << menu_link(menu_label('all', '1'), link_list(), accesskey('1'))
     links << menu_link(menu_label('me', '3'), link_user(auth.name), accesskey('3'))
-    links << menu_link(menu_label('lists', '7'), link_list(:list => u(user_lists(auth.name).first.nickname)), accesskey('7')) {
-      !ctx.list
-    }
-    links << menu_link(menu_label('rooms', '9'), link_list(:room => '*'), accesskey('9')) {
+    links << menu_link(menu_label('rooms', '7'), link_list(:room => '*'), accesskey('9')) {
       ctx.room != '*'
     }
-    links << menu_link(menu_label('pin'), link_list(:label => u('pin'))) {
+    links << menu_link(menu_label('pin', '9'), link_list(:label => u('pin'))) {
       ctx.label != 'pin'
     }
     links << menu_link(icon_tag(:next), list_opt(ctx.link_opt(:start => start + num, :num => num)), accesskey('6')) { !no_page }
@@ -846,7 +847,7 @@ module EntryHelper
 
   def search_opt(hash = {})
     search_opt = list_opt(hash)
-    search_opt[:friends] = 'me' if ctx.home
+    search_opt[:friends] = 'me' if ctx.home or ctx.inbox
     search_opt[:room] = nil if search_opt[:room] == '*'
     search_opt[:num] = ctx.num if ctx.num != @setting.entries_in_page
     search_opt
