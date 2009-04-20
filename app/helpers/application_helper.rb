@@ -272,7 +272,7 @@ __EOS__
   end
 
   def room_members(nickname)
-    room_profile(nickname)['members']
+    room_profile(nickname)['members'] || []
   end
 
   def user_profiles(nicknames)
@@ -314,19 +314,19 @@ __EOS__
   end
 
   def user_services(nickname)
-    user_profile(nickname)['services']
+    user_profile(nickname)['services'] || []
   end
 
   def user_rooms(nickname)
-    user_profile(nickname)['rooms']
+    user_profile(nickname)['rooms'] || []
   end
 
   def user_lists(nickname)
-    user_profile(nickname)['lists']
+    user_profile(nickname)['lists'] || []
   end
 
   def user_subscriptions(nickname)
-    user_profile(nickname)['subscriptions']
+    user_profile(nickname)['subscriptions'] || []
   end
 
   def user(user)
