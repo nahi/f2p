@@ -1,5 +1,13 @@
 module EntryHelper
   def viewname
+    if ctx.service
+      viewname_base + "(#{ctx.service})"
+    else
+      viewname_base
+    end
+  end
+
+  def viewname_base
     return ctx.viewname if ctx.viewname
     if ctx.eid
       'entry'
@@ -87,12 +95,14 @@ module EntryHelper
     end
     room_entry = (entry.room and entry.room.nickname != ctx.room_for)
     if room_entry
-      link = link_user(user, :room => u(entry.room.nickname))
+      opt = { :room => u(entry.room.nickname) }
     elsif entry.room
-      link = link_user(user, :room => u(entry.room.nickname), :service => u(service.id))
+      opt = { :room => u(entry.room.nickname), :service => u(service.id) }
     else
-      link = link_user(user, :service => u(service.id))
+      opt = { :service => u(service.id) }
     end
+    opt[:label] = ctx.label
+    link = link_user(user, opt)
     if room_entry
       name = entry.room.name
       if ctx.room_for
@@ -696,13 +706,17 @@ module EntryHelper
       links << link_to(icon_tag(:top), '#top', accesskey('2'))
     end
     links << menu_link(menu_label('inbox', '0'), link_action('inbox'), accesskey('0'))
-    links << menu_link(menu_label('all', '1'), link_list(), accesskey('1'))
-    links << menu_link(menu_label('me', '3'), link_user(auth.name), accesskey('3'))
-    links << menu_link(menu_label('rooms', '7'), link_list(:room => '*'), accesskey('9')) {
+    links << menu_link(menu_label('all', '1'), link_list(), accesskey('1')) {
+      !ctx.home or ctx.service
+    }
+    links << menu_link(menu_label('me', '3'), link_user(auth.name), accesskey('3')) {
+      ctx.user != auth.name or ctx.service
+    }
+    links << menu_link(menu_label('rooms', '7'), link_list(:room => '*'), accesskey('7')) {
       ctx.room != '*'
     }
-    links << menu_link(menu_label('pin', '9'), link_list(:label => u('pin'))) {
-      ctx.label != 'pin'
+    links << menu_link(menu_label('pin', '9'), link_list(:label => u('pin')), accesskey('9')) {
+      ctx.label != 'pin' or ctx.service
     }
     links << menu_link(icon_tag(:next), list_opt(ctx.link_opt(:start => start + num, :num => num)), accesskey('6')) { !no_page }
     links << archive_button
@@ -746,7 +760,7 @@ module EntryHelper
     links << menu_link(menu_label('commented'), link_list(:comment => 'commented', :user => ctx.user_for)) {
       ctx.comment != 'commented'
     }
-    h('filter: ') + links.join(' ')
+    h('Filter: ') + links.join(' ')
   end
 
   def menu_label(label, accesskey = nil)

@@ -1,30 +1,28 @@
 <%- cache_profile(@entries) -%>
 <%- if ctx.query and !ctx.link -%>
-  <%- form_tag({:action => 'list'}, {:name => 'post'}) do -%>
+  <%- form_tag({:action => 'list'}) do -%>
     <p><%= search_form %></p>
     <p><%= search_drilldown_links %></p>
     <p>permalink: <%= link_to(h(url_for(search_opt(:only_path => false))), search_opt) %></p>
   <%- end -%>
-  <script type='text/javascript'><!--
-  post.query.focus();
-  //--></script>
 <%- else -%>
-  <%- if ctx.home or ctx.list -%>
-    <p><%= list_links %></p>
-  <%- elsif ctx.room -%>
-    <p><%= room_links(ctx.user) %></p>
-  <%- elsif ctx.link -%>
-    <p>entries related to: <%= link_to(h(ctx.link), u(ctx.link)) %></p>
+  <%- form_tag({:action => 'add'}) do -%>
+    <p><a name="top"></a><%= post_entry_form %><%= bottom_menu_link %></p>
   <%- end -%>
   <%- if ctx.user_for -%>
     <p><%= user_picture(ctx.user_for) %> <%= h(user_name(ctx.user_for)) %> <%= link_to(h('[profile]'), '#profile') %></p>
-    <p><%= user_page_links(ctx.user_for) %></p>
   <%- end -%>
   <%- if ctx.room_for -%>
     <p><%= room_picture(ctx.room_for) %> <%= h(room_name(ctx.room_for)) %> <%= link_to(h('[profile]'), '#profile') %></p>
   <%- end -%>
-  <%- form_tag({:action => 'add'}, {:name => 'post'}) do -%>
-    <p><a name="top"></a><%= post_entry_form %><%= bottom_menu_link %></p>
+  <%- if ctx.home or ctx.list -%>
+    <p><%= list_links %></p>
+  <%- elsif ctx.user_for -%>
+    <p><%= user_page_links(ctx.user_for) %></p>
+  <%- elsif ctx.room -%>
+    <p><%= room_links(ctx.user) %></p>
+  <%- elsif ctx.link -%>
+    <p>entries related to: <%= link_to(h(ctx.link), u(ctx.link)) %></p>
   <%- end -%>
 <%- end -%>
 <%- if !ctx.inbox or !cell_phone? -%>

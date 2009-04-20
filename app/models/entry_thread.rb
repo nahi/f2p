@@ -53,7 +53,9 @@ class EntryThread
       if opt[:inbox]
         entries = entries.find_all { |entry| entry.view_inbox }
       elsif opt[:label] == 'pin'
-        entries = entries.find_all { |entry| entry.view_pinned }
+        entries = entries.find_all { |entry|
+          entry.view_pinned or entry.id == opt[:added_id]
+        }
       end
       if opt[:merge_entry]
         sort_by_service(entries, opt)
@@ -114,6 +116,12 @@ class EntryThread
         if opt[:link]
           # You comes first
           entries = entries.partition { |e| e.nickname == auth.name }.flatten
+        end
+        if added_id = opt[:added_id]
+          unless entries.find { |e| e.id == added_id }
+            entry = wrap(get_entry(auth, :id => added_id)).first
+            entries.unshift(entry) if entry
+          end
         end
         entries
       end
@@ -176,6 +184,7 @@ class EntryThread
       allow_cache = opt[:allow_cache]
       opt = opt.dup
       opt.delete(:allow_cache)
+      opt.delete(:added_id)
       opt.delete(:merge_entry)
       opt.delete(:merge_service)
       if allow_cache and @entries_cache[auth.name]
@@ -263,7 +272,9 @@ class EntryThread
     def pinned_entries(auth, opt)
       pinned = Pin.find_all_by_user_id(auth.id).map { |e| e.eid }
       unless pinned.empty?
-        get_entries(auth, :ids => pinned)
+        get_entries(auth, :ids => pinned).find_all { |e|
+          opt[:service].nil? or opt[:service] == e['service']['id']
+        }
       end
     end
 

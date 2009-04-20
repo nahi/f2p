@@ -108,8 +108,6 @@ class EntryControllerTest < ActionController::TestCase
 
   test 'inbox no skip initial page' do
     login('user1')
-    @ff.expects(:get_profile).
-      returns(read_profile('profile')).times(1)
     @ff.expects(:get_inbox_entries).
       returns([]).then.returns(read_entries('entries', 'f2ptest')).times(1)
     get :inbox
@@ -564,7 +562,7 @@ class EntryControllerTest < ActionController::TestCase
       returns([{'id' => 'foo'}])
     post :add, :commit => 'post', :body => 'hello'
     assert_redirected_to :action => 'list'
-    assert(!session[:ctx].list)
+    assert(session[:ctx].list)
   end
 
   test 'add post link' do

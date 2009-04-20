@@ -77,6 +77,7 @@ class EntryController < ApplicationController
         :start => @start,
         :num => @num,
         :service => @service,
+        :label => @label,
         :merge_entry => true,
         :merge_service => false
       }
@@ -86,8 +87,6 @@ class EntryController < ApplicationController
         opt.merge(:ids => @eids, :merge_entry => false)
       elsif @link
         opt.merge(:link => @link, :query => @query, :merge_service => true)
-      elsif @label
-        opt.merge(:label => @label)
       elsif @query
         opt.merge(:query => @query, :likes => @likes, :comments => @comments, :user => @user, :room => @room, :friends => @friends, :service => @service, :merge_entry => false)
       elsif @like
@@ -115,9 +114,7 @@ class EntryController < ApplicationController
     end
 
     def reset_for_new
-      # keep @room
-      @eid = @eids = @query = @user = @list = @friends = @like = @comment = @link = @label = @service = nil
-      @fold = true
+      @eid = @comment = nil
     end
 
     def list_opt
@@ -510,7 +507,10 @@ class EntryController < ApplicationController
 private
 
   def find_opt
-    @ctx.find_opt.merge(:allow_cache => flash[:allow_cache])
+    @ctx.find_opt.merge(
+      :allow_cache => flash[:allow_cache],
+      :added_id => flash[:added_id]
+    )
   end
 
   def unpin_entry(id, commit = true)

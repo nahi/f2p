@@ -45,7 +45,7 @@ module ApplicationHelper
   end
 
   def cell_phone?
-    setting.link_type or (jpmobile? and @controller.request.mobile?)
+    jpmobile? and @controller.request.mobile?
   end
 
   def i_mode?
