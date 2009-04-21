@@ -54,7 +54,7 @@ class EntryThread
         entries = entries.find_all { |entry| entry.view_inbox }
       elsif opt[:label] == 'pin'
         entries = entries.find_all { |entry|
-          entry.view_pinned or entry.id == opt[:added_id]
+          entry.view_pinned or entry.id == opt[:updated_id]
         }
       end
       if opt[:merge_entry]
@@ -117,9 +117,9 @@ class EntryThread
           # You comes first
           entries = entries.partition { |e| e.nickname == auth.name }.flatten
         end
-        if added_id = opt[:added_id]
-          unless entries.find { |e| e.id == added_id }
-            entry = wrap(get_entry(auth, :id => added_id)).first
+        if updated_id = opt[:updated_id]
+          unless entries.find { |e| e.id == updated_id }
+            entry = wrap(get_entry(auth, :id => updated_id)).first
             entries.unshift(entry) if entry
           end
         end
@@ -184,7 +184,7 @@ class EntryThread
       allow_cache = opt[:allow_cache]
       opt = opt.dup
       opt.delete(:allow_cache)
-      opt.delete(:added_id)
+      opt.delete(:updated_id)
       opt.delete(:merge_entry)
       opt.delete(:merge_service)
       if allow_cache and @entries_cache[auth.name]

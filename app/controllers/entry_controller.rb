@@ -422,6 +422,7 @@ class EntryController < ApplicationController
     id = param(:id)
     comment = param(:comment)
     do_delete(id, comment, true)
+    flash[:updated_id] = id
     redirect_to_list
   end
 
@@ -458,6 +459,7 @@ class EntryController < ApplicationController
     if id
       Entry.add_like(create_opt(:id => id))
     end
+    flash[:updated_id] = id
     redirect_to_entry_or_list
   end
 
@@ -472,6 +474,7 @@ class EntryController < ApplicationController
     if id
       Entry.delete_like(create_opt(:id => id))
     end
+    flash[:updated_id] = id
     redirect_to_entry_or_list
   end
 
@@ -509,7 +512,7 @@ private
   def find_opt
     @ctx.find_opt.merge(
       :allow_cache => flash[:allow_cache],
-      :added_id => flash[:added_id]
+      :updated_id => flash[:added_id] || flash[:updated_id]
     )
   end
 
