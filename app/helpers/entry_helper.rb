@@ -638,7 +638,7 @@ module EntryHelper
     rooms = user_rooms(user)
     links_if_exists('Rooms: ', rooms) { |e|
       label = "[#{e.name}]"
-      if e.nickname == ctx.room_for
+      if e.nickname == ctx.room_for and !ctx.service and !ctx.label
         h(label)
       else
         link_to(h(label), link_list(:room => u(e.nickname)))

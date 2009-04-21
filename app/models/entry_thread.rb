@@ -153,8 +153,6 @@ class EntryThread
             merged = merged.inject({}) { |r, e| r[e.id] = e; r }.values
           end
           merged
-        elsif opt[:label] == 'pin'
-          wrap(Task.run { pinned_entries(auth, opt) }.result)
         elsif opt[:query]
           wrap(Task.run { search_entries(auth, opt) }.result)
         elsif opt[:like] == 'likes'
@@ -173,6 +171,8 @@ class EntryThread
           wrap(Task.run { get_room_entries(auth, opt) }.result)
         elsif opt[:friends]
           wrap(Task.run { get_friends_entries(auth, opt) }.result)
+        elsif opt[:label] == 'pin'
+          wrap(Task.run { pinned_entries(auth, opt) }.result)
         else
           wrap(Task.run { get_home_entries(auth, opt) }.result)
         end
