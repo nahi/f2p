@@ -174,10 +174,15 @@ module FriendFeed
         get_request(client, uri, query)
       }
       if res.status == 200 and !res.content.empty?
-        obj = JSON.parse(res.content)
-        logger.debug { JSON.pretty_generate(obj) }
-        @token = obj['update']['token']
-        obj
+        begin
+          obj = JSON.parse(res.content)
+          logger.debug { JSON.pretty_generate(obj) }
+          @token = obj['update']['token']
+          obj
+        rescue Exception => e
+          logger.warn("JSON parsing failed: #{res.inspect}")
+          logger.warn(e)
+        end
       end
     end
 
