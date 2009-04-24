@@ -420,14 +420,16 @@ module EntryHelper
       else
         icon = icon_tag(:star)
       end
+      icon += likes.size.to_s
       max = compact ? F2P::Config.likes_in_page : F2P::Config.max_friend_list_num
       if likes.size > max + 1
         msg = "... #{likes.size - max} more likes"
-        icon + likes[0, max].collect { |like| user(like) }.join(' ') + ' ' +
+        members = likes[0, max].collect { |like| user(like) }.join(' ') + ' ' +
           (compact ? link_to(h(msg), link_show(entry.id)) : h(msg))
       else
-        icon + "#{likes.size.to_s}(#{likes.collect { |like| user(like) }.join(' ')})"
+        members = likes.collect { |like| user(like) }.join(' ')
       end
+      icon + '(' + members + ')'
     end
   end
 
@@ -861,7 +863,7 @@ module EntryHelper
 
   def search_opt(hash = {})
     search_opt = list_opt(hash)
-    search_opt[:friends] = 'me' if ctx.home or ctx.inbox
+    search_opt[:friends] = 'me' if ctx.home or ctx.inbox or ctx.label
     search_opt[:room] = nil if search_opt[:room] == '*'
     search_opt[:num] = ctx.num if ctx.num != @setting.entries_in_page
     search_opt

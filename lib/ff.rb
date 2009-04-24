@@ -173,7 +173,7 @@ module FriendFeed
         client.receive_timeout = @timeout * 1.1
         get_request(client, uri, query)
       }
-      if res.status == 200 and !res.content.empty?
+      if res.status == 200 and !res.content.strip.empty?
         begin
           obj = JSON.parse(res.content)
           logger.debug { JSON.pretty_generate(obj) }
@@ -182,6 +182,7 @@ module FriendFeed
         rescue Exception => e
           logger.warn("JSON parsing failed: #{res.inspect}")
           logger.warn(e)
+          nil
         end
       end
     end
