@@ -192,7 +192,7 @@ module EntryHelper
     # no need to show original link for link only content.
     if entry.link and !with_link?(entry.service)
       if unknown_where_to_go?(entry)
-        link_content = icon_tag(:go) + h("(#{URI.parse(entry.link).host})")
+        link_content = icon_tag(:go) + h("(#{uri_domain(entry.link)})")
       else
         link_content = icon_tag(:go)
       end
@@ -202,7 +202,7 @@ module EntryHelper
 
   def link_content(title, entry)
     if unknown_where_to_go?(entry)
-      link_to(icon_tag(:go) + h(title), entry.link) + h(" (#{URI.parse(entry.link).host})")
+      link_to(icon_tag(:go) + h(title), entry.link) + h(" (#{uri_domain(entry.link)})")
     elsif entry.service.tumblr?
       link_to(icon_tag(:go), entry.link) + h(title)
     else
@@ -216,6 +216,15 @@ module EntryHelper
 
   def uri(str)
     URI.parse(str) rescue nil
+  end
+
+  def uri_domain(str)
+    uri = uri(str)
+    if uri
+      uri.host
+    else
+      str
+    end
   end
 
   def unknown_where_to_go?(entry)
