@@ -1,6 +1,7 @@
 <p><a name="top"></a><%= page_links(:for_top => true) %></p>
 <div class="listings">
-  <%- entry = @entries.first.root -%>
+<%- if threads = @entries.first -%>
+  <%- entry = threads.root -%>
   <div class="<%= cycle('thread1', 'thread2') %>">
     <p>
       <%= pin_link(entry) -%>
@@ -43,5 +44,8 @@
       <%- end -%>
     </p>
   </div>
+<%- else -%>
+  <p>No feed is good feed.</p>
+<%- end -%>
 </div>
 <p><a name="bottom"></a><%= page_links(:for_bottom => true) %></p>
