@@ -512,7 +512,7 @@ private
   def find_opt
     @ctx.find_opt.merge(
       :allow_cache => flash[:allow_cache],
-      :updated_id => flash[:added_id] || flash[:updated_id]
+      :updated_id => flash[:added_id] || flash[:updated_id] || flash[:deleted_id]
     )
   end
 
