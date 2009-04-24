@@ -133,7 +133,7 @@ Rails::Initializer.run do |config|
   # don't touch this.  apikey needs to be private.
   F2P::Config.friendfeed_api_key = nil
   F2P::Config.friendfeed_api_daemon_drb_uri = 'druby://localhost:17171'
-  F2P::Config.friendfeed_api_use_channel = true
+  F2P::Config.friendfeed_api_use_channel = false
   F2P::Config.friendfeed_api_channel_timeout = 60
   F2P::Config.friendfeed_api_channel_cache_size = 100
   F2P::Config.friendfeed_api_channel_lifetime = 5 * 60
