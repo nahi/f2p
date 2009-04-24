@@ -118,9 +118,15 @@ class EntryThread
           entries = entries.partition { |e| e.nickname == auth.name }.flatten
         end
         if updated_id = opt[:updated_id]
-          unless entries.find { |e| e.id == updated_id }
-            entry = wrap(get_entry(auth, :id => updated_id)).first
-            entries.unshift(entry) if entry
+          entry = wrap(get_entry(auth, :id => updated_id)).first
+          if entry
+            if entries.find { |e| e.id == updated_id }
+              entries = entries.map { |e|
+                (e.id == updated_id) ? entry : e
+              }
+            else
+              entries.unshift(entry)
+            end
           end
         end
         entries
