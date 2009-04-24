@@ -128,6 +128,7 @@ module FriendFeed
                 @logger.info("channel for #{@name} stopping by time limit...")
                 @stopping = true
                 @thread = nil
+                clear_inbox
               end
             end
           rescue Exception => e
@@ -144,6 +145,7 @@ module FriendFeed
         # TODO: uglish
         @thread.kill rescue nil
         @thread = nil
+        clear_inbox
       end
 
       def inbox(start, num)
@@ -170,6 +172,12 @@ module FriendFeed
           @inbox.replace(@inbox[0, @cache_size])
         end
         @logger.info("channel updated for #{@name}")
+      end
+
+      def clear_inbox
+        @inbox.synchronize do
+          @inbox.clear
+        end
       end
     end
 

@@ -668,6 +668,9 @@ class EntryControllerTest < ActionController::TestCase
     #
     @ff.expects(:get_home_entries).
       returns(read_entries('entries', 'f2ptest')).times(1)
+    @ff.expects(:get_entry).
+      with('user1', nil, 'df9d34df-23ff-de8e-3675-a82736ef90cc').
+      returns(nil)
     get :list
     assert_response :success
     assert_equal(20, session[:ctx].start)
