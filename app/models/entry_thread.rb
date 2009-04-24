@@ -276,7 +276,17 @@ class EntryThread
     end
 
     def pinned_entries(auth, opt)
-      pinned = Pin.find_all_by_user_id(auth.id).map { |e| e.eid }
+      start = opt[:start]
+      num = opt[:num]
+      limit = start + num
+      pinned = Pin.find(
+        :all,
+        :conditions => [ 'user_id = ?', auth.id ],
+        :joins => 'INNER JOIN last_modifieds ON pins.eid = last_modifieds.eid',
+        :order => 'last_modifieds.date desc',
+        :limit => limit
+      ).map { |e| e.eid }
+      pinned = pinned[start, num] || []
       unless pinned.empty?
         get_entries(auth, :ids => pinned).find_all { |e|
           opt[:service].nil? or opt[:service] == e['service']['id']
