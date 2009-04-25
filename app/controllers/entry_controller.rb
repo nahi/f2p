@@ -60,7 +60,7 @@ class EntryController < ApplicationController
       @comments = intparam(:comments)
       @fold = (param(:fold) != 'no')
       @inbox = false
-      @home = !(@inbox or @query or @like or @comment or @user or @friends or @list or @room or @link or @label)
+      @home = !(@eid or @eids or @inbox or @query or @like or @comment or @user or @friends or @list or @room or @link or @label)
     end
 
     def single?

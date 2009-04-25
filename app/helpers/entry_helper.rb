@@ -727,7 +727,7 @@ module EntryHelper
       ctx.room != '*'
     }
     links << menu_link(menu_label('pin', '9'), link_list(:label => u('pin')), accesskey('9')) {
-      ctx.label != 'pin' or ctx.service
+      ctx.label != 'pin' or ctx.service or ctx.room
     }
     links << menu_link(icon_tag(:next), list_opt(ctx.link_opt(:start => start + num, :num => num)), accesskey('6')) { !no_page }
     links << archive_button

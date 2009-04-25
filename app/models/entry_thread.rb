@@ -286,11 +286,13 @@ class EntryThread
         :order => 'last_modifieds.date desc',
         :limit => limit
       ).map { |e| e.eid }
-      pinned = pinned[start, num] || []
-      unless pinned.empty?
-        get_entries(auth, :ids => pinned).find_all { |e|
+      if opt[:service]
+        pinned = get_entries(auth, :ids => pinned).find_all { |e|
           opt[:service].nil? or opt[:service] == e['service']['id']
         }
+        pinned[start, num] || []
+      elsif pinned = pinned[start, num]
+        get_entries(auth, :ids => pinned)
       end
     end
 
