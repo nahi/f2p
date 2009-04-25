@@ -196,22 +196,32 @@ module EntryHelper
       else
         link_content = icon_tag(:go)
       end
-      link_to(link_content, entry.link)
+      entry_link_to(link_content, entry.link)
     end
   end
 
   def link_content(title, entry)
     if unknown_where_to_go?(entry)
-      link_to(icon_tag(:go) + h(title), entry.link) + h(" (#{uri_domain(entry.link)})")
+      entry_link_to(icon_tag(:go) + h(title), entry.link) + h(" (#{uri_domain(entry.link)})")
     elsif entry.service.tumblr?
-      link_to(icon_tag(:go), entry.link) + h(title)
+      entry_link_to(icon_tag(:go), entry.link) + h(title)
     else
-      link_to(icon_tag(:go) + h(title), entry.link)
+      entry_link_to(icon_tag(:go) + h(title), entry.link)
     end
   end
 
   def link_content_without_link(title, entry)
     q(h(title))
+  end
+
+  def entry_link_to(name, options)
+    html_options = nil
+    @already_linked ||= false
+    unless @already_linked
+      @already_linked = true
+      html_options = { :id => 'first_link' }
+    end
+    link_to(name, options, html_options)
   end
 
   def uri(str)
