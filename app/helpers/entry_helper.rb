@@ -35,6 +35,8 @@ module EntryHelper
       end
     elsif ctx.link
       'related entries'
+    elsif ctx.label == 'pin'
+      'pinned'
     elsif ctx.inbox
       'inbox'
     else
