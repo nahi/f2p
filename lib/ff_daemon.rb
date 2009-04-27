@@ -258,23 +258,23 @@ module FriendFeed
     def get_user_status(name, remote_key, users)
       basekey = "\0_system"
       cache = ((@cache ||= {})[basekey] ||= {})[:user_status] ||= {}
-      users.each do |user|
-        update_profile_cache(cache, user) {
+      users.inject({}) { |r, user|
+        r[user] = update_profile_cache(cache, user) {
           ClientProxy.proxy(@client, :get_profile, name, remote_key, user, :include => 'status')['status']
         }
-      end
-      users.inject({}) { |r, e| r[e] = cache[e]; r }
+        r
+      }
     end
 
     def get_room_status(name, remote_key, rooms)
       basekey = "\0_system"
       cache = ((@cache ||= {})[basekey] ||= {})[:room_status] ||= {}
-      rooms.each do |room|
-        update_profile_cache(cache, room) {
+      rooms.inject({}) { |r, room|
+        r[room] = update_profile_cache(cache, room) {
           ClientProxy.proxy(@client, :get_room_profile, name, remote_key, room, :include => 'status')['status']
         }
-      end
-      rooms.inject({}) { |r, e| r[e] = cache[e]; r }
+        r
+      }
     end
 
     def get_inbox_entries(*arg)
@@ -312,7 +312,7 @@ module FriendFeed
       else
         cache[user] = [now, yield]
       end
-      cache[user]
+      cache[user][1]
     end
   end
 end
