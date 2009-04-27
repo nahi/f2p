@@ -65,8 +65,9 @@ module FriendFeed
     define_proxy_method :get_room_picture_url
     define_proxy_method :get_profile
     define_proxy_method :get_profiles
+    define_proxy_method :get_user_status
     define_proxy_method :get_room_profile
-
+    define_proxy_method :get_room_status
     define_proxy_method :purge_cache
 
     def initialize
@@ -182,6 +183,7 @@ module FriendFeed
     end
 
     attr_reader :client
+    attr_accessor :profile_cache_timeout
     attr_accessor :use_channel
     attr_accessor :channel_timeout
     attr_accessor :channel_cache_size
@@ -217,6 +219,7 @@ module FriendFeed
     def initialize(logger = nil)
       @client = FriendFeed::APIClient.new(logger)
       @logger = @client.logger
+      @profile_cache_timeout = 3600 * 24
       @use_channel = false
       @channel_timeout = 60
       @channel_cache_size = 512
@@ -252,6 +255,28 @@ module FriendFeed
       users.map { |e| cache[e] }
     end
 
+    def get_user_status(name, remote_key, users)
+      basekey = "\0_system"
+      cache = ((@cache ||= {})[basekey] ||= {})[:user_status] ||= {}
+      users.each do |user|
+        update_profile_cache(cache, user) {
+          ClientProxy.proxy(@client, :get_profile, name, remote_key, user, :include => 'status')['status']
+        }
+      end
+      users.inject({}) { |r, e| r[e] = cache[e]; r }
+    end
+
+    def get_room_status(name, remote_key, rooms)
+      basekey = "\0_system"
+      cache = ((@cache ||= {})[basekey] ||= {})[:room_status] ||= {}
+      rooms.each do |room|
+        update_profile_cache(cache, room) {
+          ClientProxy.proxy(@client, :get_room_profile, name, remote_key, room, :include => 'status')['status']
+        }
+      end
+      rooms.inject({}) { |r, e| r[e] = cache[e]; r }
+    end
+
     def get_inbox_entries(*arg)
       if @use_channel
         realtime_inbox_entries(*arg)
@@ -259,6 +284,8 @@ module FriendFeed
         plain_get_inbox_entries(*arg)
       end
     end
+
+  private
 
     def plain_get_inbox_entries(name, remote_key, start, num)
       get_home_entries(name, remote_key, :start => start, :num => num)
@@ -273,6 +300,19 @@ module FriendFeed
         @channel[name].start
       end
       @channel[name].inbox(start || 0, num || @channel_cache_size)
+    end
+
+    def update_profile_cache(cache, user)
+      now = Time.now
+      if e = cache[user]
+        updated, element = e
+        if (now - updated) > @profile_cache_timeout
+          cache[user] = [now, yield]
+        end
+      else
+        cache[user] = [now, yield]
+      end
+      cache[user]
     end
   end
 end

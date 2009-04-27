@@ -13,6 +13,10 @@ class Room
       convert_profile(ff_client.get_room_profile(auth.name, auth.remote_key, room) || {})
     end
 
+    def ff_status_map(auth, rooms)
+      ff_client.get_room_status(auth.name, auth.remote_key, rooms)
+    end
+
   private
 
     def convert_profile(profile)

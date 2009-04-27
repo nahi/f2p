@@ -226,11 +226,11 @@ module FriendFeed
       "http://friendfeed.com/rooms/#{name}/picture?size=#{size}"
     end
 
-    def get_profile(name, remote_key, user)
+    def get_profile(name, remote_key, user, opt = {})
       uri = uri("user/#{user}/profile")
       return nil unless uri
       res = client_sync(uri, name, remote_key) { |client|
-        get_request(client, uri)
+        get_request(client, uri, opt)
       }
       if res.status == 200
         JSON.parse(res.content)
@@ -249,11 +249,11 @@ module FriendFeed
       end
     end
 
-    def get_room_profile(name, remote_key, room)
+    def get_room_profile(name, remote_key, room, opt = {})
       uri = uri("room/#{room}/profile")
       return nil unless uri
       res = client_sync(uri, name, remote_key) { |client|
-        res = get_request(client, uri)
+        res = get_request(client, uri, opt)
       }
       if res.status == 200
         JSON.parse(res.content)

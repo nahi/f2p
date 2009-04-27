@@ -257,7 +257,8 @@ __EOS__
   end
 
   def room_status(nickname)
-    room_profile(nickname)['status']
+    @room_status ||= {}
+    @room_status[nickname] ||= room_profile(nickname)['status']
   end
 
   def room_description(nickname)
@@ -299,7 +300,8 @@ __EOS__
   end
 
   def user_status(nickname)
-    user_profile(nickname)['status']
+    @user_status ||= {}
+    @user_status[nickname] ||= user_profile(nickname)['status']
   end
 
   def user_picture(nickname, size = 'small')

@@ -58,8 +58,8 @@ module EntryHelper
         end
       end
     end
-    user_profiles(users.uniq)
-    room_profiles(rooms.uniq)
+    @user_status = User.ff_status_map(auth, users.uniq)
+    @room_status = Room.ff_status_map(auth, rooms.uniq)
   end
 
   def link_action(action, opt = {})
