@@ -401,14 +401,15 @@ __EOS__
     end
   end
 
-  def link_to(markup, *rest)
-    if rest.size == 1 and rest.first.is_a?(String) and !url_for_app?(rest.first)
-      opt = {}
-      opt[:target] = '_blank' if setting.link_open_new_window
+  def link_to(name, options = {}, html_options = {})
+    if options.is_a?(String) and !url_for_app?(options)
+      if setting.link_open_new_window
+        html_options = html_options.merge(:target => '_blank')
+      end
       if setting.link_type == 'gwt'
-        return super(markup, GWT_URL_BASE + u(rest.first), opt)
+        return super(name, GWT_URL_BASE + u(options), html_options)
       else
-        return super(markup, rest.first, opt)
+        return super(name, options, html_options)
       end
     end
     super

@@ -214,12 +214,11 @@ module EntryHelper
     q(h(title))
   end
 
-  def entry_link_to(name, options)
-    html_options = nil
+  def entry_link_to(name, options = {}, html_options = {})
     @already_linked ||= false
     unless @already_linked
       @already_linked = true
-      html_options = { :id => 'first_link' }
+      html_options = html_options.merge(:id => 'first_link')
     end
     link_to(name, options, html_options)
   end
