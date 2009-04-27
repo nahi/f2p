@@ -131,8 +131,12 @@ module EntryHelper
     str
   end
 
+  def media_disabled?
+    ctx.list? and !setting.list_view_media_rendering
+  end
+
   def media_tag(entry, url, opt = {})
-    if entry and ctx.list? and !setting.list_view_media_rendering
+    if entry and media_disabled?
       link_to(icon_tag(:media_disabled) + '[media disabled by setting]', link_show(entry.id))
     else
       image_tag(url, opt.merge(:class => h('media')))
@@ -281,7 +285,7 @@ module EntryHelper
         safe_content = h(title)
       end
       if safe_content
-        if link
+        if !media_disabled? and link
           link_to(safe_content, link)
         else
           safe_content
@@ -328,7 +332,12 @@ module EntryHelper
     address = point.address
     tb = generator.staticmap_url(F2P::Config.google_maps_maptype, lat, long, :zoom => zoom || F2P::Config.google_maps_zoom, :width => F2P::Config.google_maps_width, :height => F2P::Config.google_maps_height)
     link = generator.link_url(lat, long, address)
-    link_to(media_tag(entry, tb, :alt => h(address), :title => h(address), :size => image_size(F2P::Config.google_maps_width, F2P::Config.google_maps_height)), link)
+    content = media_tag(entry, tb, :alt => h(address), :title => h(address), :size => image_size(F2P::Config.google_maps_width, F2P::Config.google_maps_height))
+    if media_disabled?
+      content
+    else
+      link_to(content, link)
+    end
   end
 
   def google_maps_markers_link(entries)
@@ -340,7 +349,12 @@ module EntryHelper
     ids = entries.sort { |a, b|
       a.published_at <=> b.published_at
     }.map { |e| e.id }.join(',')
-    link_to(media_tag(nil, tb, :size => image_size(F2P::Config.google_maps_width, F2P::Config.google_maps_height)), link_list(:ids => ids))
+    if media_disabled?
+      content = h('[filter geo entries]')
+    else
+      content = media_tag(nil, tb, :size => image_size(F2P::Config.google_maps_width, F2P::Config.google_maps_height))
+    end
+    link_to(content, link_list(:ids => ids))
   end
 
   def brightkite_content(common, entry)
