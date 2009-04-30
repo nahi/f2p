@@ -17,7 +17,7 @@ class Service
     @entry_type = hash['entryType']
   end
 
-  ['internal', 'twitter', 'tumblr', 'brightkite'].each do |name|
+  ['internal', 'twitter', 'tumblr', 'brightkite', 'stumbleupon'].each do |name|
     define_method(name + '?') do
       self.id == name
     end

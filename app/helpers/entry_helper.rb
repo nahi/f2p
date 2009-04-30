@@ -151,6 +151,8 @@ module EntryHelper
       twitter_content(common, entry)
     elsif entry.service.tumblr?
       tumblr_content(common, entry)
+    elsif entry.service.stumbleupon?
+      stumbleupon_content(common, entry)
     else
       common
     end
@@ -384,6 +386,29 @@ module EntryHelper
       link_content(fold + '...', entry) + link_to(icon_tag(:more), link_show(entry.id))
     else
       common
+    end
+  end
+
+  def stumbleupon_content(common, entry)
+    if entry.medias.empty?
+      common
+    else
+      str = entry.medias.collect { |media|
+        link = media.link
+        if media.enclosures.first
+          url = media.enclosures.first['url']
+          label = entry.title
+          safe_content = media_tag(entry, url, :alt => h(label), :title => h(label))
+        end
+        if safe_content
+          if !media_disabled? and link
+            link_to(safe_content, link)
+          else
+            safe_content
+          end
+        end
+      }.join(' ')
+      common + "<br />\n&nbsp;&nbsp;&nbsp;" + str
     end
   end
 
