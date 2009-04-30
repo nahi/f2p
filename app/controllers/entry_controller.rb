@@ -58,7 +58,7 @@ class EntryController < ApplicationController
       @num = intparam(:num) || setting.entries_in_page
       @likes = intparam(:likes)
       @comments = intparam(:comments)
-      @fold = (param(:fold) != 'no')
+      @fold = !(param(:fold) == 'no' or @label)
       @inbox = false
       @home = !(@eid or @eids or @inbox or @query or @like or @comment or @user or @friends or @list or @room or @link or @label)
     end
