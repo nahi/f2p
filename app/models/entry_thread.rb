@@ -278,17 +278,15 @@ class EntryThread
     def pinned_entries(auth, opt)
       start = opt[:start]
       num = opt[:num]
-      limit = start + num
       pinned = Pin.find(
         :all,
         :conditions => [ 'user_id = ?', auth.id ],
         :joins => 'INNER JOIN last_modifieds ON pins.eid = last_modifieds.eid',
-        :order => 'last_modifieds.date desc',
-        :limit => limit
+        :order => 'last_modifieds.date desc'
       ).map { |e| e.eid }
       if opt[:service]
         pinned = get_entries(auth, :ids => pinned).find_all { |e|
-          opt[:service].nil? or opt[:service] == e['service']['id']
+          opt[:service] == e['service']['id']
         }
         pinned[start, num] || []
       elsif pinned = pinned[start, num]
