@@ -389,7 +389,6 @@ class EntryController < ApplicationController
       session[:ctx].reset_for_new
     end
     flash[:added_id] = id
-    reset_pagination_ctx
     redirect_to_list
   end
 
