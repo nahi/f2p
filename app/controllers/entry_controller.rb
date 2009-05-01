@@ -100,7 +100,7 @@ class EntryController < ApplicationController
       elsif @list
         opt.merge(:list => @list, :merge_service => true)
       elsif @room
-        opt.merge(:room => @room, :merge_service => true)
+        opt.merge(:room => @room, :merge_service => true, :merge_entry => (@room != '*'))
       elsif @inbox
         opt.merge(:inbox => true, :merge_service => true)
       else
