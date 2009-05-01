@@ -114,9 +114,16 @@ class Entry
   attr_accessor :view_pinned
   attr_accessor :view_inbox
   attr_accessor :view_links
+  attr_accessor :view_map
 
   def initialize(hash)
     initialize_with_hash(hash, 'id', 'title', 'link', 'updated', 'published')
+    @twitter_username = nil
+    @twitter_reply_to = nil
+    @view_pinned = nil
+    @view_inbox = nil
+    @view_links = nil
+    @view_map = false
     @service = Service[hash['service']]
     @user = EntryUser[hash['user']]
     @medias = (hash['media'] || EMPTY).map { |e| Media[e] }
@@ -131,11 +138,6 @@ class Entry
     @geo = Geo[hash['geo']] || extract_geo_from_google_staticmap_url(@medias)
     @friend_of = EntryUser[hash['friendof']]
     @hidden = hash['hidden'] || false
-    @twitter_username = nil
-    @twitter_reply_to = nil
-    @view_pinned = nil
-    @view_inbox = nil
-    @view_likns = nil
     if self.service and self.service.twitter?
       @twitter_username = (self.service.profile_url || '').sub(/\A.*\//, '')
       if /@([a-zA-Z0-9_]+)/ =~ self.title
@@ -203,6 +205,7 @@ private
     medias.each do |m|
       m.contents.each do |c|
         if /maps.google.com\/staticmap\b.*\bmarkers=([0-9\.]+),([0-9\.]+)\b/ =~ c.url
+          self.view_map = true
           return Geo['lat' => $1, 'long' => $2]
         end
       end

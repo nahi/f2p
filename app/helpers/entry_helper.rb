@@ -145,9 +145,7 @@ module EntryHelper
 
   def content(entry)
     common = common_content(entry)
-    if entry.service.brightkite?
-      brightkite_content(common, entry)
-    elsif entry.service.twitter?
+    if entry.service.twitter?
       twitter_content(common, entry)
     elsif entry.service.tumblr?
       tumblr_content(common, entry)
@@ -174,6 +172,10 @@ module EntryHelper
       # entries from Hatena contains 'enclosure' but no title and link for now.
       with_media = content_with_media(entry)
       content += "<br />\n&nbsp;&nbsp;&nbsp;" + with_media unless with_media.empty?
+    end
+    if entry.geo and !entry.view_map
+      point = GoogleMaps::Point.new(entry.title, entry.geo.lat, entry.geo.long)
+      content += ' ' + google_maps_link(point, nil, entry)
     end
     content
   end
@@ -335,6 +337,7 @@ module EntryHelper
     tb = generator.staticmap_url(F2P::Config.google_maps_maptype, lat, long, :zoom => zoom || F2P::Config.google_maps_zoom, :width => F2P::Config.google_maps_width, :height => F2P::Config.google_maps_height)
     link = generator.link_url(lat, long, address)
     content = media_tag(entry, tb, :alt => h(address), :title => h(address), :size => image_size(F2P::Config.google_maps_width, F2P::Config.google_maps_height))
+    entry.view_map = true if entry
     if media_disabled?
       content
     else
@@ -357,20 +360,6 @@ module EntryHelper
       content = media_tag(nil, tb, :size => image_size(F2P::Config.google_maps_width, F2P::Config.google_maps_height))
     end
     link_to(content, link_list(:ids => ids))
-  end
-
-  def brightkite_content(common, entry)
-    if geo = entry.geo
-      point = GoogleMaps::Point.new(entry.title, geo.lat, geo.long)
-      content = google_maps_link(point, nil, entry)
-      if !entry.medias.empty?
-        common + ' ' + content
-      else
-        common + "<br />\n&nbsp;&nbsp;&nbsp;" + content
-      end
-    else
-      common
-    end
   end
 
   def twitter_content(common, entry)
