@@ -26,8 +26,8 @@
   <li>[inbox] ... show your entries in 'home' excluding archived entries</li>
   <li>[all] ... show all of your entries in 'home' including archived entries</li>
   <li>[me] ... show your profile</li>
-  <li>[lists] ... show entries of your list</li>
   <li>[rooms] ... show entries of rooms you are joining</li>
+  <li>[pin] ... show pinned entries</li>
   <li><%= service_icon_tag('http://friendfeed.com/static/images/icons/internal.png', 'FriendFeed', 'FriendFeed') %> ... show filtered entries by specified service</li>
   <li>(user name) ... show user profile</li>
   <li><%= icon_tag(:url) %> ... show seach result page of entries which relates to specified link</li>
@@ -47,7 +47,7 @@
 <h2>Pin Operation</h2>
 
 <ul>
-  <li><%= icon_tag(:pin) %> ... add pin to the entry; pinned entries keep on showing in [inbox]</li>
+  <li><%= icon_tag(:pin) %> ... add pin to the entry; pinned entries keep on showing in [inbox] and [pin]</li>
   <li><%= icon_tag(:pinned) %> ... unpin the entry and archive it to [all]</li>
   <li><%= submit_tag('mark as read') %> ... archive all entries in [inbox] to [all] except pinned entries</li>
 </ul>
