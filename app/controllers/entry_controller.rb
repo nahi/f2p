@@ -365,10 +365,13 @@ class EntryController < ApplicationController
       end
     end
     if @link
-      link_title ||= capture_title(@link)
-      opt[:body] = link_title
+      if link_title
+        opt[:body] = link_title
+        opt[:comment] = @body
+      else
+        opt[:body] = @body || capture_title(@link)
+      end
       opt[:link] = @link
-      opt[:comment] = @body
     elsif @body
       opt[:body] = @body
     end

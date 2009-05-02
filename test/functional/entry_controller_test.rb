@@ -569,12 +569,20 @@ class EntryControllerTest < ActionController::TestCase
 
   test 'add post link' do
     login('user1')
+    @ff.expects(:post).with('user1', nil, 'hello', 'http://foo/', nil, nil, nil, nil).
+      returns([{'id' => 'foo'}])
+    post :add, :commit => 'post', :body => 'hello', :link => 'http://foo/'
+    assert_redirected_to :action => 'list'
+  end
+
+  test 'add post link body empty' do
+    login('user1')
     h = mock('http_client')
     ApplicationController.http_client = h
     h.expects(:get_content).with('http://foo/').yields(NKF.nkf('-sm0', '<title>日本語</title>'))
-    @ff.expects(:post).with('user1', nil, '日本語', 'http://foo/', 'hello', nil, nil, nil).
+    @ff.expects(:post).with('user1', nil, '日本語', 'http://foo/', nil, nil, nil, nil).
       returns([{'id' => 'foo'}])
-    post :add, :commit => 'post', :body => 'hello', :link => 'http://foo/'
+    post :add, :commit => 'post', :link => 'http://foo/'
     assert_redirected_to :action => 'list'
   end
 
@@ -583,9 +591,9 @@ class EntryControllerTest < ActionController::TestCase
     h = mock('http_client')
     ApplicationController.http_client = h
     h.expects(:get_content).with('http://foo/').raises(RuntimeError.new)
-    @ff.expects(:post).with('user1', nil, '(unknown)', 'http://foo/', 'hello', nil, nil, nil).
+    @ff.expects(:post).with('user1', nil, '(unknown)', 'http://foo/', nil, nil, nil, nil).
       returns([{'id' => 'foo'}])
-    post :add, :commit => 'post', :body => 'hello', :link => 'http://foo/'
+    post :add, :commit => 'post', :link => 'http://foo/'
     assert_redirected_to :action => 'list'
   end
 
