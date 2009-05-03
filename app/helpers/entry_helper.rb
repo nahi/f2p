@@ -171,13 +171,17 @@ module EntryHelper
     if !entry.medias.empty?
       # entries from Hatena contains 'enclosure' but no title and link for now.
       with_media = content_with_media(entry)
-      content += "<br />\n&nbsp;&nbsp;&nbsp;" + with_media unless with_media.empty?
+      content += media_indent + with_media unless with_media.empty?
     end
     if entry.geo and !entry.view_map
       point = GoogleMaps::Point.new(entry.title, entry.geo.lat, entry.geo.long)
       content += ' ' + google_maps_link(point, nil, entry)
     end
     content
+  end
+
+  def media_indent
+    "<br />\n&nbsp;&nbsp;&nbsp;"
   end
 
   def friend_of(entry)
@@ -363,9 +367,16 @@ module EntryHelper
   end
 
   def twitter_content(common, entry)
-    common.gsub(/@([a-zA-Z0-9_]+)/) {
+    str = common.gsub(/@([a-zA-Z0-9_]+)/) {
       '@' + link_to($1, "http://twitter.com/#{$1}")
     }
+    if link = entry.view_links.find { |e| /\btwitpic.com\b/ =~ e }
+      if uri = uri(link)
+        uri.path = "/show/mini#{uri.path}"
+        str += media_indent + media_tag(entry, uri.to_s)
+      end
+    end
+    str
   end
 
   def tumblr_content(common, entry)
@@ -397,7 +408,7 @@ module EntryHelper
           end
         end
       }.join(' ')
-      common + "<br />\n&nbsp;&nbsp;&nbsp;" + str
+      common + media_indent + str
     end
   end
 
