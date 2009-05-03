@@ -760,7 +760,7 @@ module EntryHelper
       !ctx.home or ctx.service
     }
     links << menu_link(menu_label('me', '3'), link_user(auth.name), accesskey('3')) {
-      ctx.user != auth.name or ctx.service
+      ctx.user != auth.name or ctx.service or ctx.like or ctx.comment
     }
     links << menu_link(menu_label('rooms', '7'), link_list(:room => '*'), accesskey('7')) {
       ctx.room != '*'
