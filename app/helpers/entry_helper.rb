@@ -126,7 +126,7 @@ module EntryHelper
       str += h("(#{name})")
     end
     if entry_status(entry) != 'public'
-      str += icon_tag(:private)
+      str = icon_tag(:private) + str
     end
     str
   end
@@ -187,15 +187,15 @@ module EntryHelper
   def friend_of(entry)
     if friend_of = entry.friend_of
       if entry.comments.find { |c| c.nickname == friend_of.nickname }
-        h(" (through #{friend_of.name})")
+        h(" (RT #{friend_of.name})")
       elsif entry.likes.find { |l| l.nickname == friend_of.nickname }
-        h(" (through #{friend_of.name})")
+        h(" (RT #{friend_of.name})")
       end
     end
   end
 
   def author_link(entry)
-    h('by ') + user(entry) + (friend_of(entry) || '')
+    user(entry) + (friend_of(entry) || '')
   end
 
   def emphasize_as_inbox?(entry)

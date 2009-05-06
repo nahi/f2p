@@ -1,8 +1,8 @@
 <%= pin_link(entry) -%>
-<%= icon(entry, !!root_user) %>
+<%= icon(entry, !!root_user) -%>
+ <%= author_link(entry) if root_user != entry.user_id %>
 <%= original_link(entry) -%>
 <%= content(entry) %>
- <%= author_link(entry) if root_user != entry.user_id %>
  <%= via(entry) %>
 <%= published(entry, true) -%>
 <%- if comment_inline?(entry) -%>
