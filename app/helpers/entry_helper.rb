@@ -29,9 +29,9 @@ module EntryHelper
       "'#{list_name(ctx.list)}' entries"
     elsif ctx.room
       if ctx.room == '*'
-        'rooms'
+        'groups'
       else
-        'room'
+        'group'
       end
     elsif ctx.link
       'related entries'
@@ -697,7 +697,7 @@ module EntryHelper
 
   def room_links(user)
     rooms = user_rooms(user)
-    links_if_exists('Rooms: ', rooms) { |e|
+    links_if_exists('Groups: ', rooms) { |e|
       label = "[#{e.name}]"
       if e.nickname == ctx.room_for and !ctx.service and !ctx.label
         h(label)
@@ -773,7 +773,7 @@ module EntryHelper
     links << menu_link(menu_label('me', '3'), link_user(auth.name), accesskey('3')) {
       ctx.user != auth.name or ctx.service or ctx.like or ctx.comment or ctx.query
     }
-    links << menu_link(menu_label('rooms', '7'), link_list(:room => '*'), accesskey('7')) {
+    links << menu_link(menu_label('groups', '7'), link_list(:room => '*'), accesskey('7')) {
       ctx.room != '*'
     }
     links << menu_link(menu_label('pin', '9'), link_list(:label => u('pin')), accesskey('9')) {
