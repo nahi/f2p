@@ -98,6 +98,7 @@ module EntryHelper
     room_entry = (entry.room and entry.room.nickname != ctx.room_for)
     if room_entry
       opt = { :room => u(entry.room.nickname) }
+      user = nil
     elsif entry.room
       opt = { :room => u(entry.room.nickname), :service => u(service.id) }
     else
@@ -195,7 +196,8 @@ module EntryHelper
   end
 
   def author_link(entry)
-    unless entry.room and !entry.service.internal?
+    group_imported = (entry.room and !entry.service.internal?)
+    if !group_imported and !ctx.user_only?
       user(entry) + (friend_of(entry) || '')
     end
   end

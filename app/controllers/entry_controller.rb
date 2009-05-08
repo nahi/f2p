@@ -71,6 +71,10 @@ class EntryController < ApplicationController
       !single?
     end
 
+    def user_only?
+      @user and !@like and !@comment
+    end
+
     def find_opt
       opt = {
         :auth => @auth,
