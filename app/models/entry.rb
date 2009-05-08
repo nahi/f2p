@@ -71,11 +71,13 @@ class Entry
     def add_pin(opt)
       auth = opt[:auth]
       id = opt[:id]
-      unless Pin.find_by_user_id_and_eid(auth.id, id)
-        pin = Pin.new
-        pin.user = auth
-        pin.eid = id
-        raise unless pin.save
+      ActiveRecord::Base.transaction do
+        unless Pin.find_by_user_id_and_eid(auth.id, id)
+          pin = Pin.new
+          pin.user = auth
+          pin.eid = id
+          pin.save!
+        end
       end
     end
 
