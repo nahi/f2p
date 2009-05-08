@@ -195,7 +195,9 @@ module EntryHelper
   end
 
   def author_link(entry)
-    user(entry) + (friend_of(entry) || '')
+    unless entry.room and !entry.service.internal?
+      user(entry) + (friend_of(entry) || '')
+    end
   end
 
   def emphasize_as_inbox?(entry)
