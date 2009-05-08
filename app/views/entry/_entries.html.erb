@@ -15,13 +15,7 @@
   <%- if ctx.room_for -%>
     <p><%= room_picture(ctx.room_for) %> <%= h(room_name(ctx.room_for)) %> <%= link_to(h('[profile]'), '#profile') %></p>
   <%- end -%>
-  <%- if ctx.home or ctx.list -%>
-    <p><%= list_links %></p>
-  <%- elsif ctx.user_for -%>
-    <p><%= user_page_links(ctx.user_for) %></p>
-  <%- elsif ctx.room -%>
-    <p><%= room_links(ctx.user) %></p>
-  <%- elsif ctx.link -%>
+  <%- if ctx.link -%>
     <p>entries related to: <%= link_to(h(ctx.link), u(ctx.link)) %></p>
   <%- end -%>
 <%- end -%>
@@ -67,9 +61,15 @@
 <%- end -%>
 <%- if ctx.user_for -%>
   <p><%= render :partial => 'profile', :locals => {:user => ctx.user_for} %></p>
-<%- end -%>
-<%- if ctx.room_for -%>
+<%- elsif ctx.room_for -%>
   <p><%= render :partial => 'room', :locals => {:room => ctx.room_for} %></p>
+<%- end -%>
+<%- if !ctx.user_only? -%>
+  <hr />
+  <p><a name="filter">[Filter by Lists, Groups and mine]</a></p>
+  <p><%= list_links %></p>
+  <p><%= room_links(auth.name) %></p>
+  <p><%= user_page_links(auth.name) %></p>
 <%- end -%>
 <script type='text/javascript'><!--
 document.getElementById('first_link').focus();

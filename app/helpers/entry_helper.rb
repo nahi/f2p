@@ -81,7 +81,7 @@ module EntryHelper
   end
 
   def pin_link(entry)
-    if ctx.inbox or ctx.single? or ctx.query or entry.view_pinned
+    if ctx.inbox or ctx.home or ctx.single? or ctx.query or entry.view_pinned
       if entry.view_pinned
         link_to(icon_tag(:pinned, 'unpin'), link_action('unpin', :id => entry.id))
       else
@@ -664,20 +664,15 @@ module EntryHelper
   end
 
   def list_links
-    user = auth.name
-    str = h('Lists: ') + menu_link(h('[Home]'), link_list()) { !ctx.home }
-    lists = user_lists(user)
-    unless lists.empty?
-      str += ' ' + lists.collect { |e|
-        label = "[#{e.name}]"
-        if ctx.list == e.nickname
-          h(label)
-        else
-          link_to(h(label), link_list(:list => u(e.nickname)))
-        end
-      }.join(' ')
-    end
-    str
+    lists = user_lists(auth.name)
+    links_if_exists('Lists: ', lists) { |e|
+      label = "[#{e.name}]"
+      if ctx.list == e.nickname
+        h(label)
+      else
+        link_to(h(label), link_list(:list => u(e.nickname)))
+      end
+    }
   end
 
   def zoom_select_tag(varname, default)
@@ -771,20 +766,21 @@ module EntryHelper
       links << link_to(icon_tag(:top), '#top', accesskey('2'))
     end
     links << menu_link(menu_label('inbox', '0'), link_action('inbox'), accesskey('0'))
-    links << menu_link(menu_label('all', '1'), link_list(), accesskey('1')) {
-      !ctx.home or ctx.service
-    }
-    links << menu_link(menu_label('me', '3'), link_user(auth.name), accesskey('3')) {
-      ctx.user != auth.name or ctx.service or ctx.like or ctx.comment or ctx.query
-    }
-    links << menu_link(menu_label('groups', '7'), link_list(:room => '*'), accesskey('7')) {
-      ctx.room != '*'
-    }
+    if ctx.friend_view?
+      links << menu_link(menu_label('me', '3'), link_user(auth.name), accesskey('3'))
+    elsif ctx.user_only?
+      links << menu_link(menu_label('filter', '3'), '#profile', accesskey('3'))
+    else
+      links << menu_link(menu_label('filter', '3'), '#filter', accesskey('3'))
+    end
     links << menu_link(menu_label('pin', '9'), link_list(:label => u('pin')), accesskey('9')) {
       ctx.label != 'pin' or ctx.service or ctx.room
     }
     links << menu_link(icon_tag(:next), list_opt(ctx.link_opt(:start => start + num, :num => num)), accesskey('6')) { !no_page }
     links << archive_button
+    if ctx.inbox
+      links << menu_link(menu_label('show all', '1'), link_list(), accesskey('1'))
+    end
     links.join(' ')
   end
 
@@ -804,28 +800,25 @@ module EntryHelper
   end
 
   def user_page_links(user)
+    return if imaginary?(user)
+    name = user_name(user)
     links = []
-    links << menu_link(menu_label("self"), link_user(user)) {
-      ctx.friends or ctx.like or ctx.comment
+    links << menu_link(menu_label(name), link_user(user)) {
+      !ctx.user_only?
     }
-    if user_id(user) != user
-      links << menu_link(menu_label('friends'), link_list(:friends => user)) {
-        !ctx.friends
-      }
-      links << menu_link(menu_label('likes'), link_list(:like => 'likes', :user => ctx.user_for)) {
-        ctx.like != 'likes'
-      }
-      links << menu_link(menu_label('comments'), link_list(:comment => 'comments', :user => ctx.user_for)) {
-        ctx.comment != 'comments'
-      }
-    end
+    links << menu_link(menu_label('discussion'), link_list(:comment => 'discussion', :user => ctx.user_for)) {
+      user != ctx.user_for or ctx.comment != 'discussion'
+    }
+    links << menu_link(menu_label('likes'), link_list(:like => 'likes', :user => ctx.user_for)) {
+      user != ctx.user_for or ctx.like != 'likes'
+    }
     links << menu_link(menu_label('liked'), link_list(:like => 'liked', :user => ctx.user_for)) {
-      ctx.like != 'liked'
+      user != ctx.user_for or ctx.like != 'liked'
     }
-    links << menu_link(menu_label('commented'), link_list(:comment => 'commented', :user => ctx.user_for)) {
-      ctx.comment != 'commented'
+    links << menu_link(menu_label('with friends'), link_list(:friends => user)) {
+      user != ctx.user_for or !ctx.friends
     }
-    h('Filter: ') + links.join(' ')
+    h(name + "'s entry: ") + links.join(' ')
   end
 
   def menu_label(label, accesskey = nil)

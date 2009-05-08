@@ -280,6 +280,10 @@ __EOS__
     room_profile(nickname)['members'] || []
   end
 
+  def imaginary?(nickname)
+    user_id(nickname) == nickname
+  end
+
   def user_profiles(nicknames)
     @user_profile ||= {}
     if nicknames.any? { |e| @user_profile[e].nil? }
@@ -309,7 +313,7 @@ __EOS__
   end
 
   def user_picture(nickname, size = 'small')
-    return if user_id(nickname) == nickname
+    return if imaginary?(nickname)
     name = user_name(nickname)
     if nickname == auth.name
       name = self_label

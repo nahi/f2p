@@ -212,9 +212,9 @@ class EntryControllerTest < ActionController::TestCase
     @ff.expects(:get_discussion).
       with('user1', nil, 'user1', {:service => nil, :num => 20, :start => 0}).
       returns(read_entries('entries', 'f2ptest')).times(2)
-    get :list, :comment => 'commented'
+    get :list, :comment => 'discussion'
     assert_response :success
-    get :list, :comment => 'commented'
+    get :list, :comment => 'discussion'
     assert_response :success
   end
 

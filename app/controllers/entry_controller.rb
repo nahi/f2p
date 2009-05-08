@@ -75,6 +75,10 @@ class EntryController < ApplicationController
       @user and !@like and !@comment
     end
 
+    def friend_view?
+      user_only? and @user != @auth.name
+    end
+
     def find_opt
       opt = {
         :auth => @auth,

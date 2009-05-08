@@ -169,8 +169,8 @@ class EntryThread
           wrap(Task.run { get_liked(auth, opt) }.result)
         elsif opt[:comment] == 'comments'
           wrap(Task.run { get_comments(auth, opt) }.result)
-        elsif opt[:comment] == 'commented'
-          wrap(Task.run { get_commented(auth, opt) }.result)
+        elsif opt[:comment] == 'discussion'
+          wrap(Task.run { get_discussion(auth, opt) }.result)
         elsif opt[:user]
           wrap(Task.run { get_user_entries(auth, opt) }.result)
         elsif opt[:list]
@@ -362,7 +362,7 @@ class EntryThread
       ff_client.get_comments(auth.name, auth.remote_key, user, filter_opt(opt))
     end
 
-    def get_commented(auth, opt)
+    def get_discussion(auth, opt)
       user = opt[:user]
       ff_client.get_discussion(auth.name, auth.remote_key, user, filter_opt(opt))
     end
