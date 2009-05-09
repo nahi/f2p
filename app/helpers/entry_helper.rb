@@ -564,14 +564,18 @@ module EntryHelper
     end
   end
 
-  def search_form
+  def search_form(opt = {})
     str = ''
     str += hidden_field_tag('user', ctx.user) if ctx.user
     str += hidden_field_tag('list', ctx.list) if ctx.list
     str += hidden_field_tag('room', ctx.room_for) if ctx.room_for
     str += hidden_field_tag('friends', ctx.friends) if ctx.friends
     str += hidden_field_tag('service', ctx.service) if ctx.service
-    str += text_field_tag('query', ctx.query) + submit_tag('search')
+    if opt[:compact]
+      str += text_field_tag('query', ctx.query, :size => 8)
+    else
+      str += text_field_tag('query', ctx.query) + submit_tag('search')
+    end
     str
   end
 
