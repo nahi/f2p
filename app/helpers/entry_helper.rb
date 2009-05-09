@@ -29,7 +29,7 @@ module EntryHelper
       if ctx.room == '*'
         'groups'
       else
-        "#{room_name(ctx.room)}"
+        "#{room_name(ctx.room_for)}"
       end
     elsif ctx.link
       'related entries'
@@ -611,7 +611,7 @@ module EntryHelper
 
   def post_entry_form
     str = ''
-    str += hidden_field_tag('room', ctx.room_for) + h(ctx.room_for) + ': ' if ctx.room_for
+    str += hidden_field_tag('room', ctx.room_for) + h(room_name(ctx.room_for)) + ': ' if ctx.room_for
     str += text_field_tag('body') + submit_tag('post')
     str
   end
