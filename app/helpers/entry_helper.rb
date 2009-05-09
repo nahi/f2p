@@ -17,21 +17,19 @@ module EntryHelper
       "entries #{user_name(ctx.user || auth.name)} likes"
     elsif ctx.like == 'liked'
       "#{user_name(ctx.user || auth.name)}'s liked entries"
-    elsif ctx.comment == 'comments'
-      "entries #{user_name(ctx.user || auth.name)} commented"
-    elsif ctx.comment == 'commented'
-      "#{user_name(ctx.user || auth.name)}'s commented + liked entries"
+    elsif ctx.comment == 'discussion'
+      "#{user_name(ctx.user || auth.name)}'s discussion"
     elsif ctx.user
-      'user'
+      "#{user_name(ctx.user || auth.name)}"
     elsif ctx.friends
-      'friends'
+      "#{user_name(ctx.user || auth.name)} with friends"
     elsif ctx.list
       "'#{list_name(ctx.list)}' entries"
     elsif ctx.room
       if ctx.room == '*'
         'groups'
       else
-        'group'
+        "#{room_name(ctx.room)}"
       end
     elsif ctx.link
       'related entries'
@@ -40,7 +38,7 @@ module EntryHelper
     elsif ctx.inbox
       'inbox'
     else
-      'home'
+      'archived'
     end
   end
 
@@ -779,7 +777,7 @@ module EntryHelper
     links << menu_link(icon_tag(:next), list_opt(ctx.link_opt(:start => start + num, :num => num)), accesskey('6')) { !no_page }
     links << archive_button
     if ctx.inbox
-      links << menu_link(menu_label('show all', '1'), link_list(), accesskey('1'))
+      links << menu_link(menu_label('archived', '1'), link_list(), accesskey('1'))
     end
     links.join(' ')
   end
@@ -793,7 +791,7 @@ module EntryHelper
 
   def archive_button
     if ctx.inbox
-      label = 'mark as read'
+      label = 'archive'
       label = '5.' + label if cell_phone?
       submit_tag(label, accesskey('5'))
     end
