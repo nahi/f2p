@@ -571,8 +571,11 @@ module EntryHelper
     str += hidden_field_tag('room', ctx.room_for) if ctx.room_for
     str += hidden_field_tag('friends', ctx.friends) if ctx.friends
     str += hidden_field_tag('service', ctx.service) if ctx.service
+    if str.empty?
+      str += hidden_field_tag('friends', 'me')
+    end
     if opt[:compact]
-      str += text_field_tag('query', ctx.query, :size => 8)
+      str += text_field_tag('query', ctx.query, :size => 6)
     else
       str += text_field_tag('query', ctx.query) + submit_tag('search')
     end

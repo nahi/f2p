@@ -282,7 +282,7 @@ class EntryHelperTest < MyActionView::TestCaseWithController
   # tests for EntryHelper
   # 
   test 'viewname' do
-    assert_equal('home', viewname)
+    assert_equal('archived', viewname)
   end
 
   test 'pin_link' do
