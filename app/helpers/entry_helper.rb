@@ -104,25 +104,18 @@ module EntryHelper
     end
     opt[:label] = ctx.label
     link = link_user(user, opt)
+    extra = nil
     if room_entry
-      name = entry.room.name
-      if ctx.room_for
-        if entry.service.internal?
-          name = nil
-        else
-          name = entry.service.name
-        end
-      end
+      extra = entry.room.name
       str = room_icon(service, entry.room.nickname, link)
     else
       str = service_icon(service, link)
     end
-    if !hide_feedname and entry.service.service_group?
-      name = entry.service.name
-      name = nil if name == entry.user.name
+    if entry.service.service_group?
+      extra = entry.service.name
     end
-    if name
-      str += h("(#{name})")
+    if extra and !hide_feedname
+      str += h("(#{extra})")
     end
     if entry_status(entry) != 'public'
       str = icon_tag(:private) + str

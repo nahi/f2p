@@ -161,7 +161,9 @@ class Entry
   end
 
   def service_identity
-    [service.id, room]
+    sid = service.service_group? ? service.profile_url : service.id
+    rid = room ? room.nickname : nil
+    [sid, rid]
   end
 
   def published_at
