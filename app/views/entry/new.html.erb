@@ -35,7 +35,7 @@
     <%- else -%>
       <dl>
         <dt><%= h(@placemark.address) %></dt>
-        <dd><%= google_maps_link(@placemark, setting.google_maps_zoom, nil) %></dd>
+        <dd><%= google_maps_link(@placemark, nil, setting.google_maps_zoom) %></dd>
       </dl>
     <%- end -%>
   <%- end -%>

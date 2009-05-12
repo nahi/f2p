@@ -143,7 +143,7 @@ Rails::Initializer.run do |config|
   F2P::Config.google_maps_maptype = 'mobile'
   F2P::Config.google_maps_zoom = 13
   F2P::Config.google_maps_width = 160
-  F2P::Config.google_maps_height = 80
+  F2P::Config.google_maps_height = 120
   F2P::Config.google_maps_geocoding_lang = 'ja'
 
   F2P::Config.font_size = 9

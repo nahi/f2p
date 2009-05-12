@@ -149,7 +149,7 @@ module GoogleMaps
     def staticmap_url(maptype, lat, long, opt = {})
       zoom = opt[:zoom] || 12
       width = opt[:width] || 160
-      height = opt[:height] || 80
+      height = opt[:height] || 120
       url = "http://maps.google.com/staticmap?zoom=#{zoom}&size=#{width}x#{height}&maptype=#{maptype}&markers=#{lat},#{long}"
       if @key
         url += "&key=#{@key}"
@@ -159,7 +159,7 @@ module GoogleMaps
 
     def staticmap_markers_url(maptype, markers, opt = {})
       width = opt[:width] || 160
-      height = opt[:height] || 80
+      height = opt[:height] || 120
       markers = markers.collect { |lat, long, color, atoz|
         if color and atoz
           rest = color + atoz

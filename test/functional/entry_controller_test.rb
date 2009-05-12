@@ -618,7 +618,7 @@ class EntryControllerTest < ActionController::TestCase
            'hello ([map] 日本、東京駅)',
            'http://maps.google.com/maps?q=35.681382,139.766084+%28%E6%97%A5%E6%9C%AC%E3%80%81%E6%9D%B1%E4%BA%AC%E9%A7%85%29',
            nil,
-           [['http://maps.google.com/staticmap?zoom=14&size=160x80&maptype=mobile&markers=35.681382,139.766084', 'http://maps.google.com/maps?q=35.681382,139.766084+%28%E6%97%A5%E6%9C%AC%E3%80%81%E6%9D%B1%E4%BA%AC%E9%A7%85%29']],
+           [['http://maps.google.com/staticmap?zoom=14&size=160x120&maptype=mobile&markers=35.681382,139.766084', 'http://maps.google.com/maps?q=35.681382,139.766084+%28%E6%97%A5%E6%9C%AC%E3%80%81%E6%9D%B1%E4%BA%AC%E9%A7%85%29']],
            nil, nil).
       returns([{'id' => 'foo'}])
     post :add,

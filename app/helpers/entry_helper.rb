@@ -1,4 +1,8 @@
 module EntryHelper
+  BRIGHTKITE_MAP_ZOOM = 12
+  BRIGHTKITE_MAP_WIDTH = 120
+  BRIGHTKITE_MAP_HEIGHT = 80
+
   def viewname
     if ctx.service
       viewname_base + "(#{ctx.service})"
@@ -167,7 +171,17 @@ module EntryHelper
     end
     if entry.geo and !entry.view_map
       point = GoogleMaps::Point.new(entry.title, entry.geo.lat, entry.geo.long)
-      content += ' ' + google_maps_link(point, nil, entry)
+      zoom = F2P::Config.google_maps_zoom
+      width = F2P::Config.google_maps_width
+      height = F2P::Config.google_maps_height
+      if entry.service.brightkite?
+        if !entry.medias.empty?
+          zoom = BRIGHTKITE_MAP_ZOOM
+          width = BRIGHTKITE_MAP_WIDTH
+          height = BRIGHTKITE_MAP_HEIGHT
+        end
+      end
+      content += ' ' + google_maps_link(point, entry, zoom, width, height)
     end
     content
   end
@@ -328,14 +342,14 @@ module EntryHelper
     link
   end
 
-  def google_maps_link(point, zoom = nil, entry = nil)
+  def google_maps_link(point, entry, zoom = F2P::Config.google_maps_zoom, width = F2P::Config.google_maps_width, height = F2P::Config.google_maps_height)
     generator = GoogleMaps::URLGenerator.new(F2P::Config.google_maps_api_key)
     lat = point.lat
     long = point.long
     address = point.address
-    tb = generator.staticmap_url(F2P::Config.google_maps_maptype, lat, long, :zoom => zoom || F2P::Config.google_maps_zoom, :width => F2P::Config.google_maps_width, :height => F2P::Config.google_maps_height)
+    tb = generator.staticmap_url(F2P::Config.google_maps_maptype, lat, long, :zoom => zoom, :width => width, :height => height)
     link = generator.link_url(lat, long, address)
-    content = media_tag(entry, tb, :alt => h(address), :title => h(address), :size => image_size(F2P::Config.google_maps_width, F2P::Config.google_maps_height))
+    content = media_tag(entry, tb, :alt => h(address), :title => h(address), :size => image_size(width, height))
     entry.view_map = true if entry
     if media_disabled?
       content
