@@ -814,6 +814,7 @@ module EntryHelper
   def user_page_links(user)
     return if imaginary?(user)
     name = user_name(user)
+    return unless name
     links = []
     links << menu_link(menu_label(name), link_user(user)) {
       !ctx.user_only?

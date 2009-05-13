@@ -439,7 +439,7 @@ if $0 == __FILE__
   require 'logger'
   logger = Logger.new('ff.log')
   client = FriendFeed::APIClient.new(logger)
-  print JSON.pretty_generate(client.get_home_entries(name, remote_key))
+  print JSON.pretty_generate(client.get_user_entries(name, remote_key, 'arika'))
 #  client = FriendFeed::ChannelClient.new(name, remote_key, logger)
 #  while true
 #    print JSON.pretty_generate(client.updated_home_entries(:timeout => 10))
