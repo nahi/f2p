@@ -582,9 +582,9 @@ module EntryHelper
       str += hidden_field_tag('friends', 'me')
     end
     if opt[:compact]
-      str += text_field_tag('query', ctx.query, :size => 6)
+      str += text_field_tag('query', ctx.query, :size => 6, :placeholder => 'search')
     else
-      str += text_field_tag('query', ctx.query) + submit_tag('search')
+      str += text_field_tag('query', ctx.query, :placeholder => 'search') + submit_tag('search')
     end
     str
   end
@@ -622,7 +622,7 @@ module EntryHelper
   def post_entry_form
     str = ''
     str += hidden_field_tag('room', ctx.room_for) + h(room_name(ctx.room_for)) + ': ' if ctx.room_for
-    str += text_field_tag('body') + submit_tag('post')
+    str += text_field_tag('body', nil, :placeholder => 'post') + submit_tag('post')
     str
   end
 
@@ -633,7 +633,7 @@ module EntryHelper
         default = "@#{default} "
       end
     end
-    text_field_tag('body', default) + submit_tag('post')
+    text_field_tag('body', default, :placeholder => 'comment') + submit_tag('post')
   end
 
   def edit_comment_form(comment)
