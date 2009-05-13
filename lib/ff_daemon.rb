@@ -214,7 +214,7 @@ module FriendFeed
     define_cached_proxy_method :get_room_picture_url
     #define_cached_proxy_method :get_profile
     #define_cached_proxy_method :get_profiles
-    define_cached_proxy_method :get_room_profile
+    #define_cached_proxy_method :get_room_profile
 
     def initialize(logger = nil)
       @client = FriendFeed::APIClient.new(logger)
@@ -240,19 +240,23 @@ module FriendFeed
       user ||= name
       basekey = name
       cache = ((@cache ||= {})[basekey] ||= {})[:get_profile] ||= {}
-      cache[user] ||= ClientProxy.proxy(@client, :get_profile, name, remote_key, user)
+      update_profile_cache(cache, user) {
+        ClientProxy.proxy(@client, :get_profile, name, remote_key, user)
+      }
     end
 
     def get_profiles(name, remote_key, users)
+      users.collect { |user|
+        get_profile(name, remote_key, user)
+      }
+    end
+
+    def get_room_profile(name, remote_key, room)
       basekey = name
-      cache = ((@cache ||= {})[basekey] ||= {})[:get_profile] ||= {}
-      if users.any? { |e| cache[e].nil? }
-        profiles = ClientProxy.proxy(@client, :get_profiles, name, remote_key, users)
-        profiles.each do |profile|
-          cache[profile['nickname']] = profile
-        end
-      end
-      users.map { |e| cache[e] }
+      cache = ((@cache ||= {})[basekey] ||= {})[:get_room_profile] ||= {}
+      update_profile_cache(cache, room) {
+        ClientProxy.proxy(@client, :get_room_profile, name, remote_key, room)
+      }
     end
 
     def get_user_status(name, remote_key, users)
@@ -302,17 +306,17 @@ module FriendFeed
       @channel[name].inbox(start || 0, num || @channel_cache_size)
     end
 
-    def update_profile_cache(cache, user)
+    def update_profile_cache(cache, key)
       now = Time.now
-      if e = cache[user]
+      if e = cache[key]
         updated, element = e
         if (now - updated) > @profile_cache_timeout
-          cache[user] = [now, yield]
+          cache[key] = [now, yield]
         end
       else
-        cache[user] = [now, yield]
+        cache[key] = [now, yield]
       end
-      cache[user][1]
+      cache[key][1]
     end
   end
 end
