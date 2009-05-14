@@ -49,3 +49,10 @@
 <%- end -%>
 </div>
 <p><a name="bottom"></a><%= page_links(:for_bottom => true) %></p>
+<%- if !ctx.user_only? -%>
+  <hr />
+  <p><a name="filter">[Filter]</a></p>
+  <p><%= user_page_links(auth.name) %></p>
+  <p><%= list_links %></p>
+  <p><%= room_links(auth.name) %></p>
+<%- end -%>
