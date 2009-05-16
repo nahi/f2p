@@ -788,7 +788,11 @@ module EntryHelper
     else
       links << menu_link(menu_label('filter', '3'), '#filter', accesskey('3'))
     end
-    links << menu_link(menu_label('pin', '9'), link_list(:label => u('pin')), accesskey('9')) {
+    pin_label = 'pin'
+    if threads = opt[:threads]
+      pin_label += "(#{threads.pins})"
+    end
+    links << menu_link(menu_label(pin_label, '9'), link_list(:label => u('pin')), accesskey('9')) {
       ctx.label != 'pin' or ctx.service or ctx.room
     }
     links << menu_link(icon_tag(:next), list_opt(ctx.link_opt(:start => start + num, :num => num)), accesskey('6')) { !no_page }
@@ -803,7 +807,7 @@ module EntryHelper
     if threads.from_modified and threads.to_modified
       from = ago(threads.from_modified)
       if ctx.start == 0
-        h("(shows #{from} ~ now)")
+        h("(shows #{from} ago ~ now)")
       else
         to = ago(threads.to_modified)
         if from == to

@@ -5,6 +5,7 @@ class EntryThread
   class EntryThreads < Array
     attr_accessor :from_modified
     attr_accessor :to_modified
+    attr_accessor :pins
   end
 
   class Task
@@ -53,7 +54,7 @@ class EntryThread
       logger.info('[perf] start internal data handling')
       record_last_modified(entries)
       logger.info('[perf] record_last_modified done')
-      check_inbox(auth, entries)
+      pins = check_inbox(auth, entries)
       logger.info('[perf] check_inbox done')
       if opt[:inbox]
         entries = entries.find_all { |entry| entry.view_inbox }
@@ -74,6 +75,7 @@ class EntryThread
         threads.from_modified = original.last.modified
         threads.to_modified = original.first.modified
       end
+      threads.pins = pins
       threads
     end
 
@@ -245,7 +247,7 @@ class EntryThread
     def check_inbox(auth, entries)
       eids = entries.map { |e| e.id }
       checked_map = checked_map(auth, eids)
-      pinned_map = pinned_map(auth, eids)
+      pinned_map = pinned_map(auth)
       if c = CheckedModified.find(:all, :order => 'checked asc', :limit => 1).first
         oldest = c.checked
       else
@@ -264,6 +266,7 @@ class EntryThread
           end
         end
       end
+      pinned_map.keys.size
     end
 
     def checked_map(auth, eids)
@@ -278,13 +281,8 @@ class EntryThread
       }
     end
 
-    def pinned_map(auth, eids)
-      cond = [
-        'user_id = ? and eid in (?)',
-        auth.id,
-        eids
-      ]
-      Pin.find(:all, :conditions => cond).inject({}) { |r, e|
+    def pinned_map(auth)
+      Pin.find_all_by_user_id(auth.id).inject({}) { |r, e|
         r[e.eid] = true
         r
       }
