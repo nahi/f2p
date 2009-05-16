@@ -10,6 +10,7 @@ class Comment
   attr_accessor :user
   attr_accessor :via
 
+  attr_accessor :index
   attr_accessor :entry
   attr_accessor :view_links
 
@@ -17,6 +18,7 @@ class Comment
     initialize_with_hash(hash, 'id', 'body', 'date')
     @user = EntryUser[hash['user']]
     @via = Via[hash['via']]
+    @index = nil
     @entry = nil
     @view_links = nil
   end

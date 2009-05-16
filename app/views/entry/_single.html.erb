@@ -12,7 +12,6 @@
 <%= content(entry) -%>
  <%= via(entry) %>
 <%= likes(entry, false) -%>
-<%= comments(entry, false) -%>
 <%= url_link(entry) -%>
 <%= reshare_link(entry) -%>
 <%= like_link(entry) -%>
@@ -22,6 +21,7 @@
           <%- entry.comments.each do |comment| -%>
             <li>
               <%= comment_icon(comment.by_user(comment.entry.nickname)) %>
+              <%= h(comment.index) %>.
               <%= date(comment.date, false) %>
               <%- if ctx.comment != comment.id -%>
                 <%= comment(comment) %> by <%= user(comment) %> <%= via(comment) %>

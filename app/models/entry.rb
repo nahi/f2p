@@ -129,11 +129,7 @@ class Entry
     @service = Service[hash['service']]
     @user = EntryUser[hash['user']]
     @medias = (hash['media'] || EMPTY).map { |e| Media[e] }
-    @comments = (hash['comments'] || EMPTY).map { |e|
-      c = Comment[e]
-      c.entry = self
-      c
-    }
+    @comments = wrap_comment(hash['comments'] || EMPTY)
     @likes = (hash['likes'] || EMPTY).map { |e| Like[e] }
     @via = Via[hash['via']]
     @room = Room[hash['room']]
@@ -204,6 +200,17 @@ class Entry
   end
 
 private
+
+  def wrap_comment(comments)
+    index = 0
+    comments.map { |e|
+      c = Comment[e]
+      index += 1
+      c.index = index
+      c.entry = self
+      c
+    }
+  end
 
   def extract_geo_from_google_staticmap_url(medias)
     medias.each do |m|
