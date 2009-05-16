@@ -2,6 +2,11 @@ require 'timeout'
 
 
 class EntryThread
+  class EntryThreads < Array
+    attr_accessor :from_modified
+    attr_accessor :to_modified
+  end
+
   class Task
     class << self
       def run(&block)
@@ -44,7 +49,7 @@ class EntryThread
       end
       opt.delete(:auth)
       logger.info('[perf] start entries fetch')
-      entries = fetch_entries(auth, opt)
+      original = entries = fetch_entries(auth, opt)
       logger.info('[perf] start internal data handling')
       record_last_modified(entries)
       logger.info('[perf] record_last_modified done')
@@ -58,12 +63,18 @@ class EntryThread
         }
       end
       if opt[:merge_entry]
-        sort_by_service(entries, opt)
+        entries = sort_by_service(entries, opt)
       else
-        entries.map { |e|
+        entries = entries.map { |e|
           EntryThread.new(e)
         }
       end
+      threads = EntryThreads[*entries]
+      unless original.empty?
+        threads.from_modified = original.last.modified
+        threads.to_modified = original.first.modified
+      end
+      threads
     end
 
     def update_checked_modified(auth, hash)

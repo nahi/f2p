@@ -409,6 +409,28 @@ __EOS__
     content_tag('span', h(body), :class => klass)
   end
 
+  def ago(time)
+    unless time.is_a?(Time)
+      time = Time.parse(time.to_s)
+    end
+    elapsed = now - time
+    if elapsed > 2.days
+      "%d days" % (elapsed / 1.days)
+    elsif elapsed > 1.days
+      "1 day"
+    elsif elapsed > 2.hours
+      "%d hours" % (elapsed / 1.hours)
+    elsif elapsed > 1.hours
+      "1 hour"
+    elsif elapsed > 2.minutes
+      "%d minutes" % (elapsed / 1.minutes)
+    elsif elapsed > 1.minutes
+      "1 minute"
+    else
+      "%d seconds" % (elapsed / 1.seconds)
+    end
+  end
+
   def elapsed(time)
     if time
       now - time

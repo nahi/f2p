@@ -778,6 +778,9 @@ module EntryHelper
       links << link_to(icon_tag(:top), '#top', accesskey('2'))
     end
     links << menu_link(menu_label('inbox', '0'), link_action('inbox'), accesskey('0'))
+    if ctx.inbox
+      links << menu_link(menu_label('all', '1'), link_list(), accesskey('1'))
+    end
     if ctx.friend_view?
       links << menu_link(menu_label('me', '3'), link_user(auth.name), accesskey('3'))
     elsif ctx.user_only?
@@ -789,11 +792,27 @@ module EntryHelper
       ctx.label != 'pin' or ctx.service or ctx.room
     }
     links << menu_link(icon_tag(:next), list_opt(ctx.link_opt(:start => start + num, :num => num)), accesskey('6')) { !no_page }
-    links << archive_button
-    if ctx.inbox
-      links << menu_link(menu_label('archived', '1'), link_list(), accesskey('1'))
+    if threads = opt[:threads]
+      links << list_range_notation(threads)
     end
+    links << archive_button if ctx.inbox
     links.join(' ')
+  end
+
+  def list_range_notation(threads)
+    if threads.from_modified and threads.to_modified
+      from = ago(threads.from_modified)
+      if ctx.start == 0
+        h("(shows #{from} ~ now)")
+      else
+        to = ago(threads.to_modified)
+        if from == to
+          h("(shows #{from} ago)")
+        else
+          h("(shows #{from} ~ #{to} ago)")
+        end
+      end
+    end
   end
 
   def bottom_menu_link
@@ -804,11 +823,9 @@ module EntryHelper
   end
 
   def archive_button
-    if ctx.inbox
-      label = 'archive'
-      label = '5.' + label if cell_phone?
-      submit_tag(label, accesskey('5'))
-    end
+    label = 'mark as read'
+    label = '5.' + label if cell_phone?
+    submit_tag(label, accesskey('5'))
   end
 
   def user_page_links(user)
@@ -816,7 +833,7 @@ module EntryHelper
     name = user_name(user)
     return unless name
     links = []
-    links << menu_link(menu_label('self'), link_user(user)) {
+    links << menu_link(menu_label(user == auth.name ? 'me' : 'self'), link_user(user)) {
       !ctx.user_only?
     }
     links << menu_link(menu_label('discussion'), link_list(:comment => 'discussion', :user => ctx.user_for)) {
