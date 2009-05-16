@@ -350,7 +350,6 @@ module EntryHelper
     tb = generator.staticmap_url(F2P::Config.google_maps_maptype, lat, long, :zoom => zoom, :width => width, :height => height)
     link = generator.link_url(lat, long, address)
     content = media_tag(entry, tb, :alt => h(address), :title => h(address), :size => image_size(width, height))
-    entry.view_map = true if entry
     if media_disabled?
       content
     else
