@@ -44,7 +44,6 @@ module F2P
       attr_accessor :service_grouping_threashold
       attr_accessor :link_open_new_window
       attr_accessor :link_type # nil or 'gwt'
-      attr_accessor :updated_expiration
       attr_accessor :list_view_media_rendering
       attr_accessor :max_friend_list_num
       attr_accessor :max_skip_empty_inbox_pages
@@ -154,7 +153,6 @@ Rails::Initializer.run do |config|
   F2P::Config.service_grouping_threashold = 5400
   F2P::Config.link_open_new_window = false
   F2P::Config.link_type = 'gwt'
-  F2P::Config.updated_expiration = 5400
   F2P::Config.list_view_media_rendering = true
   F2P::Config.max_friend_list_num = 50
   F2P::Config.max_skip_empty_inbox_pages = 2

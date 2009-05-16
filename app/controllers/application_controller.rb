@@ -169,6 +169,10 @@ private
     end
   end
 
+  def initialize_checked_modified
+    session[:checked] = {}
+  end
+
   def commit_checked_modified(eid)
     if store = session[:checked]
       if e = store.find { |k, v| k == eid }

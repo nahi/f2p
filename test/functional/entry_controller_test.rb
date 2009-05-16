@@ -71,22 +71,6 @@ class EntryControllerTest < ActionController::TestCase
     assert_redirected_to :action => 'inbox'
   end
 
-  test 'inbox archive by timeout' do
-    login('user1')
-    @ff.expects(:get_profile).
-      returns(read_profile('profile')).times(1)
-    @ff.expects(:get_inbox_entries).
-      returns(read_entries('entries', 'f2ptest')).times(1)
-    post :inbox
-    assert_response :success
-    #
-    session[:last_updated] = Time.at(Time.now - (F2P::Config.updated_expiration + 1))
-    @ff.expects(:get_inbox_entries).
-      returns(read_entries('entries', 'f2ptest'))
-    post :inbox
-    assert_response :success
-  end
-
   test 'inbox pagination' do
     login('user1')
     @ff.expects(:get_profile).

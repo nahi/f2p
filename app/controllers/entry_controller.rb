@@ -116,11 +116,6 @@ class EntryController < ApplicationController
       end
     end
 
-    def reset_pagination(setting)
-      @start = 0
-      @num = setting.entries_in_page
-    end
-
     def reset_for_new
       @eid = @comment = nil
     end
@@ -206,9 +201,6 @@ class EntryController < ApplicationController
       ctx.home = false
       ctx.fold = param(:fold) != 'no'
     }
-    if updated_expired(Time.now)
-      update_checked_modified
-    end
     retry_times = @ctx.start.zero? ? 0 : F2P::Config.max_skip_empty_inbox_pages
     @entries = find_entry_thread(find_opt)
     retry_times.times do
@@ -221,7 +213,7 @@ class EntryController < ApplicationController
       end
       @entries = find_entry_thread(find_opt)
     end
-    session[:last_updated] = Time.now
+    initialize_checked_modified
     render :action => 'list'
   end
 
@@ -235,7 +227,7 @@ class EntryController < ApplicationController
           :redirect_to => {:action => 'inbox'}
   def archive
     update_checked_modified
-    reset_pagination_ctx
+    flash[:allow_cache] = true
     redirect_to_list
   end
 
@@ -573,24 +565,12 @@ private
     ctx
   end
 
-  def reset_pagination_ctx
-    if ctx = session[:ctx]
-      ctx.reset_pagination(@setting)
-    end
-  end
-
   def redirect_to_list
     redirect_to_entry_list(true)
   end
 
   def redirect_to_entry_or_list
     redirect_to_entry_list(false)
-  end
-
-  def updated_expired(time)
-    if session[:last_updated]
-      time - session[:last_updated] > F2P::Config.updated_expiration
-    end
   end
 
   def do_location_search

@@ -807,13 +807,13 @@ module EntryHelper
     if threads.from_modified and threads.to_modified
       from = ago(threads.from_modified)
       if ctx.start == 0
-        h("(shows #{from} ago ~ now)")
+        h("(#{from} ago ~ now)")
       else
         to = ago(threads.to_modified)
         if from == to
-          h("(shows #{from} ago)")
+          h("(#{from} ago)")
         else
-          h("(shows #{from} ~ #{to} ago)")
+          h("(#{from} ~ #{to} ago)")
         end
       end
     end
