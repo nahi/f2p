@@ -296,14 +296,25 @@ class EntryThread
         :conditions => [ 'user_id = ?', auth.id ],
         :joins => 'INNER JOIN last_modifieds ON pins.eid = last_modifieds.eid',
         :order => 'last_modifieds.date desc'
-      ).map { |e| e.eid }
+      )
+      pinned_id = pinned.map { |e| e.eid }
       if opt[:service]
-        pinned = get_entries(auth, :ids => pinned).find_all { |e|
+        entries = get_entries(auth, :ids => pinned_id).find_all { |e|
           opt[:service] == e['service']['id']
         }
-        pinned[start, num] || []
-      elsif pinned = pinned[start, num]
-        get_entries(auth, :ids => pinned)
+        entries[start, num] || []
+      elsif pinned_id = pinned_id[start, num]
+        entries = get_entries(auth, :ids => pinned_id)
+        map = entries.inject({}) { |r, e| r[e['id']] = e; r }
+        pinned_id.map { |eid|
+          if map.key?(eid)
+            map[eid]
+          else
+            pin = pinned.find { |e| e.eid == eid }
+            date = pin ? pin.created_at.xmlschema : nil
+            {'id' => eid, 'updated' => date, 'published' => date, '__f2p_orphan' => true}
+          end
+        }
       end
     end
 

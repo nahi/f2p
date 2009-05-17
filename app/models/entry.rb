@@ -113,6 +113,7 @@ class Entry
 
   attr_accessor :twitter_username
   attr_accessor :twitter_reply_to
+  attr_accessor :orphan
   attr_accessor :view_pinned
   attr_accessor :view_inbox
   attr_accessor :view_links
@@ -122,6 +123,7 @@ class Entry
     initialize_with_hash(hash, 'id', 'title', 'link', 'updated', 'published')
     @twitter_username = nil
     @twitter_reply_to = nil
+    @orphan = hash['__f2p_orphan']
     @view_pinned = nil
     @view_inbox = nil
     @view_links = nil
@@ -150,20 +152,21 @@ class Entry
       result ||= same_origin?(rhs)
     end
     result ||= same_link?(rhs) || similar_title?(rhs)
-    if self.service.twitter? and rhs.service.twitter?
+    if self.service and self.service.twitter? and rhs.service.twitter?
       result ||= self.twitter_reply_to == rhs.twitter_username || self.twitter_username == rhs.twitter_reply_to
     end
     result
   end
 
   def service_identity
+    return nil unless service
     sid = service.service_group? ? service.profile_url : service.id
     rid = room ? room.nickname : nil
     [sid, rid]
   end
 
   def published_at
-    @published_at ||= Time.parse(published)
+    @published_at ||= (published ? Time.parse(published) : Time.now)
   end
 
   def modified_at
@@ -179,7 +182,7 @@ class Entry
     unless likes.empty?
       @modified = [@modified, likes.last.date].max
     end
-    @modified
+    @modified || Time.now.xmlschema
   end
 
   def hidden?
@@ -187,11 +190,11 @@ class Entry
   end
 
   def user_id
-    user.id
+    user ? user.id : nil
   end
 
   def nickname
-    user.nickname
+    user ? user.nickname : nil
   end
 
   def self_comment_only?
@@ -239,6 +242,6 @@ private
   end
 
   def part_of(base, part)
-    base.index(part) and part.length > base.length / 2
+    base and part and base.index(part) and part.length > base.length / 2
   end
 end

@@ -94,6 +94,7 @@ module EntryHelper
 
   def icon(entry, hide_feedname = false)
     service = entry.service
+    return unless service
     if ctx.user
       user = entry.nickname || entry.user_id
     end
@@ -141,6 +142,7 @@ module EntryHelper
 
   def content(entry)
     common = common_content(entry)
+    return common unless entry.service
     if entry.service.twitter?
       twitter_content(common, entry)
     elsif entry.service.tumblr?
@@ -154,6 +156,7 @@ module EntryHelper
 
   def common_content(entry)
     title = entry.title
+    return unless title
     if entry.link and with_link?(entry.service)
       content = link_content(title, entry)
     else
@@ -170,7 +173,7 @@ module EntryHelper
       content += media_indent + with_media unless with_media.empty?
     end
     if entry.geo and !entry.view_map
-      point = GoogleMaps::Point.new(entry.title, entry.geo.lat, entry.geo.long)
+      point = GoogleMaps::Point.new(title, entry.geo.lat, entry.geo.long)
       zoom = F2P::Config.google_maps_zoom
       width = F2P::Config.google_maps_width
       height = F2P::Config.google_maps_height
@@ -203,7 +206,7 @@ module EntryHelper
   def author_link(entry)
     group_imported = (entry.room and !entry.service.internal?)
     if !group_imported and !ctx.user_only?
-      user(entry) + (friend_of(entry) || '')
+      (user(entry) || '') + (friend_of(entry) || '')
     end
   end
 
@@ -791,9 +794,7 @@ module EntryHelper
     if threads = opt[:threads]
       pin_label += "(#{threads.pins})"
     end
-    links << menu_link(menu_label(pin_label, '9'), link_list(:label => u('pin')), accesskey('9')) {
-      ctx.label != 'pin' or ctx.service or ctx.room
-    }
+    links << menu_link(menu_label(pin_label, '9'), link_list(:label => u('pin')), accesskey('9'))
     links << menu_link(icon_tag(:next), list_opt(ctx.link_opt(:start => start + num, :num => num)), accesskey('6')) { !no_page }
     if threads = opt[:threads]
       links << list_range_notation(threads)

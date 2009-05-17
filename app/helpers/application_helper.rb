@@ -344,6 +344,7 @@ __EOS__
   end
 
   def user(user)
+    return unless user
     name = user.name
     if user.nickname == auth.name
       name = self_label
