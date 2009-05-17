@@ -152,7 +152,7 @@ class Entry
       result ||= same_origin?(rhs)
     end
     result ||= same_link?(rhs) || similar_title?(rhs)
-    if self.service and self.service.twitter? and rhs.service.twitter?
+    if self.service and rhs.service and self.service.twitter? and rhs.service.twitter?
       result ||= self.twitter_reply_to == rhs.twitter_username || self.twitter_username == rhs.twitter_reply_to
     end
     result
