@@ -179,9 +179,9 @@ class Entry
     unless comments.empty?
       @modified = [@modified, comments.last.date].max
     end
-    #unless likes.empty?
-    #  @modified = [@modified, likes.last.date].max
-    #end
+    unless likes.empty?
+      @modified = [@modified, likes.last.date].max
+    end
     @modified || Time.now.xmlschema
   end
 
