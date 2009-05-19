@@ -274,7 +274,9 @@ module FriendFeed
       cache = ((@cache ||= {})[basekey] ||= {})[:user_status] ||= {}
       users.inject({}) { |r, user|
         r[user] = update_profile_cache(cache, user) {
-          ClientProxy.proxy(@client, :get_profile, name, remote_key, user, :include => 'status')['status']
+          if profile = ClientProxy.proxy(@client, :get_profile, name, remote_key, user, :include => 'status')
+            profile['status']
+          end
         }
         r
       }
@@ -285,7 +287,9 @@ module FriendFeed
       cache = ((@cache ||= {})[basekey] ||= {})[:room_status] ||= {}
       rooms.inject({}) { |r, room|
         r[room] = update_profile_cache(cache, room) {
-          ClientProxy.proxy(@client, :get_room_profile, name, remote_key, room, :include => 'status')['status']
+          if profile = ClientProxy.proxy(@client, :get_room_profile, name, remote_key, room, :include => 'status')
+            profile['status']
+          end
         }
         r
       }
