@@ -25,8 +25,7 @@
           <li><%= fold_comment_link(comment) %></li>
         <%- else -%>
           <li>
-            <%= comment_icon(comment.by_user(comment.entry.nickname)) %>
-            <%= h(comment.index) %>.
+            <%= comment_icon(comment) %>
             <%= comment(comment) %> by <%= user(comment) %> <%= via(comment) %>
 <%= date(comment.date, true) -%>
 <%= comment_url_link(comment) -%>

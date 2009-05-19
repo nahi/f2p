@@ -550,8 +550,15 @@ module EntryHelper
     super(entry.user)
   end
 
-  def comment_icon(by_self = false)
-    by_self ? icon_tag(:comment) : icon_tag(:friend_comment)
+  def comment_icon(comment = nil)
+    if comment
+      by_self = comment.by_user(auth.name)
+      label = "##{comment.index}"
+    else
+      by_self = true
+      label = nil
+    end
+    by_self ? icon_tag(:comment, label) : icon_tag(:friend_comment, label)
   end
 
   def comment(comment)

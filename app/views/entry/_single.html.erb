@@ -20,8 +20,7 @@
         <ul class="comment">
           <%- entry.comments.each do |comment| -%>
             <li>
-              <%= comment_icon(comment.by_user(comment.entry.nickname)) %>
-              <%= h(comment.index) %>.
+              <%= comment_icon(comment) %>
               <%= date(comment.date, false) %>
               <%- if ctx.comment != comment.id -%>
                 <%= comment(comment) %> by <%= user(comment) %> <%= via(comment) %>
@@ -35,7 +34,7 @@
           <%- end -%>
         </ul>
         <%- if ctx.comment.nil? -%>
-          <%= comment_icon(entry.nickname == auth.name) %>
+          <%= comment_icon %>
           <%= post_comment_form(entry) %>
         <%- end -%>
         <script type='text/javascript'><!--
