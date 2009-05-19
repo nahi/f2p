@@ -67,6 +67,7 @@ module FriendFeed
     define_proxy_method :get_profiles
     define_proxy_method :get_user_status
     define_proxy_method :get_room_profile
+    define_proxy_method :get_list_profile
     define_proxy_method :get_room_status
     define_proxy_method :purge_cache
 
@@ -215,6 +216,7 @@ module FriendFeed
     #define_cached_proxy_method :get_profile
     #define_cached_proxy_method :get_profiles
     #define_cached_proxy_method :get_room_profile
+    #define_cached_proxy_method :get_list_profile
 
     def initialize(logger = nil)
       @client = FriendFeed::APIClient.new(logger)
@@ -256,6 +258,14 @@ module FriendFeed
       cache = ((@cache ||= {})[basekey] ||= {})[:get_room_profile] ||= {}
       update_profile_cache(cache, room) {
         ClientProxy.proxy(@client, :get_room_profile, name, remote_key, room)
+      }
+    end
+
+    def get_list_profile(name, remote_key, list)
+      basekey = name
+      cache = ((@cache ||= {})[basekey] ||= {})[:get_list_profile] ||= {}
+      update_profile_cache(cache, list) {
+        ClientProxy.proxy(@client, :get_list_profile, name, remote_key, list)
       }
     end
 

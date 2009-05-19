@@ -1,0 +1,28 @@
+{
+  "name": "\u30d1\u30fc\u30bd\u30ca\u30eb",
+  "nickname": "personal",
+  "rooms": [
+    {
+      "name": "f2ptest_room",
+      "nickname": "f2ptest-room",
+      "url": "http:\/\/friendfeed.com\/rooms\/f2ptest-room",
+      "id": "e213f58f-7a72-42f4-9be5-ad7e20f67b15"
+    },
+    {
+      "name": "f2ptest Standard feed",
+      "nickname": "f2ptest-standard-feed",
+      "url": "http:\/\/friendfeed.com\/rooms\/f2ptest-standard-feed",
+      "id": "672e1672-45f3-4ddd-933c-5c351bf83de6"
+    }
+  ],
+  "url": "http:\/\/friendfeed.com\/list\/personal",
+  "id": "56028b2f-cc5e-4033-87d8-42eab1a08eff",
+  "users": [
+    {
+      "name": "NaHi",
+      "nickname": "nahi",
+      "id": "95f306fd-0f63-47f2-88fc-8480ff10d48e",
+      "profileUrl": "http:\/\/friendfeed.com\/nahi"
+    }
+  ]
+}

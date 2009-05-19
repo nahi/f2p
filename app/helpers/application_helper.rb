@@ -280,6 +280,19 @@ __EOS__
     room_profile(nickname)['members'] || []
   end
 
+  def list_profile(nickname)
+    @list_profile ||= {}
+    @list_profile[nickname] ||= List.ff_profile(auth, nickname)
+  end
+
+  def list_rooms(nickname)
+    list_profile(nickname)['rooms'] || []
+  end
+
+  def list_users(nickname)
+    list_profile(nickname)['users'] || []
+  end
+
   def imaginary?(nickname)
     user_id(nickname) == nickname
   end

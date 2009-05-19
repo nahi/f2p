@@ -233,6 +233,9 @@ class EntryControllerTest < ActionController::TestCase
     @ff.expects(:get_list_entries).
       with('user1', nil, 'list1', {:service => nil, :num => 20, :start => 0}).
       returns(read_entries('entries', 'f2ptest')).times(2)
+    @ff.expects(:get_list_profile).
+      with('user1', nil, 'list1').
+      returns(read_profile('list_profile')).times(2)
     get :list, :list => 'list1'
     assert_response :success
     get :list, :list => 'list1'
@@ -540,6 +543,9 @@ class EntryControllerTest < ActionController::TestCase
     @ff.expects(:get_list_entries).
       with('user1', nil, 'list1', {:service => nil, :num => 20, :start => 0}).
       returns(read_entries('entries', 'f2ptest')).times(1)
+    @ff.expects(:get_list_profile).
+      with('user1', nil, 'list1').
+      returns(read_profile('list_profile'))
     get :list, :list => 'list1'
     assert_response :success
     assert(session[:ctx].list)

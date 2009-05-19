@@ -260,6 +260,17 @@ module FriendFeed
       end
     end
 
+    def get_list_profile(name, remote_key, list, opt = {})
+      uri = uri("list/#{list}/profile")
+      return nil unless uri
+      res = client_sync(uri, name, remote_key) { |client|
+        res = get_request(client, uri, opt)
+      }
+      if res.status == 200
+        JSON.parse(res.content)
+      end
+    end
+
     def get_entry(name, remote_key, eid, opt = {})
       uri = uri("feed/entry/#{eid}")
       return nil unless uri
@@ -439,9 +450,5 @@ if $0 == __FILE__
   require 'logger'
   logger = Logger.new('ff.log')
   client = FriendFeed::APIClient.new(logger)
-  print JSON.pretty_generate(client.get_user_entries(name, remote_key, 'arika'))
-#  client = FriendFeed::ChannelClient.new(name, remote_key, logger)
-#  while true
-#    print JSON.pretty_generate(client.updated_home_entries(:timeout => 10))
-#  end
+  print JSON.pretty_generate(client.get_home_entries(name, remote_key))
 end

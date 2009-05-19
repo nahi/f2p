@@ -15,6 +15,9 @@
   <%- if ctx.room_for -%>
     <p><%= room_picture(ctx.room_for) %> <%= h(room_name(ctx.room_for)) %> <%= link_to(h('[profile]'), '#profile') %></p>
   <%- end -%>
+  <%- if ctx.list -%>
+    <p>List: '<%= list_name(ctx.list) %>' <%= link_to(h('[profile]'), '#profile') %></p>
+  <%- end -%>
   <%- if ctx.link -%>
     <p>entries related to: <%= link_to(h(ctx.link), u(ctx.link)) %></p>
   <%- end -%>
@@ -63,6 +66,8 @@
   <p><%= render :partial => 'profile', :locals => {:user => ctx.user_for} %></p>
 <%- elsif ctx.room_for -%>
   <p><%= render :partial => 'room', :locals => {:room => ctx.room_for} %></p>
+<%- elsif ctx.list -%>
+  <p><%= render :partial => 'list', :locals => {:list => ctx.list} %></p>
 <%- end -%>
 <%- if !ctx.user_only? -%>
   <hr />

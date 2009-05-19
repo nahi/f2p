@@ -758,6 +758,29 @@ module EntryHelper
     }
   end
 
+  def list_user_links(list)
+    max = F2P::Config.max_friend_list_num
+    users = list_users(list)
+    links_if_exists("(#{users.size} users) ", users, max) { |e|
+      label = "[#{e.name}]"
+      if e.nickname
+        link_to(h(label), link_user(e.nickname))
+      end
+    }
+  end
+
+  def list_room_links(list)
+    rooms = list_rooms(list)
+    links_if_exists("(#{rooms.size} groups) ", rooms) { |e|
+      label = "[#{e.name}]"
+      if e.nickname == ctx.room_for and !ctx.service and !ctx.label
+        h(label)
+      else
+        link_to(h(label), link_list(:room => u(e.nickname)))
+      end
+    }
+  end
+
   def links_if_exists(label, enum, max = nil, &block)
     if max and enum.size > max + 1
       ary = enum[0, max].collect { |v| yield(v) }
