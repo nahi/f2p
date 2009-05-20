@@ -38,7 +38,7 @@
     <%= "<hr />" if i_mode? -%>
     <div class="<%= cycle('thread1', 'thread2') %>">
       <%= render :partial => 'entry', :locals => {:entry => thread.root, :root => nil} %>
-      <%- remember_checked(thread.root) if ctx.inbox -%>
+      <%- remember_checked(thread.root) -%>
       <%- if thread.chunked? -%>
         <ul>
           <li><%= icon_tag(:related) %> <%= thread.related_entries.size %> related entries</li>
@@ -47,7 +47,7 @@
               <%= fold_link(entry) %>
             <%- else -%>
               <li><%= render :partial => 'entry', :locals => {:entry => entry, :root => thread.root} %></li>
-              <%- remember_checked(entry) if ctx.inbox -%>
+              <%- remember_checked(entry) -%>
             <%- end -%>
           <%- end -%>
         </ul>

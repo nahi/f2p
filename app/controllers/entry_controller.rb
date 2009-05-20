@@ -182,6 +182,7 @@ class EntryController < ApplicationController
       ctx.parse(params, @setting)
     }
     @entries = find_entry_thread(find_opt)
+    initialize_checked_modified
   end
 
   def index

@@ -484,7 +484,7 @@ __EOS__
   end
 
   def remember_checked(entry)
-    store = @controller.request.session[:checked] ||= {}
+    store = @controller.request.session[:checked]
     store[entry.id] = entry.modified
   end
 end
