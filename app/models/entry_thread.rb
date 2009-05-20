@@ -305,6 +305,7 @@ class EntryThread
         entries[start, num] || []
       elsif pinned_id = pinned_id[start, num]
         entries = get_entries(auth, :ids => pinned_id)
+        return nil unless entries
         map = entries.inject({}) { |r, e| r[e['id']] = e; r }
         pinned_id.map { |eid|
           if map.key?(eid)
