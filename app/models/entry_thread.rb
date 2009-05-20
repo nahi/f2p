@@ -121,9 +121,7 @@ class EntryThread
       else
         entries = fetch_list_entries(auth, opt)
         entries = filter_hidden(entries)
-        if opt[:inbox]
-          entries = sort_by_detection(entries)
-        elsif opt[:ids]
+        if opt[:ids]
           entries = sort_by_ids(entries, opt[:ids])
         else
           entries = sort_by_modified(entries)

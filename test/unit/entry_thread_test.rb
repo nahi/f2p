@@ -12,7 +12,7 @@ class EntryThreadTest < ActiveSupport::TestCase
     2.times do
       threads = EntryThread.find(:auth => user, :inbox => true, :start => nil)
       assert_equal(
-        [1, 2, 1, 1, 4, 1, 2, 6, 3, 1, 3, 1, 1, 1, 1, 1],
+        [1, 2, 1, 1, 1, 4, 2, 6, 3, 1, 3, 1, 1, 1, 1, 1],
         threads.map { |t| t.entries.size }
       )
       assert_equal(
@@ -22,13 +22,13 @@ class EntryThreadTest < ActiveSupport::TestCase
           "8de1f334-6e5c-42d9-a6ef-32c86ea6edc7",
           "06675c5a-ae61-41e7-be94-e3bf2fc3429c",
         ],
-        threads[4].entries.map { |e| e.id })
+        threads[5].entries.map { |e| e.id })
       assert_equal(
-        [0, 1, 0, 0, 3, 0, 1, 5, 2, 0, 2, 0, 0, 0, 0, 0],
+        [0, 1, 0, 0, 0, 3, 1, 5, 2, 0, 2, 0, 0, 0, 0, 0],
         threads.map { |t| t.related_entries.size }
       )
       assert_equal(
-        [false, true, false, false, true, false, true, true, true, false, true, false, false, false, false, false],
+        [false, true, false, false, false, true, true, true, true, false, true, false, false, false, false, false],
         threads.map { |t| t.chunked? }
       )
     end
@@ -44,7 +44,7 @@ class EntryThreadTest < ActiveSupport::TestCase
     ff.stubs(:get_profiles)
     threads = EntryThread.find(:auth => user, :inbox => true, :start => 20)
     assert_equal(
-      [1, 2, 1, 1, 4, 1, 2, 6, 3, 1, 3, 1, 1, 1, 1, 1],
+      [1, 2, 1, 1, 1, 4, 2, 6, 3, 1, 3, 1, 1, 1, 1, 1],
       threads.map { |t| t.entries.size }
     )
   end
@@ -74,7 +74,7 @@ class EntryThreadTest < ActiveSupport::TestCase
     2.times do
       threads = EntryThread.find(:auth => user, :inbox => true, :start => nil)
       assert_equal(
-        [1, 1, 1, 4, 1, 2, 6, 3, 1, 3, 1, 1, 1, 1, 1],
+        [1, 1, 1, 1, 4, 2, 6, 3, 1, 3, 1, 1, 1, 1, 1],
         threads.map { |t| t.entries.size }
       )
     end
@@ -91,7 +91,7 @@ class EntryThreadTest < ActiveSupport::TestCase
     2.times do
       threads = EntryThread.find(:auth => user, :inbox => true, :start => nil, :allow_cache => true)
       assert_equal(
-        [1, 2, 1, 1, 4, 1, 2, 6, 3, 1, 3, 1, 1, 1, 1, 1],
+        [1, 2, 1, 1, 1, 4, 2, 6, 3, 1, 3, 1, 1, 1, 1, 1],
         threads.map { |t| t.entries.size }
       )
     end
