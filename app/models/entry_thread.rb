@@ -121,7 +121,9 @@ class EntryThread
       else
         entries = fetch_list_entries(auth, opt)
         entries = filter_hidden(entries)
-        if opt[:ids]
+        if opt[:inbox]
+          entries = sort_by_detection(entries)
+        elsif opt[:ids]
           entries = sort_by_ids(entries, opt[:ids])
         else
           entries = sort_by_modified(entries)
@@ -417,9 +419,29 @@ class EntryThread
       entries.find_all { |e| !e.hidden? }
     end
 
-    # FF seems to sort by this.  there's no way to sort by API client for now.
     def sort_by_detection(entries)
-      entries
+      sorted = []
+      entries.each do |e|
+        if e.comments.empty? or e.self_comment_only?
+          # keep the order
+          sorted << e
+        else
+          # updated by commented or liked
+          sorted[find_insert_point(sorted, e), 0] = e
+        end
+      end
+      sorted
+    end
+
+    def find_insert_point(seq, entry)
+      idx = seq.find { |e|
+        e.modified_at < entry.modified_at
+      }
+      if idx
+        seq.index(idx)
+      else
+        0
+      end
     end
 
     def sort_by_ids(entries, ids)
@@ -428,10 +450,9 @@ class EntryThread
     end
 
     def sort_by_modified(entries)
-      sorted = entries.sort_by { |e|
-        [e.modified, e.id].join('-') # join e.id for stable sort
+      entries.sort_by { |e|
+        -e.modified.to_i
       }
-      sorted.reverse
     end
 
     def sort_by_service(entries, opt = {})
@@ -457,11 +478,18 @@ class EntryThread
         end
         group += kinds
         buf -= kinds
-        sorted = sort_by_modified(group)
+        sorted = sort_by_modified_without_twitter(group)
         t.add(*sorted)
         t.root = sorted.first
       end
       result
+    end
+
+    def sort_by_modified_without_twitter(entries)
+      entries.sort_by { |e|
+        time = e.service.twitter? ? e.published_at : e.modified_at
+        -time.to_i
+      }
     end
 
     def tag(entry, opt)

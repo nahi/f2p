@@ -194,9 +194,9 @@ module EntryHelper
   def friend_of(entry)
     if friend_of = entry.friend_of
       if entry.comments.find { |c| c.nickname == friend_of.nickname }
-        h(" (RT #{friend_of.name})")
+        h(" (through #{friend_of.name})")
       elsif entry.likes.find { |l| l.nickname == friend_of.nickname }
-        h(" (RT #{friend_of.name})")
+        h(" (through #{friend_of.name})")
       end
     end
   end
