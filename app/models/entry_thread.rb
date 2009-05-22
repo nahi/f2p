@@ -486,7 +486,7 @@ class EntryThread
 
     def sort_by_modified_without_twitter(entries)
       entries.sort_by { |e|
-        time = e.service.twitter? ? e.published_at : e.modified_at
+        time = (e.service && e.service.twitter?) ? e.published_at : e.modified_at
         -time.to_i
       }
     end
