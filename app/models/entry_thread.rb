@@ -427,20 +427,19 @@ class EntryThread
           sorted << e
         else
           # updated by commented or liked
-          sorted[find_insert_point(sorted, e), 0] = e
+          if loc = find_insert_point(sorted, e)
+            sorted[loc, 0] = e
+          else
+            sorted << e
+          end
         end
       end
       sorted
     end
 
     def find_insert_point(seq, entry)
-      idx = seq.find { |e|
-        e.modified_at < entry.modified_at
-      }
-      if idx
+      if idx = seq.find { |e| e.modified_at < entry.modified_at }
         seq.index(idx)
-      else
-        0
       end
     end
 
