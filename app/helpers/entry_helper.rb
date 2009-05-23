@@ -435,7 +435,7 @@ module EntryHelper
     org_size = 0
     m = nil
     links = []
-    while content.match(URI.regexp)
+    while content.match(URI.regexp(['http', 'https']))
       m = $~
       added, part = fold_concat(m.pre_match, fold_size - org_size)
       str += h(part)
@@ -444,8 +444,14 @@ module EntryHelper
       else
         return true, str, links
       end
-      uri = uri(m[0])
-      added, part = fold_concat(m[0], fold_size - org_size)
+      target = m[0]
+      content = m.post_match
+      if target[-1] == ?)
+        target[-1, 1] = ''
+        content = ')' + content
+      end
+      uri = uri(target)
+      added, part = fold_concat(target, fold_size - org_size)
       if uri.nil? or !uri.is_a?(URI::HTTP)
         str += h(part)
         if added
@@ -454,16 +460,15 @@ module EntryHelper
           return true, str, links
         end
       else
-        links << m[0]
+        links << target
         if added
-          str += link_to(h(m[0]), m[0])
+          str += link_to(h(target), target)
           org_size += added
         else
-          str += link_to(h(part), m[0])
+          str += link_to(h(part), target)
           return true, str, links
         end
       end
-      content = m.post_match
     end
     added, part = fold_concat(content, fold_size - org_size)
     str += h(part)
