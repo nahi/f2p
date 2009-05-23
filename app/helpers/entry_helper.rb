@@ -390,6 +390,9 @@ module EntryHelper
         str += media_indent + media_tag(entry, uri.to_s)
       end
     end
+    if link = entry.view_links.find { |e| /\bmovapic.com\/pic\/([a-z0-9]+)/ =~ e }
+      str += media_indent + media_tag(entry, "http://image.movapic.com/pic/t_#{$1}.jpeg")
+    end
     str
   end
 
