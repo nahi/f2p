@@ -101,6 +101,7 @@ class Entry
   attr_accessor :link
   attr_accessor :updated
   attr_accessor :published
+  attr_accessor :anonymous
   attr_accessor :service
   attr_accessor :user
   attr_accessor :medias
@@ -120,7 +121,7 @@ class Entry
   attr_accessor :view_map
 
   def initialize(hash)
-    initialize_with_hash(hash, 'id', 'title', 'link', 'updated', 'published')
+    initialize_with_hash(hash, 'id', 'title', 'link', 'updated', 'published', 'anonymous')
     @twitter_username = nil
     @twitter_reply_to = nil
     @orphan = hash['__f2p_orphan']

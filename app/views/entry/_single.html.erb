@@ -23,7 +23,7 @@
               <%= comment_icon(comment) %>
               <%= date(comment.date, false) %>
               <%- if ctx.comment != comment.id -%>
-                <%= comment(comment) %> by <%= user(comment) %> <%= via(comment) %>
+                <%= comment(comment) %> <%= comment_author_link(comment) %> <%= via(comment) %>
 <%= comment_url_link(comment) -%>
 <%= edit_comment_link(comment) -%>
 <%= delete_comment_link(comment) -%>

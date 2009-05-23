@@ -38,4 +38,8 @@ class Comment
   def last?
     self.entry.comments.last == self
   end
+
+  def posted_with_entry?
+    self.date == entry.published
+  end
 end

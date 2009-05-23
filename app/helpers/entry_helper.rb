@@ -202,9 +202,14 @@ module EntryHelper
   end
 
   def author_link(entry)
-    group_imported = (entry.room and !entry.service.internal?)
-    if !group_imported and !ctx.user_only?
+    if !entry.anonymous and !ctx.user_only?
       (user(entry) || '') + (friend_of(entry) || '')
+    end
+  end
+
+  def comment_author_link(comment)
+    unless comment.posted_with_entry?
+      h('by ') + user(comment)
     end
   end
 

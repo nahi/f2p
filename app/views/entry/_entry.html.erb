@@ -26,8 +26,8 @@
         <%- else -%>
           <li>
             <%= comment_icon(comment) %>
-            <%= comment(comment) %> by <%= user(comment) %> <%= via(comment) %>
-<%= date(comment.date, true) -%>
+            <%= comment(comment) %> <%= comment_author_link(comment) %> <%= via(comment) %>
+<%= date(comment.date, true) unless comment.posted_with_entry? -%>
 <%= comment_url_link(comment) -%>
 <%= post_comment_link(comment.entry) if comment.last? %>
           </li>
