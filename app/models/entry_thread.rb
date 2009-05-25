@@ -85,24 +85,27 @@ class EntryThread
         auth.id,
         hash.keys
       ]
-      ActiveRecord::Base.transaction do
-        checked = CheckedModified.find(:all, :conditions => cond, :include => 'last_modified')
-        hash.each do |eid, checked_modified|
-          next unless checked_modified
-          if c = checked.find { |e| e.last_modified.eid == eid }
-            d = Time.parse(checked_modified)
-            if c.checked < d
-              c.checked = d
+      checked = CheckedModified.find(:all, :conditions => cond, :include => 'last_modified')
+      # do update/create without transaction.  we can use transaction and retry
+      # invoking this method (whole transaction) but it's too expensive.
+      hash.each do |eid, checked_modified|
+        next unless checked_modified
+        if c = checked.find { |e| e.last_modified.eid == eid }
+          d = Time.parse(checked_modified)
+          if c.checked < d
+            c.checked = d
+            c.save!
+          end
+        else
+          if m = LastModified.find_by_eid(eid)
+            c = CheckedModified.new
+            c.user = auth
+            c.last_modified = m
+            c.checked = Time.parse(checked_modified)
+            begin
               c.save!
-            end
-          else
-            m = LastModified.find_by_eid(eid)
-            if m
-              c = CheckedModified.new
-              c.user = auth
-              c.last_modified = m
-              c.checked = Time.parse(checked_modified)
-              c.save!
+            rescue ActiveRecord::ActiveRecordError => e
+              logger.warn("create LastModified failed for #{entry.id}", e)
             end
           end
         end
@@ -221,24 +224,28 @@ class EntryThread
     end
 
     def record_last_modified(entries)
-      ActiveRecord::Base.transaction do
-        found = LastModified.find_all_by_eid(entries.map { |e| e.id })
-        found_map = found.inject({}) { |r, e|
-          r[e.eid] = e
-          r
-        }
-        entries.each do |entry|
-          if m = found_map[entry.id]
-            d = entry.modified_at
-            if m.date != d
-              m.date = d
-              m.save!
-            end
-          else
-            m = LastModified.new
-            m.eid = entry.id
-            m.date = entry.modified_at
+      found = LastModified.find_all_by_eid(entries.map { |e| e.id })
+      found_map = found.inject({}) { |r, e|
+        r[e.eid] = e
+        r
+      }
+      # do update/create without transaction.  we can use transaction and retry
+      # invoking this method (whole transaction) but it's too expensive.
+      entries.each do |entry|
+        if m = found_map[entry.id]
+          d = entry.modified_at
+          if m.date != d
+            m.date = d
             m.save!
+          end
+        else
+          m = LastModified.new
+          m.eid = entry.id
+          m.date = entry.modified_at
+          begin
+            m.save!
+          rescue ActiveRecord::ActiveRecordError => e
+            logger.warn("create LastModified failed for #{entry.id}", e)
           end
         end
       end
