@@ -493,8 +493,20 @@ module EntryHelper
   end
 
   def likes(entry, compact)
-    me, rest = entry.likes.partition { |e| e.nickname == auth.name }
-    likes = me + rest
+    me = []
+    friends = []
+    rest = []
+    subscriptions = user_subscriptions(auth.name).inject({}) { |r, e| r[e.nickname] = true; r }
+    entry.likes.each do |e|
+      if e.nickname == auth.name
+        me << e
+      elsif subscriptions.key?(e.nickname)
+        friends << e
+      else
+        rest << e
+      end
+    end
+    likes = me + friends + rest
     if !likes.empty?
       if liked?(entry)
         icon = link_to(icon_tag(:star, 'unlike'), link_action('unlike', :id => u(entry.id)))
