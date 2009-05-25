@@ -203,6 +203,18 @@ class Entry
     cs.size == 1 and self.user_id == cs.first.user_id
   end
 
+  def origin_nickname
+    if !orphan
+      if anonymous
+        if room
+          room.nickname
+        end
+      else
+        nickname
+      end
+    end
+  end
+
 private
 
   def wrap_comment(comments)

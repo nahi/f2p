@@ -269,11 +269,11 @@ __EOS__
     name = room_name(nickname)
     image_url = Room.ff_picture_url(nickname, size)
     url = room_profile(nickname)['url']
-    str = link_to(profile_image_tag(image_url, name, name), url)
-    if room_status(nickname) != 'public'
-      str += icon_tag(:private)
-    end
-    str
+    link_to(profile_image_tag(image_url, name, name), url)
+  end
+
+  def room_status_icon(nickname)
+    status_icon(room_status(nickname))
   end
 
   def room_members(nickname)
@@ -333,11 +333,17 @@ __EOS__
     end
     image_url = User.ff_picture_url(nickname, size)
     url = user_profile(nickname)['profileUrl']
-    str = link_to(profile_image_tag(image_url, name, name), url)
-    if user_status(nickname) != 'public'
-      str += icon_tag(:private)
+    link_to(profile_image_tag(image_url, name, name), url)
+  end
+
+  def user_status_icon(nickname)
+    status_icon(user_status(nickname))
+  end
+
+  def status_icon(status)
+    if status != 'public'
+      icon_tag(:private)
     end
-    str
   end
 
   def user_services(nickname)

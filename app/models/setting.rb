@@ -9,6 +9,7 @@ class Setting
   attr_accessor :twitter_comment_hack
   attr_accessor :google_maps_geocoding_lang
   attr_accessor :google_maps_zoom
+  attr_accessor :list_view_profile_picture
 
   def initialize
     super
@@ -22,6 +23,7 @@ class Setting
     @twitter_comment_hack = F2P::Config.twitter_comment_hack
     @google_maps_geocoding_lang = F2P::Config.google_maps_geocoding_lang
     @google_maps_zoom = F2P::Config.google_maps_zoom
+    @list_view_profile_picture = F2P::Config.list_view_profile_picture
   end
 
   def validate

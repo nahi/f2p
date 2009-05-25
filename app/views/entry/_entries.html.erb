@@ -10,10 +10,10 @@
     <p><a name="top"></a><%= post_entry_form %><%= bottom_menu_link %></p>
   <%- end -%>
   <%- if ctx.user_for -%>
-    <p><%= user_picture(ctx.user_for) %> <%= h(user_name(ctx.user_for)) %> <%= link_to(h('[profile]'), '#profile') %></p>
+    <p><%= user_picture(ctx.user_for) %><%= user_status_icon(ctx.user_for) %> <%= h(user_name(ctx.user_for)) %> <%= link_to(h('[profile]'), '#profile') %></p>
   <%- end -%>
   <%- if ctx.room_for -%>
-    <p><%= room_picture(ctx.room_for) %> <%= h(room_name(ctx.room_for)) %> <%= link_to(h('[profile]'), '#profile') %></p>
+    <p><%= room_picture(ctx.room_for) %><%= room_status_icon(ctx.room_for) %> <%= h(room_name(ctx.room_for)) %> <%= link_to(h('[profile]'), '#profile') %></p>
   <%- end -%>
   <%- if ctx.list -%>
     <p>List: '<%= list_name(ctx.list) %>' <%= link_to(h('[profile]'), '#profile') %></p>

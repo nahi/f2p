@@ -82,6 +82,18 @@ module EntryHelper
     link_list(opt.merge(:user => user))
   end
 
+  def author_picture(entry)
+    return unless setting.list_view_profile_picture
+    return if ctx.user_for or ctx.room_for
+    if nickname = entry.origin_nickname
+      if nickname == entry.nickname
+        user_picture(entry.nickname)
+      else
+        room_picture(entry.room.nickname)
+      end
+    end
+  end
+
   def pin_link(entry)
     if entry.view_pinned
       link_to(icon_tag(:pinned, 'unpin'), link_action('unpin', :id => entry.id))
@@ -253,7 +265,13 @@ module EntryHelper
   end
 
   def uri(str)
-    URI.parse(str) rescue nil
+    begin
+      uri = URI.parse(str)
+      uri = nil if uri.host.nil?
+      uri
+    rescue
+      nil
+    end
   end
 
   def uri_domain(str)

@@ -14,6 +14,7 @@ class SettingController < ApplicationController
     @text_folding_size = (param(:text_folding_size) || @setting.text_folding_size).to_i
     @twitter_comment_hack = param(:twitter_comment_hack) || @setting.twitter_comment_hack
     @list_view_media_rendering = param(:list_view_media_rendering) || @setting.list_view_media_rendering
+    @list_view_profile_picture = param(:list_view_profile_picture) || @setting.list_view_profile_picture
     @link_open_new_window = param(:link_open_new_window) || @setting.link_open_new_window
     @link_type = param(:link_type) || @setting.link_type
     @google_maps_geocoding_lang = param(:google_maps_geocoding_lang) || @setting.google_maps_geocoding_lang
@@ -21,7 +22,7 @@ class SettingController < ApplicationController
 
   def update
     original_value = {}
-    [:font_size, :entries_in_page, :entries_in_thread, :text_folding_size, :twitter_comment_hack, :list_view_media_rendering, :link_open_new_window, :link_type, :google_maps_geocoding_lang].each do |key|
+    [:font_size, :entries_in_page, :entries_in_thread, :text_folding_size, :twitter_comment_hack, :list_view_media_rendering, :list_view_profile_picture, :link_open_new_window, :link_type, :google_maps_geocoding_lang].each do |key|
       original_value[key] = @setting.send(key)
     end
     # int settings
@@ -32,7 +33,7 @@ class SettingController < ApplicationController
       end
     end
     # bool settings
-    [:twitter_comment_hack, :list_view_media_rendering, :link_open_new_window].each do |key|
+    [:twitter_comment_hack, :list_view_media_rendering, :list_view_profile_picture, :link_open_new_window].each do |key|
       instance_variable_set('@' + key.to_s, param(key) == 'checked')
       @setting.send(key.to_s + '=', param(key) == 'checked')
     end

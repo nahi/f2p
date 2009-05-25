@@ -1,8 +1,10 @@
-<%= pin_link(entry) -%>
 <%- if entry.orphan -%>
-  <%= published(entry) -%>
+<%= pin_link(entry) -%>
+<%= published(entry) -%>
   (Entry not found; deleted?)
 <%- else -%>
+<%= author_picture(entry) if !root or (root.origin_nickname != entry.origin_nickname) -%>
+<%= pin_link(entry) -%>
 <%= icon(entry, (root and (root.service_identity == entry.service_identity))) -%>
  <%= author_link(entry) if root.nil? or root.user_id != entry.user_id %>
 <%= original_link(entry) -%>
