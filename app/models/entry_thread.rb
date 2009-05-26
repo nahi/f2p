@@ -457,7 +457,7 @@ class EntryThread
 
     def sort_by_modified(entries)
       entries.sort_by { |e|
-        -e.modified.to_i
+        -e.modified_at.to_i
       }
     end
 
