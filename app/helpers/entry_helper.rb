@@ -53,12 +53,16 @@ module EntryHelper
   def cache_profile(entries)
     users = [auth.name]
     rooms = []
-    entries.each do |t|
-      t.entries.each do |e|
-        if e.room
-          rooms << e.room.nickname
-        else
-          users << e.nickname if e.nickname
+    # TODO: do not show status icon for query result page now for performance
+    # reason.
+    unless ctx.query
+      entries.each do |t|
+        t.entries.each do |e|
+          if e.room
+            rooms << e.room.nickname
+            else
+            users << e.nickname if e.nickname
+          end
         end
       end
     end
@@ -132,7 +136,9 @@ module EntryHelper
     if extra and !hide_feedname
       str += h("(#{extra})")
     end
-    if entry_status(entry) != 'public'
+    # TODO: do not show status icon for query result page now for performance
+    # reason.
+    if ctx.query.nil? and entry_status(entry) != 'public'
       str = icon_tag(:private) + str
     end
     str
@@ -294,7 +300,7 @@ module EntryHelper
   end
 
   def with_link?(service)
-    service.entry_type != 'message' and !service.twitter?
+    service and service.entry_type != 'message' and !service.twitter?
   end
 
   def content_with_media(entry)
@@ -946,13 +952,14 @@ module EntryHelper
   end
 
   def url_link(entry)
-    if ctx.single?
-      link = entry.link if with_link?(entry.service)
-      link ||= entry.view_links ? entry.view_links.first : nil
-      if entry.title.size < setting.text_folding_size
-        query = entry.title
-      end
-      url_link_to(link, query)
+    link = entry.link if with_link?(entry.service)
+    link ||= entry.view_links ? entry.view_links.first : nil
+    # separate search and link.
+    #if entry.title.size < setting.text_folding_size
+    #  query = entry.title
+    #end
+    if link
+      url_link_to(link)
     end
   end
 

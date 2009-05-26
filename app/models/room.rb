@@ -6,7 +6,9 @@ class Room
 
   class << self
     def ff_picture_url(room, size = 'small')
-      ff_client.get_room_picture_url(room, size)
+      # uglish but for reducing DRb overhead...
+      # ff_client.get_room_picture_url(room, size)
+      "http://friendfeed.com/rooms/#{room}/picture?size=#{size}"
     end
 
     def ff_profile(auth, room)

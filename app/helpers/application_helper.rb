@@ -294,7 +294,7 @@ __EOS__
   end
 
   def imaginary?(nickname)
-    user_id(nickname) == nickname
+    /\A[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\z/ =~ nickname
   end
 
   def user_profiles(nicknames)

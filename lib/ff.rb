@@ -337,7 +337,7 @@ module FriendFeed
     def get_url_entries(name, remote_key, url, opt = {})
       uri = uri("feed/url")
       query = opt.merge(:url => url)
-      get_feed(uri, name, remote_key, opt)
+      get_feed(uri, name, remote_key, query)
     end
 
     def search_entries(name, remote_key, query, opt = {})

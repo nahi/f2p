@@ -127,13 +127,9 @@ class UserTest < ActiveSupport::TestCase
     ff = stub('ff_client')
     ApplicationController.ff_client = ff
     #
-    ff.expects(:get_user_picture_url).with('user1', 'small').
-      returns('http://www.example.org/')
-    assert_equal('http://www.example.org/', User.ff_picture_url('user1'))
+    assert_equal('http://friendfeed.com/user1/picture?size=small', User.ff_picture_url('user1'))
     #
-    ff.expects(:get_user_picture_url).with('user1', 'medium').
-      returns('http://www.example.org/')
-    assert_equal('http://www.example.org/', User.ff_picture_url('user1', 'medium'))
+    assert_equal('http://friendfeed.com/user1/picture?size=medium', User.ff_picture_url('user1', 'medium'))
   end
 
   test 'services' do

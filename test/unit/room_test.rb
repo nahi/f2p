@@ -67,13 +67,9 @@ class RoomTest < ActiveSupport::TestCase
     ff = stub('ff_client')
     ApplicationController.ff_client = ff
     #
-    ff.expects(:get_room_picture_url).with('room1', 'small').
-      returns('http://www.example.org/')
-    assert_equal('http://www.example.org/', Room.ff_picture_url('room1'))
+    assert_equal('http://friendfeed.com/rooms/room1/picture?size=small', Room.ff_picture_url('room1'))
     #
-    ff.expects(:get_room_picture_url).with('room1', 'large').
-      returns('http://www.example.org/')
-    assert_equal('http://www.example.org/', Room.ff_picture_url('room1', 'large'))
+    assert_equal('http://friendfeed.com/rooms/room1/picture?size=large', Room.ff_picture_url('room1', 'large'))
   end
 
   test 'members' do

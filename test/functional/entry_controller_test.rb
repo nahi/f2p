@@ -145,8 +145,6 @@ class EntryControllerTest < ActionController::TestCase
 
   test 'list likes other' do
     login('user1')
-    @ff.expects(:get_user_picture_url).with('user2', 'small').
-      returns('http://user2/').times(4)
     @ff.expects(:get_likes).
       with('user1', nil, 'user2', {:service => nil, :num => 20, :start => 0}).
       returns(read_entries('entries', 'f2ptest')).times(2)
@@ -169,8 +167,6 @@ class EntryControllerTest < ActionController::TestCase
 
   test 'list liked other' do
     login('user1')
-    @ff.expects(:get_user_picture_url).with('user2', 'small').
-      returns('http://user2/').times(4)
     @ff.expects(:search_entries).
       with('user1', nil, '', {:service => nil, :from => 'user2', :num => 20, :start => 0, :likes => 1}).
       returns(read_entries('entries', 'f2ptest')).times(2)
@@ -204,8 +200,6 @@ class EntryControllerTest < ActionController::TestCase
 
   test 'list user' do
     login('user1')
-    @ff.expects(:get_user_picture_url).with('user1', 'small').
-      returns('http://user1/').times(4)
     @ff.expects(:get_user_entries).
       with('user1', nil, 'user1', {:service => nil, :num => 20, :start => 0}).
       returns(read_entries('entries', 'f2ptest')).times(2)
@@ -217,8 +211,6 @@ class EntryControllerTest < ActionController::TestCase
 
   test 'list friends' do
     login('user1')
-    @ff.expects(:get_user_picture_url).with('user1', 'small').
-      returns('http://user1/').times(4)
     @ff.expects(:get_friends_entries).
       with('user1', nil, 'user1', {:service => nil, :num => 20, :start => 0}).
       returns(read_entries('entries', 'f2ptest')).times(2)
@@ -258,8 +250,6 @@ class EntryControllerTest < ActionController::TestCase
     @ff.expects(:get_room_profile).with('user1', nil, 'room1').
       returns(read_profile('room_profile')).
       times(2)
-    @ff.expects(:get_room_picture_url).with('room1', 'small').
-      returns('http://room1/').times(4)
     @ff.expects(:get_room_entries).
       with('user1', nil, 'room1', {:service => nil, :num => 20, :start => 0}).
       returns(read_entries('entries', 'f2ptest')).times(2)
@@ -522,8 +512,6 @@ class EntryControllerTest < ActionController::TestCase
     @ff.expects(:get_room_profile).with('user1', nil, 'room1').
       returns(read_profile('room_profile')).
       times(1)
-    @ff.expects(:get_room_picture_url).with('room1', 'small').
-      returns('http://room1/').times(2)
     @ff.expects(:get_room_entries).
       with('user1', nil, 'room1', {:service => nil, :num => 20, :start => 0}).
       returns(read_entries('entries', 'f2ptest')).times(1)
