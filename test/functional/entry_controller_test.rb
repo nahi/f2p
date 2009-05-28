@@ -6,7 +6,6 @@ class EntryControllerTest < ActionController::TestCase
     @ff = mock('ff_client')
     profile = read_profile('profile')
     @ff.stubs(:get_profile).returns(profile)
-    @ff.stubs(:get_profiles).returns([profile])
     @ff.stubs(:get_user_status).returns({})
     @ff.stubs(:get_room_status).returns({})
     ApplicationController.ff_client = @ff

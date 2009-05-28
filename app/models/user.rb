@@ -39,12 +39,6 @@ class User < ActiveRecord::Base
       convert_profile(ff_client.get_profile(auth.name, auth.remote_key, user) || {})
     end
 
-    def ff_profiles(auth, users)
-      (ff_client.get_profiles(auth.name, auth.remote_key, users) || []).map { |profile|
-        convert_profile(profile)
-      }
-    end
-
     def ff_status_map(auth, users)
       ff_client.get_user_status(auth.name, auth.remote_key, users)
     end

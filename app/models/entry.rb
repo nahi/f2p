@@ -145,6 +145,7 @@ class Entry
         @twitter_reply_to = $1
       end
     end
+    @modified = nil
   end
 
   def similar?(rhs)

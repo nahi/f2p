@@ -172,6 +172,13 @@ class EntryController < ApplicationController
     end
   end
 
+  def initialize(*arg)
+    super
+    @user_profiles = {}
+    @room_profiles = {}
+    @list_profiles = {}
+  end
+
   verify :only => :list,
           :method => [:get, :post],
           :add_flash => {:error => 'verify failed'},
@@ -181,7 +188,9 @@ class EntryController < ApplicationController
     @ctx = restore_ctx { |ctx|
       ctx.parse(params, @setting)
     }
-    @entries = find_entry_thread(find_opt)
+    with_profile_cache(@ctx) do
+      @entries = find_entry_thread(find_opt)
+    end
     initialize_checked_modified
   end
 
@@ -203,7 +212,9 @@ class EntryController < ApplicationController
       ctx.fold = param(:fold) != 'no'
     }
     retry_times = @ctx.start.zero? ? 0 : F2P::Config.max_skip_empty_inbox_pages
-    @entries = find_entry_thread(find_opt)
+    with_profile_cache(@ctx) do
+      @entries = find_entry_thread(find_opt)
+    end
     retry_times.times do
       break unless @entries.empty?
       if param(:direction) == 'rewind'
@@ -245,7 +256,9 @@ class EntryController < ApplicationController
     if ctx = session[:ctx]
       ctx.eid = @ctx.eid
     end
-    @entries = find_entry_thread(find_opt)
+    with_profile_cache(@ctx) do
+      @entries = find_entry_thread(find_opt)
+    end
     render :action => 'list'
   end
 
@@ -596,5 +609,28 @@ private
 
   def find_entry_thread(opt)
     EntryThread.find(opt) || []
+  end
+
+  def with_profile_cache(ctx)
+    tasks = []
+    if user = ctx.user_for
+      tasks << Task.run {
+        @user_profiles[user] = User.ff_profile(auth, user)
+      }
+    end
+    if room = ctx.room_for
+      tasks << Task.run {
+        @room_profiles[room] = Room.ff_profile(auth, room)
+      }
+    end
+    if list = ctx.list
+      tasks << Task.run {
+        @list_profiles[list] = List.ff_profile(auth, list)
+      }
+    end
+    yield
+    tasks.each do |task|
+      task.result # just pull the result
+    end
   end
 end

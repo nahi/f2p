@@ -4,8 +4,8 @@ class EntryHelperTest < MyActionView::TestCaseWithController
   def setup
     super
     @ctx = EntryController::EntryContext.new(auth)
-    @user_profile = {}
-    @room_profile = {}
+    @user_profiles = {}
+    @room_profiles = {}
   end
 
   #
@@ -113,9 +113,9 @@ class EntryHelperTest < MyActionView::TestCaseWithController
       returns({'name' => 'name', 'url' => 'http://url/'}).times(1)
     Room.expects(:ff_picture_url).with('nick', 'small').
       returns('http://picture/').times(2)
-    str = %Q(<a href="http://www.google.com/gwt/n?u=http%3A%2F%2Furl%2F"><img alt="name" class="profile" height="25" src="http://picture/" title="name" width="25" /></a>)
-    assert_equal(0, room_picture('nick').index(str))
-    assert_equal(0, room_picture('nick', 'small').index(str))
+    str = %Q(<a href="http://www.google.com/gwt/n?u=http%3A%2F%2Furl%2F"><img alt="nick" class="profile" height="25" src="http://picture/" title="nick" width="25" /></a>)
+    assert_equal(0, room_picture_with_link('nick').index(str))
+    assert_equal(0, room_picture_with_link('nick', 'small').index(str))
   end
 
   test 'room_members' do
@@ -145,9 +145,9 @@ class EntryHelperTest < MyActionView::TestCaseWithController
       returns({'id' => 'id', 'name' => 'name', 'profileUrl' => 'http://url/'}).times(1)
     User.expects(:ff_picture_url).with('nick', 'small').
       returns('http://picture/').times(2)
-    str = %Q(<a href="http://www.google.com/gwt/n?u=http%3A%2F%2Furl%2F"><img alt="name" class="profile" height="25" src="http://picture/" title="name" width="25" /></a>)
-    assert_equal(0, user_picture('nick').index(str))
-    assert_equal(0, user_picture('nick', 'small').index(str))
+    str = %Q(<a href="http://www.google.com/gwt/n?u=http%3A%2F%2Furl%2F"><img alt="nick" class="profile" height="25" src="http://picture/" title="nick" width="25" /></a>)
+    assert_equal(0, user_picture_with_link('nick').index(str))
+    assert_equal(0, user_picture_with_link('nick', 'small').index(str))
   end
 
   test 'user_picture self' do
@@ -156,8 +156,8 @@ class EntryHelperTest < MyActionView::TestCaseWithController
     User.expects(:ff_picture_url).with('user1', 'small').
       returns('http://picture/').times(2)
     str = %Q(<a href="http://www.google.com/gwt/n?u=http%3A%2F%2Furl%2F"><img alt="You" class="profile" height="25" src="http://picture/" title="You" width="25" /></a>)
-    assert_equal(0, user_picture('user1').index(str))
-    assert_equal(0, user_picture('user1', 'small').index(str))
+    assert_equal(0, user_picture_with_link('user1').index(str))
+    assert_equal(0, user_picture_with_link('user1', 'small').index(str))
   end
 
   test 'user_services' do

@@ -55,7 +55,7 @@ module EntryHelper
     rooms = []
     # TODO: do not show status icon for query result page now for performance
     # reason.
-    unless ctx.query
+    if ctx.query.nil? and ctx.link.nil?
       entries.each do |t|
         t.entries.each do |e|
           if e.room
@@ -138,7 +138,7 @@ module EntryHelper
     end
     # TODO: do not show status icon for query result page now for performance
     # reason.
-    if ctx.query.nil? and entry_status(entry) != 'public'
+    if ctx.query.nil? and ctx.link.nil? and entry_status(entry) != 'public'
       str = icon_tag(:private) + str
     end
     str

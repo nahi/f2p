@@ -64,7 +64,6 @@ module FriendFeed
     define_proxy_method :get_user_picture_url
     define_proxy_method :get_room_picture_url
     define_proxy_method :get_profile
-    define_proxy_method :get_profiles
     define_proxy_method :get_user_status
     define_proxy_method :get_room_profile
     define_proxy_method :get_list_profile
@@ -211,12 +210,11 @@ module FriendFeed
     define_proxy_method :like
     define_proxy_method :unlike
 
-    define_cached_proxy_method :get_user_picture_url
-    define_cached_proxy_method :get_room_picture_url
+    define_proxy_method :get_user_picture_url
+    define_proxy_method :get_room_picture_url
     #define_cached_proxy_method :get_profile
-    #define_cached_proxy_method :get_profiles
-    #define_cached_proxy_method :get_room_profile
-    #define_cached_proxy_method :get_list_profile
+    define_proxy_method :get_room_profile
+    define_proxy_method :get_list_profile
 
     def initialize(logger = nil)
       @client = FriendFeed::APIClient.new(logger)
@@ -247,33 +245,12 @@ module FriendFeed
       }
     end
 
-    def get_profiles(name, remote_key, users)
-      users.collect { |user|
-        get_profile(name, remote_key, user)
-      }
-    end
-
-    def get_room_profile(name, remote_key, room)
-      basekey = name
-      cache = ((@cache ||= {})[basekey] ||= {})[:get_room_profile] ||= {}
-      update_profile_cache(cache, room) {
-        ClientProxy.proxy(@client, :get_room_profile, name, remote_key, room)
-      }
-    end
-
-    def get_list_profile(name, remote_key, list)
-      basekey = name
-      cache = ((@cache ||= {})[basekey] ||= {})[:get_list_profile] ||= {}
-      update_profile_cache(cache, list) {
-        ClientProxy.proxy(@client, :get_list_profile, name, remote_key, list)
-      }
-    end
-
     def get_user_status(name, remote_key, users)
       basekey = "\0_system"
       cache = ((@cache ||= {})[basekey] ||= {})[:user_status] ||= {}
       users.inject({}) { |r, user|
         r[user] = update_profile_cache(cache, user) {
+          @logger.info("updating user status cache for #{user}")
           if profile = ClientProxy.proxy(@client, :get_profile, name, remote_key, user, :include => 'status')
             profile['status']
           end
@@ -287,6 +264,7 @@ module FriendFeed
       cache = ((@cache ||= {})[basekey] ||= {})[:room_status] ||= {}
       rooms.inject({}) { |r, room|
         r[room] = update_profile_cache(cache, room) {
+          @logger.info("updating room status cache for #{room}")
           if profile = ClientProxy.proxy(@client, :get_room_profile, name, remote_key, room, :include => 'status')
             profile['status']
           end

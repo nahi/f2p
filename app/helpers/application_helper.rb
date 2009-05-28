@@ -199,6 +199,18 @@ __EOS__
     @auth
   end
 
+  def user_profiles
+    @user_profiles
+  end
+
+  def room_profiles
+    @room_profiles
+  end
+
+  def list_profiles
+    @list_profiles
+  end
+
   def service_icon(service, link = nil)
     icon_url = service.icon_url
     name = service.name
@@ -243,13 +255,8 @@ __EOS__
     end
   end
 
-  def room_profiles(nicknames)
-    nicknames.map { |nickname| room_profile(nickname) }
-  end
-
   def room_profile(nickname)
-    @room_profile ||= {}
-    @room_profile[nickname] ||= Room.ff_profile(auth, nickname)
+    room_profiles[nickname] ||= Room.ff_profile(auth, nickname)
   end
 
   def room_name(nickname)
@@ -266,10 +273,16 @@ __EOS__
   end
 
   def room_picture(nickname, size = 'small')
-    name = room_name(nickname)
+    name = nickname
     image_url = Room.ff_picture_url(nickname, size)
-    url = room_profile(nickname)['url']
-    link_to(profile_image_tag(image_url, name, name), url)
+    profile_image_tag(image_url, name, name)
+  end
+
+  def room_picture_with_link(nickname, size = 'small')
+    if image = room_picture(nickname, size)
+      url = room_profile(nickname)['url']
+      link_to(image, url)
+    end
   end
 
   def room_status_icon(nickname)
@@ -281,8 +294,7 @@ __EOS__
   end
 
   def list_profile(nickname)
-    @list_profile ||= {}
-    @list_profile[nickname] ||= List.ff_profile(auth, nickname)
+    list_profiles[nickname] ||= List.ff_profile(auth, nickname)
   end
 
   def list_rooms(nickname)
@@ -297,23 +309,8 @@ __EOS__
     /\A[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\z/ =~ nickname
   end
 
-  def user_profiles(nicknames)
-    @user_profile ||= {}
-    if nicknames.any? { |e| @user_profile[e].nil? }
-      User.ff_profiles(auth, nicknames).each do |profile|
-        @user_profile[profile['nickname']] = profile
-      end
-    end
-    nicknames.map { |nickname| @user_profile[nickname] }
-  end
-
   def user_profile(nickname)
-    @user_profile ||= {}
-    @user_profile[nickname] ||= User.ff_profile(auth, nickname)
-  end
-
-  def user_id(nickname)
-    user_profile(nickname)['id']
+    user_profiles[nickname] ||= User.ff_profile(auth, nickname)
   end
 
   def user_name(nickname)
@@ -327,13 +324,19 @@ __EOS__
 
   def user_picture(nickname, size = 'small')
     return if imaginary?(nickname)
-    name = user_name(nickname)
-    if nickname == auth.name
+    name = nickname
+    if name == auth.name
       name = self_label
     end
     image_url = User.ff_picture_url(nickname, size)
-    url = user_profile(nickname)['profileUrl']
-    link_to(profile_image_tag(image_url, name, name), url)
+    profile_image_tag(image_url, name, name)
+  end
+
+  def user_picture_with_link(nickname, size = 'small')
+    if image = user_picture(nickname, size)
+      url = user_profile(nickname)['profileUrl']
+      link_to(image, url)
+    end
   end
 
   def user_status_icon(nickname)
