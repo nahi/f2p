@@ -159,6 +159,10 @@ class Entry
     result
   end
 
+  def same_feed?(rhs)
+    rhs and user_id == rhs.user_id and service_identity == rhs.service_identity
+  end
+
   def service_identity
     return nil unless service
     sid = service.service_group? ? service.profile_url : service.id

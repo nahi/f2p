@@ -106,7 +106,7 @@ module EntryHelper
     end
   end
 
-  def icon(entry, hide_feedname = false)
+  def icon(entry)
     service = entry.service
     return unless service
     if ctx.user
@@ -133,7 +133,7 @@ module EntryHelper
     if entry.service.service_group?
       extra = entry.service.name
     end
-    if extra and !hide_feedname
+    if extra
       str += h("(#{extra})")
     end
     # TODO: do not show status icon for query result page now for performance

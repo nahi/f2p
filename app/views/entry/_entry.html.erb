@@ -5,7 +5,7 @@
 <%- else -%>
 <%= author_picture(entry) if !root or (root.origin_nickname != entry.origin_nickname) -%>
 <%= pin_link(entry) -%>
-<%= icon(entry, (root and (root.service_identity == entry.service_identity))) -%>
+<%= icon(entry) unless entry.same_feed?(root) -%>
  <%= author_link(entry) if root.nil? or root.user_id != entry.user_id %>
 <%= original_link(entry) -%>
 <%= content(entry) %>
