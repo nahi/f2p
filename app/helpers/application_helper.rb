@@ -371,12 +371,12 @@ __EOS__
     link_to(h(name), :controller => 'entry', :action => 'list', :user => u(user.nickname || user.id))
   end
 
-  def via(via)
+  def via(via, label = 'via')
     if via
       if via.url
-        %Q[via #{link_to(h(via.name), via.url)}]
+        %Q[#{label} #{link_to(h(via.name), via.url)}]
       elsif via.name
-        %Q[via #{h(via.name)}]
+        %Q[#{label} #{h(via.name)}]
       end
     end
   end

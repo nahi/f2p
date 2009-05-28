@@ -40,6 +40,12 @@ class Comment
   end
 
   def posted_with_entry?
-    self.date == entry.published
+    (entry.published_at - self.date_at).abs < 10.seconds
+  end
+
+protected
+
+  def date_at
+    @date_at ||= (date ? Time.parse(date) : Time.now)
   end
 end

@@ -208,10 +208,10 @@ class EntryHelperTest < MyActionView::TestCaseWithController
   test 'via' do
     via = {"name"=>"mail2ff", "url"=>"http://mail2ff.com/"}
     entry = Entry['via' => via]
-    assert_equal(%Q(via <a href="http://www.google.com/gwt/n?u=http%3A%2F%2Fmail2ff.com%2F">mail2ff</a>), via(entry))
+    assert_equal(%Q(from <a href="http://www.google.com/gwt/n?u=http%3A%2F%2Fmail2ff.com%2F">mail2ff</a>), via(entry))
     via = {"name"=>"mail2ff", "url"=>nil}
     entry = Entry['via' => via]
-    assert_equal(%Q(via mail2ff), via(entry))
+    assert_equal(%Q(from mail2ff), via(entry))
   end
 
   test 'image_size' do

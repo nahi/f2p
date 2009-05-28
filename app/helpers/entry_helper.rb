@@ -512,8 +512,9 @@ module EntryHelper
     end
   end
 
-  def via(entry)
-    super(entry.via)
+  def via(entry_or_comment)
+    label = entry_or_comment.respond_to?(:service) ? 'from' : 'via'
+    super(entry_or_comment.via, label)
   end
 
   def likes(entry, compact)
@@ -620,10 +621,10 @@ module EntryHelper
   end
 
   def inline_comment(comment)
-    if comment.date != comment.entry.updated
-      comment(comment) + ' ' + date(comment.date, true)
-    else
+    if comment.posted_with_entry?
       comment(comment)
+    else
+      comment(comment) + ' ' + date(comment.date, true)
     end
   end
 
