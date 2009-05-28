@@ -56,7 +56,11 @@
   <%- end -%>
   <%= "<hr />" if i_mode? -%>
   <%- if @entries.size == 0 -%>
-    <p>No feed is good feed.</p>
+    <%- if ctx.label == 'pin' -%>
+      <p>No pinned entries. Click <%= icon_tag(:pin) %> for pinning the entry in other view.</p>
+    <%- else -%>
+      <p>No feed is good feed.</p>
+    <%- end -%>
   <%- end -%>
 </div>
 <%- form_tag(link_action('archive')) do -%>
