@@ -484,17 +484,16 @@ class EntryThread
         end
         group += kinds
         buf -= kinds
-        sorted = sort_by_modified_without_twitter(group)
+        sorted = sort_by_published(group)
         t.add(*sorted)
         t.root = sorted.first
       end
       result
     end
 
-    def sort_by_modified_without_twitter(entries)
+    def sort_by_published(entries)
       entries.sort_by { |e|
-        time = (e.service && e.service.twitter?) ? e.published_at : e.modified_at
-        -time.to_i
+        -e.published_at.to_i
       }
     end
 
