@@ -67,6 +67,8 @@ module ApplicationHelper
   def inline_meta
     if iphone?
       content_tag('meta', nil, :name => 'viewport', :content => 'width=device-width; initial-scale=1.0')
+    else
+      content_tag('meta', nil, :name => 'viewport', :content => 'width=device-width, height=device-height')
     end
   end
 

@@ -5,8 +5,9 @@
   <div class="<%= cycle('thread1', 'thread2') %>">
     <p>
 <%= pin_link(entry) -%>
-<%= icon(entry) -%>
- <%= author_link(entry) %>
+<%= author_picture(entry) -%>
+<%= author_link(entry) %>
+<%= icon(entry) -%><br />
 <%= published(entry, false) %>
 <%= original_link(entry) -%>
 <%= content(entry) -%>
