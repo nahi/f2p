@@ -276,12 +276,12 @@ class EntryThread
       pinned_id = pinned.map { |e| e.eid }
       if opt[:service]
         entries = get_entries(auth, :ids => pinned_id).find_all { |e|
-          e['service'] && opt[:service] == e['service']['id']
+          e['service'] && (opt[:service] == e['service']['id'])
         }
         entries[start, num] || []
       elsif opt[:room]
         entries = get_entries(auth, :ids => pinned_id).find_all { |e|
-          e['room'] && opt[:room] == e['room']['name']
+          e['room'] && (opt[:room] == e['room']['nickname'])
         }
         entries[start, num] || []
       elsif pinned_id = pinned_id[start, num]
