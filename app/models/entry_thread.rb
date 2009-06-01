@@ -160,12 +160,12 @@ class EntryThread
           wrap(Task.run { get_user_entries(auth, opt) }.result)
         elsif opt[:list]
           wrap(Task.run { get_list_entries(auth, opt) }.result)
+        elsif opt[:label] == 'pin'
+          wrap(Task.run { pinned_entries(auth, opt) }.result)
         elsif opt[:room]
           wrap(Task.run { get_room_entries(auth, opt) }.result)
         elsif opt[:friends]
           wrap(Task.run { get_friends_entries(auth, opt) }.result)
-        elsif opt[:label] == 'pin'
-          wrap(Task.run { pinned_entries(auth, opt) }.result)
         else
           wrap(Task.run { get_home_entries(auth, opt) }.result)
         end
@@ -276,7 +276,12 @@ class EntryThread
       pinned_id = pinned.map { |e| e.eid }
       if opt[:service]
         entries = get_entries(auth, :ids => pinned_id).find_all { |e|
-          opt[:service] == e['service']['id']
+          e['service'] && opt[:service] == e['service']['id']
+        }
+        entries[start, num] || []
+      elsif opt[:room]
+        entries = get_entries(auth, :ids => pinned_id).find_all { |e|
+          e['room'] && opt[:room] == e['room']['name']
         }
         entries[start, num] || []
       elsif pinned_id = pinned_id[start, num]

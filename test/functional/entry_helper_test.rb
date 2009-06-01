@@ -16,7 +16,7 @@ class EntryHelperTest < MyActionView::TestCaseWithController
   end
 
   test "inline_meta" do
-    assert_nil(inline_meta)
+    assert_match(/viewport/, inline_meta)
     @controller.request.stubs(:user_agent).returns('iPhone')
     assert_match(/viewport/, inline_meta)
   end
