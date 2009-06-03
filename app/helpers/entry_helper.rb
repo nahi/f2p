@@ -979,7 +979,11 @@ module EntryHelper
   def post_comment_link(entry, opt = {})
     str = icon_tag(:comment_add, 'comment')
     if opt[:show_comments_number] and !entry.comments.empty? and !comment_inline?(entry)
-      num = "(#{entry.comments.size} comments)"
+      if entry.comments.size == 1
+        num = "(#{entry.comments.size} comment)"
+      else
+        num = "(#{entry.comments.size} comments)"
+      end
       if entry.view_inbox and entry.modified == entry.comments.last.date
         num = content_tag('span', latest(entry.modified_at, num), :class => 'inbox')
       end
@@ -1107,6 +1111,7 @@ module EntryHelper
   end
 
   def fold_items(entry_id, items)
+    return [] if setting.entries_in_thread == 0
     if items.size > setting.entries_in_thread + 1
       head_size = setting.entries_in_thread > 1 ? 1 : 0
       last_size = setting.entries_in_thread - head_size

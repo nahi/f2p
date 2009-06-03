@@ -1,49 +1,51 @@
 <p><a name="top"></a><%= page_links(:for_top => true, :threads => @threads) %></p>
 <div class="listings">
 <%- if @threads.first && entry = @threads.first.root -%>
-  <p>
-    <div class="thread1">
+  <div class="thread2">
+    <p>
 <%= pin_link(entry) -%>
-<%= author_picture(entry) -%>
-<%= author_link(entry) %>
-<%= icon(entry) -%>
- <%= published(entry, false) %>
-<%= original_link(entry) -%>
-<%= content(entry) -%>
- <%= via(entry) %>
-<%= likes(entry, false) -%>
+<%= published(entry, false) %>
 <%= url_link(entry) -%>
 <%= reshare_link(entry) -%>
 <%= like_link(entry) -%>
 <%= delete_link(entry) -%>
-    </div>
-    <%- form_tag({:action => 'add_comment', :id => u(entry.id), :comment => ctx.comment ? u(ctx.comment) : nil}, {:name => 'post'}) do -%>
-      <ul class="comment">
-        <%- entry.comments.each do |comment| -%>
-          <div class="<%= cycle('thread2', 'thread1') %>">
-            <li>
-              <%= comment_icon(comment) %>
-              <%= date(comment.date, false) %>
-              <%- if ctx.comment != comment.id -%>
-                <%= comment(comment) %> <%= comment_author_link(comment) %> <%= via(comment) %>
+    </p>
+    <p class="title">
+<%= author_picture(entry) -%>
+<%= author_link(entry) %>
+<%= icon(entry) -%><br/>
+<%= original_link(entry) -%>
+<%= content(entry) -%>
+  <%= via(entry) -%>
+    </p>
+    <p>
+<%= likes(entry, false) -%>
+    </p>
+  </div>
+  <%- form_tag({:action => 'add_comment', :id => u(entry.id), :comment => ctx.comment ? u(ctx.comment) : nil}, {:name => 'post'}) do -%>
+    <%- entry.comments.each do |comment| -%>
+      <div class="comment">
+        <p>
+          <%= comment_icon(comment) %>
+          <%= date(comment.date, false) %>
+          <%- if ctx.comment != comment.id -%>
+            <%= comment(comment) %> <%= comment_author_link(comment) %> <%= via(comment) %>
 <%= comment_url_link(comment) -%>
 <%= edit_comment_link(comment) -%>
 <%= delete_comment_link(comment) -%>
-              <%- else -%>
-                <%= edit_comment_form(comment) %>
-              <%- end -%>
-            </li>
-          </div>
-        <%- end -%>
-      </ul>
-      <%- if ctx.comment.nil? -%>
-        <div class="<%= cycle('thread2', 'thread1') %>">
-          <%= comment_icon %>
-          <%= post_comment_form(entry) %>
-        </div>
-      <%- end -%>
+          <%- else -%>
+            <%= edit_comment_form(comment) %>
+          <%- end -%>
+        </p>
+      </div>
     <%- end -%>
-  </p>
+    <%- if ctx.comment.nil? -%>
+      <div class="comment">
+        <%= comment_icon %>
+        <%= post_comment_form(entry) %>
+      </div>
+    <%- end -%>
+  <%- end -%>
   <%- commit_checked_modified(entry) -%>
 <%- else -%>
   <p>No feed is good feed.</p>

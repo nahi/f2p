@@ -89,7 +89,10 @@ module ApplicationHelper
   .latest2 { color: #C00; }
   .latest3 { color: #900; }
   .older { color: #008; }
-  .comment { color: #666; }
+  .comment {
+    padding-bottom: 0.5ex;
+    color: #666;
+  }
   .inbox { font-weight: bold; }
   div.listings .thread1 { padding-bottom: 0.8ex; background-color: #EEE; }
   div.listings .thread2 { padding-bottom: 0.8ex; }
@@ -101,6 +104,10 @@ module ApplicationHelper
   div.listings p {
     margin-top: 0pt;
     margin-bottom: 0pt;
+  }
+  div.listings .title {
+    margin-top: 2ex;
+    margin-bottom: 1.2ex;
   }
   #{ inline_stylesheet_iphone }
 __EOS__
