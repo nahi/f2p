@@ -50,6 +50,8 @@ module F2P
       attr_accessor :twitter_comment_hack
       attr_accessor :timezone
       attr_accessor :list_view_profile_picture
+      attr_accessor :medias_in_thread
+      attr_accessor :next_entry_text_folding_size
     end
   end
 end
@@ -149,7 +151,7 @@ Rails::Initializer.run do |config|
   F2P::Config.font_size = 9
   F2P::Config.entries_in_page = 20
   F2P::Config.text_folding_size = 140
-  F2P::Config.entries_in_thread = 4
+  F2P::Config.entries_in_thread = 0
   F2P::Config.likes_in_page = 3
   F2P::Config.service_grouping_threashold = 5400
   F2P::Config.link_open_new_window = false
@@ -160,4 +162,6 @@ Rails::Initializer.run do |config|
   F2P::Config.twitter_comment_hack = false
   F2P::Config.timezone = 'Tokyo'
   F2P::Config.list_view_profile_picture = false
+  F2P::Config.medias_in_thread = 4
+  F2P::Config.next_entry_text_folding_size = 40
 end

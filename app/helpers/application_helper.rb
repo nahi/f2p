@@ -122,8 +122,8 @@ __EOS__
     write_new_link +
       search_link +
       settings_link +
-      logout_link +
-      help_link
+      help_link +
+      logout_link
   end
 
   def self_label

@@ -26,7 +26,9 @@ class EntryThread
       pins = check_inbox(auth, entries)
       logger.info('[perf] check_inbox done')
       if opt[:inbox]
-        entries = entries.find_all { |entry| entry.view_inbox }
+        entries = entries.find_all { |entry|
+          entry.view_inbox or entry.id == opt[:filter_inbox_except]
+        }
       elsif opt[:label] == 'pin'
         entries = entries.find_all { |entry|
           entry.view_pinned or entry.id == opt[:updated_id]
@@ -121,6 +123,17 @@ class EntryThread
     end
 
     def fetch_single_entry_as_array(auth, opt)
+      @entries_cache ||= {}
+      allow_cache = opt[:allow_cache]
+      if allow_cache
+        if cached = @entries_cache[auth.name]
+          entries = cached[1]
+          if found = entries.find { |e| e.id == opt[:id] }
+            logger.info("[cache] entry cache found for #{opt[:id]}")
+            return [found]
+          end
+        end
+      end
       wrap(Task.run { get_entry(auth, opt) }.result)
     end
 
@@ -180,6 +193,7 @@ class EntryThread
       opt.delete(:updated_id)
       opt.delete(:merge_entry)
       opt.delete(:merge_service)
+      opt.delete(:filter_inbox_except)
       if allow_cache and @entries_cache[auth.name]
         cached_opt, entries = @entries_cache[auth.name]
         if opt == cached_opt

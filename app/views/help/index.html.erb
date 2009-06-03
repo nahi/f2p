@@ -8,8 +8,8 @@
   <li><%= icon_tag(:write) %> ... add new entry</li>
   <li><%= icon_tag(:search) %> ... search entries</li>
   <li><%= icon_tag(:settings) %> ... change session settings</li>
-  <li><%= icon_tag(:logout) %> ... logout and discard settings</li>
   <li><%= icon_tag(:help) %> ... show this help</li>
+  <li><%= icon_tag(:logout) %> ... logout and discard settings</li>
 </ul>
 
 <h2>Page Cursor</h2>
@@ -24,8 +24,11 @@
 <h2>Page Menu</h2>
 <ul>
   <li>[inbox] ... show your entries in 'home' excluding archived entries</li>
+  <li>[show] ... show the first entry</li>
   <li>[filter] ... show links for filtering; lists, groups and my feeds</li>
+  <li>[all] ... show all of your entries in 'home' including archived entries</li>
   <li>[pin] ... show pinned entries</li>
+  <li>[next] ... (in [show] page only) show next entry in the list</li>
   <li><%= service_icon_tag('http://friendfeed.com/static/images/icons/internal.png', 'FriendFeed', 'FriendFeed') %> ... show filtered entries by specified service</li>
   <li>(user name) ... show user profile</li>
   <li><%= icon_tag(:url) %> ... show seach result page of entries which relates to specified link</li>
@@ -48,7 +51,6 @@
   <li><%= icon_tag(:pin) %> ... add pin to the entry; pinned entries keep on showing in [inbox] and [pin]</li>
   <li><%= icon_tag(:pinned) %> ... unpin the entry and archive it</li>
   <li><%= submit_tag('mark as read') %> ... archive entries except pinned entries</li>
-  <li>[all] ... show all of your entries in 'home' including archived entries</li>
 </ul>
 
 <h2>User Filter</h2>

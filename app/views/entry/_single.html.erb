@@ -1,14 +1,13 @@
-<p><a name="top"></a><%= page_links(:for_top => true) %></p>
+<p><a name="top"></a><%= page_links(:for_top => true, :threads => @threads) %></p>
 <div class="listings">
-<%- if threads = @entries.first -%>
-  <%- entry = threads.root -%>
-  <div class="<%= cycle('thread1', 'thread2') %>">
-    <p>
+<%- if @threads.first && entry = @threads.first.root -%>
+  <p>
+    <div class="thread1">
 <%= pin_link(entry) -%>
 <%= author_picture(entry) -%>
 <%= author_link(entry) %>
-<%= icon(entry) -%><br />
-<%= published(entry, false) %>
+<%= icon(entry) -%>
+ <%= published(entry, false) %>
 <%= original_link(entry) -%>
 <%= content(entry) -%>
  <%= via(entry) %>
@@ -17,9 +16,11 @@
 <%= reshare_link(entry) -%>
 <%= like_link(entry) -%>
 <%= delete_link(entry) -%>
-      <%- form_tag({:action => 'add_comment', :id => u(entry.id), :comment => ctx.comment ? u(ctx.comment) : nil}, {:name => 'post'}) do -%>
-        <ul class="comment">
-          <%- entry.comments.each do |comment| -%>
+    </div>
+    <%- form_tag({:action => 'add_comment', :id => u(entry.id), :comment => ctx.comment ? u(ctx.comment) : nil}, {:name => 'post'}) do -%>
+      <ul class="comment">
+        <%- entry.comments.each do |comment| -%>
+          <div class="<%= cycle('thread2', 'thread1') %>">
             <li>
               <%= comment_icon(comment) %>
               <%= date(comment.date, false) %>
@@ -32,28 +33,34 @@
                 <%= edit_comment_form(comment) %>
               <%- end -%>
             </li>
-          <%- end -%>
-        </ul>
-        <%- if ctx.comment.nil? -%>
+          </div>
+        <%- end -%>
+      </ul>
+      <%- if ctx.comment.nil? -%>
+        <div class="<%= cycle('thread2', 'thread1') %>">
           <%= comment_icon %>
           <%= post_comment_form(entry) %>
-        <%- end -%>
-        <script type='text/javascript'><!--
-        post.body.focus();
-        //--></script>
+        </div>
       <%- end -%>
-    </p>
-  </div>
+    <%- end -%>
+  </p>
   <%- commit_checked_modified(entry) -%>
 <%- else -%>
   <p>No feed is good feed.</p>
 <%- end -%>
 </div>
-<p><a name="bottom"></a><%= page_links(:for_bottom => true) %></p>
+<p><a name="bottom"></a><%= page_links(:for_bottom => true, :threads => @threads) %></p>
+<%- if next_entry = next_entry(entry.id) -%>
+  <hr />
+  <p>
+    <%= icon_tag(:next) %> <%= menu_label('next', '5') %><br />
+    <%= link_to_next_entry(next_entry) %><br />
+    from <%= author_link(next_entry) %><%= icon(next_entry) %>
+  </p>
+<%- end -%>
 <%- if !ctx.user_only? -%>
   <hr />
   <p><a name="filter">[Filter]</a></p>
   <p><%= user_page_links(auth.name) %></p>
   <p><%= list_links %></p>
-  <p><%= room_links(auth.name) %></p>
 <%- end -%>

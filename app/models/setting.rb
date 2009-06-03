@@ -34,8 +34,8 @@ class Setting
     unless (5..100) === @entries_in_page
       errors << 'entries in page must be in 5..100'
     end
-    unless (3..100) === @entries_in_thread
-      errors << 'entries in thread must be in 3..100'
+    unless (0..100) === @entries_in_thread
+      errors << 'entries in thread must be in 0..100'
     end
     unless (20..1000) === @text_folding_size
       errors << 'text folding size must be in 20..1000'

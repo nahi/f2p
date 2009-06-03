@@ -77,7 +77,7 @@ class SettingControllerTest < ActionController::TestCase
     post :update,
       :font_size => '5',
       :entries_in_page => '4',
-      :entries_in_thread => '2',
+      :entries_in_thread => '-1',
       :text_folding_size => '19',
       :twitter_comment_hack => '',
       :list_view_media_rendering => '',
@@ -86,7 +86,7 @@ class SettingControllerTest < ActionController::TestCase
       :google_maps_geocoding_lang => 'foobar'
     assert_response :success
     assert_equal(
-      "Settings error: font size must be greater than 6, entries in page must be in 5..100, entries in thread must be in 3..100, text folding size must be in 20..1000",
+      "Settings error: font size must be greater than 6, entries in page must be in 5..100, entries in thread must be in 0..100, text folding size must be in 20..1000",
       flash[:error]
     )
     s = @request.session[:setting]

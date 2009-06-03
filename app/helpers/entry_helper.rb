@@ -308,7 +308,7 @@ module EntryHelper
     if ctx.single?
       display = medias
     else
-      display = medias[0, setting.entries_in_thread - 1]
+      display = medias[0, F2P::Config.medias_in_thread]
     end
     str = display.collect { |media|
       title = media.title
@@ -699,7 +699,7 @@ module EntryHelper
   end
 
   def fold_link(entry)
-    msg = " (#{entry.fold_entries} more entries)"
+    msg = " (#{entry.fold_entries} related entries)"
     link_to(icon_tag(:more), list_opt(ctx.link_opt(:start => ctx.start, :num => ctx.num, :fold => 'no'))) + h(msg)
   end
 
@@ -848,9 +848,11 @@ module EntryHelper
     start = ctx.start || 0
     num = ctx.num || 0
     links = []
-    links << menu_link(icon_tag(:previous), list_opt(ctx.link_opt(:start => start - num, :num => num, :direction => 'rewind')), accesskey('4')) {
-      !no_page and start - num >= 0
-    }
+    if ctx.list?
+      links << menu_link(icon_tag(:previous), list_opt(ctx.link_opt(:start => start - num, :num => num, :direction => 'rewind')), accesskey('4')) {
+        !no_page and start - num >= 0
+      }
+    end
     if opt[:for_top]
       links << link_to(icon_tag(:bottom), '#bottom', accesskey('8'))
     end
@@ -858,8 +860,10 @@ module EntryHelper
       links << link_to(icon_tag(:top), '#top', accesskey('2'))
     end
     links << menu_link(menu_label('inbox', '0'), link_action('inbox'), accesskey('0'))
-    if ctx.inbox
-      links << menu_link(menu_label('all', '1'), link_list(), accesskey('1'))
+    if ctx.list? and threads = opt[:threads]
+      if thread = threads.first
+        links << menu_link(menu_label('show', '1'), link_show(thread.root.id), accesskey('1'))
+      end
     end
     if ctx.friend_view?
       links << menu_link(menu_label('me', '3'), link_user(auth.name), accesskey('3'))
@@ -868,16 +872,23 @@ module EntryHelper
     else
       links << menu_link(menu_label('filter', '3'), '#filter', accesskey('3'))
     end
+    if ctx.inbox
+      links << menu_link(menu_label('all', '7'), link_list(), accesskey('7'))
+    end
     pin_label = 'pin'
     if threads = opt[:threads]
       pin_label += "(#{threads.pins})"
     end
     links << menu_link(menu_label(pin_label, '9'), link_list(:label => u('pin')), accesskey('9'))
-    links << menu_link(icon_tag(:next), list_opt(ctx.link_opt(:start => start + num, :num => num)), accesskey('6')) { !no_page }
-    if threads = opt[:threads]
-      links << list_range_notation(threads)
+    if ctx.list?
+      links << menu_link(icon_tag(:next), list_opt(ctx.link_opt(:start => start + num, :num => num)), accesskey('6')) { !no_page }
+      if threads = opt[:threads] and opt[:for_top]
+        links << list_range_notation(threads)
+      end
     end
-    links << archive_button if ctx.inbox
+    if ctx.inbox and opt[:for_bottom]
+      links << archive_button
+    end
     links.join(' ')
   end
 
@@ -902,6 +913,23 @@ module EntryHelper
       label = '8.menu'
       link_to(h("[#{label}]"), '#bottom', accesskey('8'))
     end
+  end
+
+  def next_entry(eid)
+    return if @original_threads.nil? or @original_threads.empty?
+    entries = @original_threads.map { |thread| thread.entries }.flatten
+    if found = entries.find { |e| e.id == eid }
+      entries[entries.index(found) + 1]
+    end
+  end
+
+  def link_to_next_entry(entry)
+    title = entry.title || ''
+    fold = fold_length(title, F2P::Config.next_entry_text_folding_size - 3)
+    if title != fold
+      fold += '...'
+    end
+    link_to(h(fold), link_show(entry.id), accesskey('5'))
   end
 
   def archive_button
@@ -948,11 +976,20 @@ module EntryHelper
     end
   end
 
-  def post_comment_link(entry)
-    link_to(icon_tag(:comment_add, 'comment'), link_show(entry.id))
+  def post_comment_link(entry, opt = {})
+    str = icon_tag(:comment_add, 'comment')
+    if opt[:show_comments_number] and !entry.comments.empty? and !comment_inline?(entry)
+      num = "(#{entry.comments.size} comments)"
+      if entry.view_inbox and entry.modified == entry.comments.last.date
+        num = content_tag('span', latest(entry.modified_at, num), :class => 'inbox')
+      end
+      str += num
+    end
+    link_to(str, link_show(entry.id))
   end
 
   def url_link(entry)
+    return unless ctx.single?
     link = entry.link if with_link?(entry.service)
     link ||= entry.view_links ? entry.view_links.first : nil
     # separate search and link.
@@ -962,6 +999,10 @@ module EntryHelper
     if link
       url_link_to(link)
     end
+  end
+
+  def comment_date(comment, compact = true)
+    date(comment.date, compact)
   end
 
   def comment_url_link(comment)
@@ -1050,7 +1091,7 @@ module EntryHelper
   end
 
   def fold_entries(entries)
-    if ctx.fold
+    if !entries.empty? and ctx.fold
       fold_items(entries.first.id, entries)
     else
       entries.dup
@@ -1058,7 +1099,7 @@ module EntryHelper
   end
 
   def fold_comments(comments)
-    if ctx.fold
+    if !comments.empty? and ctx.fold
       fold_items(comments.first.entry.id, comments)
     else
       comments.dup
@@ -1066,16 +1107,20 @@ module EntryHelper
   end
 
   def fold_items(entry_id, items)
-    if items.size > setting.entries_in_thread
-      head_size = 1
+    if items.size > setting.entries_in_thread + 1
+      head_size = setting.entries_in_thread > 1 ? 1 : 0
+      last_size = setting.entries_in_thread - head_size
       result = items[0, head_size]
-      result << Fold.new(entry_id, items.size - (setting.entries_in_thread - 1))
-      last_size = setting.entries_in_thread - 2
+      result << Fold.new(entry_id, items.size - (head_size + last_size))
       result += items[-last_size, last_size]
       result
     else
       items.dup
     end
+  end
+
+  def fold_item?(entry)
+    entry and entry.respond_to?(:fold_entries)
   end
 
   def comment_inline?(entry)

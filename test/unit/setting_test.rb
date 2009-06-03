@@ -19,7 +19,7 @@ class SettingTest < ActiveSupport::TestCase
     s = Setting.new
     s.font_size = 5
     s.entries_in_page = 4
-    s.entries_in_thread = 2
+    s.entries_in_thread = -1
     s.text_folding_size = 19
     s.google_maps_zoom = 20
     assert_equal(5, s.validate.size)

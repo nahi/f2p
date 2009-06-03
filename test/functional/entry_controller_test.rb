@@ -287,10 +287,18 @@ class EntryControllerTest < ActionController::TestCase
     login('user1')
     @ff.expects(:get_profile).
       returns(read_profile('profile')).times(1)
-    @ff.expects(:get_entry).
-      returns(read_entries('entries', 'f2ptest')[0, 1]).times(2)
+    @ff.expects(:get_inbox_entries).
+      returns(read_entries('entries', 'f2ptest')).times(1)
+    # clear cache first
+    get :inbox
+    assert_response :success
+    # cache is used
     get :show, :id => 'df9d34df-23ff-de8e-3675-a82736ef90cc'
     assert_response :success
+    #
+    @ff.expects(:get_entry).
+      returns(read_entries('entries', 'f2ptest')[0, 1]).times(1)
+    # cache is not used for reloading
     get :show, :id => 'df9d34df-23ff-de8e-3675-a82736ef90cc'
     assert_response :success
   end
@@ -303,8 +311,9 @@ class EntryControllerTest < ActionController::TestCase
     assert_response :success
     assert_nil(session[:ctx].eid)
     #
-    @ff.expects(:get_entry).
-      returns(read_entries('entries', 'f2ptest')[0, 1]).times(1)
+    # entries cache is used
+    #@ff.expects(:get_entry).
+    #  returns(read_entries('entries', 'f2ptest')[0, 1]).times(1)
     get :show, :id => 'df9d34df-23ff-de8e-3675-a82736ef90cc'
     assert_response :success
     assert(session[:ctx].eid)

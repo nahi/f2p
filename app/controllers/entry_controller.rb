@@ -189,7 +189,7 @@ class EntryController < ApplicationController
       ctx.parse(params, @setting)
     }
     with_profile_cache(@ctx) do
-      @entries = find_entry_thread(find_opt)
+      @threads = find_entry_thread(find_opt)
     end
     initialize_checked_modified
   end
@@ -213,17 +213,17 @@ class EntryController < ApplicationController
     }
     retry_times = @ctx.start.zero? ? 0 : F2P::Config.max_skip_empty_inbox_pages
     with_profile_cache(@ctx) do
-      @entries = find_entry_thread(find_opt)
+      @threads = find_entry_thread(find_opt)
     end
     retry_times.times do
-      break unless @entries.empty?
+      break unless @threads.empty?
       if param(:direction) == 'rewind'
         break if @ctx.start - @ctx.num < 0
         @ctx.start -= @ctx.num
       else
         @ctx.start += @ctx.num
       end
-      @entries = find_entry_thread(find_opt)
+      @threads = find_entry_thread(find_opt)
     end
     initialize_checked_modified
     render :action => 'list'
@@ -253,12 +253,29 @@ class EntryController < ApplicationController
     @ctx = EntryContext.new(auth)
     @ctx.eid = param(:id)
     @ctx.home = false
-    if ctx = session[:ctx]
-      ctx.eid = @ctx.eid
-    end
+    sess_ctx = session[:ctx]
     with_profile_cache(@ctx) do
-      @entries = find_entry_thread(find_opt)
+      opt = find_opt()
+      # allow to use cache except self reloading
+      opt[:allow_cache] = true unless flash[:show_reload_detection]
+      @threads = find_entry_thread(opt)
+      if sess_ctx
+        # pin/unpin redirect caused :id set.
+        ctx = sess_ctx.dup
+        ctx.eid = nil
+        opt = find_opt(ctx)
+        opt[:allow_cache] = true
+        # avoid inbox threds update
+        opt[:filter_inbox_except] = @ctx.eid
+        @original_threads = find_entry_thread(opt)
+      else
+        @original_threads = []
+      end
     end
+    if sess_ctx
+      sess_ctx.eid = @ctx.eid
+    end
+    flash[:show_reload_detection] = true
     render :action => 'list'
   end
 
@@ -328,7 +345,7 @@ class EntryController < ApplicationController
     if ctx = session[:ctx]
       ctx.eid = @ctx.eid
     end
-    @entries = find_entry_thread(find_opt)
+    @threads = find_entry_thread(find_opt)
     render :action => 'list'
   end
 
@@ -525,8 +542,8 @@ class EntryController < ApplicationController
 
 private
 
-  def find_opt
-    @ctx.find_opt.merge(
+  def find_opt(ctx = @ctx)
+    ctx.find_opt.merge(
       :allow_cache => flash[:allow_cache],
       :updated_id => flash[:added_id] || flash[:updated_id] || flash[:deleted_id]
     )

@@ -1,4 +1,4 @@
-<%- cache_profile(@entries) -%>
+<%- cache_profile(@threads) -%>
 <%- if ctx.query and !ctx.link -%>
   <%- form_tag({:action => 'list'}) do -%>
     <p><%= search_form %></p>
@@ -24,26 +24,26 @@
 <%- end -%>
 <%- if !ctx.inbox or !cell_phone? -%>
   <%- form_tag(link_action('archive')) do -%>
-    <p><a name="top"></a><%= page_links(:for_top => true, :threads => @entries) %></p>
+    <p><a name="top"></a><%= page_links(:for_top => true, :threads => @threads) %></p>
   <%- end -%>
 <%- end -%>
 <div class="listings">
-  <%- if link = geo_markers_link(@entries) -%>
+  <%- if link = geo_markers_link(@threads) -%>
     <p>
       Following list includes geo entries:<br />
       <ul><li><%= link %></li></ul>
     </p>
   <%- end -%>
-  <%- @entries.each do |thread| -%>
+  <%- @threads.each do |thread| -%>
     <%= "<hr />" if i_mode? -%>
     <div class="<%= cycle('thread1', 'thread2') %>">
       <%= render :partial => 'entry', :locals => {:entry => thread.root, :root => nil} %>
       <%- remember_checked(thread.root) -%>
-      <%- if thread.chunked? -%>
+      <%- unless thread.related_entries.empty? -%>
         <ul>
           <li><%= icon_tag(:related) %> <%= thread.related_entries.size %> related entries</li>
-          <% fold_entries(thread.related_entries).each do |entry| -%>
-            <%- if entry.respond_to?(:fold_entries) -%>
+          <% thread.related_entries.each do |entry| -%>
+            <%- if fold_item?(entry) -%>
               <%= fold_link(entry) %>
             <%- else -%>
               <li><%= render :partial => 'entry', :locals => {:entry => entry, :root => thread.root} %></li>
@@ -55,7 +55,7 @@
     </div>
   <%- end -%>
   <%= "<hr />" if i_mode? -%>
-  <%- if @entries.size == 0 -%>
+  <%- if @threads.size == 0 -%>
     <%- if ctx.label == 'pin' -%>
       <p>No pinned entries. Click <%= icon_tag(:pin) %> for pinning the entry in other view.</p>
     <%- else -%>
@@ -64,7 +64,7 @@
   <%- end -%>
 </div>
 <%- form_tag(link_action('archive')) do -%>
-  <p><a name="bottom"></a><%= page_links(:for_bottom => true, :threads => @entries) %></p>
+  <p><a name="bottom"></a><%= page_links(:for_bottom => true, :threads => @threads) %></p>
 <%- end -%>
 <%- if ctx.user_for -%>
   <p><%= render :partial => 'profile', :locals => {:user => ctx.user_for} %></p>
@@ -78,7 +78,6 @@
   <p><a name="filter">[Filter]</a></p>
   <p><%= user_page_links(auth.name) %></p>
   <p><%= list_links %></p>
-  <p><%= room_links(auth.name) %></p>
 <%- end -%>
 <script type='text/javascript'><!--
 document.getElementById('first_link').focus();
