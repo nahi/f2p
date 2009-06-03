@@ -107,6 +107,7 @@ module ApplicationHelper
   }
   div.listings .title {
     margin-top: 2ex;
+    margin-left: 1ex;
     margin-bottom: 1.2ex;
   }
   #{ inline_stylesheet_iphone }

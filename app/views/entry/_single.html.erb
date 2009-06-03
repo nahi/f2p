@@ -1,19 +1,21 @@
-<p><a name="top"></a><%= page_links(:for_top => true, :threads => @threads) %></p>
+<p><a name="top"></a></p>
 <div class="listings">
 <%- if @threads.first && entry = @threads.first.root -%>
   <div class="thread2">
     <p>
 <%= pin_link(entry) -%>
-<%= published(entry, false) %>
+  <%= published(entry, false) %>
 <%= url_link(entry) -%>
 <%= reshare_link(entry) -%>
 <%= like_link(entry) -%>
 <%= delete_link(entry) -%>
     </p>
-    <p class="title">
+    <p>
 <%= author_picture(entry) -%>
 <%= author_link(entry) %>
-<%= icon(entry) -%><br/>
+<%= icon(entry) -%>
+    </p>
+    <p class="title">
 <%= original_link(entry) -%>
 <%= content(entry) -%>
   <%= via(entry) -%>
@@ -27,9 +29,9 @@
       <div class="comment">
         <p>
           <%= comment_icon(comment) %>
-          <%= date(comment.date, false) %>
           <%- if ctx.comment != comment.id -%>
             <%= comment(comment) %> <%= comment_author_link(comment) %> <%= via(comment) %>
+            <%= date(comment.date, false) %>
 <%= comment_url_link(comment) -%>
 <%= edit_comment_link(comment) -%>
 <%= delete_comment_link(comment) -%>
@@ -51,13 +53,17 @@
   <p>No feed is good feed.</p>
 <%- end -%>
 </div>
+<hr />
 <p><a name="bottom"></a><%= page_links(:for_bottom => true, :threads => @threads) %></p>
 <%- if next_entry = next_entry(entry.id) -%>
-  <hr />
   <p>
     <%= icon_tag(:next) %> <%= menu_label('next', '5') %><br />
     <%= link_to_next_entry(next_entry) %><br />
     from <%= author_link(next_entry) %><%= icon(next_entry) %>
+  </p>
+<%- else -%>
+  <p>
+    <%= icon_tag(:previous) %> <%= link_to(menu_label('back', '5'), :controller => 'entry') %>
   </p>
 <%- end -%>
 <%- if !ctx.user_only? -%>
