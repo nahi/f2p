@@ -494,8 +494,19 @@ __EOS__
     str.scan(Regexp.new("^.{0,#{len.to_s}}", Regexp::MULTILINE, 'u'))[0] || ''
   end
 
+  # TODO: should move to controller
   def remember_checked(entry)
     store = @controller.request.session[:checked]
     store[entry.id] = entry.modified
+  end
+
+  # TODO: should move to controller
+  def commit_checked_modified(entry)
+    if entry.view_inbox
+      if store = @controller.request.session[:checked]
+        store.delete(entry.id)
+      end
+      EntryThread.update_checked_modified(auth, entry.id => entry.modified)
+    end
   end
 end
