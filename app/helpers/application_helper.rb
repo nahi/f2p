@@ -46,6 +46,7 @@ module ApplicationHelper
 
   def cell_phone?
     jpmobile? and @controller.request.mobile?
+    true
   end
 
   def i_mode?

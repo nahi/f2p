@@ -7,7 +7,7 @@
   <%- end -%>
 <%- else -%>
   <%- form_tag({:action => 'add'}) do -%>
-    <p><a name="top"></a><%= post_entry_form %><%= bottom_menu_link %></p>
+    <p><a name="top"></a><%= post_entry_form %></p>
   <%- end -%>
   <%- if ctx.user_for -%>
     <p><%= user_picture(ctx.user_for) %><%= user_status_icon(ctx.user_for) %> <%= h(user_name(ctx.user_for)) %> <%= link_to(h('[profile]'), '#profile') %></p>
@@ -22,10 +22,8 @@
     <p>entries related to: <%= link_to(h(ctx.link), u(ctx.link)) %></p>
   <%- end -%>
 <%- end -%>
-<%- if !ctx.inbox or !cell_phone? -%>
-  <%- form_tag(link_action('archive')) do -%>
-    <p><a name="top"></a><%= page_links(:for_top => true, :threads => @threads) %></p>
-  <%- end -%>
+<%- form_tag(link_action('archive')) do -%>
+  <p><a name="top"></a><%= page_links(:for_top => true, :threads => @threads) %></p>
 <%- end -%>
 <div class="listings">
   <%- if link = geo_markers_link(@threads) -%>

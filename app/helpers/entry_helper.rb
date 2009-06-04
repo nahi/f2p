@@ -908,13 +908,6 @@ module EntryHelper
     end
   end
 
-  def bottom_menu_link
-    if cell_phone? and ctx.inbox
-      label = '8.menu'
-      link_to(h("[#{label}]"), '#bottom', accesskey('8'))
-    end
-  end
-
   def next_entry(eid)
     return if @original_threads.nil? or @original_threads.empty?
     entries = @original_threads.map { |thread| thread.entries }.flatten

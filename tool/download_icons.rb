@@ -18,6 +18,8 @@ save_as = proc { |url, basename|
 save_as.call('http://friendfeed.com/static/images/icons/internal.png', 'internal')
 
 JSON.parse(httpclient.get_content('http://friendfeed.com/api/services'))['services'].each do |service|
+  puts JSON.pretty_generate(service)
+  next
   url = service['iconUrl']
   #name = service['name']
   name = url.scan(%r[/([^/]+).png])[0][0]
