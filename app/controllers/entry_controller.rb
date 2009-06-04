@@ -537,7 +537,7 @@ class EntryController < ApplicationController
     id = param(:id)
     unpin_entry(id)
     flash[:allow_cache] = true
-    redirect_to_list
+    redirect_to_entry_or_list
   end
 
 private
