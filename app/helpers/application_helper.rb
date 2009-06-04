@@ -90,7 +90,7 @@ module ApplicationHelper
   .latest3 { color: #900; }
   .older { color: #008; }
   .comment {
-    padding-bottom: 0.5ex;
+    padding-bottom: 0.2ex;
     color: #666;
   }
   .inbox { font-weight: bold; }

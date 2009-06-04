@@ -257,7 +257,9 @@ class EntryController < ApplicationController
     with_profile_cache(@ctx) do
       opt = find_opt()
       # allow to use cache except self reloading
-      opt[:allow_cache] = true unless flash[:show_reload_detection]
+      if !flash[:show_reload_detection] and !updated_id_in_flash
+        opt[:allow_cache] = true
+      end
       @threads = find_entry_thread(opt)
       if sess_ctx
         # pin/unpin redirect caused :id set.
@@ -543,10 +545,15 @@ class EntryController < ApplicationController
 private
 
   def find_opt(ctx = @ctx)
+    updated_id = updated_id_in_flash()
     ctx.find_opt.merge(
-      :allow_cache => flash[:allow_cache],
-      :updated_id => flash[:added_id] || flash[:updated_id] || flash[:deleted_id]
+      :allow_cache => updated_id.nil? && flash[:allow_cache],
+      :updated_id => updated_id
     )
+  end
+
+  def updated_id_in_flash
+    flash[:added_id] || flash[:updated_id] || flash[:deleted_id]
   end
 
   def unpin_entry(id, commit = true)
