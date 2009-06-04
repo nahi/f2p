@@ -60,13 +60,12 @@
 <p><a name="bottom"></a><%= page_links(:for_bottom => true, :threads => @threads) %></p>
 <%- if next_entry = next_entry(entry.id) -%>
   <p>
-    <%= icon_tag(:next) %> <%= menu_label('next', '5') %><br />
     <%= link_to_next_entry(next_entry) %><br />
     from <%= author_link(next_entry) %><%= icon(next_entry) %>
   </p>
 <%- else -%>
   <p>
-    <%= icon_tag(:previous) %> <%= link_to(menu_label('back', '5'), :controller => 'entry') %>
+    <%= link_to_back() %>
   </p>
 <%- end -%>
 <%- if !ctx.user_only? -%>

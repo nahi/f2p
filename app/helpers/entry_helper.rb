@@ -929,7 +929,13 @@ module EntryHelper
     if title != fold
       fold += '...'
     end
-    link_to(h(fold), link_show(entry.id), accesskey('5'))
+    content = icon_tag(:next) + menu_label('next', '5') + ' '
+    content += h(fold)
+    link_to(content, link_show(entry.id), accesskey('5'))
+  end
+
+  def link_to_back
+    link_to(icon_tag(:previous) + menu_label('back', '5'), :controller => 'entry')
   end
 
   def archive_button
