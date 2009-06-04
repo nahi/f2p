@@ -38,6 +38,7 @@ module ApplicationHelper
     'help' => 'help.png',
     'group' => 'group.png',
     'private' => 'shield.png',
+    'hide' => 'sound_mute.png',
   }
 
   def jpmobile?
@@ -46,7 +47,6 @@ module ApplicationHelper
 
   def cell_phone?
     jpmobile? and @controller.request.mobile?
-    true
   end
 
   def i_mode?
@@ -106,6 +106,7 @@ module ApplicationHelper
     margin-top: 0pt;
     margin-bottom: 0pt;
   }
+  div.listings .title-header { background-color: #EEE; }
   div.listings .title {
     margin-top: 2ex;
     margin-left: 1ex;

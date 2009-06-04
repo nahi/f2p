@@ -1022,7 +1022,7 @@ module EntryHelper
 
   def delete_link(entry)
     if entry.nickname == auth.name
-      link_to(icon_tag(:delete), link_action('delete', :id => u(entry.id)), :confirm => 'Are you sure?')
+      link_to(icon_tag(:delete), link_action('delete', :id => u(entry.id)), :confirm => 'Delete?')
     end
   end
 
@@ -1046,7 +1046,7 @@ module EntryHelper
 
   def delete_comment_link(comment)
     if comment.nickname == auth.name or auth.name == comment.entry.nickname
-      link_to(icon_tag(:delete), link_action('delete', :id => u(comment.entry.id), :comment => u(comment.id)), :confirm => 'Are you sure?')
+      link_to(icon_tag(:delete), link_action('delete', :id => u(comment.entry.id), :comment => u(comment.id)), :confirm => 'Delete?')
     end
   end
 
@@ -1056,6 +1056,10 @@ module EntryHelper
         link_to(icon_tag(:like), link_action('like', :id => u(entry.id)))
       end
     end
+  end
+
+  def hide_link(entry)
+    link_to(icon_tag(:hide), link_action('hide', :id => u(entry.id)), :confirm => 'Hide?')
   end
 
   def reshare_link(entry)

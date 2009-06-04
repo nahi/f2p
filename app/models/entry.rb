@@ -68,6 +68,12 @@ class Entry
       ff_client.unlike(auth.name, auth.remote_key, id)
     end
 
+    def hide(opt)
+      auth = opt[:auth]
+      id = opt[:id]
+      ff_client.hide(auth.name, auth.remote_key, id)
+    end
+
     def add_pin(opt)
       auth = opt[:auth]
       id = opt[:id]

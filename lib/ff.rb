@@ -435,6 +435,15 @@ module FriendFeed
       end
     end
 
+    def hide(name, remote_key, entry, unhide = false)
+      uri = uri("entry/hide")
+      query = {'entry' => entry}
+      query['unhide'] = 1 if unhide
+      client_sync(uri, name, remote_key) do |client|
+        post_request(client, uri, query)
+      end
+    end
+
   private
 
     def url_base

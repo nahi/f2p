@@ -515,6 +515,21 @@ class EntryController < ApplicationController
     redirect_to_entry_or_list
   end
 
+  verify :only => :hide,
+          :method => :get,
+          :params => [:id],
+          :add_flash => {:error => 'verify failed'},
+          :redirect_to => {:action => 'inbox'}
+
+  def hide
+    id = param(:id)
+    if id
+      Entry.hide(create_opt(:id => id))
+    end
+    flash[:updated_id] = id
+    redirect_to_list
+  end
+
   verify :only => :pin,
           :method => :get,
           :params => [:id],

@@ -2,24 +2,29 @@
 <div class="listings">
 <%- if @threads.first && entry = @threads.first.root -%>
   <div class="thread2">
-    <p>
+    <div class="title-header">
+      <p>
 <%= pin_link(entry) -%>
   <%= published(entry, false) %>
 <%= url_link(entry) -%>
 <%= reshare_link(entry) -%>
+<%= hide_link(entry) -%>
 <%= like_link(entry) -%>
 <%= delete_link(entry) -%>
-    </p>
-    <p>
+      </p>
+      <p>
 <%= author_picture(entry) -%>
 <%= author_link(entry) %>
 <%= icon(entry) -%>
-    </p>
-    <p class="title">
+      </p>
+    </div>
+    <div class="title">
+      <p>
 <%= original_link(entry) -%>
 <%= content(entry) -%>
   <%= via(entry) -%>
-    </p>
+      </p>
+    </div>
     <p>
 <%= likes(entry, false) -%>
     </p>
