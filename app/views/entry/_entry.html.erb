@@ -5,7 +5,7 @@
 <%- else -%>
 <%= author_picture(entry) if !root or (root.origin_nickname != entry.origin_nickname) -%>
 <%= author_link(entry) if root.nil? or root.user_id != entry.user_id %>
-<%= icon(entry) unless entry.same_feed?(root) -%>
+<%= icon(entry) + '<br />' unless entry.same_feed?(root) -%>
   <%= original_link(entry) -%>
 <%= content(entry) %>
  <%= via(entry) %>
@@ -13,10 +13,10 @@
 <%- if comment_inline?(entry) -%>
   -- <span class="comment"><%= inline_comment(entry.comments.first) %></span>
 <%- end -%>
-<%= likes(entry, true) -%>
 <%= url_link(entry) -%>
 <%= reshare_link(entry) -%>
 <%= like_link(entry) -%>
+<%= likes(entry, true) -%>
   <%- comments = fold_comments(entry.comments) -%>
   <%- if comments.empty? or comment_inline?(entry) or (comments.size == 1 and fold_item?(comments.first))-%>
 <%= post_comment_link(entry, :show_comments_number => true) %>

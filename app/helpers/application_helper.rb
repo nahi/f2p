@@ -90,13 +90,13 @@ module ApplicationHelper
   .latest2 { color: #C00; }
   .latest3 { color: #900; }
   .older { color: #008; }
-  .comment {
+  .comment, .pin {
     padding-bottom: 0.2ex;
     color: #666;
   }
   .inbox { font-weight: bold; }
-  div.listings .thread1 { padding-bottom: 0.8ex; background-color: #EEE; }
-  div.listings .thread2 { padding-bottom: 0.8ex; }
+  div.listings .thread1 { padding-bottom: 1.2ex; background-color: #EEE; }
+  div.listings .thread2 { padding-bottom: 1.2ex; }
   div.listings ul {
     list-style-type: none;
     margin-top: 0pt;
@@ -109,8 +109,7 @@ module ApplicationHelper
   div.listings .title-header { background-color: #EEE; }
   div.listings .title {
     margin-top: 2ex;
-    margin-left: 1ex;
-    margin-bottom: 1.2ex;
+    margin-bottom: 0.8ex;
   }
   #{ inline_stylesheet_iphone }
 __EOS__
