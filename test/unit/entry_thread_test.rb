@@ -219,7 +219,7 @@ class EntryThreadTest < ActiveSupport::TestCase
     ff.stubs(:get_profiles)
     threads = EntryThread.find(:auth => user, :room => 'room1')
     assert_equal(
-      [3, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1],
+      [2, 1, 2, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1],
       threads.map { |t| t.entries.size }
     )
   end

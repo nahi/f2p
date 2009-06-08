@@ -27,7 +27,7 @@ class EntryThread
       logger.info('[perf] check_inbox done')
       if opt[:inbox]
         entries = entries.find_all { |entry|
-          entry.view_inbox or entry.id == opt[:filter_inbox_except]
+          entry.view_unread or entry.view_pinned or entry.id == opt[:filter_inbox_except]
         }
       elsif opt[:label] == 'pin'
         entries = entries.find_all { |entry|
@@ -244,16 +244,12 @@ class EntryThread
         oldest = Time.at(0)
       end
       entries.each do |entry|
-        if pinned_map.key?(entry.id)
-          entry.view_pinned = true
-          entry.view_inbox = true
+        entry.view_pinned = pinned_map.key?(entry.id)
+        if checked = checked_map[entry.id]
+          entry.checked_at = checked
+          entry.view_unread = checked < entry.modified_at
         else
-          entry.view_pinned = false
-          if checked_map.key?(entry.id)
-            entry.view_inbox = checked_map[entry.id]
-          else
-            entry.view_inbox = oldest < entry.modified_at
-          end
+          entry.view_unread = oldest < entry.modified_at
         end
       end
       pinned_map.keys.size
@@ -266,7 +262,8 @@ class EntryThread
         eids
       ]
       CheckedModified.find(:all, :conditions => cond, :include => 'last_modified').inject({}) { |r, e|
-        r[e.last_modified.eid] = e.checked < e.last_modified.date
+        #r[e.last_modified.eid] = e.checked < e.last_modified.date
+        r[e.last_modified.eid] = e.checked
         r
       }
     end

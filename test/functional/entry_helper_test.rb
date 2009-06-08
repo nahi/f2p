@@ -288,7 +288,7 @@ class EntryHelperTest < MyActionView::TestCaseWithController
   test 'pin_link' do
     entry = read_mapped_entries('entries', 'twitter')[0]
     ctx.inbox = true
-    entry.view_inbox = true
+    entry.view_unread = true
     assert_match(/anchor.png/, pin_link(entry))
     entry.view_pinned = true
     assert_match(/tick.png/, pin_link(entry))
@@ -307,7 +307,7 @@ class EntryHelperTest < MyActionView::TestCaseWithController
     entry = read_mapped_entries('entries', 'twitter')[0]
     entry.room = Room['nickname' => 'n1', 'name' => 'nn11']
     assert_match(/\?room=n1/, icon(entry))
-    assert_match(/\(nn11\)/, icon(entry))
+    assert_match(/\(nn11\)/, icon_extra(entry))
   end
 
   test 'content brightkite' do

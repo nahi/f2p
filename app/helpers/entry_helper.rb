@@ -237,8 +237,8 @@ module EntryHelper
     end
   end
 
-  def emphasize_as_inbox?(entry)
-    ctx.home and (entry.view_inbox or entry.view_pinned)
+  def emphasize_as_unread?(entry_or_comment)
+    (ctx.home or ctx.inbox) and entry_or_comment.view_unread
   end
 
   def original_link(entry)
@@ -567,10 +567,14 @@ module EntryHelper
     date(entry.modified, compact)
   end
 
+  def emphasize_as_unread(str)
+    content_tag('span', str, :class => 'inbox')
+  end
+
   def published(entry, compact = false)
     str = date(entry.published_at, compact)
-    if emphasize_as_inbox?(entry)
-      str = content_tag('span', str, :class => 'inbox')
+    if emphasize_as_unread?(entry)
+      str = emphasize_as_unread(str)
     end
     str
   end
@@ -630,7 +634,7 @@ module EntryHelper
     if comment.posted_with_entry?
       comment(comment)
     else
-      comment(comment) + ' ' + date(comment.date, true)
+      comment(comment) + ' ' + comment_date(comment, true)
     end
   end
 
@@ -899,10 +903,7 @@ module EntryHelper
   end
 
   def find_show_entry(threads)
-    if false #ctx.inbox
-      # TODO
-      raise
-    elsif thread = threads.first
+    if thread = threads.first
       thread.root
     end
   end
@@ -998,8 +999,8 @@ module EntryHelper
       else
         num = "(#{entry.comments.size} comments)"
       end
-      if entry.view_inbox and entry.modified == entry.comments.last.date
-        num = content_tag('span', latest(entry.modified_at, num), :class => 'inbox')
+      if emphasize_as_unread?(entry)
+        num = emphasize_as_unread(latest(entry.modified_at, num))
       end
       str += num
     end
@@ -1020,7 +1021,11 @@ module EntryHelper
   end
 
   def comment_date(comment, compact = true)
-    date(comment.date, compact)
+    str = date(comment.date, compact)
+    if emphasize_as_unread?(comment)
+      str = emphasize_as_unread(str)
+    end
+    str
   end
 
   def comment_url_link(comment)

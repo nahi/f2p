@@ -135,12 +135,12 @@ class EntryTest < ActiveSupport::TestCase
     e2.instance_eval { @published_at = Time.at(e1.published_at + 9) }
     assert(e1.similar?(e2))
     assert(e2.similar?(e1))
-    # 10 sec
+    # 30 sec
     e1 = entries[2]
     e2 = e1.dup
     e2.link = 'foo'
     e2.title = 'hello world'
-    e2.instance_eval { @published_at = Time.at(e1.published_at + 10) }
+    e2.instance_eval { @published_at = Time.at(e1.published_at + 30) }
     assert(!e1.similar?(e2))
     assert(!e2.similar?(e1))
   end

@@ -505,13 +505,15 @@ __EOS__
 
   # TODO: should move to controller
   def remember_checked(entry)
-    store = @controller.request.session[:checked]
-    store[entry.id] = entry.modified
+    if ctx.inbox or ctx.home
+      store = @controller.request.session[:checked]
+      store[entry.id] = entry.modified
+    end
   end
 
   # TODO: should move to controller
   def commit_checked_modified(entry)
-    if entry.view_inbox
+    if entry.view_unread
       if store = @controller.request.session[:checked]
         store.delete(entry.id)
       end

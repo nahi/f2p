@@ -117,12 +117,13 @@ class Entry
   attr_accessor :room
   attr_accessor :geo
   attr_accessor :friend_of
+  attr_accessor :checked_at
 
   attr_accessor :twitter_username
   attr_accessor :twitter_reply_to
   attr_accessor :orphan
   attr_accessor :view_pinned
-  attr_accessor :view_inbox
+  attr_accessor :view_unread
   attr_accessor :view_links
   attr_accessor :view_map
 
@@ -132,7 +133,7 @@ class Entry
     @twitter_reply_to = nil
     @orphan = hash['__f2p_orphan']
     @view_pinned = nil
-    @view_inbox = nil
+    @view_unread = nil
     @view_links = nil
     @view_map = false
     @service = Service[hash['service']]
@@ -144,6 +145,7 @@ class Entry
     @room = Room[hash['room']]
     @geo = Geo[hash['geo']] || extract_geo_from_google_staticmap_url(@medias)
     @friend_of = EntryUser[hash['friendof']]
+    @checked_at = nil
     @hidden = hash['hidden'] || false
     if self.service and self.service.twitter?
       @twitter_username = (self.service.profile_url || '').sub(/\A.*\//, '')
@@ -192,7 +194,7 @@ class Entry
       @modified = [@modified, comments.last.date].max
     end
     unless likes.empty?
-      @modified = [@modified, likes.last.date].max
+      @modified = [@modified, likes.first.date].max
     end
     @modified || Time.now.xmlschema
   end
@@ -252,7 +254,7 @@ private
   end
 
   def same_origin?(rhs)
-    (self.published_at - rhs.published_at).abs < 10.seconds
+    (self.published_at - rhs.published_at).abs < 30.seconds
   end
 
   def similar_title?(rhs)

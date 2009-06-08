@@ -40,7 +40,12 @@ class Comment
   end
 
   def posted_with_entry?
-    (entry.published_at - self.date_at).abs < 10.seconds
+    self.entry.nickname == self.nickname and (entry.published_at - self.date_at).abs < 30.seconds
+  end
+
+  def view_unread
+    e = self.entry
+    e.view_unread and (e.checked_at.nil? or e.checked_at < self.date_at)
   end
 
 protected
