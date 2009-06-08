@@ -276,7 +276,7 @@ __EOS__
 
   def room_status(nickname)
     @room_status ||= {}
-    @room_status[nickname] ||= room_profile(nickname)['status']
+    @room_status[nickname] ||= Room.ff_status_map(auth, [nickname])[nickname]
   end
 
   def room_description(nickname)

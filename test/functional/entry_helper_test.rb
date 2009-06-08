@@ -300,8 +300,6 @@ class EntryHelperTest < MyActionView::TestCaseWithController
   end
 
   test 'icon for room' do
-    Room.expects(:ff_profile).with(auth, 'n1').
-      returns({'status' => 'public'})
     entry = read_mapped_entries('entries', 'twitter')[0]
     entry.room = Room['nickname' => 'n1', 'name' => 'nn11']
     assert_match(/\?room=n1/, icon(entry))
