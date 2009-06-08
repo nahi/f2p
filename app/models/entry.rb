@@ -117,6 +117,7 @@ class Entry
   attr_accessor :room
   attr_accessor :geo
   attr_accessor :friend_of
+  attr_accessor :checked_at
 
   attr_accessor :twitter_username
   attr_accessor :twitter_reply_to
@@ -144,6 +145,7 @@ class Entry
     @room = Room[hash['room']]
     @geo = Geo[hash['geo']] || extract_geo_from_google_staticmap_url(@medias)
     @friend_of = EntryUser[hash['friendof']]
+    @checked_at = nil
     @hidden = hash['hidden'] || false
     if self.service and self.service.twitter?
       @twitter_username = (self.service.profile_url || '').sub(/\A.*\//, '')

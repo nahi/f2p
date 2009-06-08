@@ -123,18 +123,10 @@ module EntryHelper
     end
     opt[:label] = ctx.label
     link = link_user(user, opt)
-    extra = nil
     if room_entry
-      extra = entry.room.name
       str = room_icon(service, entry.room.nickname, link)
     else
       str = service_icon(service, link)
-    end
-    if entry.service.service_group?
-      extra = entry.service.name
-    end
-    if extra
-      str += h("(#{extra})")
     end
     # TODO: do not show status icon for query result page now for performance
     # reason.
@@ -142,6 +134,20 @@ module EntryHelper
       str = icon_tag(:private) + str
     end
     str
+  end
+
+  def icon_extra(entry)
+    room_entry = (entry.room and entry.room.nickname != ctx.room_for)
+    str = nil
+    if room_entry
+      str = entry.room.name
+    end
+    if entry.service.service_group?
+      str = entry.service.name
+    end
+    if str
+      h("(#{str})")
+    end
   end
 
   def media_disabled?
@@ -861,8 +867,8 @@ module EntryHelper
     end
     links << menu_link(menu_label('inbox', '0'), link_action('inbox'), accesskey('0'))
     if ctx.list? and threads = opt[:threads]
-      if thread = threads.first
-        links << menu_link(menu_label('show', '1'), link_show(thread.root.id), accesskey('1'))
+      if entry = find_show_entry(threads)
+        links << menu_link(menu_label('show', '1'), link_show(entry.id), accesskey('1'))
       end
     end
     if ctx.friend_view?
@@ -890,6 +896,15 @@ module EntryHelper
       links << archive_button
     end
     links.join(' ')
+  end
+
+  def find_show_entry(threads)
+    if ctx.inbox
+      # TODO
+      raise
+    elsif thread = threads.first
+      thread.root
+    end
   end
 
   def list_range_notation(threads)

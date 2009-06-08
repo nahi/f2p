@@ -3,9 +3,13 @@
 <%= published(entry) -%>
   (Entry not found; deleted?)
 <%- else -%>
-<%= author_picture(entry) if !root or (root.origin_nickname != entry.origin_nickname) -%>
+<%= author_picture(entry) if root.nil? or (root.origin_nickname != entry.origin_nickname) -%>
 <%= author_link(entry) if root.nil? or root.user_id != entry.user_id %>
-<%= icon(entry) + '<br />' unless entry.same_feed?(root) -%>
+<%- if root.nil? -%>
+  <%= icon(entry) %><%= icon_extra(entry) -%><br />
+<%- elsif !entry.same_feed?(root) -%>
+  <%= icon(entry) %><%= extra = icon_extra(entry); extra ? extra + '<br />' : nil -%>
+<%- end -%>
   <%= original_link(entry) -%>
 <%= content(entry) %>
  <%= via(entry) %>
