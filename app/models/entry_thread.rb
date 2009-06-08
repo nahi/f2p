@@ -42,6 +42,11 @@ class EntryThread
         }
       end
       threads = EntryThreads[*entries]
+      prev = nil
+      threads.map { |t| t.entries }.flatten.reverse_each do |e|
+        e.view_nextid = prev
+        prev = e.id
+      end
       unless original.empty?
         threads.from_modified = original.last.modified
         threads.to_modified = original.first.modified

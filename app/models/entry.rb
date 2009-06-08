@@ -124,6 +124,7 @@ class Entry
   attr_accessor :orphan
   attr_accessor :view_pinned
   attr_accessor :view_unread
+  attr_accessor :view_nextid
   attr_accessor :view_links
   attr_accessor :view_map
 
@@ -134,6 +135,7 @@ class Entry
     @orphan = hash['__f2p_orphan']
     @view_pinned = nil
     @view_unread = nil
+    @view_nextid = nil
     @view_links = nil
     @view_map = false
     @service = Service[hash['service']]

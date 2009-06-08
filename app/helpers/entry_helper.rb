@@ -928,7 +928,9 @@ module EntryHelper
     return if @original_threads.nil? or @original_threads.empty?
     entries = @original_threads.map { |thread| thread.entries }.flatten
     if found = entries.find { |e| e.id == eid }
-      entries[entries.index(found) + 1]
+      if found.view_nextid
+        entries.find { |e| e.id == found.view_nextid }
+      end
     end
   end
 
