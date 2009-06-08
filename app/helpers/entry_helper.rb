@@ -899,7 +899,7 @@ module EntryHelper
   end
 
   def find_show_entry(threads)
-    if ctx.inbox
+    if false #ctx.inbox
       # TODO
       raise
     elsif thread = threads.first
