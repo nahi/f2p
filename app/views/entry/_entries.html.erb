@@ -1,4 +1,3 @@
-<%- cache_profile(@threads) -%>
 <%- if ctx.query and !ctx.link -%>
   <%- form_tag({:action => 'list'}) do -%>
     <p><%= search_form %></p>

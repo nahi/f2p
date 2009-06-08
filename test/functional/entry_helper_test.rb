@@ -134,8 +134,8 @@ class EntryHelperTest < MyActionView::TestCaseWithController
   end
 
   test 'user_status' do
-    User.expects(:ff_profile).with(auth, 'nick').
-      returns({'status' => 'status'}).times(1)
+    User.expects(:ff_status_map).with(auth, ['nick']).
+      returns({'nick' => 'status'}).times(1)
     assert_equal('status', user_status('nick'))
     assert_equal('status', user_status('nick'))
   end
@@ -295,8 +295,6 @@ class EntryHelperTest < MyActionView::TestCaseWithController
   end
 
   test 'icon' do
-    User.expects(:ff_profile).with(auth, 'foobar').
-      returns({'status' => 'public'})
     entry = read_mapped_entries('entries', 'twitter')[0]
     assert_match(/\?service=twitter/, icon(entry))
   end

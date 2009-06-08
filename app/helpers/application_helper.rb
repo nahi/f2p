@@ -330,7 +330,7 @@ __EOS__
 
   def user_status(nickname)
     @user_status ||= {}
-    @user_status[nickname] ||= user_profile(nickname)['status']
+    @user_status[nickname] ||= User.ff_status_map(auth, [nickname])[nickname]
   end
 
   def user_picture(nickname, size = 'small')
