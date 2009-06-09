@@ -238,10 +238,11 @@ module EntryHelper
   end
 
   def emphasize_as_unread?(entry_or_comment)
-    (ctx.home or ctx.inbox) and entry_or_comment.view_unread
+    (ctx.home or ctx.inbox or ctx.label) and entry_or_comment.view_unread
   end
 
   def original_link(entry)
+    return unless ctx.single?
     # no need to show original link for link only content.
     if entry.link and !with_link?(entry.service)
       if unknown_where_to_go?(entry)
@@ -254,12 +255,21 @@ module EntryHelper
   end
 
   def link_content(title, entry)
-    if unknown_where_to_go?(entry)
-      entry_link_to(icon_tag(:go) + h(title), entry.link) + h(" (#{uri_domain(entry.link)})")
-    elsif entry.service.tumblr?
-      entry_link_to(icon_tag(:go), entry.link) + h(title)
+    if ctx.single?
+      icon = icon_tag(:go)
     else
-      entry_link_to(icon_tag(:go) + h(title), entry.link)
+      icon = ''
+    end
+    if unknown_where_to_go?(entry)
+      entry_link_to(icon + h(title), entry.link) + h(" (#{uri_domain(entry.link)})")
+    elsif entry.service.tumblr?
+      if icon.empty?
+        h(title)
+      else
+        entry_link_to(icon, entry.link) + h(title)
+      end
+    else
+      entry_link_to(icon + h(title), entry.link)
     end
   end
 
@@ -863,11 +873,13 @@ module EntryHelper
         !no_page and start - num >= 0
       }
     end
-    if opt[:for_top]
-      links << link_to(icon_tag(:bottom), '#bottom', accesskey('8'))
-    end
-    if opt[:for_bottom]
-      links << link_to(icon_tag(:top), '#top', accesskey('2'))
+    if false
+      if opt[:for_top]
+        links << link_to(icon_tag(:bottom), '#bottom', accesskey('8'))
+      end
+      if opt[:for_bottom]
+        links << link_to(icon_tag(:top), '#top', accesskey('2'))
+      end
     end
     links << menu_link(menu_label('inbox', '0'), link_action('inbox'), accesskey('0'))
     if ctx.list? and threads = opt[:threads]
