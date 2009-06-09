@@ -65,6 +65,7 @@
 <p><a name="bottom"></a><%= page_links(:for_bottom => true, :threads => @threads) %></p>
 <%- if next_entry = next_entry(entry.id) -%>
   <p>
+    <%= icon_tag(:next) %>Next<br />
     <%= link_to_next_entry(next_entry) %><br />
     from <%= author_link(next_entry) %><%= icon(next_entry) %><%= icon_extra(next_entry) %>
   </p>

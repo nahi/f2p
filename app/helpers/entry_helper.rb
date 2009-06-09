@@ -940,8 +940,7 @@ module EntryHelper
     if title != fold
       fold += '...'
     end
-    content = icon_tag(:next) + menu_label('next', '5') + ' '
-    content += h(fold)
+    content = h(fold)
     link_to(content, link_show(entry.id), accesskey('5'))
   end
 
