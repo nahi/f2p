@@ -1001,8 +1001,9 @@ module EntryHelper
       else
         num = "(#{entry.comments.size} comments)"
       end
+      num = latest(entry.modified_at, num)
       if emphasize_as_unread?(entry)
-        num = emphasize_as_unread(latest(entry.modified_at, num))
+        num = emphasize_as_unread(num)
       end
       str += num
     end

@@ -15,7 +15,7 @@
       <p>
 <%= author_picture(entry) -%>
 <%= author_link(entry) %>
-<%= icon(entry) -%>
+<%= icon(entry) -%><%= icon_extra(entry) -%>
       </p>
     </div>
     <div class="title">
@@ -66,7 +66,7 @@
 <%- if next_entry = next_entry(entry.id) -%>
   <p>
     <%= link_to_next_entry(next_entry) %><br />
-    from <%= author_link(next_entry) %><%= icon(next_entry) %>
+    from <%= author_link(next_entry) %><%= icon(next_entry) %><%= icon_extra(next_entry) %>
   </p>
 <%- else -%>
   <p>
