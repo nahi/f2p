@@ -95,8 +95,8 @@ module ApplicationHelper
     color: #666;
   }
   .inbox { font-weight: bold; }
-  div.listings .thread1 { padding-bottom: 1.2ex; background-color: #EEE; }
-  div.listings .thread2 { padding-bottom: 1.2ex; }
+  div.listings .thread1 { padding-bottom: 2.0ex; background-color: #EEE; }
+  div.listings .thread2 { padding-bottom: 2.0ex; }
   div.listings ul {
     list-style-type: none;
     margin-top: 0pt;

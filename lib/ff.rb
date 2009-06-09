@@ -10,8 +10,7 @@ module FriendFeed
   module JSONFilter
     class << self
       def parse(str)
-        utf8 = NKF.nkf("-wm0", str)
-        safe = filter_utf8(utf8)
+        safe = filter_utf8(str)
         JSON.parse(safe)
       end
 
