@@ -7,6 +7,44 @@ require 'zlib'
 
 
 module FriendFeed
+  module JSONFilter
+    class << self
+      def parse(str)
+        utf8 = NKF.nkf("-wm0", str)
+        safe = filter_utf8(utf8)
+        JSON.parse(safe)
+      end
+
+      def pretty_generate(obj)
+        JSON.pretty_generate(obj)
+      end
+
+    private
+
+      # these definition source code is from soap4r.
+      us_ascii = '[\x9\xa\xd\x20-\x7F]'     # XML 1.0 restricted.
+      # 0xxxxxxx
+      # 110yyyyy 10xxxxxx
+      twobytes_utf8 = '(?:[\xC0-\xDF][\x80-\xBF])'
+      # 1110zzzz 10yyyyyy 10xxxxxx
+      threebytes_utf8 = '(?:[\xE0-\xEF][\x80-\xBF][\x80-\xBF])'
+      # 11110uuu 10uuuzzz 10yyyyyy 10xxxxxx
+      fourbytes_utf8 = '(?:[\xF0-\xF7][\x80-\xBF][\x80-\xBF][\x80-\xBF])'
+      CHAR_UTF_8 =
+        "(?:#{us_ascii}|#{twobytes_utf8}|#{threebytes_utf8}|#{fourbytes_utf8})"
+
+      def filter_utf8(str)
+        str.scan(/(#{CHAR_UTF_8})|(.)/n).collect { |u, x|
+          if u
+            u
+          else
+            sprintf("\\x%02X", x[0])
+          end
+        }.join
+      end
+    end
+  end
+
   class NullLogger
     def <<(*arg)
     end
@@ -135,8 +173,8 @@ module FriendFeed
         get_request(client, uri, query)
       }
       if res.status == 200
-        obj = JSON.parse(res.content)
-        logger.debug { JSON.pretty_generate(obj) }
+        obj = JSONFilter.parse(res.content)
+        logger.debug { JSONFilter.pretty_generate(obj) }
         obj['entries']
       end
     end
@@ -175,8 +213,8 @@ module FriendFeed
       }
       if res.status == 200 and !res.content.strip.empty?
         begin
-          obj = JSON.parse(res.content)
-          logger.debug { JSON.pretty_generate(obj) }
+          obj = JSONFilter.parse(res.content)
+          logger.debug { JSONFilter.pretty_generate(obj) }
           @token = obj['update']['token']
           obj
         rescue Exception => e
@@ -196,7 +234,7 @@ module FriendFeed
         get_request(client, uri, query)
       }
       if res.status == 200
-        JSON.parse(res.content)['update']['token']
+        JSONFilter.parse(res.content)['update']['token']
       end
     end
 
@@ -233,7 +271,7 @@ module FriendFeed
         get_request(client, uri, opt)
       }
       if res.status == 200
-        JSON.parse(res.content)
+        JSONFilter.parse(res.content)
       end
     end
 
@@ -245,7 +283,7 @@ module FriendFeed
         get_request(client, uri, query)
       }
       if res.status == 200
-        JSON.parse(res.content)['profiles']
+        JSONFilter.parse(res.content)['profiles']
       end
     end
 
@@ -256,7 +294,7 @@ module FriendFeed
         res = get_request(client, uri, opt)
       }
       if res.status == 200
-        JSON.parse(res.content)
+        JSONFilter.parse(res.content)
       end
     end
 
@@ -267,7 +305,7 @@ module FriendFeed
         res = get_request(client, uri, opt)
       }
       if res.status == 200
-        JSON.parse(res.content)
+        JSONFilter.parse(res.content)
       end
     end
 
@@ -369,7 +407,7 @@ module FriendFeed
       query['room'] = room if room
       client_sync(uri, name, remote_key) do |client|
         res = post_request(client, uri, query)
-        JSON.parse(res.content)['entries']
+        JSONFilter.parse(res.content)['entries']
       end
     end
 
@@ -390,7 +428,7 @@ module FriendFeed
       }
       client_sync(uri, name, remote_key) do |client|
         res = post_request(client, uri, query)
-        JSON.parse(res.content)
+        JSONFilter.parse(res.content)
       end
     end
 
@@ -403,7 +441,7 @@ module FriendFeed
       }
       client_sync(uri, name, remote_key) do |client|
         res = post_request(client, uri, query)
-        JSON.parse(res.content)
+        JSONFilter.parse(res.content)
       end
     end
 
