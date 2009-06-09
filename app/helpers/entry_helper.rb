@@ -156,7 +156,7 @@ module EntryHelper
 
   def media_tag(entry, url, opt = {})
     if entry and media_disabled?
-      link_to(icon_tag(:media_disabled) + '[media disabled by setting]', link_show(entry.id))
+      link_to(icon_tag(:media_disabled), link_show(entry.id))
     else
       image_tag(url, opt.merge(:class => h('media')))
     end
