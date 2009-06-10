@@ -1,19 +1,26 @@
-<%= pin_link(entry) -%>
 <%- if entry.orphan -%>
+<%= pin_link(entry) -%>
 <%= published(entry) -%>
   (Entry not found; deleted?)
 <%- else -%>
-<%= author_picture(entry) if root.nil? or (root.origin_nickname != entry.origin_nickname) -%>
-<%= author_link(entry) if root.nil? or root.user_id != entry.user_id %>
 <%- if root.nil? -%>
-  <%= icon(entry) %><%= icon_extra(entry) -%><br />
+  <%= author_picture(entry) -%>
+  <%= icon(entry) %><%= icon_extra(entry) -%>
+  <%= author_link(entry) %>
+  <%= published(entry, true) -%><br />
+  <%= pin_link(entry) -%>
 <%- elsif !entry.same_feed?(root) -%>
-  <%= icon(entry) %><%= extra = icon_extra(entry); extra ? extra + '<br />' : nil -%>
+  <%= pin_link(entry) -%>
+  <%= author_picture(entry) if root.origin_nickname != entry.origin_nickname -%>
+  <%= icon(entry) %><%= icon_extra(entry) -%>
+  <%= author_link(entry) if root.origin_nickname != entry.origin_nickname %>
+<%- else -%>
+  <%= pin_link(entry) -%>
 <%- end -%>
   <%= original_link(entry) -%>
 <%= content(entry) %>
  <%= via(entry) %>
-<%= published(entry, true) -%>
+<%= published(entry, true) unless root.nil? -%>
 <%- if comment_inline?(entry) -%>
   -- <span class="comment"><%= inline_comment(entry.comments.first) %></span>
 <%- end -%>
