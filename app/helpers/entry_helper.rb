@@ -130,7 +130,7 @@ module EntryHelper
     end
     # TODO: do not show status icon for query result page now for performance
     # reason.
-    if ctx.query.nil? and ctx.link.nil? and entry_status(entry) != 'public'
+    if ctx.query.nil? and ctx.link.nil? and !ctx.user_for and entry_status(entry) != 'public'
       str = icon_tag(:private) + str
     end
     str
@@ -262,12 +262,6 @@ module EntryHelper
     end
     if unknown_where_to_go?(entry)
       entry_link_to(icon + h(title), entry.link) + h(" (#{uri_domain(entry.link)})")
-    elsif entry.service.tumblr?
-      if icon.empty?
-        h(title)
-      else
-        entry_link_to(icon, entry.link) + h(title)
-      end
     else
       entry_link_to(icon + h(title), entry.link)
     end

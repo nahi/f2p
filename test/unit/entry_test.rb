@@ -222,12 +222,12 @@ class EntryTest < ActiveSupport::TestCase
     # has likes -> likes does not affect to modified
     e = entries[0]
     assert_equal('2009-03-18T08:41:50Z', e.updated)
-    assert_equal('2009-03-18T08:51:08Z', e.modified)
+    assert_equal('2009-03-18T08:41:50Z', e.modified)
   end
 
   test 'modified_at' do
     entries = read_mapped_entries('entries', 'f2ptest')
-    assert_equal('2009-03-18T08:51:08Z', entries.first.modified_at.xmlschema)
+    assert_equal('2009-03-18T08:41:50Z', entries.first.modified_at.xmlschema)
   end
 
   test 'attrs' do
