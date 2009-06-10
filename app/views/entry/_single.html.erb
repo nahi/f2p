@@ -13,9 +13,9 @@
 <%= delete_link(entry) -%>
       </p>
       <p>
-<%= author_picture(entry) -%>
-<%= author_link(entry) %>
-<%= icon(entry) -%><%= icon_extra(entry) -%>
+        <%= author_picture(entry) -%>
+        <%= icon(entry) -%><%= icon_extra(entry) -%>
+        <%= author_link(entry) %>
       </p>
     </div>
     <div class="title">
@@ -67,7 +67,9 @@
   <p>
     <%= icon_tag(:next) %>Next<br />
     <%= link_to_next_entry(next_entry) %><br />
-    from <%= author_link(next_entry) %><%= icon(next_entry) %><%= icon_extra(next_entry) %>
+    from
+    <%= icon(next_entry) %><%= icon_extra(next_entry) %>
+    <%= author_link(next_entry) %>
   </p>
   <%- if entry.view_pinned -%>
     <p>
