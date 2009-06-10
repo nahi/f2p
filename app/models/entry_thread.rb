@@ -461,19 +461,21 @@ class EntryThread
         kinds = similar_entries(buf, entry)
         group += kinds
         buf -= kinds
-        kinds = []
-        pre = entry
-        entry_tag = tag(entry, opt)
-        buf.each do |e|
-          if entry_tag == tag(e, opt) and ((e.published_at - pre.published_at).abs < F2P::Config.service_grouping_threashold) and !kinds.include?(e)
-            kinds << (pre = e)
-            similar_entries(buf, e).each do |e2|
-              kinds << e2 unless kinds.include?(e2)
+        if kinds.empty?
+          pre = entry
+          entry_tag = tag(entry, opt)
+          buf.each do |e|
+            if entry_tag == tag(e, opt) and ((e.published_at - pre.published_at).abs < F2P::Config.service_grouping_threashold) and !kinds.include?(e)
+              kinds << (pre = e)
+              # too agressive?
+              #similar_entries(buf, e).each do |e2|
+              #  kinds << e2 unless kinds.include?(e2)
+              #end
             end
           end
+          group += kinds
+          buf -= kinds
         end
-        group += kinds
-        buf -= kinds
         sorted = sort_by_published(group)
         t.add(*sorted)
         t.root = sorted.first
