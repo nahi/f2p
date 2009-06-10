@@ -31,7 +31,7 @@ class EntryThread
         }
       elsif opt[:label] == 'pin'
         entries = entries.find_all { |entry|
-          entry.view_pinned or entry.id == opt[:updated_id]
+          entry.view_pinned or entry.id == opt[:updated_id] or entry.id == opt[:filter_inbox_except]
         }
       end
       if opt[:merge_entry]

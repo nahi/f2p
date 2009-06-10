@@ -130,8 +130,10 @@ module EntryHelper
     end
     # TODO: do not show status icon for query result page now for performance
     # reason.
-    if ctx.query.nil? and ctx.link.nil? and !ctx.user_for and entry_status(entry) != 'public'
-      str = icon_tag(:private) + str
+    if ctx.query.nil? and ctx.link.nil? and !ctx.user_for
+      if entry_status(entry) != 'public'
+        str = icon_tag(:private) + str
+      end
     end
     str
   end
