@@ -895,7 +895,9 @@ module EntryHelper
     end
     pin_label = 'pin'
     if threads = opt[:threads]
-      pin_label += "(#{threads.pins})"
+      if threads.pins and threads.pins > 0
+        pin_label += "(#{threads.pins})"
+      end
     end
     links << menu_link(menu_label(pin_label, '9'), link_list(:label => u('pin')), accesskey('9'))
     if ctx.list?
