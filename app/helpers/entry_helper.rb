@@ -78,8 +78,8 @@ module EntryHelper
     link_action('list', opt)
   end
 
-  def link_show(id)
-    link_action('show', :id => u(id))
+  def link_show(id, opt = {})
+    link_action('show', opt.merge(:id => u(id)))
   end
 
   def link_user(user, opt = {})
@@ -945,6 +945,16 @@ module EntryHelper
   end
 
   def link_to_next_entry(entry)
+    title = entry.title || ''
+    fold = fold_length(title, F2P::Config.next_entry_text_folding_size - 3)
+    if title != fold
+      fold += '...'
+    end
+    content = h(fold)
+    link_to(content, link_show(entry.id), accesskey('5'))
+  end
+
+  def link_to_next_entry_with_unpin(entry)
     title = entry.title || ''
     fold = fold_length(title, F2P::Config.next_entry_text_folding_size - 3)
     if title != fold

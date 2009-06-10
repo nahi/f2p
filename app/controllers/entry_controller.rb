@@ -254,6 +254,9 @@ class EntryController < ApplicationController
     @ctx.eid = param(:id)
     @ctx.home = false
     sess_ctx = session[:ctx]
+    if unpin = param(:unpin)
+      unpin_entry(unpin)
+    end
     with_profile_cache(@ctx) do
       opt = find_opt()
       # allow to use cache except self reloading
