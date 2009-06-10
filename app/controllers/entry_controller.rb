@@ -475,14 +475,13 @@ class EntryController < ApplicationController
       comment_id = Entry.edit_comment(create_opt(:id => id, :comment => comment, :body => body))
       flash[:updated_id] = id
       flash[:updated_comment] = comment_id
-      redirect_to_entry_or_list
     else
       comment_id = Entry.add_comment(create_opt(:id => id, :body => body))
       unpin_entry(id)
       flash[:added_id] = id
       flash[:added_comment] = comment_id
-      redirect_to_list
     end
+    redirect_to_entry_or_list
   end
 
   verify :only => :like,
