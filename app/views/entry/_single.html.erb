@@ -4,18 +4,18 @@
   <div class="thread2">
     <div class="title-header">
       <p>
-<%= pin_link(entry) -%>
-  <%= published(entry, false) %>
-<%= url_link(entry) -%>
-<%= reshare_link(entry) -%>
-<%= hide_link(entry) -%>
-<%= like_link(entry) -%>
-<%= delete_link(entry) -%>
-      </p>
-      <p>
         <%= author_picture(entry) -%>
         <%= icon(entry) -%><%= icon_extra(entry) -%>
         <%= author_link(entry) %>
+        <%= published(entry, false) %>
+      </p>
+      <p>
+        <%= pin_link(entry) %>
+        <%= url_link(entry) %>
+        <%= reshare_link(entry) %>
+        <%= hide_link(entry) %>
+        <%= like_link(entry) %>
+        <%= delete_link(entry) %>
       </p>
     </div>
     <div class="title">
