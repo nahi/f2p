@@ -954,16 +954,6 @@ module EntryHelper
     link_to(content, link_show(entry.id), accesskey('5'))
   end
 
-  def link_to_next_entry_with_unpin(entry)
-    title = entry.title || ''
-    fold = fold_length(title, F2P::Config.next_entry_text_folding_size - 3)
-    if title != fold
-      fold += '...'
-    end
-    content = h(fold)
-    link_to(content, link_show(entry.id), accesskey('5'))
-  end
-
   def link_to_back
     link_to(icon_tag(:previous) + menu_label('back', '5'), :controller => 'entry')
   end

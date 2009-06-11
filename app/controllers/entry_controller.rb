@@ -260,7 +260,7 @@ class EntryController < ApplicationController
     with_profile_cache(@ctx) do
       opt = find_opt()
       # allow to use cache except self reloading
-      if !flash[:show_reload_detection] and !updated_id_in_flash
+      if flash[:show_reload_detection] != @ctx.eid and !updated_id_in_flash
         opt[:allow_cache] = true
       end
       @threads = find_entry_thread(opt)
@@ -280,7 +280,7 @@ class EntryController < ApplicationController
     if sess_ctx
       sess_ctx.eid = @ctx.eid
     end
-    flash[:show_reload_detection] = true
+    flash[:show_reload_detection] = @ctx.eid
     render :action => 'list'
   end
 
