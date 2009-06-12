@@ -885,18 +885,16 @@ module EntryHelper
     start = ctx.start || 0
     num = ctx.num || 0
     links = []
+    if opt[:for_top]
+      links << link_to(icon_tag(:bottom), '#bottom', accesskey('8'))
+    end
+    if opt[:for_bottom]
+      links << link_to(icon_tag(:top), '#top', accesskey('2'))
+    end
     if ctx.list?
       links << menu_link(menu_label('<<', '4', true), list_opt(ctx.link_opt(:start => start - num, :num => num, :direction => 'rewind')), accesskey('4')) {
         !no_page and start - num >= 0
       }
-    end
-    if false
-      if opt[:for_top]
-        links << link_to(icon_tag(:bottom), '#bottom', accesskey('8'))
-      end
-      if opt[:for_bottom]
-        links << link_to(icon_tag(:top), '#top', accesskey('2'))
-      end
     end
     links << menu_link(menu_label('inbox', '0'), link_action('inbox'), accesskey('0'))
     if ctx.list? and threads = opt[:threads]
