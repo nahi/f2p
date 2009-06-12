@@ -7,7 +7,8 @@
   <%= author_picture(entry) -%>
   <%= icon(entry) %><%= icon_extra(entry) -%>
   <%= author_link(entry) %>
-  <%= published(entry, true) -%><br />
+  <%= published(entry, true) -%>
+  <%= likes(entry, true) -%><br />
   <%= pin_link(entry) -%>
 <%- elsif !entry.same_feed?(root) -%>
   <%= pin_link(entry) -%>
@@ -24,10 +25,9 @@
 <%- if comment_inline?(entry) -%>
   -- <span class="comment"><%= inline_comment(entry.comments.first) %></span>
 <%- end -%>
-<%= url_link(entry) -%>
 <%= reshare_link(entry) -%>
 <%= like_link(entry) -%>
-<%= likes(entry, true) -%>
+<%= likes(entry, true) unless root.nil? -%>
   <%- comments = fold_comments(entry.comments) -%>
   <%- if comments.empty? or comment_inline?(entry) or (comments.size == 1 and fold_item?(comments.first))-%>
 <%= post_comment_link(entry, :show_comments_number => true) %>

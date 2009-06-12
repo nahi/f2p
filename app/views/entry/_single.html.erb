@@ -26,9 +26,6 @@
       </p>
     </div>
   </div>
-  <p class="likes">
-<%= likes(entry, false) -%>
-  </p>
   <%- form_tag({:action => 'add_comment', :id => u(entry.id), :comment => ctx.comment ? u(ctx.comment) : nil}, {:name => 'post'}) do -%>
     <%- entry.comments.each do |comment| -%>
       <div class="comment">
@@ -55,6 +52,9 @@
       post.body.focus();
       //--></script>
     <%- end -%>
+    <p class="likes">
+      <%= likes(entry, false) -%>
+    </p>
   <%- end -%>
   <%- commit_checked_modified(entry) -%>
 <%- else -%>
