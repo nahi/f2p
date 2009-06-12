@@ -65,11 +65,9 @@
 <p><a name="bottom"></a><%= page_links(:for_bottom => true, :threads => @threads) %></p>
 <%- if next_entry = next_entry(entry.id) -%>
   <p>
-    <%= icon_tag(:next) %>Next<br />
-    <%= link_to_next_entry(next_entry) %><br />
-    from
-    <%= icon(next_entry) %><%= icon_extra(next_entry) %>
-    <%= author_link(next_entry) %>
+    Next: <%= link_to_next_entry(next_entry) %><br />
+    from <%= icon(next_entry) %><%= icon_extra(next_entry) %>
+         <%= author_link(next_entry) %>
   </p>
   <p>
     <%- if entry.view_pinned -%>
@@ -81,7 +79,7 @@
   </p>
 <%- else -%>
   <p>
-    <%= link_to(icon_tag(:previous) + h('Back'), :controller => 'entry') %>
+    <%= link_to(h('Back'), :controller => 'entry') %>
   </p>
 <%- end -%>
 <%- if !ctx.user_only? -%>

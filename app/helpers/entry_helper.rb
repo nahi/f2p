@@ -886,7 +886,7 @@ module EntryHelper
     num = ctx.num || 0
     links = []
     if ctx.list?
-      links << menu_link(icon_tag(:previous), list_opt(ctx.link_opt(:start => start - num, :num => num, :direction => 'rewind')), accesskey('4')) {
+      links << menu_link(menu_label('<<', '4', true), list_opt(ctx.link_opt(:start => start - num, :num => num, :direction => 'rewind')), accesskey('4')) {
         !no_page and start - num >= 0
       }
     end
@@ -922,7 +922,7 @@ module EntryHelper
     end
     links << menu_link(menu_label(pin_label, '9'), link_list(:label => u('pin')), accesskey('9'))
     if ctx.list?
-      links << menu_link(icon_tag(:next), list_opt(ctx.link_opt(:start => start + num, :num => num)), accesskey('6')) { !no_page }
+      links << menu_link(menu_label('>>', '6'), list_opt(ctx.link_opt(:start => start + num, :num => num)), accesskey('6')) { !no_page }
       if threads = opt[:threads] and opt[:for_top]
         links << list_range_notation(threads)
       end
@@ -1004,9 +1004,13 @@ module EntryHelper
     h(name + "'s: ") + links.join(' ')
   end
 
-  def menu_label(label, accesskey = nil)
+  def menu_label(label, accesskey = nil, reverse = false)
     if accesskey and cell_phone?
-      label = accesskey + '.' + label
+      if reverse
+        label = label + '.' + accesskey
+      else
+        label = accesskey + '.' + label
+      end
     end
     h("[#{label}]")
   end
