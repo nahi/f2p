@@ -954,10 +954,6 @@ module EntryHelper
     link_to(content, link_show(entry.id), accesskey('5'))
   end
 
-  def link_to_back
-    link_to(icon_tag(:previous) + menu_label('back', '5'), :controller => 'entry')
-  end
-
   def archive_button
     label = 'mark as read'
     label = '5.' + label if cell_phone?

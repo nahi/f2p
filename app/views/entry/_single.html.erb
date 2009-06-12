@@ -73,14 +73,15 @@
   </p>
   <p>
     <%- if entry.view_pinned -%>
-      <%= link_to(h('Unpin this and Go Next'), link_show(next_entry.id, :unpin => entry.id)) %>
+      <%= link_to(h('Unpin this and Go Next'), link_show(next_entry.id, :unpin => entry.id)) %><br />
     <%- else -%>
-      <%= link_to(h('Pin this and Go Next'), link_show(next_entry.id, :pin => entry.id)) %>
+      <%= link_to(h('Pin this and Go Next'), link_show(next_entry.id, :pin => entry.id)) %><br />
     <%- end -%>
+    <%= link_to(h('Back'), :controller => 'entry') %>
   </p>
 <%- else -%>
   <p>
-    <%= link_to_back() %>
+    <%= link_to(icon_tag(:previous) + h('Back'), :controller => 'entry') %>
   </p>
 <%- end -%>
 <%- if !ctx.user_only? -%>
