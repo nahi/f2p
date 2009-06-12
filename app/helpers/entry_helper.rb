@@ -529,7 +529,7 @@ module EntryHelper
     super(entry_or_comment.via, label)
   end
 
-  def likes(entry, compact)
+  def likes(entry)
     me = []
     friends = []
     rest = []
@@ -550,16 +550,37 @@ module EntryHelper
       else
         icon = icon_tag(:star)
       end
-      icon += likes.size.to_s
-      max = compact ? F2P::Config.likes_in_page : F2P::Config.max_friend_list_num
+      icon += h(likes.size.to_s)
+      max = F2P::Config.max_friend_list_num
       if likes.size > max + 1
         msg = "... #{likes.size - max} more likes"
-        members = likes[0, max].collect { |like| user(like) }.join(' ') + ' ' +
-          (compact ? link_to(h(msg), link_show(entry.id)) : h(msg))
+        members = likes[0, max].collect { |like| user(like) }.join(' ') + ' ' + h(msg)
       else
         members = likes.collect { |like| user(like) }.join(' ')
       end
       icon + '(' + members + ')'
+    end
+  end
+
+  def friends_likes(entry)
+    subscriptions = user_subscriptions(auth.name).inject({}) { |r, e| r[e.nickname] = true; r }
+    likes = entry.likes.find_all { |e| subscriptions.key?(e.nickname) }
+    if !entry.likes.empty?
+      if liked?(entry)
+        icon = link_to(icon_tag(:star, 'unlike'), link_action('unlike', :id => u(entry.id)))
+      else
+        icon = icon_tag(:star)
+      end
+      if entry.likes.size != likes.size
+        icon += link_to(h(entry.likes.size.to_s), link_show(entry.id))
+      else
+        icon += h(entry.likes.size.to_s)
+      end
+      if !likes.empty?
+        members = likes.collect { |like| user(like) }.join(' ')
+        icon += '(' + members + ')'
+      end
+      icon
     end
   end
 
