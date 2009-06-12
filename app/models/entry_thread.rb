@@ -114,10 +114,9 @@ class EntryThread
         if updated_id = opt[:updated_id]
           entry = wrap(get_entry(auth, :id => updated_id)).first
           if entry
+            update_cache_entry(auth, entry)
             if entries.find { |e| e.id == updated_id }
-              entries = entries.map { |e|
-                (e.id == updated_id) ? entry : e
-              }
+              replace_entry(entries, entry)
             else
               entries.unshift(entry)
             end
@@ -209,6 +208,13 @@ class EntryThread
       entries = yield
       @entries_cache[auth.name] = [opt, entries]
       entries
+    end
+
+    def update_cache_entry(auth, entry)
+      opt, entries = @entries_cache[auth.name]
+      if entries
+        replace_entry(entries, entry)
+      end
     end
 
     def record_last_modified(entries)
@@ -501,6 +507,15 @@ class EntryThread
 
     def first_page_option?(opt)
       opt[:start].nil? or opt[:start] == 0
+    end
+
+    def replace_entry(entries, entry)
+      entries.each_with_index do |e, idx|
+        if e.id == entry.id
+          entries[idx] = entry
+          return
+        end
+      end
     end
   end
 
