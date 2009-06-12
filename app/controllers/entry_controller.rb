@@ -257,6 +257,9 @@ class EntryController < ApplicationController
     if unpin = param(:unpin)
       unpin_entry(unpin)
     end
+    if pin = param(:pin)
+      pin_entry(pin)
+    end
     with_profile_cache(@ctx) do
       opt = find_opt()
       # allow to use cache except self reloading
@@ -539,10 +542,8 @@ class EntryController < ApplicationController
           :redirect_to => {:action => 'inbox'}
 
   def pin
-    id = param(:id)
-    if id
-      Entry.add_pin(create_opt(:id => id))
-      clear_checked_modified(id)
+    if id = param(:id)
+      pin_entry(id)
     end
     flash[:allow_cache] = true
     redirect_to_entry_or_list
@@ -555,8 +556,9 @@ class EntryController < ApplicationController
           :redirect_to => {:action => 'inbox'}
 
   def unpin
-    id = param(:id)
-    unpin_entry(id)
+    if id = param(:id)
+      unpin_entry(id)
+    end
     flash[:allow_cache] = true
     redirect_to_entry_or_list
   end
@@ -573,6 +575,13 @@ private
 
   def updated_id_in_flash
     flash[:added_id] || flash[:updated_id] || flash[:deleted_id]
+  end
+
+  def pin_entry(id)
+    if id
+      Entry.add_pin(create_opt(:id => id))
+      clear_checked_modified(id)
+    end
   end
 
   def unpin_entry(id, commit = true)

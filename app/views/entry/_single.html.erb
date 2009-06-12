@@ -71,11 +71,13 @@
     <%= icon(next_entry) %><%= icon_extra(next_entry) %>
     <%= author_link(next_entry) %>
   </p>
-  <%- if entry.view_pinned -%>
-    <p>
+  <p>
+    <%- if entry.view_pinned -%>
       <%= link_to(h('Unpin this and Go Next'), link_show(next_entry.id, :unpin => entry.id)) %>
-    </p>
-  <%- end -%>
+    <%- else -%>
+      <%= link_to(h('Pin this and Go Next'), link_show(next_entry.id, :pin => entry.id)) %>
+    <%- end -%>
+  </p>
 <%- else -%>
   <p>
     <%= link_to_back() %>
