@@ -8,6 +8,7 @@
         <%= icon(entry) -%><%= icon_extra(entry) -%>
         <%= author_link(entry) %>
         <%= published(entry, false) %>
+        <%= link_to(icon_tag(:bottom), '#bottom', accesskey('8')) %>
       </p>
       <p>
         <%= pin_link(entry) %>
@@ -16,7 +17,6 @@
         <%= hide_link(entry) %>
         <%= like_link(entry) %>
         <%= delete_link(entry) %>
-        <%= link_to(icon_tag(:bottom), '#bottom', accesskey('8')) %>
       </p>
     </div>
     <div class="title">
@@ -63,7 +63,10 @@
 <%- end -%>
 </div>
 <hr />
-<p><a name="bottom"></a><%= page_links(:for_bottom => true, :threads => @threads) %></p>
+<p><a name="bottom"></a>
+  <%= link_to(icon_tag(:top), '#top', accesskey('2')) %>
+  <%= page_links(:for_bottom => true, :threads => @threads) %>
+</p>
 <%- if next_entry = next_entry(entry.id) -%>
   <p>
     Next: <%= link_to_next_entry(next_entry) %><br />

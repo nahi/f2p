@@ -881,21 +881,7 @@ module EntryHelper
   end
 
   def page_links(opt = {})
-    no_page = ctx.start.nil?
-    start = ctx.start || 0
-    num = ctx.num || 0
     links = []
-    if opt[:for_top]
-      links << link_to(icon_tag(:bottom), '#bottom', accesskey('8'))
-    end
-    if opt[:for_bottom]
-      links << link_to(icon_tag(:top), '#top', accesskey('2'))
-    end
-    if ctx.list?
-      links << menu_link(menu_label('<<', '4', true), list_opt(ctx.link_opt(:start => start - num, :num => num, :direction => 'rewind')), accesskey('4')) {
-        !no_page and start - num >= 0
-      }
-    end
     links << menu_link(menu_label('inbox', '0'), link_action('inbox'), accesskey('0'))
     if ctx.list? and threads = opt[:threads]
       if entry = find_show_entry(threads)
@@ -919,8 +905,25 @@ module EntryHelper
       end
     end
     links << menu_link(menu_label(pin_label, '9'), link_list(:label => u('pin')), accesskey('9'))
+    links.join(' ')
+  end
+
+  def cursor_links(opt = {})
+    no_page = ctx.start.nil?
+    start = ctx.start || 0
+    num = ctx.num || 0
+    links = []
+    if opt[:for_top]
+      links << menu_link(menu_icon(:bottom, '8'), '#bottom', accesskey('8'))
+    end
+    if opt[:for_bottom]
+      links << menu_link(menu_icon(:top, '2'), '#top', accesskey('2'))
+    end
     if ctx.list?
-      links << menu_link(menu_label('>>', '6'), list_opt(ctx.link_opt(:start => start + num, :num => num)), accesskey('6')) { !no_page }
+      links << menu_link(menu_label('<', '4', true), list_opt(ctx.link_opt(:start => start - num, :num => num, :direction => 'rewind')), accesskey('4')) {
+        !no_page and start - num >= 0
+      }
+      links << menu_link(menu_label('>', '6'), list_opt(ctx.link_opt(:start => start + num, :num => num)), accesskey('6')) { !no_page }
       if threads = opt[:threads] and opt[:for_top]
         links << list_range_notation(threads)
       end
@@ -1002,15 +1005,24 @@ module EntryHelper
     h(name + "'s: ") + links.join(' ')
   end
 
+  def menu_icon(icon, accesskey = nil, reverse = false)
+    "[#{label_with_accesskey(icon_tag(icon), accesskey, reverse)}]"
+  end
+
   def menu_label(label, accesskey = nil, reverse = false)
+    h("[#{label_with_accesskey(label, accesskey, reverse)}]")
+  end
+
+  def label_with_accesskey(label, accesskey = nil, reverse = false)
     if accesskey and cell_phone?
       if reverse
-        label = label + '.' + accesskey
+        label + '.' + accesskey
       else
-        label = accesskey + '.' + label
+        accesskey + '.' + label
       end
+    else
+      label
     end
-    h("[#{label}]")
   end
 
   def menu_link(label, opt, html_opt = {}, &block)

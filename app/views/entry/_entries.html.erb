@@ -22,7 +22,10 @@
   <%- end -%>
 <%- end -%>
 <%- form_tag(link_action('archive')) do -%>
-  <p><a name="top"></a><%= page_links(:for_top => true, :threads => @threads) %></p>
+  <p><a name="top"></a>
+  <%= page_links(:for_top => true, :threads => @threads) %><br />
+  <%= cursor_links(:for_top => true, :threads => @threads) %>
+  </p>
 <%- end -%>
 <div class="listings">
   <%- if link = geo_markers_link(@threads) -%>
@@ -61,7 +64,9 @@
   <%- end -%>
 </div>
 <%- form_tag(link_action('archive')) do -%>
-  <p><a name="bottom"></a><%= page_links(:for_bottom => true, :threads => @threads) %></p>
+  <p><a name="bottom"></a>
+  <%= cursor_links(:for_bottom => true, :threads => @threads) %>
+  </p>
 <%- end -%>
 <%- if ctx.user_for -%>
   <p><%= render :partial => 'profile', :locals => {:user => ctx.user_for} %></p>
