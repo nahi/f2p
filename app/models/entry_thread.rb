@@ -42,10 +42,13 @@ class EntryThread
         }
       end
       threads = EntryThreads[*entries]
-      prev = nil
-      threads.map { |t| t.entries }.flatten.reverse_each do |e|
-        e.view_nextid = prev
-        prev = e.id
+      flatten = threads.map { |t| t.entries }.flatten
+      if !flatten.any? { |e| e.view_nextid }
+        prev = nil
+        flatten.reverse_each do |e|
+          e.view_nextid = prev
+          prev = e.id
+        end
       end
       unless original.empty?
         threads.from_modified = original.last.modified
@@ -249,18 +252,13 @@ class EntryThread
       eids = entries.map { |e| e.id }
       checked_map = checked_map(auth, eids)
       pinned_map = pinned_map(auth)
-      if c = CheckedModified.find(:all, :order => 'checked asc', :limit => 1).first
-        oldest = c.checked
-      else
-        oldest = Time.at(0)
-      end
       entries.each do |entry|
         entry.view_pinned = pinned_map.key?(entry.id)
         if checked = checked_map[entry.id]
           entry.checked_at = checked
           entry.view_unread = checked < entry.modified_at
         else
-          entry.view_unread = oldest < entry.modified_at
+          entry.view_unread = true
         end
       end
       pinned_map.keys.size
