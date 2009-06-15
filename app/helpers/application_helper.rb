@@ -81,8 +81,10 @@ module ApplicationHelper
     content = <<__EOS__
   h1 { font-size: #{h1_size}pt; }
   h2 { font-size: #{h2_size}pt; }
+  p.header { font-size: #{h1_size}pt; }
   body { font-size: #{body_size}pt; }
   a img { border: none; }
+  img.inline  { vertical-align: text-top; }
   img.media   { border: 1px solid #ccc; padding: 1px; }
   img.profile { border: 1px solid #ccc; padding: 0px; }
   p.message { color: red; }
@@ -90,13 +92,25 @@ module ApplicationHelper
   .latest2 { color: #C00; }
   .latest3 { color: #900; }
   .older { color: #008; }
-  .comment, .pin {
-    padding-bottom: 0.2ex;
-    color: #666;
+  .comment { color: #666; }
+  .comment-block {
+    padding-top: 0.5ex;
+    padding-left: 1.5ex;
+  }
+  .comment-block p {
+    padding-bottom: 0.5ex;
   }
   .inbox { font-weight: bold; }
-  div.listings .thread1 { padding-bottom: 2.0ex; background-color: #EEE; }
-  div.listings .thread2 { padding-bottom: 2.0ex; }
+  div.listings .thread1 {
+    background-color: #EEE;
+    border-top: 1px solid #ccc;
+    border-bottom: 1px solid #ccc;
+    padding-bottom: 0.2ex;
+  }
+  div.listings .thread2 {
+    padding-bottom: 0.2ex;
+  }
+  div.listings hr.separator { display: none; }
   div.listings ul {
     list-style-type: none;
     margin-top: 0pt;
@@ -106,10 +120,19 @@ module ApplicationHelper
     margin-top: 0pt;
     margin-bottom: 0pt;
   }
-  div.listings .title-header { background-color: #EEE; }
-  div.listings .title {
-    margin-top: 2ex;
+  div.listings .entry {
+    margin-top: 1.0ex;
     margin-bottom: 0.8ex;
+  }
+  div.listings .related {
+    margin-bottom: 0.8ex;
+  }
+  div.listings .title-header {
+    background-color: #EEE;
+  }
+  div.listings .title {
+    padding-top: 1.5ex;
+    padding-bottom: 1.0ex;
   }
   #{ inline_stylesheet_iphone }
 __EOS__
@@ -159,6 +182,12 @@ __EOS__
     name = name.to_s
     label = alt || name.gsub(/_/, ' ')
     image_tag(icon_url(name), :alt => h(label), :title => h(label), :size => '16x16')
+  end
+
+  def inline_icon_tag(name, alt = nil)
+    name = name.to_s
+    label = alt || name.gsub(/_/, ' ')
+    image_tag(icon_url(name), :class => h('inline'), :alt => h(label), :title => h(label), :size => '16x16')
   end
 
   def service_icon_tag(url, alt, title)

@@ -23,34 +23,40 @@
 <%- end -%>
 <%- form_tag(link_action('archive')) do -%>
   <p><a name="top"></a>
-  <%= page_links(:for_top => true, :threads => @threads) %><br />
-  <%= cursor_links(:for_top => true, :threads => @threads) %>
+    <%= page_links(:for_top => true, :threads => @threads) %>
   </p>
 <%- end -%>
 <div class="listings">
   <%- if link = geo_markers_link(@threads) -%>
-    <p>
-      Following list includes geo entries:<br />
-      <ul><li><%= link %></li></ul>
-    </p>
+    <div class="entry">
+      <p>
+        Following list includes geo entries:<br />
+        &nbsp;&nbsp;&nbsp;<%= link %>
+      </p>
+    </div>
   <%- end -%>
   <%- @threads.each do |thread| -%>
-    <%= "<hr />" if i_mode? -%>
+    <hr class="separator" />
     <div class="<%= cycle('thread1', 'thread2') %>">
-      <%= render :partial => 'entry', :locals => {:entry => thread.root, :root => nil} %>
+      <div class="entry">
+        <p>
+          <%= render :partial => 'entry', :locals => {:entry => thread.root, :root => nil} %>
+        </p>
+      </div>
       <%- remember_checked(thread.root) -%>
       <%- unless thread.related_entries.empty? -%>
-        <ul>
-          <li><%= icon_tag(:related) %> <%= thread.related_entries.size %> related entries</li>
-          <% thread.related_entries.each do |entry| -%>
-            <%- if fold_item?(entry) -%>
-              <%= fold_link(entry) %>
-            <%- else -%>
-              <li><%= render :partial => 'entry', :locals => {:entry => entry, :root => thread.root} %></li>
-              <%- remember_checked(entry) -%>
-            <%- end -%>
-          <%- end -%>
-        </ul>
+        <% thread.related_entries.each do |entry| -%>
+          <div class="related">
+            <p>
+              <%- if fold_item?(entry) -%>
+                <%= fold_link(entry) %>
+              <%- else -%>
+                <%= render :partial => 'entry', :locals => {:entry => entry, :root => thread.root} %>
+                <%- remember_checked(entry) -%>
+              <%- end -%>
+            </p>
+          </div>
+        <%- end -%>
       <%- end -%>
     </div>
   <%- end -%>
@@ -65,7 +71,7 @@
 </div>
 <%- form_tag(link_action('archive')) do -%>
   <p><a name="bottom"></a>
-  <%= cursor_links(:for_bottom => true, :threads => @threads) %>
+    <%= page_links(:for_bottom => true, :threads => @threads) %>
   </p>
 <%- end -%>
 <%- if ctx.user_for -%>
@@ -77,7 +83,7 @@
 <%- end -%>
 <%- if !ctx.user_only? -%>
   <hr />
-  <p><a name="filter">[Filter]</a></p>
+  <p><a name="filter">Filter:</a></p>
   <p><%= user_page_links(auth.name) %></p>
   <p><%= list_links %></p>
 <%- end -%>

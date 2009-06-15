@@ -32,20 +32,20 @@
   <%- if comments.empty? or comment_inline?(entry) or (comments.size == 1 and fold_item?(comments.first))-%>
 <%= post_comment_link(entry, :show_comments_number => true) %>
   <%- else -%>
-    <ul class="comment">
+    <div class="comment comment-block">
       <%- comments.each do |comment| -%>
-        <%- if comment.respond_to?(:fold_entries) -%>
-          <li><%= fold_comment_link(comment) %></li>
-        <%- else -%>
-          <li>
+        <p>
+          <%- if comment.respond_to?(:fold_entries) -%>
+            <%= fold_comment_link(comment) %>
+          <%- else -%>
             <%= comment_icon(comment) %>
             <%= comment(comment) %> <%= comment_author_link(comment) %> <%= via(comment) %>
 <%= comment_date(comment, true) unless comment.posted_with_entry? -%>
 <%= comment_url_link(comment) -%>
 <%= post_comment_link(comment.entry) if comment.last? %>
-          </li>
-        <%- end -%>
+          <%- end -%>
+        </p>
       <%- end -%>
-    </ul>
+    </div>
   <%- end -%>
 <%- end -%>

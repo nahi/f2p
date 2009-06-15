@@ -4,23 +4,21 @@
   <div class="thread2">
     <div class="title-header">
       <p>
-        <%= author_picture(entry) -%>
+        <%= pin_link(entry) %>
         <%= icon(entry) -%><%= icon_extra(entry) -%>
         <%= author_link(entry) %>
         <%= published(entry, false) %>
-        <%= link_to(icon_tag(:bottom), '#bottom', accesskey('8')) %>
-      </p>
-      <p>
-        <%= pin_link(entry) %>
-        <%= url_link(entry) %>
-        <%= reshare_link(entry) %>
-        <%= hide_link(entry) %>
-        <%= like_link(entry) %>
-        <%= delete_link(entry) %>
+        <%= menu_link(menu_icon(:bottom, '8'), '#bottom', accesskey('8')) %>
+      <%= url_link(entry) %>
+      <%= reshare_link(entry) %>
+      <%= hide_link(entry) %>
+      <%= like_link(entry) %>
+      <%= delete_link(entry) %>
       </p>
     </div>
     <div class="title">
       <p>
+<%= author_picture(entry) -%>
 <%= original_link(entry) -%>
 <%= content(entry) -%>
   <%= via(entry) -%>
@@ -28,8 +26,8 @@
     </div>
   </div>
   <%- form_tag({:action => 'add_comment', :id => u(entry.id), :comment => ctx.comment ? u(ctx.comment) : nil}, {:name => 'post'}) do -%>
-    <%- entry.comments.each do |comment| -%>
-      <div class="comment">
+    <div class="comment comment-block">
+      <%- entry.comments.each do |comment| -%>
         <p>
           <%= comment_icon(comment) %>
           <%- if ctx.comment != comment.id -%>
@@ -42,20 +40,18 @@
             <%= edit_comment_form(comment) %>
           <%- end -%>
         </p>
-      </div>
-    <%- end -%>
-    <%- if ctx.comment.nil? -%>
-      <div class="comment">
+      <%- end -%>
+      <%- if ctx.comment.nil? -%>
         <%= comment_icon %>
         <%= post_comment_form(entry) %>
-      </div>
-      <script type='text/javascript'><!--
-      post.body.focus();
-      //--></script>
-    <%- end -%>
-    <p class="likes">
-      <%= likes(entry) -%>
-    </p>
+        <script type='text/javascript'><!--
+        post.body.focus();
+        //--></script>
+      <%- end -%>
+      <p class="likes">
+        <%= likes(entry) -%>
+      </p>
+    </div>
   <%- end -%>
   <%- commit_checked_modified(entry) -%>
 <%- else -%>
@@ -64,7 +60,6 @@
 </div>
 <hr />
 <p><a name="bottom"></a>
-  <%= link_to(icon_tag(:top), '#top', accesskey('2')) %>
   <%= page_links(:for_bottom => true, :threads => @threads) %>
 </p>
 <%- if next_entry = next_entry(entry.id) -%>

@@ -87,7 +87,7 @@ module EntryHelper
   end
 
   def author_picture(entry)
-    return unless setting.list_view_profile_picture
+    return if !ctx.single? and !setting.list_view_profile_picture
     return if ctx.user_for or ctx.room_for
     if nickname = entry.origin_nickname
       if nickname == entry.nickname
@@ -187,7 +187,7 @@ module EntryHelper
       fold, str, links = escape_text(title, ctx.fold ? setting.text_folding_size : nil)
       entry.view_links = links
       if fold
-        str += link_to(icon_tag(:more), link_show(entry.id))
+        str += link_to(inline_icon_tag(:more), link_show(entry.id))
       end
       content = q(str)
     end
@@ -436,7 +436,7 @@ module EntryHelper
     title = entry.title
     fold = fold_length(title, setting.text_folding_size - 3)
     if ctx.fold and entry.medias.empty? and fold != title
-      link_content(fold + '...', entry) + link_to(icon_tag(:more), link_show(entry.id))
+      link_content(fold + '...', entry) + link_to(inline_icon_tag(:more), link_show(entry.id))
     else
       common
     end
@@ -652,7 +652,7 @@ module EntryHelper
     fold, str, links = escape_text(comment.body, ctx.fold ? setting.text_folding_size : nil)
     comment.view_links = links
     if fold
-      str += link_to(icon_tag(:more), link_show(comment.entry.id))
+      str += link_to(inline_icon_tag(:more), link_show(comment.entry.id))
     end
     str
   end
@@ -881,34 +881,6 @@ module EntryHelper
   end
 
   def page_links(opt = {})
-    links = []
-    links << menu_link(menu_label('inbox', '0'), link_action('inbox'), accesskey('0'))
-    if ctx.list? and threads = opt[:threads]
-      if entry = find_show_entry(threads)
-        links << menu_link(menu_label('show', '1'), link_show(entry.id), accesskey('1'))
-      end
-    end
-    if ctx.friend_view?
-      links << menu_link(menu_label('me', '3'), link_user(auth.name), accesskey('3'))
-    elsif ctx.user_only?
-      links << menu_link(menu_label('filter', '3'), '#profile', accesskey('3'))
-    else
-      links << menu_link(menu_label('filter', '3'), '#filter', accesskey('3'))
-    end
-    if ctx.inbox
-      links << menu_link(menu_label('all', '7'), link_list(), accesskey('7'))
-    end
-    pin_label = 'pin'
-    if threads = opt[:threads]
-      if threads.pins and threads.pins > 0
-        pin_label += "(#{threads.pins})"
-      end
-    end
-    links << menu_link(menu_label(pin_label, '9'), link_list(:label => u('pin')), accesskey('9'))
-    links.join(' ')
-  end
-
-  def cursor_links(opt = {})
     no_page = ctx.start.nil?
     start = ctx.start || 0
     num = ctx.num || 0
@@ -923,6 +895,23 @@ module EntryHelper
       links << menu_link(menu_label('<', '4', true), list_opt(ctx.link_opt(:start => start - num, :num => num, :direction => 'rewind')), accesskey('4')) {
         !no_page and start - num >= 0
       }
+    end
+    if ctx.single? or opt[:for_top]
+      links << menu_link(menu_label('inbox', '0'), link_action('inbox'), accesskey('0'))
+      if ctx.list? and threads = opt[:threads]
+        if entry = find_show_entry(threads)
+          links << menu_link(menu_label('next', '1'), link_show(entry.id), accesskey('1'))
+        end
+      end
+      pin_label = 'pin'
+      if threads = opt[:threads]
+        if threads.pins and threads.pins > 0
+          pin_label += "(#{threads.pins})"
+        end
+      end
+      links << menu_link(menu_label(pin_label, '9'), link_list(:label => u('pin')), accesskey('9'))
+    end
+    if ctx.list?
       links << menu_link(menu_label('>', '6'), list_opt(ctx.link_opt(:start => start + num, :num => num)), accesskey('6')) { !no_page }
       if threads = opt[:threads] and opt[:for_top]
         links << list_range_notation(threads)
@@ -930,6 +919,7 @@ module EntryHelper
     end
     if ctx.inbox and opt[:for_bottom]
       links << archive_button
+      links << menu_link(menu_label('all', '7'), link_list(), accesskey('7'))
     end
     links.join(' ')
   end
@@ -1034,7 +1024,7 @@ module EntryHelper
   end
 
   def post_comment_link(entry, opt = {})
-    str = icon_tag(:comment_add, 'comment')
+    str = inline_icon_tag(:comment_add, 'comment')
     if opt[:show_comments_number] and !entry.comments.empty? and !comment_inline?(entry)
       if entry.comments.size == 1
         num = "(#{entry.comments.size} comment)"
@@ -1079,7 +1069,7 @@ module EntryHelper
 
   def url_link_to(link, query = nil)
     if link and ctx.link != link
-      link_to(icon_tag(:url, 'related'), link_list(:link => link, :query => query))
+      link_to(inline_icon_tag(:url, 'related'), link_list(:link => link, :query => query))
     end
   end
 
@@ -1116,20 +1106,20 @@ module EntryHelper
   def like_link(entry)
     if entry.nickname != auth.name or (entry.room and !entry.service.internal?)
       unless liked?(entry)
-        link_to(icon_tag(:like), link_action('like', :id => u(entry.id)))
+        link_to(inline_icon_tag(:like), link_action('like', :id => u(entry.id)))
       end
     end
   end
 
   def hide_link(entry)
-    link_to(icon_tag(:hide), link_action('hide', :id => u(entry.id)), :confirm => 'Hide?')
+    link_to(inline_icon_tag(:hide), link_action('hide', :id => u(entry.id)), :confirm => 'Hide?')
   end
 
   def reshare_link(entry)
     if (ctx.single? or entry.view_pinned) and
         (entry.nickname != auth.name or entry.room) and
         entry.link
-      link_to(icon_tag(:reshare), link_action('reshare', :eid => u(entry.id)))
+      link_to(inline_icon_tag(:reshare), link_action('reshare', :eid => u(entry.id)))
     end
   end
 

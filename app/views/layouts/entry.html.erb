@@ -6,7 +6,7 @@
   </head>
   <body>
     <%- form_tag({:action => 'list'}) do -%>
-      <h1><%= link_to(h(appname), :controller => 'entry') %> <%= h(viewname) %> at <%= title_date %> <%= top_menu %> <%= search_form(:compact => true) %></h1>
+      <p class="header"><%= link_to(h(appname), :controller => 'entry') %> <%= h(viewname) %> at <%= title_date %> <%= top_menu %> <%= search_form(:compact => true) %></p>
     <%- end -%>
     <%= yield %>
   </body>
