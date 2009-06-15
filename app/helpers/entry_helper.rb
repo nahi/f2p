@@ -996,7 +996,7 @@ module EntryHelper
   end
 
   def menu_icon(icon, accesskey = nil, reverse = false)
-    "[#{label_with_accesskey(icon_tag(icon), accesskey, reverse)}]"
+    "[#{label_with_accesskey(inline_icon_tag(icon), accesskey, reverse)}]"
   end
 
   def menu_label(label, accesskey = nil, reverse = false)
