@@ -511,6 +511,7 @@ class EntryThread
       entries.each_with_index do |e, idx|
         if e.id == entry.id
           entries[idx] = entry
+          entry.view_nextid = e.view_nextid
           return
         end
       end
