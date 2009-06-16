@@ -327,14 +327,11 @@ class EntryControllerTest < ActionController::TestCase
 
   test 'edit' do
     login('user1')
-    get :edit, :id => 'df9d34df-23ff-de8e-3675-a82736ef90cc'
-    assert_redirected_to :action => 'inbox'
-    #
     @ff.expects(:get_profile).
       returns(read_profile('profile'))
     @ff.expects(:get_entry).
       returns(read_entries('entries', 'f2ptest')[0, 1])
-    get :edit, :id => 'df9d34df-23ff-de8e-3675-a82736ef90cc', :comment => 'c'
+    get :show, :id => 'df9d34df-23ff-de8e-3675-foobar', :comment => 'c'
     assert_response :success
   end
 
@@ -350,9 +347,9 @@ class EntryControllerTest < ActionController::TestCase
     #
     @ff.expects(:get_entry).
       returns(read_entries('entries', 'f2ptest')[0, 1])
-    get :edit, :id => 'df9d34df-23ff-de8e-3675-a82736ef90cc', :comment => 'c'
+    get :show, :id => 'df9d34df-23ff-de8e-3675-abc', :comment => 'c'
     assert_response :success
-    assert_equal('df9d34df-23ff-de8e-3675-a82736ef90cc', session[:ctx].eid)
+    assert_equal('df9d34df-23ff-de8e-3675-abc', session[:ctx].eid)
   end
 
   test 'updated' do

@@ -1091,7 +1091,7 @@ module EntryHelper
 
   def edit_comment_link(comment)
     if comment.nickname == auth.name
-      link_to(inline_icon_tag(:comment_edit, 'edit'), link_action('edit', :id => u(comment.entry.id), :comment => u(comment.id)))
+      link_to(inline_icon_tag(:comment_edit, 'edit'), link_action('show', :id => u(comment.entry.id), :comment => u(comment.id)))
     end
   end
 

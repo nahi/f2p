@@ -252,6 +252,7 @@ class EntryController < ApplicationController
   def show
     @ctx = EntryContext.new(auth)
     @ctx.eid = param(:id)
+    @ctx.comment = param(:comment)
     @ctx.home = false
     sess_ctx = session[:ctx]
     if unpin = param(:unpin)
@@ -337,24 +338,6 @@ class EntryController < ApplicationController
     entry = t.root
     @link = entry.link
     @link_title = %Q("#{entry.title}")
-  end
-
-  verify :only => :edit,
-          :method => :get,
-          :params => [:id, :comment],
-          :add_flash => {:error => 'verify failed'},
-          :redirect_to => {:action => 'inbox'}
-
-  def edit
-    @ctx = EntryContext.new(auth)
-    @ctx.eid = param(:id)
-    @ctx.comment = param(:comment)
-    @ctx.home = false
-    if ctx = session[:ctx]
-      ctx.eid = @ctx.eid
-    end
-    @threads = find_entry_thread(find_opt)
-    render :action => 'list'
   end
 
   def search
