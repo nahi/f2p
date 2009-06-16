@@ -896,21 +896,19 @@ module EntryHelper
         !no_page and start - num >= 0
       }
     end
-    if ctx.single? or opt[:for_top]
-      links << menu_link(menu_label('inbox', '0'), link_action('inbox'), accesskey('0'))
-      if ctx.list? and threads = opt[:threads]
-        if entry = find_show_entry(threads)
-          links << menu_link(menu_label('next', '1'), link_show(entry.id), accesskey('1'))
-        end
+    links << menu_link(menu_label('inbox', '0'), link_action('inbox'), accesskey('0'))
+    if ctx.list? and threads = opt[:threads]
+      if entry = find_show_entry(threads)
+        links << menu_link(menu_label('next', '1'), link_show(entry.id), accesskey('1'))
       end
-      pin_label = 'pin'
-      if threads = opt[:threads]
-        if threads.pins and threads.pins > 0
-          pin_label += "(#{threads.pins})"
-        end
-      end
-      links << menu_link(menu_label(pin_label, '9'), link_list(:label => u('pin')), accesskey('9'))
     end
+    pin_label = 'pin'
+    if threads = opt[:threads]
+      if threads.pins and threads.pins > 0
+        pin_label += "(#{threads.pins})"
+      end
+    end
+    links << menu_link(menu_label(pin_label, '9'), link_list(:label => u('pin')), accesskey('9'))
     if ctx.list?
       links << menu_link(menu_label('>', '6'), list_opt(ctx.link_opt(:start => start + num, :num => num)), accesskey('6')) { !no_page }
       if threads = opt[:threads] and opt[:for_top]
@@ -1075,7 +1073,7 @@ module EntryHelper
 
   def delete_link(entry)
     if entry.nickname == auth.name
-      link_to(icon_tag(:delete), link_action('delete', :id => u(entry.id)), :confirm => 'Delete?')
+      link_to(inline_icon_tag(:delete), link_action('delete', :id => u(entry.id)), :confirm => 'Delete?')
     end
   end
 
@@ -1093,13 +1091,13 @@ module EntryHelper
 
   def edit_comment_link(comment)
     if comment.nickname == auth.name
-      link_to(icon_tag(:comment_edit, 'edit'), link_action('edit', :id => u(comment.entry.id), :comment => u(comment.id)))
+      link_to(inline_icon_tag(:comment_edit, 'edit'), link_action('edit', :id => u(comment.entry.id), :comment => u(comment.id)))
     end
   end
 
   def delete_comment_link(comment)
     if comment.nickname == auth.name or auth.name == comment.entry.nickname
-      link_to(icon_tag(:delete), link_action('delete', :id => u(comment.entry.id), :comment => u(comment.id)), :confirm => 'Delete?')
+      link_to(inline_icon_tag(:delete), link_action('delete', :id => u(comment.entry.id), :comment => u(comment.id)), :confirm => 'Delete?')
     end
   end
 

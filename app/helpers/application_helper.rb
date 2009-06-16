@@ -98,7 +98,7 @@ module ApplicationHelper
     padding-left: 1.5ex;
   }
   .comment-block p {
-    padding-bottom: 0.5ex;
+    padding-bottom: 0.2ex;
   }
   .inbox { font-weight: bold; }
   div.listings .thread1 {
