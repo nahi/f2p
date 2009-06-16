@@ -134,6 +134,11 @@ module ApplicationHelper
     padding-top: 1.5ex;
     padding-bottom: 1.0ex;
   }
+  div.listings .single-entry {
+    border-top: 1px solid #ccc;
+    border-bottom: 1px solid #ccc;
+    margin-bottom: 1ex;
+  }
   #{ inline_stylesheet_iphone }
 __EOS__
     content_tag('style', content, :type => "text/css")

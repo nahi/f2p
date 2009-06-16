@@ -1,7 +1,7 @@
 <p><a name="top"></a></p>
 <div class="listings">
-<%- if @threads.first && entry = @threads.first.root -%>
-  <div class="thread2">
+  <div class="single-entry">
+  <%- if @threads.first && entry = @threads.first.root -%>
     <div class="title-header">
       <p>
         <%= pin_link(entry) %>
@@ -24,49 +24,44 @@
   <%= via(entry) -%>
       </p>
     </div>
-  </div>
-  <%- form_tag({:action => 'add_comment', :id => u(entry.id), :comment => ctx.comment ? u(ctx.comment) : nil}, {:name => 'post'}) do -%>
-    <div class="comment comment-block">
-      <%- entry.comments.each do |comment| -%>
-        <p>
-          <%= comment_icon(comment) %>
-          <%- if ctx.comment != comment.id -%>
-            <%= comment(comment) %> <%= comment_author_link(comment) %> <%= via(comment) %>
-            <%= date(comment.date, false) %>
+    <%- form_tag({:action => 'add_comment', :id => u(entry.id), :comment => ctx.comment ? u(ctx.comment) : nil}, {:name => 'post'}) do -%>
+      <div class="comment comment-block">
+        <%- entry.comments.each do |comment| -%>
+          <p>
+            <%= comment_icon(comment) %>
+            <%- if ctx.comment != comment.id -%>
+              <%= comment(comment) %> <%= comment_author_link(comment) %> <%= via(comment) %>
+              <%= date(comment.date, false) %>
 <%= comment_url_link(comment) -%>
 <%= edit_comment_link(comment) -%>
 <%= delete_comment_link(comment) -%>
-          <%- else -%>
-            <%= edit_comment_form(comment) %>
-          <%- end -%>
+            <%- else -%>
+              <%= edit_comment_form(comment) %>
+            <%- end -%>
+          </p>
+        <%- end -%>
+        <%- if ctx.comment.nil? -%>
+          <%= comment_icon %>
+          <%= post_comment_form(entry) %>
+          <script type='text/javascript'><!--
+          post.body.focus();
+          //--></script>
+        <%- end -%>
+        <p class="likes">
+          <%= likes(entry) -%>
         </p>
-      <%- end -%>
-      <%- if ctx.comment.nil? -%>
-        <%= comment_icon %>
-        <%= post_comment_form(entry) %>
-        <script type='text/javascript'><!--
-        post.body.focus();
-        //--></script>
-      <%- end -%>
-      <p class="likes">
-        <%= likes(entry) -%>
-      </p>
-    </div>
+      </div>
+    <%- end -%>
+    <%- commit_checked_modified(entry) -%>
+  <%- else -%>
+    <p>No feed is good feed.</p>
   <%- end -%>
-  <%- commit_checked_modified(entry) -%>
-<%- else -%>
-  <p>No feed is good feed.</p>
-<%- end -%>
 </div>
-<hr />
-<p><a name="bottom"></a>
-  <%= page_links(:for_bottom => true, :threads => @threads) %>
-</p>
-<%- if next_entry = next_entry(entry.id) -%>
+<%- if next_entry = next_entry(entry) -%>
   <p>
     Next: <%= link_to_next_entry(next_entry) %><br />
     from <%= icon(next_entry) %><%= icon_extra(next_entry) %>
-         <%= author_link(next_entry) %>
+        <%= author_link(next_entry) %>
   </p>
   <p>
     <%- if entry.view_pinned -%>
@@ -81,6 +76,10 @@
     <%= link_to(h('Back'), :controller => 'entry') %>
   </p>
 <%- end -%>
+</div>
+<p><a name="bottom"></a>
+  <%= page_links(:for_bottom => true, :threads => @threads) %>
+</p>
 <%- if !ctx.user_only? -%>
   <hr />
   <p><a name="filter">[Filter]</a></p>

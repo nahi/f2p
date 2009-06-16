@@ -944,10 +944,10 @@ module EntryHelper
     end
   end
 
-  def next_entry(eid)
-    return if @original_threads.nil? or @original_threads.empty?
+  def next_entry(entry)
+    return if entry.nil? or @original_threads.nil? or @original_threads.empty?
     entries = @original_threads.map { |thread| thread.entries }.flatten
-    if found = entries.find { |e| e.id == eid }
+    if found = entries.find { |e| e.id == entry.id }
       if found.view_nextid
         entries.find { |e| e.id == found.view_nextid }
       end
@@ -994,7 +994,7 @@ module EntryHelper
   end
 
   def menu_icon(icon, accesskey = nil, reverse = false)
-    "[#{label_with_accesskey(inline_icon_tag(icon), accesskey, reverse)}]"
+    label_with_accesskey(inline_icon_tag(icon), accesskey, reverse)
   end
 
   def menu_label(label, accesskey = nil, reverse = false)
