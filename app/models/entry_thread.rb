@@ -84,7 +84,8 @@ class EntryThread
             begin
               c.save!
             rescue ActiveRecord::ActiveRecordError => e
-              logger.warn("create LastModified failed for #{entry.id}", e)
+              logger.warn("create LastModified failed for #{entry.id}")
+              logger.warn(e)
             end
           end
         end

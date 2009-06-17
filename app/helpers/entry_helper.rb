@@ -672,7 +672,7 @@ module EntryHelper
     str += hidden_field_tag('room', ctx.room_for) if ctx.room_for
     str += hidden_field_tag('friends', ctx.friends) if ctx.friends
     str += hidden_field_tag('service', ctx.service) if ctx.service
-    if str.empty?
+    if str.empty? and ctx.query.nil?
       str += hidden_field_tag('friends', 'me')
     end
     if opt[:compact]
