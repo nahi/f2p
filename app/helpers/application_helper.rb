@@ -95,7 +95,6 @@ module ApplicationHelper
   .comment { color: #666; }
   .comment-block {
     padding-top: 0.5ex;
-    padding-left: 1.5ex;
   }
   .comment-block p {
     padding-bottom: 0.2ex;

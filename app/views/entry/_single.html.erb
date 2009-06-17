@@ -4,21 +4,21 @@
   <%- if @threads.first && entry = @threads.first.root -%>
     <div class="title-header">
       <p>
+        <%= author_picture(entry) -%>
         <%= pin_link(entry) %>
         <%= icon(entry) -%><%= icon_extra(entry) -%>
         <%= author_link(entry) %>
         <%= published(entry, false) %>
         <%= menu_link(menu_icon(:bottom, '8'), '#bottom', accesskey('8')) %>
       <%= url_link(entry) %>
-      <%= reshare_link(entry) %>
       <%= hide_link(entry) %>
-      <%= like_link(entry) %>
       <%= delete_link(entry) %>
+      <%= reshare_link(entry) %>
+      <%= like_link(entry) %>
       </p>
     </div>
     <div class="title">
       <p>
-<%= author_picture(entry) -%>
 <%= original_link(entry) -%>
 <%= content(entry) -%>
   <%= via(entry) -%>
