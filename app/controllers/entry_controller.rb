@@ -195,6 +195,12 @@ class EntryController < ApplicationController
   end
 
   def index
+    if unpin = param(:unpin)
+      unpin_entry(unpin)
+    end
+    if pin = param(:pin)
+      pin_entry(pin)
+    end
     redirect_to_list
   end
 

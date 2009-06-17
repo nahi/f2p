@@ -73,6 +73,11 @@
   </p>
 <%- else -%>
   <p>
+    <%- if entry.view_pinned -%>
+      <%= link_to(h('Unpin this and Back'), :controller => 'entry', :unpin => entry.id) %><br />
+    <%- else -%>
+      <%= link_to(h('Pin this and Back'), :controller => 'entry', :pin => entry.id) %><br />
+    <%- end -%>
     <%= link_to(h('Back'), :controller => 'entry') %>
   </p>
 <%- end -%>
