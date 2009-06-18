@@ -5,22 +5,19 @@
 <%- else -%>
 <%- if root.nil? -%>
   <%= author_picture(entry) -%>
-  <%= icon(entry) %><%= icon_extra(entry) -%>
-  <%= author_link(entry) %>
+  <%= icon(entry) %><%= icon_extra(entry) -%><%= author_link(entry) %>
   <%= published(entry, true) -%>
   <%= friends_likes(entry) -%><br />
   <%= pin_link(entry) -%>
 <%- elsif !entry.same_feed?(root) -%>
   <%= pin_link(entry) -%>
-  <%= author_picture(entry) if root.origin_nickname != entry.origin_nickname -%>
-  <%= icon(entry) %><%= icon_extra(entry) -%>
-  <%= author_link(entry) if root.origin_nickname != entry.origin_nickname %>
+<%= author_picture(entry) if root.origin_nickname != entry.origin_nickname -%>
+<%= icon(entry) %><%= icon_extra(entry) -%><%= author_link(entry) if root.origin_nickname != entry.origin_nickname %>
 <%- else -%>
   <%= pin_link(entry) -%>
 <%- end -%>
-  <%= original_link(entry) -%>
-<%= content(entry) %>
- <%= via(entry) %>
+<%= original_link(entry) -%><%= content(entry) %>
+  <%= via(entry) %>
 <%= published(entry, true) unless root.nil? -%>
 <%- if comment_inline?(entry) -%>
   -- <span class="comment"><%= inline_comment(entry.comments.first) %></span>
@@ -38,8 +35,7 @@
           <%- if comment.respond_to?(:fold_entries) -%>
             <%= fold_comment_link(comment) %>
           <%- else -%>
-            <%= comment_icon(comment) %>
-            <%= comment(comment) %> <%= comment_author_link(comment) %> <%= via(comment) %>
+            <%= comment_icon(comment) %><%= comment(comment) %> <%= comment_author_link(comment) %> <%= via(comment) %>
 <%= comment_date(comment, true) unless comment.posted_with_entry? -%>
 <%= comment_url_link(comment) -%>
 <%= post_comment_link(comment.entry) if comment.last? %>
