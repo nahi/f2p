@@ -166,16 +166,25 @@ module EntryHelper
 
   def content(entry)
     common = common_content(entry)
-    return common unless entry.service
-    if entry.service.twitter?
-      twitter_content(common, entry)
+    if entry.service.nil?
+      content = common
+    elsif entry.service.twitter?
+      content = twitter_content(common, entry)
     elsif entry.service.tumblr?
-      tumblr_content(common, entry)
+      content = tumblr_content(common, entry)
     elsif entry.service.stumbleupon?
-      stumbleupon_content(common, entry)
+      content = stumbleupon_content(common, entry)
     else
-      common
+      content = common
     end
+    scan_media_from_link(entry)
+    unless entry.view_medias.empty?
+      content += media_indent
+      entry.view_medias.each do |uri|
+        content += media_tag(entry, uri)
+      end
+    end
+    content
   end
 
   def common_content(entry)
@@ -211,6 +220,39 @@ module EntryHelper
       content += ' ' + google_maps_link(point, entry, zoom, width, height)
     end
     content
+  end
+
+  def scan_media_from_link(entry)
+    if entry.view_links
+      entry.view_links.each do |link|
+        case link
+        # http://twitpic.com/api.do#thumbnails
+        when /\btwitpic.com\b/
+          if uri = uri(link)
+            uri.path = "/show/mini#{uri.path}"
+            entry.view_medias << uri.to_s
+          end
+        # via gotoken
+        when /\bmovapic.com\/pic\/([a-z0-9]+)/
+          uri = "http://image.movapic.com/pic/t_#{$1}.jpeg"
+          entry.view_medias << uri
+        # http://code.google.com/p/imageshackapi/wiki/YFROGthumbnails
+        when /\byfrog.com\b/
+          uri = link + '.th.jpg'
+          entry.view_medias << uri
+        # http://pic.im/website/api
+        when /\bpic.im\b/
+          if uri = uri(link)
+            uri.path = "/website/thumbnail#{uri.path}"
+            entry.view_medias << uri.to_s
+          end
+        # http://pix.im/api#thumbnails
+        when /\bpix.im\b/
+          uri = link + '/thumbnail'
+          entry.view_medias << uri
+        end
+      end
+    end
   end
 
   def media_indent
@@ -417,19 +459,9 @@ module EntryHelper
   end
 
   def twitter_content(common, entry)
-    str = common.gsub(/@([a-zA-Z0-9_]+)/) {
+    common.gsub(/@([a-zA-Z0-9_]+)/) {
       '@' + link_to($1, "http://twitter.com/#{$1}")
     }
-    if link = entry.view_links.find { |e| /\btwitpic.com\b/ =~ e }
-      if uri = uri(link)
-        uri.path = "/show/mini#{uri.path}"
-        str += media_indent + media_tag(entry, uri.to_s)
-      end
-    end
-    if link = entry.view_links.find { |e| /\bmovapic.com\/pic\/([a-z0-9]+)/ =~ e }
-      str += media_indent + media_tag(entry, "http://image.movapic.com/pic/t_#{$1}.jpeg")
-    end
-    str
   end
 
   def tumblr_content(common, entry)

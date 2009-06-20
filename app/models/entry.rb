@@ -126,6 +126,7 @@ class Entry
   attr_accessor :view_unread
   attr_accessor :view_nextid
   attr_accessor :view_links
+  attr_accessor :view_medias
   attr_accessor :view_map
 
   def initialize(hash)
@@ -137,6 +138,7 @@ class Entry
     @view_unread = nil
     @view_nextid = nil
     @view_links = nil
+    @view_medias = []
     @view_map = false
     @service = Service[hash['service']]
     @user = EntryUser[hash['user']]
