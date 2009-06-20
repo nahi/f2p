@@ -491,6 +491,7 @@ class EntryController < ApplicationController
       Entry.add_like(create_opt(:id => id))
     end
     flash[:updated_id] = id
+    flash[:allow_cache] = true
     redirect_to_entry_or_list
   end
 
@@ -506,6 +507,7 @@ class EntryController < ApplicationController
       Entry.delete_like(create_opt(:id => id))
     end
     flash[:updated_id] = id
+    flash[:allow_cache] = true
     redirect_to_entry_or_list
   end
 
