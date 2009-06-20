@@ -73,7 +73,12 @@ class EntryThread
           d = Time.parse(checked_modified)
           if c.checked < d
             c.checked = d
-            c.save!
+            begin
+              c.save!
+            rescue ActiveRecord::ActiveRecordError => e
+              logger.warn("update CheckedModified failed for #{entry.id}")
+              logger.warn(e)
+            end
           end
         else
           if m = LastModified.find_by_eid(eid)
@@ -84,7 +89,7 @@ class EntryThread
             begin
               c.save!
             rescue ActiveRecord::ActiveRecordError => e
-              logger.warn("create LastModified failed for #{entry.id}")
+              logger.warn("create CheckedModified failed for #{entry.id}")
               logger.warn(e)
             end
           end
@@ -234,7 +239,12 @@ class EntryThread
           d = entry.modified_at
           if m.date != d
             m.date = d
-            m.save!
+            begin
+              m.save!
+            rescue ActiveRecord::ActiveRecordError => e
+              logger.warn("update LastModified failed for #{entry.id}")
+              logger.warn(e)
+            end
           end
         else
           m = LastModified.new
@@ -243,7 +253,8 @@ class EntryThread
           begin
             m.save!
           rescue ActiveRecord::ActiveRecordError => e
-            logger.warn("create LastModified failed for #{entry.id}", e)
+            logger.warn("create LastModified failed for #{entry.id}")
+            logger.warn(e)
           end
         end
       end
