@@ -76,7 +76,7 @@ class EntryThread
             begin
               c.save!
             rescue ActiveRecord::ActiveRecordError => e
-              logger.warn("update CheckedModified failed for #{entry.id}")
+              logger.warn("update CheckedModified failed for #{eid}")
               logger.warn(e)
             end
           end
@@ -89,7 +89,7 @@ class EntryThread
             begin
               c.save!
             rescue ActiveRecord::ActiveRecordError => e
-              logger.warn("create CheckedModified failed for #{entry.id}")
+              logger.warn("create CheckedModified failed for #{eid}")
               logger.warn(e)
             end
           end
