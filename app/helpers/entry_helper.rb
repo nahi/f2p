@@ -1007,7 +1007,7 @@ module EntryHelper
     name = user_name(user)
     return unless name
     links = []
-    links << menu_link(menu_label(user == auth.name ? 'me' : 'self'), link_user(user)) {
+    links << menu_link(menu_label(user == auth.name ? 'my feed' : 'self feed'), link_user(user)) {
       !ctx.user_only?
     }
     links << menu_link(menu_label('discussion'), link_list(:comment => 'discussion', :user => ctx.user_for)) {
