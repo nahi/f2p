@@ -223,7 +223,7 @@ module EntryHelper
   end
 
   def scan_media_from_link(entry)
-    if entry.view_links
+    if entry.view_links and entry.view_medias.empty?
       entry.view_links.each do |link|
         case link
         # http://twitpic.com/api.do#thumbnails

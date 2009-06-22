@@ -23,12 +23,11 @@
 <ul>
   <li>[inbox] ... show your entries in 'home' excluding archived entries</li>
   <li>[next] ... start showing page-by-page view</li>
-  <li>[filter] ... show links for filtering; lists, groups and my feeds</li>
   <li>[all] ... show all of your entries in 'home' including archived entries</li>
   <li>[pin] ... show pinned entries</li>
   <li><%= service_icon_tag('http://friendfeed.com/static/images/icons/internal.png', 'FriendFeed', 'FriendFeed') %> ... show filtered entries by specified service</li>
+  <li><%= icon_tag(:group) %> ... show group entries</li>
   <li>(user name) ... show user profile</li>
-  <li><%= icon_tag(:url) %> ... show seach result page of entries which relates to specified link</li>
 </ul>
 
 <h2>Entry Edit Operation</h2>
@@ -66,8 +65,8 @@
 <h2>Others</h2>
 <ul>
   <li><%= icon_tag(:private) %> ... the entry is private</li>
-  <li><%= icon_tag(:group) %> ... the entry is for a group</li>
   <li><%= icon_tag(:go) %> ... link to go source site</li>
+  <li><%= icon_tag(:url) %> ... show seach result page of entries which relates to specified link</li>
   <li><%= icon_tag(:comment) %> ... comment to the entry</li>
 </ul>
 </div>
