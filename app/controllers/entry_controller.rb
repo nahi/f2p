@@ -475,6 +475,7 @@ class EntryController < ApplicationController
       unpin_entry(id)
       flash[:added_id] = id
       flash[:added_comment] = comment_id
+      flash[:allow_cache] = true
     end
     redirect_to_entry_or_list
   end
