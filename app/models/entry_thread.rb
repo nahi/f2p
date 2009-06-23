@@ -25,15 +25,8 @@ class EntryThread
       logger.info('[perf] record_last_modified done')
       pins = check_inbox(auth, entries)
       logger.info('[perf] check_inbox done')
-      if opt[:inbox]
-        entries = entries.find_all { |entry|
-          entry.view_unread or entry.view_pinned or entry.id == opt[:filter_inbox_except]
-        }
-      elsif opt[:label] == 'pin'
-        entries = entries.find_all { |entry|
-          entry.view_pinned or entry.id == opt[:updated_id] or entry.id == opt[:filter_inbox_except]
-        }
-      end
+      entries = filter_entries(auth, opt, entries)
+      logger.info('[perf] filter_entries done')
       if opt[:merge_entry]
         entries = sort_by_service(entries, opt)
       else
@@ -108,18 +101,6 @@ class EntryThread
         fetch_single_entry_as_array(auth, opt)
       else
         entries = fetch_list_entries(auth, opt)
-        entries = filter_hidden(entries)
-        if opt[:inbox]
-          entries = sort_by_detection(entries)
-        elsif opt[:ids]
-          entries = sort_by_ids(entries, opt[:ids])
-        else
-          entries = sort_by_modified(entries)
-        end
-        if opt[:link]
-          # You comes first
-          entries = entries.partition { |e| e.nickname == auth.name }.flatten
-        end
         if updated_id = opt[:updated_id]
           entry = wrap(get_entry(auth, :id => updated_id)).first
           if entry
@@ -155,6 +136,7 @@ class EntryThread
         if opt[:inbox]
           start = opt[:start]
           num = opt[:num]
+          num *= 2 if num
           wrap(Task.run { get_inbox_entries(auth, start, num) }.result)
         elsif opt[:ids]
           wrap(Task.run { get_entries(auth, opt) }.result)
@@ -409,6 +391,32 @@ class EntryThread
     def get_entries(auth, opt)
       ids = opt[:ids]
       ff_client.get_entries(auth.name, auth.remote_key, ids)
+    end
+
+    def filter_entries(auth, opt, entries)
+      entries = filter_hidden(entries)
+      if opt[:inbox]
+        entries = entries.find_all { |entry|
+          entry.view_unread or entry.view_pinned or entry.id == opt[:filter_inbox_except]
+        }
+        entries = entries[0, opt[:num]] if opt[:num]
+      elsif opt[:label] == 'pin'
+        entries = entries.find_all { |entry|
+          entry.view_pinned or entry.id == opt[:updated_id] or entry.id == opt[:filter_inbox_except]
+        }
+      end
+      if opt[:inbox]
+        entries = sort_by_detection(entries)
+      elsif opt[:ids]
+        entries = sort_by_ids(entries, opt[:ids])
+      else
+        entries = sort_by_modified(entries)
+      end
+      if opt[:link]
+        # You comes first
+        entries = entries.partition { |e| e.nickname == auth.name }.flatten
+      end
+      entries
     end
 
     def filter_opt(opt)
