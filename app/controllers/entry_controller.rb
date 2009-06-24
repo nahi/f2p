@@ -341,9 +341,9 @@ class EntryController < ApplicationController
       redirect_to_list
       return
     end
-    entry = t.root
-    @link = entry.link
-    @link_title = %Q("#{entry.title}")
+    @entry = t.root
+    @link = @entry.link
+    @link_title = %Q("#{@entry.title}")
   end
 
   def search

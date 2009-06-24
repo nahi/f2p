@@ -367,17 +367,21 @@ module EntryHelper
       else
         link = media.link
       end
-      tbs = media.thumbnails
       safe_content = nil
+      tbs = media.thumbnails
+      encs = media.enclosures
       if tbs and tbs.first
-        tb = tbs.first
-        tb_url = tb.url
-        tb_width = tb.width
-        tb_height = tb.height
-        if tb_url
-          label = title || entry.title
-          safe_content = media_tag(entry, tb_url, :alt => h(label), :title => h(label), :size => image_size(tb_width, tb_height))
-        end
+        tb_url = tbs.first.url
+        tb_width = tbs.first.width
+        tb_height = tbs.first.height
+      elsif encs and encs.first
+        # Google Reader has no thumbnails but enclosures...
+        tb_url = encs.first['url']
+      end
+      if tb_url
+        label = title || entry.title
+        size = image_size(tb_width, tb_height) if tb_width and tb_height
+        safe_content = media_tag(entry, tb_url, :alt => h(label), :title => h(label), :size => size)
       elsif title
         safe_content = h(title)
       end

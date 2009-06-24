@@ -5,7 +5,7 @@
     group: <%= room_select_tag('room', ctx.room) %><br />
     <%= hidden_field_tag('link', @link) %>
     <%= hidden_field_tag('reshared_from', @eid) %>
-    message: <%= text_field_tag('body') %><br />
+    comment: <%= text_field_tag('body') %><br />
     <%= submit_tag 'post' %>
   </p>
 <%- end -%>

@@ -136,7 +136,6 @@ class EntryThread
         if opt[:inbox]
           start = opt[:start]
           num = opt[:num]
-          num *= 2 if num
           wrap(Task.run { get_inbox_entries(auth, start, num) }.result)
         elsif opt[:ids]
           wrap(Task.run { get_entries(auth, opt) }.result)
@@ -399,7 +398,6 @@ class EntryThread
         entries = entries.find_all { |entry|
           entry.view_unread or entry.view_pinned or entry.id == opt[:filter_inbox_except]
         }
-        entries = entries[0, opt[:num]] if opt[:num]
       elsif opt[:label] == 'pin'
         entries = entries.find_all { |entry|
           entry.view_pinned or entry.id == opt[:updated_id] or entry.id == opt[:filter_inbox_except]
