@@ -379,8 +379,7 @@ module FriendFeed
 
     def search_entries(name, remote_key, query, opt = {})
       uri = uri("feed/search")
-      opt = opt.merge(:q => query)
-      get_feed(uri, name, remote_key, opt)
+      get_feed(uri, name, remote_key, :q => search_opt_convert(query, opt))
     end
 
     def post(name, remote_key, title, link = nil, comment = nil, images = nil, files = nil, room = nil)
@@ -485,6 +484,15 @@ module FriendFeed
 
     def url_base
       URL_BASE
+    end
+
+    SEARCH_KEY = ['from', 'room', 'friends', 'service', 'intitle', 'incomment', 'comment', 'comments', 'like', 'likes']
+    def search_opt_convert(query, opt)
+      ary = opt.map { |k, v|
+        (SEARCH_KEY.include?(k.to_s) and v) ? k.to_s + ':' + v.to_s : nil
+      }.compact
+      ary.unshift(query) if query and !query.empty?
+      ary.join(' ')
     end
   end
 end
