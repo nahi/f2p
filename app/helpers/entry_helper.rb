@@ -374,7 +374,7 @@ module EntryHelper
         tb_url = tbs.first.url
         tb_width = tbs.first.width
         tb_height = tbs.first.height
-      elsif encs and encs.first
+      elsif display.size == 1 and encs and encs.first
         # Google Reader has no thumbnails but enclosures...
         tb_url = encs.first['url']
       end
