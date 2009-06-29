@@ -108,7 +108,7 @@ class EntryThread
             if entries.find { |e| e.id == updated_id }
               replace_entry(entries, entry)
             else
-              entries.unshift(entry)
+              entries = [entry] + entries
             end
           end
         end
