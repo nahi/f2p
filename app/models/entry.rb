@@ -224,7 +224,7 @@ class Entry
           room.nickname
         end
       else
-        nickname
+        nickname || user_id
       end
     end
   end
