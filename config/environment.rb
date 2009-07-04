@@ -52,6 +52,7 @@ module F2P
       attr_accessor :list_view_profile_picture
       attr_accessor :medias_in_thread
       attr_accessor :next_entry_text_folding_size
+      attr_accessor :disable_status_icon
     end
   end
 end
@@ -164,4 +165,5 @@ Rails::Initializer.run do |config|
   F2P::Config.list_view_profile_picture = false
   F2P::Config.medias_in_thread = 4
   F2P::Config.next_entry_text_folding_size = 40
+  F2P::Config.disable_status_icon = false
 end
