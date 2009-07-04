@@ -90,10 +90,12 @@ module EntryHelper
     return if !ctx.single? and !setting.list_view_profile_picture
     return if ctx.user_for or ctx.room_for
     if nickname = entry.origin_nickname
-      if nickname == entry.nickname
-        user_picture(entry.nickname)
-      else
-        room_picture(entry.room.nickname)
+      unless imaginary?(nickname)
+        if nickname == entry.nickname
+          user_picture(entry.nickname)
+        else
+          room_picture(entry.room.nickname)
+        end
       end
     end
   end
