@@ -317,7 +317,7 @@ class EntryController < ApplicationController
     if @lat and @long
       geocoder = GoogleMaps::GoogleGeocoder.new(http_client, F2P::Config.google_maps_api_key)
       lang = @setting.google_maps_geocoding_lang || 'ja'
-      @placemark = geocoder.reversesearch(@lat, @long, lang)
+      @placemark = geocoder.reversesearch(@lat, @long, lang) rescue nil
       if @placemark and !@placemark.ambiguous?
         @address = @placemark.address
       end
@@ -639,7 +639,7 @@ private
       else
         geocoder = GoogleMaps::GoogleGeocoder.new(http_client, F2P::Config.google_maps_api_key)
       end
-      @placemark = geocoder.search(@title, lang)
+      @placemark = geocoder.search(@title, lang) rescue nil
       if @placemark and !@placemark.ambiguous?
         @address = @placemark.address
         @lat = @placemark.lat
