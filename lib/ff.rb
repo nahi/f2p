@@ -396,8 +396,14 @@ module FriendFeed
       end
       if files
         files.each_with_index do |file, idx|
-          file, file_link = file
-          file = StringIO.new(file.to_s) unless file.respond_to?(:read)
+          file, file_link, content_type = file
+          unless file.respond_to?(:read)
+            file = StringIO.new(file.to_s)
+            class << file
+              attr_accessor :mime_type
+            end
+            file.mime_type = content_type
+          end
           query["file#{idx}"] = file
           query["file#{idx}_link"] = file_link
         end

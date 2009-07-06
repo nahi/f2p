@@ -79,8 +79,9 @@ module FriendFeed
     def post(name, remote_key, title, link = nil, comment = nil, images = nil, files = nil, room = nil)
       if files
         files = files.map { |file, file_link|
+          content_type = file.content_type if file.respond_to?(:content_type)
           file = file.read if file.respond_to?(:read)
-          [file, file_link]
+          [file, file_link, content_type]
         }
       end
       @client.post(name, remote_key, title, link, comment, images, files, room)
