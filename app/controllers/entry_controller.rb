@@ -3,6 +3,7 @@ require 'google_maps'
 
 class EntryController < ApplicationController
   before_filter :login_required
+  before_filter :verify_authenticity_token, :except => [:inbox, :list]
   after_filter :strip_heading_spaces
   after_filter :compress
 

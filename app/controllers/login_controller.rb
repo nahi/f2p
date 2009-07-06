@@ -2,6 +2,7 @@ require 'httpclient'
 
 
 class LoginController < ApplicationController
+  before_filter :verify_authenticity_token, :except => [:authenticate]
   after_filter :strip_heading_spaces
   after_filter :compress
 
