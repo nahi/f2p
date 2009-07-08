@@ -409,6 +409,9 @@ module EntryHelper
         return tb
       end
     end
+    if tb = tbs.find_all { |e| e.height }.min_by { |e| e.height }
+      return tb
+    end
     tbs.first
   end
 
