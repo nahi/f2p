@@ -372,10 +372,11 @@ module EntryHelper
       safe_content = nil
       tbs = media.thumbnails
       encs = media.enclosures
-      if tbs and tbs.first
-        tb_url = tbs.first.url
-        tb_width = tbs.first.width
-        tb_height = tbs.first.height
+      if tbs and !tbs.empty?
+        first = select_thumbnail(tbs)
+        tb_url = first.url
+        tb_width = first.width
+        tb_height = first.height
       elsif display.size == 1 and encs and encs.first
         # Google Reader has no thumbnails but enclosures...
         tb_url = encs.first['url']
@@ -400,6 +401,15 @@ module EntryHelper
       str += link_to(icon_tag(:more), link_show(entry.id)) + h(msg)
     end
     str
+  end
+
+  def select_thumbnail(tbs)
+    if /movapic/ =~ tbs.first.url
+      if tb = tbs.find { |e| /t_/ =~ e.url }
+        return tb
+      end
+    end
+    tbs.first
   end
 
   def direct_image_link?(entry, media)
