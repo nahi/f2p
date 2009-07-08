@@ -284,20 +284,22 @@ class EntryThread
         :all,
         :conditions => [ 'user_id = ?', auth.id ],
         :joins => 'INNER JOIN last_modifieds ON pins.eid = last_modifieds.eid',
-        :order => 'last_modifieds.date desc'
+        :order => 'last_modifieds.date desc',
+        :offset => start,
+        :limit => num
       )
       pinned_id = pinned.map { |e| e.eid }
       if opt[:service]
         entries = get_entries(auth, :ids => pinned_id).find_all { |e|
           e['service'] && (opt[:service] == e['service']['id'])
         }
-        entries[start, num] || []
+        entries || []
       elsif opt[:room]
         entries = get_entries(auth, :ids => pinned_id).find_all { |e|
           e['room'] && (opt[:room] == e['room']['nickname'])
         }
-        entries[start, num] || []
-      elsif pinned_id = pinned_id[start, num]
+        entries || []
+      elsif pinned_id
         entries = get_entries(auth, :ids => pinned_id)
         return nil unless entries
         map = entries.inject({}) { |r, e| r[e['id']] = e; r }
