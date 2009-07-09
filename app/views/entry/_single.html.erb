@@ -49,6 +49,7 @@
             <%= hide_link(entry) %>
             <%= delete_link(entry) %>
             <%= reshare_link(entry) %>
+            <%= url_link(entry) %>
           </p>
         <%- end -%>
       </div>
@@ -57,6 +58,7 @@
   <%- else -%>
     <p>No feed is good feed.</p>
   <%- end -%>
+  </div>
 </div>
 <p>
   <%= original_link(entry) %>
@@ -73,7 +75,6 @@
     <%- else -%>
       <%= link_to(h('Pin this and Go Next'), link_show(next_entry.id, :pin => entry.id)) %><br />
     <%- end -%>
-    <%= link_to(h('Back'), :controller => 'entry') %>
   </p>
 <%- else -%>
   <p>
@@ -82,13 +83,11 @@
     <%- else -%>
       <%= link_to(h('Pin this and Back'), :controller => 'entry', :pin => entry.id) %><br />
     <%- end -%>
-    <%= link_to(h('Back'), :controller => 'entry') %>
   </p>
 <%- end -%>
   <p>
-    <%= url_link(entry) %>
+    <%= link_to(h('Back'), :controller => 'entry') %>
   </p>
-</div>
 <p><a name="bottom"></a>
   <%= page_links(:for_bottom => true, :threads => @threads) %>
 </p>

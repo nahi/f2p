@@ -85,6 +85,10 @@ module ApplicationHelper
   p.header { font-size: #{h1_size}pt; }
   body { font-size: #{body_size}pt; }
   a img { border: none; }
+  p {
+    margin-top: 1ex;
+    margin-bottom: 1ex;
+  }
   img { margin-right: 0.3ex; }
   img.inline  { vertical-align: text-top; }
   img.media   { border: 1px solid #ccc; padding: 1px; }

@@ -18,11 +18,11 @@
 <%- end -%>
 <%= content(entry) %>
   <%= via(entry) %>
-<%= like_link(entry) -%>
 <%= published(entry, true) unless root.nil? -%>
 <%- if comment_inline?(entry) -%>
   -- <span class="comment"><%= inline_comment(entry.comments.first) %></span>
 <%- end -%>
+<%= like_link(entry) -%>
 <%= reshare_link(entry) -%>
 <%= friends_likes(entry) unless root.nil? -%>
   <%- comments = fold_comments(entry.comments) -%>

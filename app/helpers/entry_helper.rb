@@ -963,7 +963,7 @@ module EntryHelper
         links << menu_link(menu_label('next', '1'), link_show(entry.id), accesskey('1'))
       end
     end
-    if ctx.inbox and opt[:for_top]
+    if ctx.inbox
       links << menu_link(menu_label('all', '7'), link_list(), accesskey('7'))
     end
     pin_label = 'pin'
@@ -1137,13 +1137,13 @@ module EntryHelper
 
   def url_link_to(link, query = nil)
     if link and ctx.link != link
-      link_to(inline_menu_label(:url, 'Search related entries'), link_list(:link => link, :query => query))
+      link_to(inline_menu_label(:url, 'Search link'), link_list(:link => link, :query => query))
     end
   end
 
   def delete_link(entry)
     if entry.nickname == auth.name
-      link_to(inline_menu_label(:delete, 'Delete entry'), link_action('delete', :id => u(entry.id)), :confirm => 'Delete?')
+      link_to(inline_menu_label(:delete, 'Delete'), link_action('delete', :id => u(entry.id)), :confirm => 'Delete?')
     end
   end
 
