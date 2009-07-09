@@ -25,7 +25,6 @@
             <%- if ctx.comment != comment.id -%>
               <%= comment_icon(comment) %><%= comment(comment) %> <%= comment_author_link(comment) %> <%= via(comment) %>
               <%= date(comment.date, false) %>
-<%= comment_url_link(comment) -%>
 <%= edit_comment_link(comment) -%>
 <%= delete_comment_link(comment) -%>
             <%- else -%>
