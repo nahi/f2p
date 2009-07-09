@@ -284,6 +284,7 @@ class EntryController < ApplicationController
         ctx.eid = nil
         opt = find_opt(ctx)
         opt[:allow_cache] = true
+        opt.delete(:updated_id)
         # avoid inbox threds update
         opt[:filter_inbox_except] = @ctx.eid
         @original_threads = find_entry_thread(opt)
@@ -565,7 +566,7 @@ private
     cache = session[:cached_entries] ||= CachedEntries.new
     updated_id = updated_id_in_flash()
     ctx.find_opt.merge(
-      :allow_cache => updated_id.nil? && flash[:allow_cache],
+      :allow_cache => flash[:allow_cache],
       :updated_id => updated_id,
       :cached_entries => cache
     )

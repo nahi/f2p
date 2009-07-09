@@ -35,11 +35,6 @@
         <%- end -%>
         <%- if ctx.comment.nil? -%>
           <%= comment_icon %><%= post_comment_form(entry) %><br />
-          <%= like_link(entry) %>
-          <%= moderate_link(entry) %>
-          <%= hide_link(entry) %>
-          <%= delete_link(entry) %>
-          <%= reshare_link(entry) %>
           <script type='text/javascript'><!--
           post.body.focus();
           //--></script>
@@ -47,6 +42,15 @@
         <p class="likes">
           <%= likes(entry) -%>
         </p>
+        <%- if ctx.comment.nil? -%>
+          <p>
+            <%= like_link(entry) %>
+            <%= moderate_link(entry) %>
+            <%= hide_link(entry) %>
+            <%= delete_link(entry) %>
+            <%= reshare_link(entry) %>
+          </p>
+        <%- end -%>
       </div>
     <%- end -%>
     <%- commit_checked_modified(entry) -%>

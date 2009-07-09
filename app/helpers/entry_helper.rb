@@ -6,6 +6,11 @@ module EntryHelper
   def top_menu
     if ctx.list?
       super
+    else
+      [
+        write_new_link, 
+        search_link 
+      ].join
     end
   end
 
@@ -654,11 +659,12 @@ module EntryHelper
     if emphasize_as_unread?(entry)
       str = emphasize_as_unread(str)
     end
-    if compact
-      link_to(str, link_show(entry.id))
-    else
-      str
-    end
+    str
+    #if compact
+    #  link_to(str, link_show(entry.id))
+    #else
+    #  str
+    #end
   end
 
   def modified_if(entry, compact)
@@ -1078,19 +1084,27 @@ module EntryHelper
     end
   end
 
+  def comment_link(comment)
+    if comment.last?
+      link_to(h("comment"), link_show(comment.entry.id))
+    end
+  end
+
   def post_comment_link(entry, opt = {})
     if !entry.comments.empty? and !comment_inline?(entry)
       if entry.comments.size == 1
-        str = "(#{entry.comments.size} comment)"
+        str = "#{entry.comments.size} comment"
       else
-        str = "(#{entry.comments.size} comments)"
+        str = "#{entry.comments.size} comments"
       end
       str = latest(entry.modified_at, str)
       if emphasize_as_unread?(entry)
         str = emphasize_as_unread(str)
       end
-      link_to(str, link_show(entry.id))
+    else
+      str = 'comment'
     end
+    link_to(str, link_show(entry.id))
   end
 
   def url_link(entry)
@@ -1107,11 +1121,12 @@ module EntryHelper
     if emphasize_as_unread?(comment)
       str = emphasize_as_unread(str)
     end
-    if compact and comment.last?
-      link_to(str, link_show(comment.entry.id))
-    else
-      str
-    end
+    #if compact and comment.last?
+    #  link_to(str, link_show(comment.entry.id))
+    #else
+    #  str
+    #end
+    str
   end
 
   def comment_url_link(comment)
