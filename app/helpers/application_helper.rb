@@ -156,11 +156,13 @@ __EOS__
   end
 
   def top_menu
-    [write_new_link, 
+    [
+      write_new_link, 
       search_link, 
       settings_link, 
       help_link, 
-      logout_link].join
+      logout_link
+    ].join
   end
 
   def self_label

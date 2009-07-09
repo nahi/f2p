@@ -10,16 +10,10 @@
         <%= author_link(entry) %>
         <%= published(entry, false) %>
         <%= menu_link(menu_icon(:bottom, '8'), '#bottom', accesskey('8')) %>
-      <%= url_link(entry) %>
-      <%= hide_link(entry) %>
-      <%= delete_link(entry) %>
-      <%= reshare_link(entry) %>
-      <%= like_link(entry) %>
       </p>
     </div>
     <div class="title">
       <p>
-<%= original_link(entry) -%>
 <%= content(entry) -%>
   <%= via(entry) -%>
       </p>
@@ -40,7 +34,12 @@
           </p>
         <%- end -%>
         <%- if ctx.comment.nil? -%>
-          <%= comment_icon %><%= post_comment_form(entry) %>
+          <%= comment_icon %><%= post_comment_form(entry) %><br />
+          <%= like_link(entry) %>
+          <%= moderate_link(entry) %>
+          <%= hide_link(entry) %>
+          <%= delete_link(entry) %>
+          <%= reshare_link(entry) %>
           <script type='text/javascript'><!--
           post.body.focus();
           //--></script>
@@ -55,6 +54,9 @@
     <p>No feed is good feed.</p>
   <%- end -%>
 </div>
+<p>
+  <%= original_link(entry) %>
+</p>
 <%- if next_entry = next_entry(entry) -%>
   <p>
     Next: <%= link_to_next_entry(next_entry) %><br />
@@ -79,6 +81,9 @@
     <%= link_to(h('Back'), :controller => 'entry') %>
   </p>
 <%- end -%>
+  <p>
+    <%= url_link(entry) %>
+  </p>
 </div>
 <p><a name="bottom"></a>
   <%= page_links(:for_bottom => true, :threads => @threads) %>

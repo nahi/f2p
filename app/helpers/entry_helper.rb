@@ -3,6 +3,12 @@ module EntryHelper
   BRIGHTKITE_MAP_WIDTH = 120
   BRIGHTKITE_MAP_HEIGHT = 80
 
+  def top_menu
+    if ctx.list?
+      super
+    end
+  end
+
   def viewname
     if ctx.service
       viewname_base + "(#{ctx.service})"
@@ -87,7 +93,7 @@ module EntryHelper
   end
 
   def author_picture(entry)
-    return if !ctx.single? and !setting.list_view_profile_picture
+    return if !setting.list_view_profile_picture
     return if ctx.user_for or ctx.room_for
     if nickname = entry.origin_nickname
       unless imaginary?(nickname)
@@ -284,28 +290,20 @@ module EntryHelper
   end
 
   def original_link(entry)
-    return unless ctx.single?
-    # no need to show original link for link only content.
-    if entry.link and !with_link?(entry.service)
+    if entry.link
+      link_content = 'See original'
       if unknown_where_to_go?(entry)
-        link_content = icon_tag(:go) + h("(#{uri_domain(entry.link)})")
-      else
-        link_content = icon_tag(:go)
+        link_content += "(#{uri_domain(entry.link)})"
       end
-      entry_link_to(link_content, entry.link)
+      entry_link_to(h(link_content), entry.link)
     end
   end
 
   def link_content(title, entry)
-    if ctx.single?
-      icon = icon_tag(:go)
-    else
-      icon = ''
-    end
     if unknown_where_to_go?(entry)
-      entry_link_to(icon + h(title), entry.link) + h(" (#{uri_domain(entry.link)})")
+      entry_link_to(h(title), entry.link) + h(" (#{uri_domain(entry.link)})")
     else
-      entry_link_to(icon + h(title), entry.link)
+      entry_link_to(h(title), entry.link)
     end
   end
 
@@ -656,7 +654,11 @@ module EntryHelper
     if emphasize_as_unread?(entry)
       str = emphasize_as_unread(str)
     end
-    str
+    if compact
+      link_to(str, link_show(entry.id))
+    else
+      str
+    end
   end
 
   def modified_if(entry, compact)
@@ -955,6 +957,9 @@ module EntryHelper
         links << menu_link(menu_label('next', '1'), link_show(entry.id), accesskey('1'))
       end
     end
+    if ctx.inbox and opt[:for_top]
+      links << menu_link(menu_label('all', '7'), link_list(), accesskey('7'))
+    end
     pin_label = 'pin'
     if threads = opt[:threads]
       if threads.pins and threads.pins > 0
@@ -970,7 +975,6 @@ module EntryHelper
     end
     if ctx.inbox and opt[:for_bottom]
       links << archive_button
-      links << menu_link(menu_label('all', '7'), link_list(), accesskey('7'))
     end
     links.join(' ')
   end
@@ -1075,30 +1079,24 @@ module EntryHelper
   end
 
   def post_comment_link(entry, opt = {})
-    str = inline_icon_tag(:comment_add, 'comment')
-    if opt[:show_comments_number] and !entry.comments.empty? and !comment_inline?(entry)
+    if !entry.comments.empty? and !comment_inline?(entry)
       if entry.comments.size == 1
-        num = "(#{entry.comments.size} comment)"
+        str = "(#{entry.comments.size} comment)"
       else
-        num = "(#{entry.comments.size} comments)"
+        str = "(#{entry.comments.size} comments)"
       end
-      num = latest(entry.modified_at, num)
+      str = latest(entry.modified_at, str)
       if emphasize_as_unread?(entry)
-        num = emphasize_as_unread(num)
+        str = emphasize_as_unread(str)
       end
-      str += num
+      link_to(str, link_show(entry.id))
     end
-    link_to(str, link_show(entry.id))
   end
 
   def url_link(entry)
     return unless ctx.single?
     link = entry.link if with_link?(entry.service)
     link ||= entry.view_links ? entry.view_links.first : nil
-    # separate search and link.
-    #if entry.title.size < setting.text_folding_size
-    #  query = entry.title
-    #end
     if link
       url_link_to(link)
     end
@@ -1109,7 +1107,11 @@ module EntryHelper
     if emphasize_as_unread?(comment)
       str = emphasize_as_unread(str)
     end
-    str
+    if compact and comment.last?
+      link_to(str, link_show(comment.entry.id))
+    else
+      str
+    end
   end
 
   def comment_url_link(comment)
@@ -1120,13 +1122,13 @@ module EntryHelper
 
   def url_link_to(link, query = nil)
     if link and ctx.link != link
-      link_to(inline_icon_tag(:url, 'related'), link_list(:link => link, :query => query))
+      link_to(inline_menu_label(:url, 'Search related entries'), link_list(:link => link, :query => query))
     end
   end
 
   def delete_link(entry)
     if entry.nickname == auth.name
-      link_to(inline_icon_tag(:delete), link_action('delete', :id => u(entry.id)), :confirm => 'Delete?')
+      link_to(inline_menu_label(:delete, 'Delete entry'), link_action('delete', :id => u(entry.id)), :confirm => 'Delete?')
     end
   end
 
@@ -1142,35 +1144,57 @@ module EntryHelper
     link_to(h('Added.  UNDO?'), link_action('delete', :id => u(id), :comment => u(comment)))
   end
 
+  def moderate_link(entry)
+    if !ctx.moderate and !entry.comments.empty?
+      link_to(inline_menu_label(:comment_edit, 'Edit'),
+              link_action('show', :id => u(entry.id), :moderate => true))
+    end
+  end
+
   def edit_comment_link(comment)
-    if comment.nickname == auth.name
-      link_to(inline_icon_tag(:comment_edit, 'edit'), link_action('show', :id => u(comment.entry.id), :comment => u(comment.id)))
+    if ctx.moderate
+      if comment.nickname == auth.name
+        link_to(inline_icon_tag(:comment_edit, 'edit'), link_action('show', :id => u(comment.entry.id), :comment => u(comment.id)))
+      end
     end
   end
 
   def delete_comment_link(comment)
-    if comment.nickname == auth.name or auth.name == comment.entry.nickname
-      link_to(inline_icon_tag(:delete), link_action('delete', :id => u(comment.entry.id), :comment => u(comment.id)), :confirm => 'Delete?')
+    if ctx.moderate
+      if comment.nickname == auth.name or auth.name == comment.entry.nickname
+        link_to(inline_icon_tag(:delete), link_action('delete', :id => u(comment.entry.id), :comment => u(comment.id)), :confirm => 'Delete?')
+      end
+    end
+  end
+
+  def inline_menu_label(icon, label = nil)
+    if ctx.single?
+      label || icon.to_s
+    else
+      inline_icon_tag(icon, label)
     end
   end
 
   def like_link(entry)
     if entry.nickname != auth.name or (entry.room and !entry.service.internal?)
       unless liked?(entry)
-        link_to(inline_icon_tag(:like), link_action('like', :id => u(entry.id)))
+        link_to(inline_menu_label(:like, 'Like'),
+                link_action('like', :id => u(entry.id)))
       end
     end
   end
 
   def hide_link(entry)
-    link_to(inline_icon_tag(:hide), link_action('hide', :id => u(entry.id)), :confirm => 'Hide?')
+    link_to(inline_menu_label(:hide, 'Hide'),
+            link_action('hide', :id => u(entry.id)), :confirm => 'Hide?')
   end
 
   def reshare_link(entry)
     if (ctx.single? or entry.view_pinned) and
         (entry.nickname != auth.name or entry.room) and
         entry.link
-      link_to(inline_icon_tag(:reshare), link_action('reshare', :eid => u(entry.id)))
+      link_to(inline_menu_label(:reshare, 'Reshare'),
+              link_action('reshare', :eid => u(entry.id)))
     end
   end
 

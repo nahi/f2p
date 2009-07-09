@@ -16,18 +16,18 @@
 <%- else -%>
   <%= pin_link(entry) -%>
 <%- end -%>
-<%= original_link(entry) -%><%= content(entry) %>
+<%= content(entry) %>
   <%= via(entry) %>
+<%= like_link(entry) -%>
 <%= published(entry, true) unless root.nil? -%>
 <%- if comment_inline?(entry) -%>
   -- <span class="comment"><%= inline_comment(entry.comments.first) %></span>
 <%- end -%>
 <%= reshare_link(entry) -%>
-<%= like_link(entry) -%>
 <%= friends_likes(entry) unless root.nil? -%>
   <%- comments = fold_comments(entry.comments) -%>
   <%- if comments.empty? or comment_inline?(entry) or (comments.size == 1 and fold_item?(comments.first))-%>
-<%= post_comment_link(entry, :show_comments_number => true) %>
+<%= post_comment_link(entry) %>
   <%- else -%>
     <div class="comment comment-block">
       <%- comments.each do |comment| -%>
@@ -38,7 +38,6 @@
             <%= comment_icon(comment) %><%= comment(comment) %> <%= comment_author_link(comment) %> <%= via(comment) %>
 <%= comment_date(comment, true) unless comment.posted_with_entry? -%>
 <%= comment_url_link(comment) -%>
-<%= post_comment_link(comment.entry) if comment.last? %>
           <%- end -%>
         </p>
       <%- end -%>

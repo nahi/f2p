@@ -27,6 +27,7 @@ class EntryController < ApplicationController
     attr_accessor :fold
     attr_accessor :inbox
     attr_accessor :home
+    attr_accessor :moderate
 
     attr_accessor :viewname
 
@@ -37,6 +38,7 @@ class EntryController < ApplicationController
       @fold = false
       @inbox = false
       @home = true
+      @moderate = nil
       @param = nil
     end
 
@@ -260,6 +262,7 @@ class EntryController < ApplicationController
     @ctx = EntryContext.new(auth)
     @ctx.eid = param(:id)
     @ctx.comment = param(:comment)
+    @ctx.moderate = param(:moderate)
     @ctx.home = false
     sess_ctx = session[:ctx]
     if unpin = param(:unpin)
