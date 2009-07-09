@@ -10,7 +10,6 @@ class Setting
   attr_accessor :google_maps_geocoding_lang
   attr_accessor :google_maps_zoom
   attr_accessor :list_view_profile_picture
-  attr_accessor :disable_status_icon
 
   def initialize
     super
@@ -25,7 +24,6 @@ class Setting
     @google_maps_geocoding_lang = F2P::Config.google_maps_geocoding_lang
     @google_maps_zoom = F2P::Config.google_maps_zoom
     @list_view_profile_picture = F2P::Config.list_view_profile_picture
-    @disable_status_icon = F2P::Config.disable_status_icon
   end
 
   def validate

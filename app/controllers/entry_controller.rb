@@ -559,10 +559,12 @@ class EntryController < ApplicationController
 private
 
   def find_opt(ctx = @ctx)
+    cache = session[:cached_entries] ||= CachedEntries.new
     updated_id = updated_id_in_flash()
     ctx.find_opt.merge(
       :allow_cache => updated_id.nil? && flash[:allow_cache],
-      :updated_id => updated_id
+      :updated_id => updated_id,
+      :cached_entries => cache
     )
   end
 
