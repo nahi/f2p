@@ -373,13 +373,17 @@ module EntryHelper
       tbs = media.thumbnails
       encs = media.enclosures
       if tbs and !tbs.empty?
-        first = select_thumbnail(tbs)
-        tb_url = first.url
-        tb_width = first.width
-        tb_height = first.height
-      elsif display.size == 1 and encs and encs.first
+        if first = select_thumbnail(tbs)
+          tb_url = first.url
+          tb_width = first.width
+          tb_height = first.height
+        end
+      end
+      if !tb_url and display.size == 1 and encs and encs.first
         # Google Reader has no thumbnails but enclosures...
-        tb_url = encs.first['url']
+        if ctx.single? or !cell_phone?
+          tb_url = encs.first['url']
+        end
       end
       if tb_url
         label = title || entry.title
@@ -387,13 +391,13 @@ module EntryHelper
         safe_content = media_tag(entry, tb_url, :alt => h(label), :title => h(label), :size => size)
       elsif title
         safe_content = h(title)
+      else
+        safe_content = h('[media]')
       end
-      if safe_content
-        if !media_disabled? and link
-          link_to(safe_content, link)
-        else
-          safe_content
-        end
+      if !media_disabled? and link
+        link_to(safe_content, link)
+      else
+        safe_content
       end
     }.join(' ')
     if medias.size != display.size
@@ -412,7 +416,9 @@ module EntryHelper
     if tb = tbs.find_all { |e| e.height }.min_by { |e| e.height }
       return tb
     end
-    tbs.first
+    if ctx.single? or !cell_phone?
+      tbs.first
+    end
   end
 
   def direct_image_link?(entry, media)
