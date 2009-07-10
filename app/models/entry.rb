@@ -152,7 +152,7 @@ class Entry
     @checked_at = nil
     @hidden = hash['hidden'] || false
     if self.service and self.service.twitter?
-      @twitter_username = (self.service.profile_url || '').sub(/\A.*\//, '')
+      @twitter_username = (self.service.profile_url || '').match(%r{twitter.com/([^/]+)})[1]
       if /@([a-zA-Z0-9_]+)/ =~ self.title
         @twitter_reply_to = $1
       end
