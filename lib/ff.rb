@@ -56,6 +56,7 @@ module FriendFeed
     attr_accessor :logger
     attr_accessor :apikey
     attr_accessor :http_proxy
+    attr_accessor :httpclient_max_keepalive
 
     class LShiftLogger
       def initialize(logger)
@@ -72,13 +73,27 @@ module FriendFeed
     end
 
     class UserClient
+      attr_accessor :httpclient_max_keepalive
+
       def initialize(name, remote_key, logger, http_proxy)
         @client = HTTPClient.new(http_proxy)
         @name = name
         @remote_key = remote_key
         #@client.debug_dev = LShiftLogger.new(logger)
+        @logger = logger
         @client.extend(MonitorMixin)
+        @last_accessed = Time.now
         reset_auth
+      end
+
+      def idle?
+        if @httpclient_max_keepalive
+          elapsed = Time.now - @last_accessed
+          if elapsed > @httpclient_max_keepalive
+            @client.reset_all rescue nil
+            true
+          end
+        end
       end
 
       def client(remote_key)
@@ -87,6 +102,7 @@ module FriendFeed
             @remote_key = remote_key
             reset_auth
           end
+          @last_accessed = Time.now
           @client
         end
       end
@@ -106,7 +122,9 @@ module FriendFeed
       @logger = logger || NullLogger.new
       @apikey = apikey
       @http_proxy = nil
+      @httpclient_max_keepalive = 5 * 60
       @clients = {}
+      @mutex = Monitor.new
     end
 
   private
@@ -119,10 +137,23 @@ module FriendFeed
     end
 
     def create_client(name, remote_key)
-      UserClient.new(name, remote_key, @logger, @http_proxy)
+      client = UserClient.new(name, remote_key, @logger, @http_proxy)
+      client.httpclient_max_keepalive = @httpclient_max_keepalive
+      client
     end
 
     def client_sync(uri, name, remote_key)
+      @mutex.synchronize do
+        clients = {}
+        @clients.each do |key, value|
+          if value.idle?
+            @logger.info("removed idle HTTPClient for #{key}")
+          else
+            clients[key] = value
+          end
+        end
+        @clients = clients
+      end
       user_client = @clients[name] ||= create_client(name, remote_key)
       client = user_client.client(remote_key)
       logger.info("#{user_client.inspect} is accessing to #{uri.to_s} for #{name}")

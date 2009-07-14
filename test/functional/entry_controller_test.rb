@@ -8,6 +8,15 @@ class EntryControllerTest < ActionController::TestCase
     @ff.stubs(:get_profile).returns(profile)
     @ff.stubs(:get_user_status).returns({})
     @ff.stubs(:get_room_status).returns({})
+    class << @ff
+      def set_cached_entries(auth, cache)
+        @cache = cache
+      end
+
+      def get_cached_entries(auth)
+        @cache
+      end
+    end
     ApplicationController.ff_client = @ff
   end
 

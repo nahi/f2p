@@ -1,4 +1,12 @@
 require 'hash_utils'
+require 'comment'
+require 'entry_user'
+require 'geo'
+require 'like'
+require 'media'
+require 'room'
+require 'service'
+require 'via'
 
 
 class Entry

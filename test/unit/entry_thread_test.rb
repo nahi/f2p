@@ -1,14 +1,19 @@
 require 'test_helper'
 
 class EntryThreadTest < ActiveSupport::TestCase
+  def setup
+    @ff = mock('ff_client')
+    @ff.stubs(:get_cached_entries)
+    @ff.stubs(:set_cached_entries)
+  end
+
   test 'self.find inbox' do
     user = User.find_by_name('user1')
-    ff = mock('ff_client')
-    ApplicationController.ff_client = ff
+    ApplicationController.ff_client = @ff
     #
-    ff.expects(:get_inbox_entries).with('user1', nil, nil, nil).
+    @ff.expects(:get_inbox_entries).with('user1', nil, nil, nil).
       returns(read_entries('entries', 'f2ptest')).times(2)
-    ff.stubs(:get_profiles)
+    @ff.stubs(:get_profiles)
     2.times do
       threads = EntryThread.find(:auth => user, :inbox => true, :start => nil)
       assert_equal(
@@ -36,12 +41,11 @@ class EntryThreadTest < ActiveSupport::TestCase
 
   test 'self.find inbox 2nd page' do
     user = User.find_by_name('user1')
-    ff = mock('ff_client')
-    ApplicationController.ff_client = ff
+    ApplicationController.ff_client = @ff
     #
-    ff.expects(:get_inbox_entries).with('user1', nil, 20, nil).
+    @ff.expects(:get_inbox_entries).with('user1', nil, 20, nil).
       returns(read_entries('entries', 'f2ptest'))
-    ff.stubs(:get_profiles)
+    @ff.stubs(:get_profiles)
     threads = EntryThread.find(:auth => user, :inbox => true, :start => 20)
     assert_equal(
       [1, 2, 1, 1, 1, 4, 2, 3, 3, 3, 1, 3, 1, 1, 1, 1, 1],
@@ -65,12 +69,11 @@ class EntryThreadTest < ActiveSupport::TestCase
     pin.user = user
     pin.eid = 'foobar'
     pin.save
-    ff = mock('ff_client')
-    ApplicationController.ff_client = ff
+    ApplicationController.ff_client = @ff
     #
-    ff.expects(:get_inbox_entries).with('user1', nil, nil, nil).
+    @ff.expects(:get_inbox_entries).with('user1', nil, nil, nil).
       returns(read_entries('entries', 'f2ptest')[2..-1]).times(2)
-    ff.stubs(:get_profiles)
+    @ff.stubs(:get_profiles)
     2.times do
       threads = EntryThread.find(:auth => user, :inbox => true, :start => nil)
       assert_equal(
@@ -82,15 +85,21 @@ class EntryThreadTest < ActiveSupport::TestCase
 
   test 'self.find inbox cache' do
     user = User.find_by_name('user1')
-    ff = mock('ff_client')
-    ApplicationController.ff_client = ff
+    ApplicationController.ff_client = @ff
     #
-    ff.expects(:get_inbox_entries).with('user1', nil, nil, nil).
+    @ff.expects(:get_inbox_entries).with('user1', nil, nil, nil).
       returns(read_entries('entries', 'f2ptest')).times(1) # 1 time only
-    ff.stubs(:get_profiles)
-    cache = CachedEntries.new
+    @ff.stubs(:get_profiles)
+    class << @ff
+      def get_cached_entries(auth)
+        @cache
+      end
+      def set_cached_entries(auth, cache)
+        @cache = cache
+      end
+    end
     2.times do
-      threads = EntryThread.find(:auth => user, :inbox => true, :start => nil, :allow_cache => true, :cached_entries => cache)
+      threads = EntryThread.find(:auth => user, :inbox => true, :start => nil, :allow_cache => true)
       assert_equal(
         [1, 2, 1, 1, 1, 4, 2, 3, 3, 3, 1, 3, 1, 1, 1, 1, 1],
         threads.map { |t| t.entries.size }
@@ -100,12 +109,11 @@ class EntryThreadTest < ActiveSupport::TestCase
 
   test 'self.find home' do
     user = User.find_by_name('user1')
-    ff = mock('ff_client')
-    ApplicationController.ff_client = ff
+    ApplicationController.ff_client = @ff
     #
-    ff.expects(:get_home_entries).with('user1', nil, {:num => nil, :start => nil, :service => nil}).
+    @ff.expects(:get_home_entries).with('user1', nil, {:num => nil, :start => nil, :service => nil}).
       returns(read_entries('entries', 'f2ptest'))
-    ff.stubs(:get_profiles)
+    @ff.stubs(:get_profiles)
     threads = EntryThread.find(:auth => user, :start => nil)
     assert_equal(
       [2, 1, 1, 1, 1, 4, 2, 3, 3, 3, 1, 3, 1, 1, 1, 1, 1],
@@ -115,14 +123,13 @@ class EntryThreadTest < ActiveSupport::TestCase
 
   test 'self.find home cache' do
     user = User.find_by_name('user1')
-    ff = mock('ff_client')
-    ApplicationController.ff_client = ff
+    ApplicationController.ff_client = @ff
     #
-    ff.expects(:get_inbox_entries).with('user1', nil, nil, nil).
+    @ff.expects(:get_inbox_entries).with('user1', nil, nil, nil).
       returns(read_entries('entries', 'f2ptest')).times(2) # no cache used
-    ff.expects(:get_home_entries).with('user1', nil, :num => nil, :start => nil, :service => nil).
+    @ff.expects(:get_home_entries).with('user1', nil, :num => nil, :start => nil, :service => nil).
       returns(read_entries('entries', 'f2ptest')).times(2) # no cache used
-    ff.stubs(:get_profiles)
+    @ff.stubs(:get_profiles)
     assert_equal(17, EntryThread.find(:auth => user, :inbox => true, :start => nil, :allow_cache => true).size)
     assert_equal(17, EntryThread.find(:auth => user, :start => nil, :allow_cache => true).size)
     assert_equal(17, EntryThread.find(:auth => user, :inbox => true, :start => nil, :allow_cache => true).size)
@@ -131,12 +138,11 @@ class EntryThreadTest < ActiveSupport::TestCase
 
   test 'self.find query' do
     user = User.find_by_name('user1')
-    ff = mock('ff_client')
-    ApplicationController.ff_client = ff
+    ApplicationController.ff_client = @ff
     #
-    ff.expects(:search_entries).with('user1', nil, 'foobar', {:from => nil, :room => nil, :friends => nil, :start => nil, :num => nil, :service => nil}).
+    @ff.expects(:search_entries).with('user1', nil, 'foobar', {:from => nil, :room => nil, :friends => nil, :start => nil, :num => nil, :service => nil}).
       returns(read_entries('entries', 'f2ptest'))
-    ff.stubs(:get_profiles)
+    @ff.stubs(:get_profiles)
     threads = EntryThread.find(:auth => user, :query => 'foobar')
     assert_equal(
       [2, 1, 1, 1, 1, 4, 2, 3, 3, 3, 1, 3, 1, 1, 1, 1, 1],
@@ -146,78 +152,71 @@ class EntryThreadTest < ActiveSupport::TestCase
 
   test 'self.find id' do
     user = User.find_by_name('user1')
-    ff = mock('ff_client')
-    ApplicationController.ff_client = ff
+    ApplicationController.ff_client = @ff
     #
-    ff.expects(:get_entry).with('user1', nil, 'foobar').
+    @ff.expects(:get_entry).with('user1', nil, 'foobar').
       returns(read_entries('entries', 'f2ptest'))
-    ff.stubs(:get_profiles)
+    @ff.stubs(:get_profiles)
     assert_equal(17, EntryThread.find(:auth => user, :id => 'foobar').size)
   end
 
   test 'self.find likes' do
     user = User.find_by_name('user1')
-    ff = mock('ff_client')
-    ApplicationController.ff_client = ff
+    ApplicationController.ff_client = @ff
     #
-    ff.expects(:get_likes).with('user1', nil, 'user2', {:start => nil, :num => nil, :service => nil}).
+    @ff.expects(:get_likes).with('user1', nil, 'user2', {:start => nil, :num => nil, :service => nil}).
       returns([])
-    ff.stubs(:get_profiles)
+    @ff.stubs(:get_profiles)
     EntryThread.find(:auth => user, :user => 'user2', :like => 'likes')
   end
 
   test 'self.find liked' do
     user = User.find_by_name('user1')
-    ff = mock('ff_client')
-    ApplicationController.ff_client = ff
+    ApplicationController.ff_client = @ff
     #
-    ff.expects(:search_entries).with('user1', nil, '', {:from => nil, :start => nil, :num => nil, :likes => 1, :service => nil}).
+    @ff.expects(:search_entries).with('user1', nil, '', {:from => nil, :start => nil, :num => nil, :likes => 1, :service => nil}).
       returns([])
-    ff.stubs(:get_profiles)
+    @ff.stubs(:get_profiles)
     EntryThread.find(:auth => user, :like => 'liked')
   end
 
   test 'self.find user' do
     user = User.find_by_name('user1')
-    ff = mock('ff_client')
-    ApplicationController.ff_client = ff
+    ApplicationController.ff_client = @ff
     #
-    ff.expects(:get_user_entries).with('user1', nil, 'user2', {:start => nil, :num => nil, :service => nil}).
+    @ff.expects(:get_user_entries).with('user1', nil, 'user2', {:start => nil, :num => nil, :service => nil}).
       returns([])
-    ff.stubs(:get_profiles)
+    @ff.stubs(:get_profiles)
     EntryThread.find(:auth => user, :user => 'user2')
   end
 
   test 'self.find list' do
     user = User.find_by_name('user1')
-    ff = mock('ff_client')
-    ApplicationController.ff_client = ff
+    ApplicationController.ff_client = @ff
     #
-    ff.expects(:get_list_entries).with('user1', nil, 'list1', {:start => nil, :num => nil, :service => nil}).
+    @ff.expects(:get_list_entries).with('user1', nil, 'list1', {:start => nil, :num => nil, :service => nil}).
       returns([])
-    ff.stubs(:get_profiles)
+    @ff.stubs(:get_profiles)
     EntryThread.find(:auth => user, :list => 'list1')
   end
 
   test 'self.find room' do
     user = User.find_by_name('user1')
-    ff = mock('ff_client')
-    ApplicationController.ff_client = ff
+    ApplicationController.ff_client = @ff
     #
-    ff.expects(:get_room_entries).with('user1', nil, 'room1', {:start => nil, :num => nil, :service => nil}).
+    @ff.expects(:get_room_entries).with('user1', nil, 'room1', {:start => nil, :num => nil, :service => nil}).
       returns([])
-    ff.stubs(:get_profiles)
+    @ff.stubs(:get_profiles)
     EntryThread.find(:auth => user, :room => 'room1')
   end
 
   test 'self.find room chunk' do
     user = User.find_by_name('user1')
-    ff = mock('ff_client')
-    ApplicationController.ff_client = ff
+    ApplicationController.ff_client = @ff
     #
-    ff.expects(:get_room_entries).with('user1', nil, 'room1', {:start => nil, :num => nil, :service => nil}).
+    @ff.expects(:get_room_entries).with('user1', nil, 'room1', {:start => nil, :num => nil, :service => nil}).
       returns(read_entries('entries', 'room'))
-    ff.stubs(:get_profiles)
+    @ff.stubs(:get_profiles)
     threads = EntryThread.find(:auth => user, :room => 'room1')
     assert_equal(
       [3, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1],
@@ -227,35 +226,32 @@ class EntryThreadTest < ActiveSupport::TestCase
 
   test 'self.find friends' do
     user = User.find_by_name('user1')
-    ff = mock('ff_client')
-    ApplicationController.ff_client = ff
+    ApplicationController.ff_client = @ff
     #
-    ff.expects(:get_friends_entries).with('user1', nil, 'user2', {:start => nil, :num => nil, :service => nil}).
+    @ff.expects(:get_friends_entries).with('user1', nil, 'user2', {:start => nil, :num => nil, :service => nil}).
       returns([])
-    ff.stubs(:get_profiles)
+    @ff.stubs(:get_profiles)
     EntryThread.find(:auth => user, :friends => 'user2')
   end
 
   test 'self.find link' do
     user = User.find_by_name('user1')
-    ff = mock('ff_client')
-    ApplicationController.ff_client = ff
+    ApplicationController.ff_client = @ff
     #
-    ff.expects(:get_url_entries).with('user1', nil, 'http://www.example.org/', {:start => nil, :num => nil, :service => nil}).
+    @ff.expects(:get_url_entries).with('user1', nil, 'http://www.example.org/', {:start => nil, :num => nil, :service => nil}).
       returns([])
-    ff.stubs(:get_profiles)
+    @ff.stubs(:get_profiles)
     EntryThread.find(:auth => user, :link => 'http://www.example.org/')
   end
 
   test 'update_checked_modified' do
     user = User.find_by_name('user1')
-    ff = mock('ff_client')
-    ApplicationController.ff_client = ff
+    ApplicationController.ff_client = @ff
     list = read_entries('entries', 'f2ptest')
     #
-    ff.expects(:get_inbox_entries).with('user1', nil, nil, nil).
+    @ff.expects(:get_inbox_entries).with('user1', nil, nil, nil).
       returns(list)
-    ff.stubs(:get_profiles)
+    @ff.stubs(:get_profiles)
     threads = EntryThread.find(:auth => user, :inbox => true, :start => nil)
     hash = {}
     threads.each do |t|
@@ -268,20 +264,19 @@ class EntryThreadTest < ActiveSupport::TestCase
     EntryThread.update_checked_modified(user, hash)
     #
     list[0]['updated'] = Time.now.xmlschema
-    ff.expects(:get_inbox_entries).with('user1', nil, nil, nil).
+    @ff.expects(:get_inbox_entries).with('user1', nil, nil, nil).
       returns(list)
-    ff.stubs(:get_profiles)
+    @ff.stubs(:get_profiles)
     threads = EntryThread.find(:auth => user, :inbox => true, :start => nil)
     assert_equal(1, threads.size)
   end
 
   test 'self.find timeout' do
     user = User.find_by_name('user1')
-    ff = mock('ff_client')
-    ApplicationController.ff_client = ff
+    ApplicationController.ff_client = @ff
     #
-    ff.expects(:get_inbox_entries).with('user1', nil, nil, nil).raises(Timeout::Error.new)
-    ff.stubs(:get_profiles)
+    @ff.expects(:get_inbox_entries).with('user1', nil, nil, nil).raises(Timeout::Error.new)
+    @ff.stubs(:get_profiles)
     assert(EntryThread.find(:auth => user, :inbox => true, :start => nil).empty?)
   end
 end

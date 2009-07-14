@@ -1,4 +1,6 @@
 require 'task'
+require 'entry'
+require 'cached_entries'
 
 
 class EntryThread
@@ -13,15 +15,13 @@ class EntryThread
 
     def find(opt = {})
       auth = opt[:auth]
-      cache = opt[:cached_entries]
       return nil unless auth
       unless opt.key?(:merge_entry)
         opt[:merge_entry] = true
       end
       opt.delete(:auth)
-      opt.delete(:cached_entries)
       logger.info('[perf] start entries fetch')
-      original = entries = fetch_entries(auth, opt, cache)
+      original = entries = fetch_entries(auth, opt)
       logger.info('[perf] start internal data handling')
       record_last_modified(entries)
       logger.info('[perf] record_last_modified done')
@@ -98,15 +98,15 @@ class EntryThread
       ActiveRecord::Base.logger
     end
 
-    def fetch_entries(auth, opt, cache)
+    def fetch_entries(auth, opt)
       if opt[:id]
-        fetch_single_entry_as_array(auth, opt, cache)
+        fetch_single_entry_as_array(auth, opt)
       else
-        entries = fetch_list_entries(auth, opt, cache)
+        entries = fetch_list_entries(auth, opt)
         if updated_id = opt[:updated_id]
           entry = wrap(get_entry(auth, :id => updated_id)).first
           if entry
-            update_cache_entry(cache, entry)
+            update_cache_entry(auth, entry)
             if entries.find { |e| e.id == updated_id }
               replace_entry(entries, entry)
             else
@@ -118,18 +118,20 @@ class EntryThread
       end
     end
 
-    def fetch_single_entry_as_array(auth, opt, cache)
-      if opt[:allow_cache] and cache
-        if found = cache.find { |e| e.id == opt[:id] && e.id != opt[:updated_id] }
-          logger.info("[cache] entry cache found for #{opt[:id]}")
-          return [found]
+    def fetch_single_entry_as_array(auth, opt)
+      if opt[:allow_cache]
+        if cache = get_cached_entries(auth)
+          if found = cache.find { |e| e.id == opt[:id] && e.id != opt[:updated_id] }
+            logger.info("[cache] entry cache found for #{opt[:id]}")
+            return [found]
+          end
         end
       end
       wrap(Task.run { get_entry(auth, opt) }.result)
     end
 
-    def fetch_list_entries(auth, opt, cache)
-      cache_entries(opt, cache) {
+    def fetch_list_entries(auth, opt)
+      cache_entries(auth, opt) {
         if opt[:inbox]
           start = opt[:start]
           num = opt[:num]
@@ -176,7 +178,7 @@ class EntryThread
       }
     end
 
-    def cache_entries(opt, cache, &block)
+    def cache_entries(auth, opt, &block)
       allow_cache = opt[:allow_cache]
       opt = opt.dup
       opt.delete(:allow_cache)
@@ -184,24 +186,35 @@ class EntryThread
       opt.delete(:merge_entry)
       opt.delete(:merge_service)
       opt.delete(:filter_inbox_except)
-      if allow_cache and cache
-        if opt == cache.opt
-          logger.info("[cache] entries cache found for #{opt.inspect}")
-          return cache
+      if allow_cache
+        if cache = get_cached_entries(auth)
+          if opt == cache.opt
+            logger.info("[cache] entries cache found for #{opt.inspect}")
+            return cache
+          end
         end
       end
       entries = yield
-      if cache
-        cache.opt = opt
-        cache.replace(entries)
-      end
+      cache = CachedEntries.new
+      cache.opt = opt
+      cache.replace(entries)
+      set_cached_entries(auth, cache)
       entries
     end
 
-    def update_cache_entry(cache, entry)
-      if cache
+    def update_cache_entry(auth, entry)
+      if cache = get_cached_entries(auth)
         replace_entry(cache, entry)
+        set_cached_entries(auth, cache)
       end
+    end
+
+    def get_cached_entries(auth)
+      ff_client.get_cached_entries(auth.name)
+    end
+
+    def set_cached_entries(auth, cache)
+      ff_client.set_cached_entries(auth.name, cache)
     end
 
     def record_last_modified(entries)

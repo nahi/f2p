@@ -70,6 +70,8 @@ module FriendFeed
     define_proxy_method :get_list_profile
     define_proxy_method :get_room_status
     define_proxy_method :purge_cache
+    define_proxy_method :get_cached_entries
+    define_proxy_method :set_cached_entries
 
     def initialize
       @client = DRb::DRbObject.new(nil, F2P::Config.friendfeed_api_daemon_drb_uri)
@@ -228,6 +230,19 @@ module FriendFeed
       @channel_cache_size = 512
       @channel = {}
       @cache = {}
+    end
+
+    def set_cached_entries(name, entries)
+      basekey = name
+      cache = ((@cache ||= {})[basekey] ||= {})
+      cache[:last_entries] = entries
+      nil
+    end
+
+    def get_cached_entries(name)
+      basekey = name
+      cache = ((@cache ||= {})[basekey] ||= {})
+      cache[:last_entries]
     end
 
     def purge_cache(key)
