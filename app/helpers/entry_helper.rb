@@ -295,7 +295,7 @@ module EntryHelper
   end
 
   def original_link(entry)
-    if entry.link
+    if entry and entry.link
       link_content = 'See original'
       if unknown_where_to_go?(entry)
         link_content += "(#{uri_domain(entry.link)})"
