@@ -1160,10 +1160,16 @@ module EntryHelper
   end
 
   def moderate_link(entry)
-    if !ctx.moderate and !entry.comments.empty?
+    if !ctx.moderate and editable?(entry)
       link_to(inline_menu_label(:comment_edit, 'Edit'),
               link_action('show', :id => u(entry.id), :moderate => true))
     end
+  end
+
+  def editable?(entry)
+    name = auth.name
+    !entry.comments.empty? and
+      (entry.nickname == name or entry.comments.any? { |c| c.nickname == name })
   end
 
   def edit_comment_link(comment)
