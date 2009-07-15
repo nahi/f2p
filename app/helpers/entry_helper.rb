@@ -683,7 +683,7 @@ module EntryHelper
     end
     entry = entry_or_comment
     if setting.twitter_comment_hack and entry.service.twitter?
-      if nickname = entry.nickname
+      if nickname = entry.nickname || entry.user.id
         name = entry.user.name
         tw_name = entry.twitter_username
         if name != tw_name
