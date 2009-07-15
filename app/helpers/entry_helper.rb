@@ -382,11 +382,8 @@ module EntryHelper
           tb_height = first.height
         end
       end
-      if !tb_url and display.size == 1 and encs and encs.first
-        # Google Reader has no thumbnails but enclosures...
-        if ctx.single? or !cell_phone?
-          tb_url = encs.first['url']
-        end
+      if !tb_url and display.size == 1
+        tb_url = find_image_from_enclosure(encs)
       end
       if tb_url
         label = title || entry.title
@@ -421,6 +418,16 @@ module EntryHelper
     end
     if ctx.single? or !cell_phone?
       tbs.first
+    end
+  end
+
+  def find_image_from_enclosure(encs)
+    if encs
+      if ctx.single? or !cell_phone?
+        if enc = encs.find { |e| e['url'] and /\Aimage/i =~ e['type'] }
+          return enc['url']
+        end
+      end
     end
   end
 
