@@ -211,7 +211,7 @@ module EntryHelper
       if fold
         str += link_to(inline_icon_tag(:more), link_show(entry.id))
       end
-      content = q(str)
+      content = str
     end
     if !entry.medias.empty?
       # entries from Hatena contains 'enclosure' but no title and link for now.
