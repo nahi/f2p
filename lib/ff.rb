@@ -58,6 +58,9 @@ module FriendFeed
     attr_accessor :http_proxy
     attr_accessor :httpclient_max_keepalive
 
+    attr_accessor :name
+    attr_accessor :remote_key
+
     class LShiftLogger
       def initialize(logger)
         @logger = logger
@@ -124,6 +127,8 @@ module FriendFeed
       @http_proxy = nil
       @httpclient_max_keepalive = 5 * 60
       @clients = {}
+      @name = nil
+      @remote_key = nil
       @mutex = Monitor.new
     end
 
@@ -207,6 +212,19 @@ module FriendFeed
         logger.debug { JSONFilter.pretty_generate(obj) }
         obj['entries']
       end
+    end
+
+    SEARCH_KEY = ['from', 'room', 'friends', 'service', 'intitle', 'incomment', 'comment', 'comments', 'like', 'likes']
+    def search_opt_filter(query, opt)
+      ary = []
+      opt.each do |k, v|
+        if SEARCH_KEY.include?(k.to_s)
+          opt.delete(k)
+          ary << k.to_s + ':' + v.to_s if v
+        end
+      end
+      ary.unshift(query) if query and !query.empty?
+      ary.join(' ')
     end
   end
 
@@ -410,7 +428,8 @@ module FriendFeed
 
     def search_entries(name, remote_key, query, opt = {})
       uri = uri("feed/search")
-      get_feed(uri, name, remote_key, :q => search_opt_convert(query, opt))
+      opt[:q] = search_opt_filter(query, opt)
+      get_feed(uri, name, remote_key, opt)
     end
 
     def post(name, remote_key, title, link = nil, comment = nil, images = nil, files = nil, room = nil)
@@ -521,15 +540,6 @@ module FriendFeed
 
     def url_base
       URL_BASE
-    end
-
-    SEARCH_KEY = ['from', 'room', 'friends', 'service', 'intitle', 'incomment', 'comment', 'comments', 'like', 'likes']
-    def search_opt_convert(query, opt)
-      ary = opt.map { |k, v|
-        (SEARCH_KEY.include?(k.to_s) and v) ? k.to_s + ':' + v.to_s : nil
-      }.compact
-      ary.unshift(query) if query and !query.empty?
-      ary.join(' ')
     end
   end
 end
