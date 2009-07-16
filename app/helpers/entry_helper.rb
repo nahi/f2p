@@ -305,15 +305,8 @@ module EntryHelper
   end
 
   def link_content(title, entry)
-    if unknown_where_to_go?(entry)
-      entry_link_to(h(title), entry.link) + h(" (#{uri_domain(entry.link)})")
-    else
-      entry_link_to(h(title), entry.link)
-    end
-  end
-
-  def link_content_without_link(title, entry)
-    q(h(title))
+    link = entry.link
+    h(title) + ' ' + entry_link_to(h("(#{uri_domain(link)})"), link)
   end
 
   def entry_link_to(name, options = {}, html_options = {})
