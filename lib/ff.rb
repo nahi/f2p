@@ -132,6 +132,16 @@ module FriendFeed
       @mutex = Monitor.new
     end
 
+    # size: small, medium, or large.
+    def get_user_picture_url(name, size = 'small')
+      "http://friendfeed.com/#{name}/picture?size=#{size}"
+    end
+
+    # size: small, medium, or large.
+    def get_room_picture_url(name, size = 'small')
+      "http://friendfeed.com/rooms/#{name}/picture?size=#{size}"
+    end
+
   private
 
     def uri(part)
@@ -300,16 +310,6 @@ module FriendFeed
         get_request(client, uri)
       }
       res.status == 200
-    end
-
-    # size: small, medium, or large.
-    def get_user_picture_url(name, size = 'small')
-      "http://friendfeed.com/#{name}/picture?size=#{size}"
-    end
-
-    # size: small, medium, or large.
-    def get_room_picture_url(name, size = 'small')
-      "http://friendfeed.com/rooms/#{name}/picture?size=#{size}"
     end
 
     def get_profile(name, remote_key, user, opt = {})
@@ -542,14 +542,125 @@ module FriendFeed
       URL_BASE
     end
   end
-end
 
+  class APIV2Client < BaseClient
+    URL_BASE = 'http://friendfeed-api.com/v2/'
 
-if $0 == __FILE__
-  name = ARGV.shift or raise
-  remote_key = ARGV.shift or raise
-  require 'logger'
-  logger = Logger.new('ff.log')
-  client = FriendFeed::APIClient.new(logger)
-  print JSON.pretty_generate(client.get_home_entries(name, remote_key))
+    # Reading data from FriendFeed
+    def get_feed(fid, opt = {})
+      uri = uri("feed/#{fid}")
+      return nil unless uri
+      query = opt.dup
+      name, remote_key = get_credential!(query)
+      get_and_parse(uri, name, remote_key, query)
+    end
+
+    def search(q, opt = {})
+      uri = uri("search")
+      return nil unless uri
+      query = opt.dup
+      name, remote_key = get_credential!(query)
+      query[:q] = search_opt_filter(q, query)
+      get_and_parse(uri, name, remote_key, query)
+    end
+
+    def feedlist(opt = {})
+      uri = uri("feedlist")
+      return nil unless uri
+      query = opt.dup
+      name, remote_key = get_credential!(query)
+      get_and_parse(uri, name, remote_key, query)
+    end
+
+    def feedinfo(fid, opt = {})
+      uri = uri("feedinfo/#{fid}")
+      return nil unless uri
+      query = opt.dup
+      name, remote_key = get_credential!(query)
+      get_and_parse(uri, name, remote_key, query)
+    end
+    alias profile feedinfo
+
+    def get_entries(*args)
+      if args.last.is_a?(Hash)
+        query = args.pop.dup
+      else
+        query = {}
+      end
+      uri = uri("entry")
+      return nil unless uri
+      name, remote_key = get_credential!(query)
+      query[:id] = args.join(',')
+      get_and_parse(uri, name, remote_key, query)
+    end
+
+    def get_entry(eid, opt = {})
+      uri = uri("entry/#{eid}")
+      return nil unless uri
+      query = opt.dup
+      name, remote_key = get_credential!(query)
+      get_and_parse(uri, name, remote_key, query)
+    end
+
+    def post(to, body, opt = {})
+      uri = uri("entry")
+      return nil unless uri
+      query = opt.dup
+      name, remote_key = get_credential!(query)
+      query[:to] = [*to].join(',')
+      query[:body] = body
+      set_if(query, opt, :link)
+      set_if(query, opt, :comment)
+      set_if(query, opt, :image_url)
+      if opt[:file]
+        query[:file] = opt[:file].map { |file|
+          file, content_type = file
+          unless file.respond_to?(:read)
+            file = StringIO.new(file.to_s)
+            class << file
+              attr_accessor :mime_type
+            end
+            file.mime_type = content_type
+          end
+          file
+        }
+      end
+      client_sync(uri, name, remote_key) do |client|
+        res = post_request(client, uri, query)
+        parse_response(res)
+      end
+    end
+
+  private
+
+    def get_credential!(query = nil)
+      if query.nil?
+        return [@name, @remote_key]
+      end
+      name = query.delete(:name) || @name
+      remote_key = query.delete(:remote_key) || @remote_key
+      [name, remote_key]
+    end
+
+    def set_if(new, old, key)
+      new[key] = old[key] if old.key?(key)
+    end
+
+    def url_base
+      URL_BASE
+    end
+
+    def get_and_parse(uri, name, remote_key, opt = {})
+      res = client_sync(uri, name, remote_key) { |client|
+        get_request(client, uri, opt)
+      }
+      parse_response(res)
+    end
+
+    def parse_response(res)
+      if res.status == 200
+        JSONFilter.parse(res.content)
+      end
+    end
+  end
 end
