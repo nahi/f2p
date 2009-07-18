@@ -90,6 +90,52 @@ module FriendFeed
     end
   end
 
+  class APIV2ClientProxy
+    extend ClientProxy
+
+    define_proxy_method :validate
+    define_proxy_method :feed
+    define_proxy_method :search
+    define_proxy_method :feedlist
+    define_proxy_method :feedinfo
+    define_proxy_method :entries
+    define_proxy_method :entry
+    #define_proxy_method :post_entry
+    #define_proxy_method :edit_entry
+
+    define_proxy_method :delete_entry
+    define_proxy_method :undelete_entry
+    define_proxy_method :post_comment
+    define_proxy_method :edit_comment
+    define_proxy_method :delete_comment
+    define_proxy_method :like
+    define_proxy_method :delete_like
+    define_proxy_method :hide_entry
+    define_proxy_method :unhide_entry
+
+    define_proxy_method :get_user_picture_url
+    define_proxy_method :get_room_picture_url
+
+    define_proxy_method :get_cached_entries
+    define_proxy_method :set_cached_entries
+
+    def initialize
+      @client = DRb::DRbObject.new(nil, F2P::Config.friendfeed_api_daemon_drb_uri)
+    end
+
+    # need custom wrapping for dispatching IO.
+    def post_entry(to, body, opt = {})
+      if opt[:file]
+        opt[:file] = opt[:file].map { |file|
+          content_type = file.content_type if file.respond_to?(:content_type)
+          file = file.read if file.respond_to?(:read)
+          [file, content_type]
+        }
+      end
+      @client.post_entry(to, body, opt)
+    end
+  end
+
   class APIDaemon
     extend ClientCachedProxy
 
@@ -327,6 +373,54 @@ module FriendFeed
         cache[key] = [now, yield]
       end
       cache[key][1]
+    end
+  end
+
+  class APIV2Daemon
+    extend ClientCachedProxy
+
+    attr_reader :client
+
+    define_proxy_method :validate
+    define_proxy_method :feed
+    define_proxy_method :search
+    define_proxy_method :feedlist
+    define_proxy_method :feedinfo
+    define_proxy_method :entries
+    define_proxy_method :entry
+    define_proxy_method :post_entry
+    define_proxy_method :edit_entry
+
+    define_proxy_method :delete_entry
+    define_proxy_method :undelete_entry
+    define_proxy_method :post_comment
+    define_proxy_method :edit_comment
+    define_proxy_method :delete_comment
+    define_proxy_method :like
+    define_proxy_method :delete_like
+    define_proxy_method :hide_entry
+    define_proxy_method :unhide_entry
+
+    define_proxy_method :get_user_picture_url
+    define_proxy_method :get_room_picture_url
+
+    def initialize(logger = nil)
+      @client = FriendFeed::APIV2Client.new(logger)
+      @logger = @client.logger
+      @cache = {}
+    end
+
+    def set_cached_entries(name, entries)
+      basekey = name
+      cache = ((@cache ||= {})[basekey] ||= {})
+      cache[:last_entries] = entries
+      nil
+    end
+
+    def get_cached_entries(name)
+      basekey = name
+      cache = ((@cache ||= {})[basekey] ||= {})
+      cache[:last_entries]
     end
   end
 end

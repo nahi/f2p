@@ -546,8 +546,18 @@ module FriendFeed
   class APIV2Client < BaseClient
     URL_BASE = 'http://friendfeed-api.com/v2/'
 
+    # wrapper method for V1 compatibility
+    def validate(name, remote_key)
+      uri = uri("feedinfo/#{name}")
+      return false unless uri
+      res = client_sync(uri, name, remote_key) { |client|
+        get_request(client, uri)
+      }
+      res.status == 200
+    end
+
     # Reading data from FriendFeed
-    def get_feed(fid, opt = {})
+    def feed(fid, opt = {})
       uri = uri("feed/#{fid}")
       return nil unless uri
       query = opt.dup
@@ -581,7 +591,7 @@ module FriendFeed
     end
     alias profile feedinfo
 
-    def get_entries(*args)
+    def entries(*args)
       if args.last.is_a?(Hash)
         query = args.pop.dup
       else
@@ -594,7 +604,7 @@ module FriendFeed
       get_and_parse(uri, name, remote_key, query)
     end
 
-    def get_entry(eid, opt = {})
+    def entry(eid, opt = {})
       uri = uri("entry/#{eid}")
       return nil unless uri
       query = opt.dup
@@ -602,11 +612,12 @@ module FriendFeed
       get_and_parse(uri, name, remote_key, query)
     end
 
-    def post(to, body, opt = {})
+    # Publishing to FriendFeed
+    def post_entry(to, body, opt = {})
       uri = uri("entry")
       return nil unless uri
-      query = opt.dup
-      name, remote_key = get_credential!(query)
+      name, remote_key = get_credential(opt)
+      query = {}
       query[:to] = [*to].join(',')
       query[:body] = body
       set_if(query, opt, :link)
@@ -625,13 +636,142 @@ module FriendFeed
           file
         }
       end
-      client_sync(uri, name, remote_key) do |client|
-        res = post_request(client, uri, query)
-        parse_response(res)
+      post_and_parse(uri, name, remote_key, query)
+    end
+
+    def edit_entry(eid, opt)
+      uri = uri("entry")
+      return nil unless uri
+      name, remote_key = get_credential(opt)
+      query = {}
+      query[:id] = eid
+      if opt[:to]
+        query[:to] = opt[:to].join(',')
       end
+      set_if(query, opt, :to)
+      set_if(query, opt, :body)
+      set_if(query, opt, :link)
+      set_if(query, opt, :comment)
+      set_if(query, opt, :image_url)
+      if opt[:file]
+        query[:file] = opt[:file].map { |file|
+          file, content_type = file
+          unless file.respond_to?(:read)
+            file = StringIO.new(file.to_s)
+            class << file
+              attr_accessor :mime_type
+            end
+            file.mime_type = content_type
+          end
+          file
+        }
+      end
+      post_and_parse(uri, name, remote_key, query)
+    end
+
+    def delete_entry(eid, opt = {})
+      uri = uri("entry/delete")
+      return nil unless uri
+      name, remote_key = get_credential(opt)
+      query = {}
+      query[:id] = eid
+      post_and_parse(uri, name, remote_key, query)
+    end
+
+    def undelete_entry(eid, opt = {})
+      uri = uri("entry/delete")
+      return nil unless uri
+      name, remote_key = get_credential(opt)
+      query = {}
+      query[:id] = eid
+      query[:undelete] = 1
+      post_and_parse(uri, name, remote_key, query)
+    end
+
+    def post_comment(eid, body, opt = {})
+      uri = uri("comment")
+      return nil unless uri
+      name, remote_key = get_credential(opt)
+      query = {}
+      query[:entry] = eid
+      query[:body] = body
+      post_and_parse(uri, name, remote_key, query)
+    end
+
+    def edit_comment(cid, body, opt = {})
+      uri = uri("comment")
+      return nil unless uri
+      name, remote_key = get_credential(opt)
+      query = {}
+      query[:id] = cid
+      query[:body] = body
+      post_and_parse(uri, name, remote_key, query)
+    end
+
+    def delete_comment(cid, opt = {})
+      uri = uri("comment/delete")
+      return nil unless uri
+      name, remote_key = get_credential(opt)
+      query = {}
+      query[:id] = cid
+      post_and_parse(uri, name, remote_key, query)
+    end
+
+    def undelete_comment(cid, opt = {})
+      uri = uri("comment/delete")
+      return nil unless uri
+      name, remote_key = get_credential(opt)
+      query = {}
+      query[:id] = cid
+      query[:undelete] = 1
+      post_and_parse(uri, name, remote_key, query)
+    end
+
+    def like(eid, opt = {})
+      uri = uri("like")
+      return nil unless uri
+      perform_entry_action(uri, eid, opt)
+    end
+
+    def delete_like(eid, opt = {})
+      uri = uri("like/delete")
+      return nil unless uri
+      perform_entry_action(uri, eid, opt)
+    end
+
+    def hide_entry(eid, opt = {})
+      uri = uri("hide")
+      return nil unless uri
+      perform_entry_action(uri, eid, opt)
+    end
+
+    def unhide_entry(eid, opt = {})
+      uri = uri("hide")
+      return nil unless uri
+      name, remote_key = get_credential(opt)
+      query = {}
+      query[:entry] = eid
+      query[:unhide] = 1
+      post_and_parse(uri, name, remote_key, query)
     end
 
   private
+
+    def perform_entry_action(uri, eid, opt)
+      name, remote_key = get_credential(opt)
+      query = {}
+      query[:entry] = eid
+      post_and_parse(uri, name, remote_key, query)
+    end
+
+    def get_credential(query = nil)
+      if query.nil?
+        return [@name, @remote_key]
+      end
+      name = query[:name] || @name
+      remote_key = query[:remote_key] || @remote_key
+      [name, remote_key]
+    end
 
     def get_credential!(query = nil)
       if query.nil?
@@ -650,9 +790,16 @@ module FriendFeed
       URL_BASE
     end
 
-    def get_and_parse(uri, name, remote_key, opt = {})
+    def get_and_parse(uri, name, remote_key, query = {})
       res = client_sync(uri, name, remote_key) { |client|
-        get_request(client, uri, opt)
+        get_request(client, uri, query)
+      }
+      parse_response(res)
+    end
+
+    def post_and_parse(uri, name, remote_key, query = {})
+      res = client_sync(uri, name, remote_key) { |client|
+        post_request(client, uri, query)
       }
       parse_response(res)
     end
@@ -661,6 +808,172 @@ module FriendFeed
       if res.status == 200
         JSONFilter.parse(res.content)
       end
+    end
+  end
+end
+
+if __FILE__ == $0
+  require 'test/unit'
+  require 'logger'
+
+  class APIV2ClientTest < Test::Unit::TestCase
+    def setup
+      cred = JSON.parse(File.read(File.expand_path("~/.fftest_credential")))
+      @test_user = cred['name']
+      @test_key = cred['remote_key']
+      logger = Logger.new('ff.log')
+      @v1 = FriendFeed::APIClient.new
+      @tc = FriendFeed::APIV2Client.new(logger)
+      @tc.name = @test_user
+      @tc.remote_key = @test_key
+    end
+
+    def test_validate
+      assert(@tc.validate(@test_user, @test_key))
+      assert(!@tc.validate(@test_user, 'dummy'))
+    end
+
+    def test_post_entry
+      to = ['me']
+      body = 'test body'
+      e1 = @tc.post_entry(to, body)
+      e2 = @tc.entry(e1['id'])
+      assert_equal(e1['id'], e2['id'])
+      posted = JSON.pretty_generate(e2)
+      #
+      @tc.edit_entry(e1['id'], :body => 'test body 2')
+      e2 = @tc.entry(e1['id'])
+      edited = JSON.pretty_generate(e2)
+      assert_match(/test body 2/, edited)
+      @tc.edit_entry(e1['id'], :body => 'test body')
+      e2 = @tc.entry(e1['id'])
+      edited = JSON.pretty_generate(e2)
+      assert_equal(posted, edited)
+      #
+      @tc.delete_entry(e1['id'])
+      assert_nil(@tc.entry(e1['id']))
+      @tc.undelete_entry(e1['id'])
+      assert_not_nil(@tc.entry(e1['id']))
+      @tc.delete_entry(e1['id'])
+    end
+
+    def test_post_geo_entry
+      to = ['me']
+      body = 'test body'
+      e1 = @tc.post_entry(to, body, :geo => "35.69169,139.770883")
+      e2 = @tc.entry(e1['id'])
+      geo = { "lat" => 35.69169, "long" => 139.770883 }
+      assert_equal(geo, e2['geo'])
+      #
+      @tc.delete_entry(e1['id'])
+    end
+
+    def test_post_comment
+      to = ['me']
+      body = 'test body'
+      e1 = @tc.post_entry(to, body)
+      assert_nil(e1['comments'])
+      #
+      c1 = @tc.post_comment(e1['id'], 'test comment')
+      assert(c1)
+      e2 = @tc.entry(e1['id'])
+      c2 = e2['comments'].find { |c| c['id'] == c1['id'] }
+      assert(c2)
+      assert_equal('test comment', c2['body'])
+      #
+      @tc.edit_comment(c1['id'], 'test comment 2')
+      e2 = @tc.entry(e1['id'])
+      c2 = e2['comments'].find { |c| c['id'] == c1['id'] }
+      assert(c2)
+      assert_equal('test comment 2', c2['body'])
+      #
+      @tc.delete_comment(c1['id'])
+      e2 = @tc.entry(e1['id'])
+      assert_nil(e2['comments'])
+      @tc.undelete_comment(c1['id'])
+      e2 = @tc.entry(e1['id'])
+      assert(e2['comments'])
+      #
+      @tc.delete_entry(e1['id'])
+    end
+
+    def test_like
+      to = ['me']
+      body = 'test body'
+      e1 = @tc.post_entry(to, body)
+      # cannot like self entry
+      assert_nil(@tc.like(e1['id']))
+      @tc.delete_entry(e1['id'])
+    end
+
+    def test_home_feed
+      opt = {:num => 30}
+      v2_opt = opt.merge(:fof => 1, :hidden => 1)
+      actual = @tc.feed('home', v2_opt)['entries']
+      expected = @v1.get_home_entries(@test_user, @test_key, opt)
+      assert_equal(expected.size, actual.size)
+      e_ids = expected.map { |e| conv_to_new_eid(e['id']) }
+      a_ids = actual.map { |e| e['id'] }
+      e_ids.each_with_index do |e, idx|
+        assert_equal(e, a_ids[idx])
+      end
+    end
+
+    def test_my_feed
+      opt = {:num => 30}
+      actual = @tc.feed(@test_user, opt)['entries']
+      expected = @v1.get_user_entries(@test_user, @test_key, @test_user, opt)
+      assert_equal(expected.size, actual.size)
+      actual.each_with_index do |a, idx|
+        e = expected[idx]
+        assert_equal(conv_to_new_eid(e['id']), a['id'])
+      end
+    end
+
+    def test_search
+      actual = @tc.search('f2p', :service => 'internal', :num => 10)['entries']
+      assert_equal(10, actual.size)
+    end
+
+    def test_feedlist
+      feedlist = @tc.feedlist
+      assert_equal(4, feedlist['main'].size)
+      assert_equal(3, feedlist['lists'].size)
+      assert_equal(2, feedlist['groups'].size)
+      assert_equal(2, feedlist['searches'].size)
+      assert_equal(3, feedlist['sections'].size)
+    end
+
+    def test_feedinfo
+      feedinfo = @tc.feedinfo('list/personal')
+      assert_equal('パーソナル', feedinfo['name'])
+      assert_equal(3, feedinfo['feeds'].size)
+      #
+      profile = @tc.profile('nahi') # same thing
+      assert_equal('Hiroshi Nakamura', profile['name'])
+      assert(!profile['subscriptions'].empty?)
+      assert(!profile['subscribers'].empty?)
+      assert(!profile['services'].empty?)
+      #
+      profile = @tc.profile('f2ptest-room') # same thing
+      assert_equal('f2ptest_room', profile['name'])
+      assert(!profile['subscribers'].empty?)
+      assert(!profile['admins'].empty?)
+      assert(profile['services'].empty?)
+    end
+
+    def test_entries
+      expected = @tc.feed('home')['entries']
+      ids = expected.map { |e| e['id'] }
+      actual = @tc.entries(ids)['entries']
+      # NB: order of retrieved entries does not match with request ids.
+      assert((actual.map { |e| e['id'] } - ids).empty?)
+    end
+
+  private
+
+    def conv_to_new_eid(id)
+      'e/' + id.gsub(/-/, '')
     end
   end
 end
