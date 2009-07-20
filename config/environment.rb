@@ -24,11 +24,6 @@ module F2P
       attr_accessor :friendfeed_api_key
       attr_accessor :friendfeed_api_timeout
       attr_accessor :friendfeed_api_daemon_drb_uri
-      attr_accessor :friendfeed_api_profile_cache_timeout
-      attr_accessor :friendfeed_api_use_channel
-      attr_accessor :friendfeed_api_channel_timeout
-      attr_accessor :friendfeed_api_channel_cache_size
-      attr_accessor :friendfeed_api_channel_lifetime
 
       attr_accessor :google_maps_maptype
       attr_accessor :google_maps_zoom
@@ -52,7 +47,7 @@ module F2P
       attr_accessor :list_view_profile_picture
       attr_accessor :medias_in_thread
       attr_accessor :next_entry_text_folding_size
-      attr_accessor :disable_status_icon
+      attr_accessor :disable_fof
     end
   end
 end
@@ -137,11 +132,6 @@ Rails::Initializer.run do |config|
   # don't touch this.  apikey needs to be private.
   F2P::Config.friendfeed_api_key = nil
   F2P::Config.friendfeed_api_daemon_drb_uri = 'druby://localhost:17171'
-  F2P::Config.friendfeed_api_profile_cache_timeout = 24 * 60 * 60
-  F2P::Config.friendfeed_api_use_channel = false
-  F2P::Config.friendfeed_api_channel_timeout = 60
-  F2P::Config.friendfeed_api_channel_cache_size = 100
-  F2P::Config.friendfeed_api_channel_lifetime = 5 * 60
 
   F2P::Config.google_maps_maptype = 'mobile'
   F2P::Config.google_maps_zoom = 13
@@ -165,5 +155,5 @@ Rails::Initializer.run do |config|
   F2P::Config.list_view_profile_picture = false
   F2P::Config.medias_in_thread = 4
   F2P::Config.next_entry_text_folding_size = 40
-  F2P::Config.disable_status_icon = true
+  F2P::Config.disable_fof = false
 end

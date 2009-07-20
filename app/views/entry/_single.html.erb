@@ -6,19 +6,28 @@
       <p>
         <%= author_picture(entry) -%>
         <%= pin_link(entry) %>
-        <%= icon(entry) -%><%= icon_extra(entry) -%>
         <%= author_link(entry) %>
+        <%= to(entry) -%>
         <%= published(entry, false) %>
         <%= menu_link(menu_icon(:bottom, '8'), '#bottom', accesskey('8')) %>
       </p>
     </div>
     <div class="title">
       <p>
+        <%- if ctx.moderate -%>
+          <%- form_tag({:action => 'update', :eid => entry.id}, {:name => 'post'}) do -%>
+            <%= edit_entry_form(entry) -%>
+          <%- end -%>
+          <script type='text/javascript'><!--
+          post.body.focus();
+          //--></script>
+        <%- else -%>
 <%= content(entry) -%>
   <%= via(entry) -%>
+        <%- end -%>
       </p>
     </div>
-    <%- form_tag({:action => 'add_comment', :id => u(entry.id), :comment => ctx.comment ? u(ctx.comment) : nil}, {:name => 'post'}) do -%>
+    <%- form_tag({:action => 'add_comment', :eid => entry.id, :comment => ctx.comment ? ctx.comment : nil}, {:name => 'post'}) do -%>
       <div class="comment comment-block">
         <%- entry.comments.each do |comment| -%>
           <p>
@@ -32,7 +41,7 @@
             <%- end -%>
           </p>
         <%- end -%>
-        <%- if ctx.comment.nil? -%>
+        <%- if ctx.comment.nil? and !ctx.moderate -%>
           <%= comment_icon %><%= post_comment_form(entry) %><br />
           <script type='text/javascript'><!--
           post.body.focus();
@@ -64,9 +73,8 @@
 </p>
 <%- if next_entry = next_entry(entry) -%>
   <p>
-    Next: <%= link_to_next_entry(next_entry) %><br />
-    from <%= icon(next_entry) %><%= icon_extra(next_entry) %>
-        <%= author_link(next_entry) %>
+    Next: <%= link_to_next_entry(next_entry) %>
+    from <%= author_link(next_entry) %><%= to(next_entry) -%>
   </p>
   <p>
     <%- if entry.view_pinned -%>
@@ -75,9 +83,9 @@
       <%= link_to(h('Pin this and Go Next'), link_show(next_entry.id, :pin => entry.id)) %><br />
     <%- end -%>
   </p>
-<%- else -%>
+<%- elsif entry -%>
   <p>
-    <%- if entry && entry.view_pinned -%>
+    <%- if entry.view_pinned -%>
       <%= link_to(h('Unpin this and Back'), :controller => 'entry', :unpin => entry.id) %><br />
     <%- else -%>
       <%= link_to(h('Pin this and Back'), :controller => 'entry', :pin => entry.id) %><br />
@@ -90,9 +98,7 @@
 <p><a name="bottom"></a>
   <%= page_links(:for_bottom => true, :threads => @threads) %>
 </p>
-<%- if !ctx.user_only? -%>
-  <hr />
-  <p><a name="filter">[Filter]</a></p>
-  <p><%= user_page_links(auth.name) %></p>
-  <p><%= list_links %></p>
-<%- end -%>
+<hr />
+<p><a name="filter">[Filter]</a></p>
+<p>My: <%= user_page_links %></p>
+<p>Lists: <%= list_links %></p>

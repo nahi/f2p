@@ -8,14 +8,11 @@
   <%- form_tag({:action => 'add'}) do -%>
     <p><a name="top"></a><%= post_entry_form %></p>
   <%- end -%>
-  <%- if ctx.user_for -%>
-    <p><%= user_picture(ctx.user_for) %><%= user_status_icon(ctx.user_for) %> <%= h(user_name(ctx.user_for)) %> <%= link_to(h('[profile]'), '#profile') %></p>
+  <%- if ctx.profile_for -%>
+    <p><%= picture(ctx.profile_for) %> <%= h(feed_name) %> <%= h(subscribe_status) %> <%= link_to(h('[profile]'), :controller => :profile, :action => :show, :id => ctx.profile_for) %></p>
   <%- end -%>
-  <%- if ctx.room_for -%>
-    <p><%= room_picture(ctx.room_for) %><%= room_status_icon(ctx.room_for) %> <%= h(room_name(ctx.room_for)) %> <%= link_to(h('[profile]'), '#profile') %></p>
-  <%- end -%>
-  <%- if ctx.list -%>
-    <p>List: '<%= list_name(ctx.list) %>' <%= link_to(h('[profile]'), '#profile') %></p>
+  <%- if ctx.list_for -%>
+    <p>Best of: <%= best_of_list_links(ctx.list_for) %></p>
   <%- end -%>
   <%- if ctx.link -%>
     <p>entries related to: <%= link_to(h(ctx.link), u(ctx.link)) %></p>
@@ -74,19 +71,17 @@
     <%= page_links(:for_bottom => true, :threads => @threads) %>
   </p>
 <%- end -%>
-<%- if ctx.user_for -%>
-  <p><%= render :partial => 'profile', :locals => {:user => ctx.user_for} %></p>
-<%- elsif ctx.room_for -%>
-  <p><%= render :partial => 'room', :locals => {:room => ctx.room_for} %></p>
-<%- elsif ctx.list -%>
-  <p><%= render :partial => 'list', :locals => {:list => ctx.list} %></p>
-<%- end -%>
-<%- if !ctx.user_only? -%>
+<%- if ctx.list_for -%>
   <hr />
-  <p><a name="filter">Filter:</a></p>
-  <p><%= user_page_links(auth.name) %></p>
-  <p><%= list_links %></p>
+<p><a name="list">List:</a></p>
+  <p><%= feed_subscriptions_user %></p>
+  <p><%= feed_subscriptions_group %></p>
 <%- end -%>
+  <hr />
+<p><a name="filter">Filter:</a></p>
+<p>My: <%= user_page_links %></p>
+<p>Lists: <%= list_links %></p>
+<p>Searches: <%= saved_search_links %></p>
 <script type='text/javascript'><!--
 document.getElementById('first_link').focus();
 //--></script>

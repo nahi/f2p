@@ -1,0 +1,11 @@
+<html>
+  <head>
+    <title><%= appname %> setting</title>
+    <%= inline_meta -%>
+    <%= inline_stylesheet %>
+  </head>
+  <body>
+    <p class="herader"><%= link_to(h(appname), :controller => 'entry') %> <%= h(viewname) %> at <%= title_date %> <%= top_menu %></p>
+    <%= yield %>
+  </body>
+</html>

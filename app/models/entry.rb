@@ -1,11 +1,10 @@
 require 'hash_utils'
+require 'attachment'
 require 'comment'
-require 'entry_user'
+require 'from'
 require 'geo'
 require 'like'
-require 'media'
-require 'room'
-require 'service'
+require 'thumbnail'
 require 'via'
 
 
@@ -16,75 +15,82 @@ class Entry
   class << self
     def create(opt)
       auth = opt[:auth]
+      to = opt[:to]
       body = opt[:body]
-      link = opt[:link]
-      comment = opt[:comment]
-      images = opt[:images]
-      files = opt[:files]
-      room = opt[:room]
-      entry = ff_client.post(auth.name, auth.remote_key, body, link, comment, images, files, room)
-      if entry
-        entry.first['id']
+      if entry = ff_client.post_entry(to, body, opt.merge(:name => auth.name, :remote_key => auth.remote_key))
+        Entry[entry]
+      end
+    end
+
+    def update(opt)
+      auth = opt[:auth]
+      eid = opt[:eid]
+      if entry = ff_client.edit_entry(eid, opt.merge(:name => auth.name, :remote_key => auth.remote_key))
+        Entry[entry]
       end
     end
 
     def delete(opt)
       auth = opt[:auth]
-      id = opt[:id]
+      id = opt[:eid]
       undelete = !!opt[:undelete]
-      ff_client.delete(auth.name, auth.remote_key, id, undelete)
+      if undelete
+        ff_client.undelete_entry(id, :name => auth.name, :remote_key => auth.remote_key)
+      else
+        ff_client.delete_entry(id, :name => auth.name, :remote_key => auth.remote_key)
+      end
     end
 
     def add_comment(opt)
       auth = opt[:auth]
-      id = opt[:id]
+      id = opt[:eid]
       body = opt[:body]
-      comment = ff_client.post_comment(auth.name, auth.remote_key, id, body)
-      if comment
-        comment['id']
+      if comment = ff_client.post_comment(id, body, :name => auth.name, :remote_key => auth.remote_key)
+        Comment[comment]
       end
     end
 
     def edit_comment(opt)
       auth = opt[:auth]
-      id = opt[:id]
       comment = opt[:comment]
       body = opt[:body]
-      comment = ff_client.edit_comment(auth.name, auth.remote_key, id, comment, body)
-      if comment
-        comment['id']
+      if comment = ff_client.edit_comment(comment, body, :name => auth.name, :remote_key => auth.remote_key)
+        Comment[comment]
       end
     end
 
     def delete_comment(opt)
       auth = opt[:auth]
-      id = opt[:id]
       comment = opt[:comment]
       undelete = !!opt[:undelete]
-      ff_client.delete_comment(auth.name, auth.remote_key, id, comment, undelete)
+      if undelete
+        ff_client.undelete_comment(comment, :name => auth.name, :remote_key => auth.remote_key)
+      else
+        ff_client.delete_comment(comment, :name => auth.name, :remote_key => auth.remote_key)
+      end
     end
 
     def add_like(opt)
       auth = opt[:auth]
-      id = opt[:id]
-      ff_client.like(auth.name, auth.remote_key, id)
+      id = opt[:eid]
+      ff_client.like(id, :name => auth.name, :remote_key => auth.remote_key)
     end
 
     def delete_like(opt)
       auth = opt[:auth]
-      id = opt[:id]
-      ff_client.unlike(auth.name, auth.remote_key, id)
+      id = opt[:eid]
+      ff_client.delete_like(id, :name => auth.name, :remote_key => auth.remote_key)
     end
 
     def hide(opt)
       auth = opt[:auth]
-      id = opt[:id]
-      ff_client.hide(auth.name, auth.remote_key, id)
+      id = opt[:eid]
+      ff_client.hide_entry(id, :name => auth.name, :remote_key => auth.remote_key)
     end
 
     def add_pin(opt)
       auth = opt[:auth]
-      id = opt[:id]
+      id = opt[:eid]
       ActiveRecord::Base.transaction do
         unless Pin.find_by_user_id_and_eid(auth.id, id)
           pin = Pin.new
@@ -97,7 +103,7 @@ class Entry
 
     def delete_pin(opt)
       auth = opt[:auth]
-      id = opt[:id]
+      id = opt[:eid]
       if pin = Pin.find_by_user_id_and_eid(auth.id, id)
         raise unless pin.destroy
       end
@@ -111,21 +117,21 @@ class Entry
   end
 
   attr_accessor :id
-  attr_accessor :title
+  attr_accessor :body
+  attr_accessor :url
   attr_accessor :link
-  attr_accessor :updated
-  attr_accessor :published
-  attr_accessor :anonymous
-  attr_accessor :service
-  attr_accessor :user
-  attr_accessor :medias
+  attr_accessor :date
+  attr_accessor :from
+  attr_accessor :to
+  attr_accessor :thumbnails
+  attr_accessor :files
   attr_accessor :comments
   attr_accessor :likes
   attr_accessor :via
-  attr_accessor :room
   attr_accessor :geo
   attr_accessor :friend_of
   attr_accessor :checked_at
+  attr_accessor :commands
 
   attr_accessor :twitter_username
   attr_accessor :twitter_reply_to
@@ -138,7 +144,9 @@ class Entry
   attr_accessor :view_map
 
   def initialize(hash)
-    initialize_with_hash(hash, 'id', 'title', 'link', 'updated', 'published', 'anonymous')
+    initialize_with_hash(hash, 'id', 'url', 'link', 'date', 'commands')
+    @link = @url
+    @commands ||= EMPTY
     @twitter_username = nil
     @twitter_reply_to = nil
     @orphan = hash['__f2p_orphan']
@@ -148,20 +156,25 @@ class Entry
     @view_links = nil
     @view_medias = []
     @view_map = false
-    @service = Service[hash['service']]
-    @user = EntryUser[hash['user']]
-    @medias = (hash['media'] || EMPTY).map { |e| Media[e] }
+    @body = hash['rawBody']
+    @from = From[hash['from']]
+    @to = (hash['to'] || EMPTY).map { |e| From[e] }
+    @thumbnails = (hash['thumbnails'] || EMPTY).map { |e| Thumbnail[e] }
+    @files = (hash['files'] || EMPTY).map { |e| Attachment[e] }
     @comments = wrap_comment(hash['comments'] || EMPTY)
     @likes = (hash['likes'] || EMPTY).map { |e| Like[e] }
     @via = Via[hash['via']]
-    @room = Room[hash['room']]
-    @geo = Geo[hash['geo']] || extract_geo_from_google_staticmap_url(@medias)
-    @friend_of = EntryUser[hash['friendof']]
+    @geo = Geo[hash['geo']] || extract_geo_from_google_staticmap_url(@thumbnails)
+    if hash['fof']
+      @friend_of = From[hash['fof']['from']]
+    else
+      @friend_of = nil
+    end
     @checked_at = nil
     @hidden = hash['hidden'] || false
-    if self.service and self.service.twitter?
-      @twitter_username = (self.service.profile_url || '').match(%r{twitter.com/([^/]+)})[1]
-      if /@([a-zA-Z0-9_]+)/ =~ self.title
+    if self.via and self.via.twitter?
+      @twitter_username = (self.via.url || '').match(%r{twitter.com/([^/]+)})[1]
+      if /@([a-zA-Z0-9_]+)/ =~ self.body
         @twitter_reply_to = $1
       end
     end
@@ -170,29 +183,26 @@ class Entry
 
   def similar?(rhs)
     result = false
-    if self.user_id == rhs.user_id
+    if self.from_id == rhs.from_id
       result ||= same_origin?(rhs)
     end
-    result ||= same_link?(rhs) || similar_title?(rhs)
-    if self.service and rhs.service and self.service.twitter? and rhs.service.twitter?
+    result ||= same_link?(rhs) || similar_body?(rhs)
+    if self.via and rhs.via and self.via.twitter? and rhs.via.twitter?
       result ||= self.twitter_reply_to == rhs.twitter_username || self.twitter_username == rhs.twitter_reply_to
     end
     result
   end
 
   def same_feed?(rhs)
-    rhs and user_id == rhs.user_id and service_identity == rhs.service_identity
+    rhs and from_id == rhs.from_id and service_identity == rhs.service_identity
   end
 
   def service_identity
-    return nil unless service
-    sid = service.service_group? ? service.profile_url : service.id
-    rid = room ? room.nickname : nil
-    [sid, rid]
+    via ? via.name : nil
   end
 
-  def published_at
-    @published_at ||= (published ? Time.parse(published) : Time.now)
+  def date_at
+    @date_at ||= (date ? Time.parse(date) : Time.now)
   end
 
   def modified_at
@@ -201,7 +211,7 @@ class Entry
 
   def modified
     return @modified if @modified
-    @modified = self.updated || self.published
+    @modified = self.date
     unless comments.empty?
       @modified = [@modified, comments.last.date].max
     end
@@ -212,28 +222,18 @@ class Entry
     @hidden
   end
 
-  def user_id
-    user ? user.id : nil
-  end
-
-  def nickname
-    user ? user.nickname : nil
+  def from_id
+    from.id
   end
 
   def self_comment_only?
     cs = comments
-    cs.size == 1 and self.user_id == cs.first.user_id
+    cs.size == 1 and self.from_id == cs.first.from_id
   end
 
-  def origin_nickname
+  def origin_id
     if !orphan
-      if anonymous
-        if room
-          room.nickname
-        end
-      else
-        nickname || user_id
-      end
+      from_id
     end
   end
 
@@ -250,30 +250,28 @@ private
     }
   end
 
-  def extract_geo_from_google_staticmap_url(medias)
-    medias.each do |m|
-      m.contents.each do |c|
-        if /maps.google.com\/staticmap\b.*\bmarkers=([0-9\.]+),([0-9\.]+)\b/ =~ c.url
-          self.view_map = true
-          return Geo['lat' => $1, 'long' => $2]
-        end
+  def extract_geo_from_google_staticmap_url(tbs)
+    tbs.each do |tb|
+      if /maps.google.com\/staticmap\b.*\bmarkers=([0-9\.]+),([0-9\.]+)\b/ =~ tb.url
+        self.view_map = true
+        return Geo['lat' => $1, 'long' => $2]
       end
     end
     nil
   end
 
   def same_origin?(rhs)
-    (self.published_at - rhs.published_at).abs < 30.seconds
+    (self.date_at - rhs.date_at).abs < 30.seconds
   end
 
-  def similar_title?(rhs)
-    t1 = self.title
-    t2 = rhs.title
+  def similar_body?(rhs)
+    t1 = self.body
+    t2 = rhs.body
     t1 == t2 or part_of(t1, t2) or part_of(t2, t1)
   end
 
   def same_link?(rhs)
-    self.link and rhs.link and self.link == rhs.link
+    self.url and rhs.url and self.url == rhs.url
   end
 
   def part_of(base, part)

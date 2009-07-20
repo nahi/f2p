@@ -98,8 +98,10 @@ module FriendFeed
     define_proxy_method :search
     define_proxy_method :feedlist
     define_proxy_method :feedinfo
+    define_proxy_method :profile
     define_proxy_method :entries
     define_proxy_method :entry
+    define_proxy_method :url
     #define_proxy_method :post_entry
     #define_proxy_method :edit_entry
 
@@ -110,6 +112,8 @@ module FriendFeed
     define_proxy_method :delete_comment
     define_proxy_method :like
     define_proxy_method :delete_like
+    define_proxy_method :subscribe
+    define_proxy_method :unsubscribe
     define_proxy_method :hide_entry
     define_proxy_method :unhide_entry
 
@@ -125,14 +129,24 @@ module FriendFeed
 
     # need custom wrapping for dispatching IO.
     def post_entry(to, body, opt = {})
+      @client.post_entry(to, body, wrap_opt_file(opt))
+    end
+
+    def edit_entry(eid, opt = {})
+      @client.edit_entry(eid, wrap_opt_file(opt))
+    end
+
+    def wrap_opt_file(opt)
       if opt[:file]
+        opt = opt.dup
         opt[:file] = opt[:file].map { |file|
+          filename = file.original_filename if file.respond_to?(:original_filename)
           content_type = file.content_type if file.respond_to?(:content_type)
           file = file.read if file.respond_to?(:read)
-          [file, content_type]
+          [file, content_type, filename]
         }
       end
-      @client.post_entry(to, body, opt)
+      opt
     end
   end
 
@@ -386,8 +400,10 @@ module FriendFeed
     define_proxy_method :search
     define_proxy_method :feedlist
     define_proxy_method :feedinfo
+    define_proxy_method :profile
     define_proxy_method :entries
     define_proxy_method :entry
+    define_proxy_method :url
     define_proxy_method :post_entry
     define_proxy_method :edit_entry
 
@@ -398,6 +414,8 @@ module FriendFeed
     define_proxy_method :delete_comment
     define_proxy_method :like
     define_proxy_method :delete_like
+    define_proxy_method :subscribe
+    define_proxy_method :unsubscribe
     define_proxy_method :hide_entry
     define_proxy_method :unhide_entry
 

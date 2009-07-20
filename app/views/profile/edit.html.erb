@@ -1,0 +1,14 @@
+<p><%= picture(@id) %> <%= h(feed_name) %> <%= h(subscribe_status) %></p>
+<%- if flash[:message] -%>
+  <p class="message"><%= h(flash[:message]) %></p>
+<%- end -%>
+<p>Edit new subscription settings for each list.</p>
+<%- form_tag({:action => 'update'}, {:name => 'post'}) do -%>
+  <%= hidden_field_tag('id', @id) %>
+  <ul>
+    <%- @subscription.each do |id, name, checked| -%>
+    <li><%= check_box_tag(id, 'checked', checked) %><%= h(name) %></li>
+    <%- end -%>
+  </ul>
+  <%= submit_tag 'update' %><br />
+<%- end -%>

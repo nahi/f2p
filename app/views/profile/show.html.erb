@@ -1,0 +1,13 @@
+<%- if @feedinfo -%>
+<p><%= picture(@id) %> <%= h(feed_name) %> <%= link_to(h(subscribe_status), :id => @id, :action => :edit) %></p>
+<p><%= h(feed_description) %></p>
+<p><%= user_page_links %></p>
+<hr />
+<p><%= feed_service_links %></p>
+<p><%= feed_subscriptions_user %></p>
+<p><%= feed_subscriptions_group %></p>
+<p><%= feed_subscribers %></p>
+<%- else -%>
+  <p>No such profile</p>
+<%- end -%>
+<hr />

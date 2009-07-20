@@ -1,4 +1,3 @@
-<%- cache_profile(@threads) -%>
 <%- if flash[:deleted_id] -%>
   <p class="message"><%= undo_delete_link(flash[:deleted_id], flash[:deleted_comment]) %></p>
 <%- elsif flash[:added_comment] -%>

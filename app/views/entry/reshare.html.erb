@@ -2,7 +2,7 @@
   <p>
     title: <%= text_field_tag('link_title', @link_title) %><br />
     link: <%= link_to(h(@link), @link) %><br />
-    group: <%= room_select_tag('room', ctx.room) %><br />
+    group: <%= group_select_tag('room', ctx.room) %><br />
     <%= hidden_field_tag('link', @link) %>
     <%= hidden_field_tag('reshared_from', @eid) %>
     comment: <%= text_field_tag('body') %><br />

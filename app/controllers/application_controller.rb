@@ -53,7 +53,7 @@ class ApplicationController < ActionController::Base
   private
 
     def create_ff_client(logger)
-      FriendFeed::APIClientProxy.new
+      FriendFeed::APIV2ClientProxy.new
     end
   end
 
@@ -129,7 +129,6 @@ private
   def set_user(user)
     @user_id = session[:user_id] = user.id
     @auth = user
-    ApplicationController.ff_client.purge_cache(@auth.name)
   end
 
   def set_timezone(tz)
@@ -137,7 +136,6 @@ private
   end
 
   def logout
-    ApplicationController.ff_client.purge_cache(@auth.name)
     @user_id = session[:user_id] = nil
     @auth = nil
     reset_session

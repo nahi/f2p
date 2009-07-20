@@ -82,7 +82,7 @@ module FriendFeed
         @client = HTTPClient.new(http_proxy)
         @name = name
         @remote_key = remote_key
-        #@client.debug_dev = LShiftLogger.new(logger)
+        @client.debug_dev = LShiftLogger.new(logger)
         @logger = logger
         @client.extend(MonitorMixin)
         @last_accessed = Time.now
@@ -207,9 +207,9 @@ module FriendFeed
       res
     end
 
-    def post_request(client, uri, query = {})
+    def post_request(client, uri, query = {}, ext = {})
       query = query.merge(:apikey => @apikey) if @apikey
-      client.post(uri, query)
+      client.post(uri, query, ext)
     end
 
     def get_feed(uri, name, remote_key, query = {})
@@ -612,31 +612,50 @@ module FriendFeed
       get_and_parse(uri, name, remote_key, query)
     end
 
+    def url(opt = {})
+      uri = uri("url")
+      return nil unless uri
+      query = opt.dup
+      name, remote_key = get_credential!(query)
+      get_and_parse(uri, name, remote_key, query)
+    end
+
     # Publishing to FriendFeed
     def post_entry(to, body, opt = {})
       uri = uri("entry")
       return nil unless uri
       name, remote_key = get_credential(opt)
       query = {}
-      query[:to] = [*to].join(',')
       query[:body] = body
       set_if(query, opt, :link)
       set_if(query, opt, :comment)
+      query[:to] = [*to].join(',')
       set_if(query, opt, :image_url)
+      set_if(query, opt, :audio_url)
+      set_if(query, opt, :short)
+      set_if(query, opt, :geo)
+      query = query.to_a
       if opt[:file]
-        query[:file] = opt[:file].map { |file|
-          file, content_type = file
+        opt[:file].each do |filedef|
+          file, content_type, filename = filedef
           unless file.respond_to?(:read)
             file = StringIO.new(file.to_s)
             class << file
               attr_accessor :mime_type
+              attr_accessor :path
             end
             file.mime_type = content_type
+            file.path = filename
+            logger.info("!!!!!!!")
+            logger.info(filedef.inspect)
           end
           file
-        }
+          query << [:file, file]
+        end
       end
-      post_and_parse(uri, name, remote_key, query)
+      boundary = Digest::SHA1.hexdigest(Time.now.to_s)
+      ext = { 'Content-Type' => "multipart/form-data; boundary=#{boundary}" }
+      post_and_parse(uri, name, remote_key, query, ext)
     end
 
     def edit_entry(eid, opt)
@@ -739,6 +758,26 @@ module FriendFeed
       perform_entry_action(uri, eid, opt)
     end
 
+    def subscribe(fid, opt = {})
+      uri = uri("subscribe")
+      return nil unless uri
+      name, remote_key = get_credential(opt)
+      query = {}
+      query[:feed] = fid
+      query[:list] = opt[:list] if opt.key?(:list)
+      post_and_parse(uri, name, remote_key, query)
+    end
+
+    def unsubscribe(fid, opt = {})
+      uri = uri("unsubscribe")
+      return nil unless uri
+      name, remote_key = get_credential(opt)
+      query = {}
+      query[:feed] = fid
+      query[:list] = opt[:list] if opt.key?(:list)
+      post_and_parse(uri, name, remote_key, query)
+    end
+
     def hide_entry(eid, opt = {})
       uri = uri("hide")
       return nil unless uri
@@ -797,9 +836,9 @@ module FriendFeed
       parse_response(res)
     end
 
-    def post_and_parse(uri, name, remote_key, query = {})
+    def post_and_parse(uri, name, remote_key, query = {}, ext = {})
       res = client_sync(uri, name, remote_key) { |client|
-        post_request(client, uri, query)
+        post_request(client, uri, query, ext)
       }
       parse_response(res)
     end

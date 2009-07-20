@@ -250,148 +250,42 @@ __EOS__
     @auth
   end
 
-  def user_profiles
-    @user_profiles
-  end
-
-  def room_profiles
-    @room_profiles
-  end
-
-  def list_profiles
-    @list_profiles
-  end
-
-  def service_icon(service, link = nil)
-    icon_url = service.icon_url
-    name = service.name
-    link ||= service.profile_url
-    if service.icon_url and service.name
-      if link
-        label = "filter by #{name}"
-        link_to(service_icon_tag(service.icon_url, name, label), link)
-      else
-        service_icon_tag(service.icon_url, name, name)
-      end
-    end
-  end
-
-  def room_icon(service, room, link = nil)
-    if link
-      label = "filter by #{room}"
-    else
-      label = room
-    end
-    if service.internal?
-      icon = icon_tag(:group, label)
-    else
-      icon = service_icon_tag(service.icon_url, room, label)
-    end
-    link_to(icon, link)
+  def service_icon(via, link = nil)
+    nil # TODO
   end
 
   def entry_status(entry)
-    if entry.room
-      room_status(entry.room.nickname)
-    elsif entry.nickname
-      user_status(entry.nickname)
+    if entry.from_id
+      user_status(entry.from_id)
     else # imaginary user
       'private'
     end
   end
 
-  def list_name(nickname)
-    if found = user_lists(auth.name).find { |e| e.nickname == nickname }
-      found.name
+  def list_name(id)
+    if @feedlist
+      if found = @feedlist['lists'].find { |e| e.id == id }
+        found.name
+      end
+    elsif @feedinfo
+      if @feedinfo.id == id
+        @feedinfo.name
+      end
     end
   end
 
-  def room_profile(nickname)
-    room_profiles[nickname] ||= Room.ff_profile(auth, nickname)
+  def imaginary?(id)
+    /\A[0-9a-f]{32}\z/ =~ id
   end
 
-  def room_name(nickname)
-    room_profile(nickname)['name']
-  end
-
-  def room_status(nickname)
-    @room_status ||= {}
-    @room_status[nickname] ||= Room.ff_status_map(auth, [nickname])[nickname]
-  end
-
-  def room_description(nickname)
-    room_profile(nickname)['description']
-  end
-
-  def room_picture(nickname, size = 'small')
-    name = nickname
-    image_url = Room.ff_picture_url(nickname, size)
-    profile_image_tag(image_url, name, name)
-  end
-
-  def room_picture_with_link(nickname, size = 'small')
-    if image = room_picture(nickname, size)
-      url = room_profile(nickname)['url']
-      link_to(image, url)
-    end
-  end
-
-  def room_status_icon(nickname)
-    status_icon(room_status(nickname))
-  end
-
-  def room_members(nickname)
-    room_profile(nickname)['members'] || []
-  end
-
-  def list_profile(nickname)
-    list_profiles[nickname] ||= List.ff_profile(auth, nickname)
-  end
-
-  def list_rooms(nickname)
-    list_profile(nickname)['rooms'] || []
-  end
-
-  def list_users(nickname)
-    list_profile(nickname)['users'] || []
-  end
-
-  def imaginary?(nickname)
-    /\A[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\z/ =~ nickname
-  end
-
-  def user_profile(nickname)
-    user_profiles[nickname] ||= User.ff_profile(auth, nickname)
-  end
-
-  def user_name(nickname)
-    user_profile(nickname)['name']
-  end
-
-  def user_status(nickname)
-    @user_status ||= {}
-    @user_status[nickname] ||= User.ff_status_map(auth, [nickname])[nickname]
-  end
-
-  def user_picture(nickname, size = 'small')
-    return if imaginary?(nickname)
-    name = nickname
+  def picture(id, size = 'small')
+    return if imaginary?(id)
+    name = id
     if name == auth.name
       name = self_label
     end
-    image_url = User.ff_picture_url(nickname, size)
+    image_url = User.ff_picture_url(id, size)
     profile_image_tag(image_url, name, name)
-  end
-
-  def user_picture_with_link(nickname, size = 'small')
-    if image = user_picture(nickname, size)
-      url = user_profile(nickname)['profileUrl']
-      link_to(image, url)
-    end
-  end
-
-  def user_status_icon(nickname)
-    status_icon(user_status(nickname))
   end
 
   def status_icon(status)
@@ -400,29 +294,13 @@ __EOS__
     end
   end
 
-  def user_services(nickname)
-    user_profile(nickname)['services'] || []
-  end
-
-  def user_rooms(nickname)
-    user_profile(nickname)['rooms'] || []
-  end
-
-  def user_lists(nickname)
-    user_profile(nickname)['lists'] || []
-  end
-
-  def user_subscriptions(nickname)
-    user_profile(nickname)['subscriptions'] || []
-  end
-
   def user(user)
     return unless user
     name = user.name
-    if user.nickname == auth.name
+    if user.id == auth.name
       name = self_label
     end
-    link_to(h(name), :controller => 'entry', :action => 'list', :user => u(user.nickname || user.id))
+    link_to(h(name), :controller => 'entry', :action => 'list', :user => u(user.id))
   end
 
   def via(via, label = 'via')
@@ -559,5 +437,92 @@ __EOS__
       end
       EntryThread.update_checked_modified(auth, entry.id => entry.modified)
     end
+  end
+
+  def links_if_exists(label, enum, max = nil, &block)
+    if max and enum.size > max + 1
+      ary = enum[0, max].collect { |v| yield(v) }
+      ary << "... #{enum.size - max} more"
+    else
+      ary = enum.collect { |v| yield(v) }
+    end
+    str = ary.join(' ')
+    str = h(label) + str unless str.empty?
+    str
+  end
+
+  def menu_link(label, opt, html_opt = {}, &block)
+    if block.nil? or block.call
+      link_to(label, opt, html_opt)
+    else
+      label
+    end
+  end
+
+  def menu_label(label, accesskey = nil, reverse = false)
+    h("[#{label_with_accesskey(label, accesskey, reverse)}]")
+  end
+
+  def label_with_accesskey(label, accesskey = nil, reverse = false)
+    if accesskey and cell_phone?
+      if reverse
+        label + '.' + accesskey
+      else
+        accesskey + '.' + label
+      end
+    else
+      label
+    end
+  end
+
+  def subscribe_status
+    return unless @feedinfo
+    if @feedinfo.commands.include?('unsubscribe')
+      '(subscribed)'
+    elsif @feedinfo.commands.include?('subscribe')
+      '(not subscribed)'
+    end
+  end
+
+  def feed_name
+    return unless @feedinfo
+    @feedinfo.name
+  end
+
+  def feed_description
+    return unless @feedinfo
+    @feedinfo.description
+  end
+
+  def feed_subscriptions_user
+    return unless @feedinfo
+    max = F2P::Config.max_friend_list_num
+    if lists = @feedinfo.feeds || @feedinfo.subscriptions
+      lists = lists.find_all { |e| e.user? }
+      links_if_exists(lists.size.to_s + ' users: ', lists, max) { |e|
+        label = "[#{e.name}]"
+        link_to(h(label), link_entry_list(:user => e.id))
+      }
+    end
+  end
+
+  def feed_subscriptions_group
+    return unless @feedinfo
+    max = F2P::Config.max_friend_list_num
+    if lists = @feedinfo.feeds || @feedinfo.subscriptions
+      lists = lists.find_all { |e| e.group? }
+      links_if_exists(lists.size.to_s + ' groups: ', lists, max) { |e|
+        label = "[#{e.name}]"
+        link_to(h(label), link_entry_list(:room => e.id))
+      }
+    end
+  end
+
+  def link_entry_action(action, opt = {})
+    { :controller => 'entry', :action => action }.merge(opt)
+  end
+
+  def link_entry_list(opt = {})
+    link_entry_action('list', opt)
   end
 end

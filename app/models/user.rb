@@ -1,4 +1,5 @@
 require 'encrypt'
+require 'service'
 
 
 class User < ActiveRecord::Base
@@ -35,31 +36,40 @@ class User < ActiveRecord::Base
       "http://friendfeed.com/#{user}/picture?size=#{size}"
     end
 
-    def ff_profile(auth, user)
-      convert_profile(ff_client.get_profile(auth.name, auth.remote_key, user) || {})
+    def ff_feedlist(auth)
+      convert_feedlist(ff_client.feedlist(:name => auth.name, :remote_key => auth.remote_key) || {})
     end
 
-    def ff_status_map(auth, users)
-      ff_client.get_user_status(auth.name, auth.remote_key, users)
+    def ff_feedinfo(auth, feedid)
+      Feedinfo[ff_client.feedinfo(feedid, :name => auth.name, :remote_key => auth.remote_key) || {}]
+    end
+
+    def ff_subscribe(auth, feed, list = nil)
+      opt = { :name => auth.name, :remote_key => auth.remote_key }
+      opt[:list] = list if list
+      ff_client.subscribe(feed, opt)
+    end
+
+    def ff_unsubscribe(auth, feed, list = nil)
+      opt = { :name => auth.name, :remote_key => auth.remote_key }
+      opt[:list] = list if list
+      ff_client.unsubscribe(feed, opt)
     end
 
   private
 
-    def convert_profile(profile)
-      profile = profile.dup
-      if list = profile['services']
-        profile['services'] = sort_by_name(list.map { |e| Service[e] })
+    def convert_feedlist(feedlist)
+      feedlist = feedlist.dup
+      if list = feedlist['groups']
+        feedlist['groups'] = sort_by_name(list.map { |e| From[e] })
       end
-      if list = profile['lists']
-        profile['lists'] = sort_by_name(list.map { |e| List[e] })
+      if list = feedlist['searches']
+        feedlist['searches'] = sort_by_name(list.map { |e| From[e] })
       end
-      if list = profile['rooms']
-        profile['rooms'] = sort_by_name(list.map { |e| Room[e] })
+      if list = feedlist['lists']
+        feedlist['lists'] = sort_by_name(list.map { |e| From[e] })
       end
-      if list = profile['subscriptions']
-        profile['subscriptions'] = sort_by_name(list.map { |e| EntryUser[e] })
-      end
-      profile
+      feedlist
     end
 
     def sort_by_name(lists)

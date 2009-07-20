@@ -4,15 +4,15 @@ require 'hash_utils'
 class Like
   include HashUtils
 
-  attr_accessor :user
   attr_accessor :date
+  attr_accessor :from
 
   def initialize(hash)
     initialize_with_hash(hash, 'date')
-    @user = EntryUser[hash['user']]
+    @from = From[hash['from']]
   end
 
-  def nickname
-    user.nickname
+  def from_id
+    from.id
   end
 end

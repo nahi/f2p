@@ -1,7 +1,7 @@
 <%- form_tag({:action => 'list'}, {:method => 'GET', :name => 'search'}) do -%>
   <p>
     keyword: <%= text_field_tag('query', ctx.query, :placeholder => 'keyword') %><br />
-    from group: <%= room_select_tag('room', ctx.room) %><br />
+    from group: <%= group_select_tag('room', ctx.room) %><br />
     from friends of: <%= text_field_tag('friends', ctx.friends) %><br />
     from user: <%= text_field_tag('user', ctx.user) %><br />
     from service: <%= text_field_tag('service', ctx.service) %><br />

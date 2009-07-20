@@ -12,7 +12,7 @@ class EntryController < ApplicationController
     attr_accessor :eids
     attr_accessor :query
     attr_accessor :user
-    attr_accessor :list
+    attr_accessor :feed
     attr_accessor :room
     attr_accessor :friends
     attr_accessor :like
@@ -34,7 +34,7 @@ class EntryController < ApplicationController
     def initialize(auth)
       @auth = auth
       @viewname = nil
-      @eid = @eids = @query = @user = @list = @room = @friends = @like = @comment = @link = @label = @service = @start = @num = @likes = @comments = nil
+      @eid = @eids = @query = @user = @feed = @room = @friends = @like = @comment = @link = @label = @service = @start = @num = @likes = @comments = nil
       @fold = false
       @inbox = false
       @home = true
@@ -45,11 +45,11 @@ class EntryController < ApplicationController
     def parse(param, setting)
       return unless param
       @param = param
-      @eid = param(:id)
-      @eids = param(:ids).split(',') if param(:ids)
+      @eid = param(:eid)
+      @eids = param(:eids).split(',') if param(:eids)
       @query = param(:query)
       @user = param(:user)
-      @list = param(:list)
+      @feed = param(:feed)
       @room = param(:room)
       @friends = param(:friends)
       @like = param(:like)
@@ -63,7 +63,7 @@ class EntryController < ApplicationController
       @comments = intparam(:comments)
       @fold = param(:fold) != 'no'
       @inbox = false
-      @home = !(@eid or @eids or @inbox or @query or @like or @comment or @user or @friends or @list or @room or @link or @label)
+      @home = !(@eid or @eids or @inbox or @query or @like or @comment or @user or @friends or @feed or @room or @link or @label)
     end
 
     def single?
@@ -72,6 +72,18 @@ class EntryController < ApplicationController
 
     def list?
       !single?
+    end
+
+    def feedid
+      user_for || room_for || feed || 'home'
+    end
+
+    def profile_for
+      user_for || room_for
+    end
+
+    def direct_message?
+      feedid == 'filter/direct'
     end
 
     def user_only?
@@ -93,9 +105,9 @@ class EntryController < ApplicationController
         :merge_service => false
       }
       if @eid
-        opt.merge(:id => @eid)
+        opt.merge(:eid => @eid)
       elsif @eids
-        opt.merge(:ids => @eids, :merge_entry => false)
+        opt.merge(:eids => @eids, :merge_entry => false)
       elsif @link
         opt.merge(:link => @link, :query => @query, :merge_service => true)
       elsif @query
@@ -108,8 +120,8 @@ class EntryController < ApplicationController
         opt.merge(:user => @user)
       elsif @friends
         opt.merge(:friends => @friends, :merge_service => true)
-      elsif @list
-        opt.merge(:list => @list, :merge_service => true)
+      elsif @feed
+        opt.merge(:feed => @feed, :merge_service => true)
       elsif @room
         opt.merge(:room => @room, :merge_service => true, :merge_entry => (@room != '*'))
       elsif @inbox
@@ -129,7 +141,7 @@ class EntryController < ApplicationController
         :likes => @likes,
         :comments => @comments,
         :user => @user,
-        :list => @list,
+        :feed => @feed,
         :room => @room,
         :friends => @friends,
         :like => @like,
@@ -150,8 +162,12 @@ class EntryController < ApplicationController
       user != 'me' ? user : nil
     end
 
+    def list_for
+      /\Alist\b/ =~ @feed ? @feed : nil
+    end
+
     def link_opt(opt = {})
-      opt.merge(:action => default_action, :id => @eid)
+      opt.merge(:action => default_action, :eid => @eid)
     end
 
   private
@@ -177,9 +193,6 @@ class EntryController < ApplicationController
 
   def initialize(*arg)
     super
-    @user_profiles = {}
-    @room_profiles = {}
-    @list_profiles = {}
   end
 
   verify :only => :list,
@@ -191,7 +204,7 @@ class EntryController < ApplicationController
     @ctx = restore_ctx { |ctx|
       ctx.parse(params, @setting)
     }
-    with_profile_cache(@ctx) do
+    with_feedinfo(@ctx.feedid, @ctx) do
       @threads = find_entry_thread(find_opt)
     end
     initialize_checked_modified
@@ -221,7 +234,7 @@ class EntryController < ApplicationController
       ctx.fold = param(:fold) != 'no'
     }
     retry_times = @ctx.start.zero? ? 0 : F2P::Config.max_skip_empty_inbox_pages
-    with_profile_cache(@ctx) do
+    with_feedinfo(@ctx.feedid, @ctx) do
       @threads = find_entry_thread(find_opt)
     end
     retry_times.times do
@@ -254,13 +267,13 @@ class EntryController < ApplicationController
 
   verify :only => :show,
           :method => :get,
-          :params => [:id],
+          :params => [:eid],
           :add_flash => {:error => 'verify failed'},
           :redirect_to => {:action => 'inbox'}
 
   def show
     @ctx = EntryContext.new(auth)
-    @ctx.eid = param(:id)
+    @ctx.eid = param(:eid)
     @ctx.comment = param(:comment)
     @ctx.moderate = param(:moderate)
     @ctx.home = false
@@ -271,7 +284,7 @@ class EntryController < ApplicationController
     if pin = param(:pin)
       pin_entry(pin)
     end
-    with_profile_cache(@ctx) do
+    with_feedinfo(@ctx.feedid, @ctx) do
       opt = find_opt()
       # allow to use cache except self reloading
       if flash[:show_reload_detection] != @ctx.eid and !updated_id_in_flash
@@ -279,7 +292,7 @@ class EntryController < ApplicationController
       end
       @threads = find_entry_thread(opt)
       if sess_ctx
-        # pin/unpin redirect caused :id set.
+        # pin/unpin redirect caused :eid set.
         ctx = sess_ctx.dup
         ctx.eid = nil
         opt = find_opt(ctx)
@@ -302,7 +315,9 @@ class EntryController < ApplicationController
   def new
     @ctx = EntryContext.new(auth)
     @ctx.viewname = 'post new entry'
-    @ctx.room = param(:room)
+    @to_lines = 1
+    @to = []
+    @cc = true
     @body = param(:body)
     @link = param(:link)
     @with_form = param(:with_form)
@@ -327,6 +342,7 @@ class EntryController < ApplicationController
         @address = @placemark.address
       end
     end
+    @feedinfo = User.ff_feedinfo(auth, auth.name)
   end
 
   verify :only => :reshare,
@@ -340,7 +356,7 @@ class EntryController < ApplicationController
     @ctx.viewname = 'reshare entry'
     @ctx.room = param(:room)
     @eid = param(:eid)
-    opt = create_opt(:id => @eid)
+    opt = create_opt(:eid => @eid)
     t = find_entry_thread(opt).first
     if t.nil?
       redirect_to_list
@@ -348,13 +364,15 @@ class EntryController < ApplicationController
     end
     @entry = t.root
     @link = @entry.link
-    @link_title = %Q("#{@entry.title}")
+    @link_title = %Q("#{@entry.body}")
+    @feedinfo = User.ff_feedinfo(auth, auth.name)
   end
 
   def search
     @ctx = EntryContext.new(auth)
     @ctx.viewname = 'search entries'
     @ctx.parse(params, @setting)
+    @feedinfo = User.ff_feedinfo(auth, auth.name)
   end
 
   verify :only => :add,
@@ -365,10 +383,15 @@ class EntryController < ApplicationController
   def add
     @ctx = EntryContext.new(auth)
     @ctx.viewname = 'post new entry' # setting for address search result
-    @ctx.room = param(:room)
     if ctx = session[:ctx]
       @ctx.inbox = ctx.inbox
     end
+    @to_lines = intparam(:to_lines)
+    @to = []
+    @to_lines.times do |idx|
+      @to[idx] = param("to_#{idx}")
+    end
+    @cc = param(:cc)
     @body = param(:body)
     link_title = param(:link_title)
     @link = param(:link)
@@ -381,17 +404,24 @@ class EntryController < ApplicationController
     @address = param(:address)
     @setting.google_maps_zoom = intparam(:zoom) if intparam(:zoom)
     @placemark = nil
-    if param(:commit) == 'search'
+    case param(:commit)
+    when 'search'
       do_location_search
+      @feedinfo = User.ff_feedinfo(auth, auth.name)
+      render :action => 'new'
+      return
+    when 'more'
+      @to_lines += 1
+      @feedinfo = User.ff_feedinfo(auth, auth.name)
       render :action => 'new'
       return
     end
-    opt = create_opt(:room => @ctx.room)
+    opt = create_opt(:to => @to.compact)
+    opt[:to] << 'me' if @cc == 'checked'
     if @body and @lat and @long and @address
+      opt[:geo] = "#{@lat},#{@long}"
       generator = GoogleMaps::URLGenerator.new
-      image_url = generator.staticmap_url(F2P::Config.google_maps_maptype, @lat, @long, :zoom => @setting.google_maps_zoom, :width => F2P::Config.google_maps_width, :height => F2P::Config.google_maps_height)
       image_link = generator.link_url(@lat, @long, @address)
-      (opt[:images] ||= []) << [image_url, image_link]
       @body += " ([map] #{@address})"
       if !@link and !file
         opt[:link] = image_link
@@ -409,33 +439,58 @@ class EntryController < ApplicationController
       opt[:body] = @body
     end
     if file
-      if !file.content_type or /\Aimage\//i !~ file.content_type
-        render :action => 'new'
-        return
-      end
-      (opt[:files] ||= []) << [file]
+      (opt[:file] ||= []) << file
     end
     unless opt[:body]
+      @feedinfo = User.ff_feedinfo(auth, auth.name)
       render :action => 'new'
       return
     end
-    id = Entry.create(opt)
+    entry = Entry.create(opt)
+    unless entry
+      msg = 'Posting failure.'
+      if opt[:file]
+        msg += ' Unsupported media type?'
+      else
+        msg += ' Try later.'
+      end
+      flash[:message] = msg
+      @feedinfo = User.ff_feedinfo(auth, auth.name)
+      render :action => 'new'
+      return
+    end
     unpin_entry(reshared_from, false)
     if session[:ctx]
       session[:ctx].reset_for_new
     end
-    flash[:added_id] = id
+    flash[:added_id] = entry.id
     redirect_to_list
+  end
+
+  verify :only => :update,
+          :method => [:post],
+          :params => [:eid, :body],
+          :add_flash => {:error => 'verify failed'},
+          :redirect_to => {:action => 'inbox'}
+
+  def update
+    id = param(:eid)
+    body = param(:body)
+    if entry = Entry.update(create_opt(:eid => id, :body => body))
+      flash[:updated_id] = entry.id
+      flash[:allow_cache] = true
+    end
+    redirect_to_entry_or_list
   end
 
   verify :only => :delete,
           :method => :get,
-          :params => [:id],
+          :params => [:eid],
           :add_flash => {:error => 'verify failed'},
           :redirect_to => {:action => 'inbox'}
 
   def delete
-    id = param(:id)
+    id = param(:eid)
     comment = param(:comment)
     do_delete(id, comment, false)
     flash[:deleted_id] = id
@@ -449,12 +504,12 @@ class EntryController < ApplicationController
 
   verify :only => :undelete,
           :method => :get,
-          :params => [:id],
+          :params => [:eid],
           :add_flash => {:error => 'verify failed'},
           :redirect_to => {:action => 'inbox'}
 
   def undelete
-    id = param(:id)
+    id = param(:eid)
     comment = param(:comment)
     do_delete(id, comment, true)
     flash[:updated_id] = id
@@ -463,23 +518,24 @@ class EntryController < ApplicationController
 
   verify :only => :add_comment,
           :method => :post,
-          :params => [:id, :body],
+          :params => [:eid, :body],
           :add_flash => {:error => 'verify failed'},
           :redirect_to => {:action => 'inbox'}
 
   def add_comment
-    id = param(:id)
+    id = param(:eid)
     comment = param(:comment)
     body = param(:body)
     if comment
-      comment_id = Entry.edit_comment(create_opt(:id => id, :comment => comment, :body => body))
-      flash[:updated_id] = id
-      flash[:updated_comment] = comment_id
+      if c = Entry.edit_comment(create_opt(:comment => comment, :body => body))
+        flash[:updated_id] = id
+        flash[:updated_comment] = c.id
+      end
     else
-      comment_id = Entry.add_comment(create_opt(:id => id, :body => body))
+      c = Entry.add_comment(create_opt(:eid => id, :body => body))
       unpin_entry(id)
       flash[:added_id] = id
-      flash[:added_comment] = comment_id
+      flash[:added_comment] = c.id
       flash[:allow_cache] = true
     end
     redirect_to_entry_or_list
@@ -487,14 +543,14 @@ class EntryController < ApplicationController
 
   verify :only => :like,
           :method => :get,
-          :params => [:id],
+          :params => [:eid],
           :add_flash => {:error => 'verify failed'},
           :redirect_to => {:action => 'inbox'}
 
   def like
-    id = param(:id)
+    id = param(:eid)
     if id
-      Entry.add_like(create_opt(:id => id))
+      Entry.add_like(create_opt(:eid => id))
     end
     flash[:updated_id] = id
     flash[:allow_cache] = true
@@ -503,14 +559,14 @@ class EntryController < ApplicationController
 
   verify :only => :unlike,
           :method => :get,
-          :params => [:id],
+          :params => [:eid],
           :add_flash => {:error => 'verify failed'},
           :redirect_to => {:action => 'inbox'}
 
   def unlike
-    id = param(:id)
+    id = param(:eid)
     if id
-      Entry.delete_like(create_opt(:id => id))
+      Entry.delete_like(create_opt(:eid => id))
     end
     flash[:updated_id] = id
     flash[:allow_cache] = true
@@ -519,14 +575,14 @@ class EntryController < ApplicationController
 
   verify :only => :hide,
           :method => :get,
-          :params => [:id],
+          :params => [:eid],
           :add_flash => {:error => 'verify failed'},
           :redirect_to => {:action => 'inbox'}
 
   def hide
-    id = param(:id)
+    id = param(:eid)
     if id
-      Entry.hide(create_opt(:id => id))
+      Entry.hide(create_opt(:eid => id))
     end
     flash[:updated_id] = id
     redirect_to_list
@@ -534,12 +590,12 @@ class EntryController < ApplicationController
 
   verify :only => :pin,
           :method => :get,
-          :params => [:id],
+          :params => [:eid],
           :add_flash => {:error => 'verify failed'},
           :redirect_to => {:action => 'inbox'}
 
   def pin
-    if id = param(:id)
+    if id = param(:eid)
       pin_entry(id)
     end
     flash[:allow_cache] = true
@@ -548,12 +604,12 @@ class EntryController < ApplicationController
 
   verify :only => :unpin,
           :method => :get,
-          :params => [:id],
+          :params => [:eid],
           :add_flash => {:error => 'verify failed'},
           :redirect_to => {:action => 'inbox'}
 
   def unpin
-    if id = param(:id)
+    if id = param(:eid)
       unpin_entry(id)
     end
     flash[:allow_cache] = true
@@ -566,7 +622,8 @@ private
     updated_id = updated_id_in_flash()
     ctx.find_opt.merge(
       :allow_cache => flash[:allow_cache],
-      :updated_id => updated_id
+      :updated_id => updated_id,
+      :fof => (@setting.disable_fof ? nil : 1)
     )
   end
 
@@ -576,14 +633,14 @@ private
 
   def pin_entry(id)
     if id
-      Entry.add_pin(create_opt(:id => id))
+      Entry.add_pin(create_opt(:eid => id))
       clear_checked_modified(id)
     end
   end
 
   def unpin_entry(id, commit = true)
     if id
-      Entry.delete_pin(create_opt(:id => id))
+      Entry.delete_pin(create_opt(:eid => id))
       commit_checked_modified(id) if commit
     end
   end
@@ -611,9 +668,9 @@ private
 
   def do_delete(id, comment = nil, undelete = false)
     if comment and !comment.empty?
-      Entry.delete_comment(create_opt(:id => id, :comment => comment, :undelete => undelete))
+      Entry.delete_comment(create_opt(:eid => id, :comment => comment, :undelete => undelete))
     else
-      Entry.delete(create_opt(:id => id, :undelete => undelete))
+      Entry.delete(create_opt(:eid => id, :undelete => undelete))
     end
   end
 
@@ -660,26 +717,18 @@ private
     EntryThread.find(opt) || []
   end
 
-  def with_profile_cache(ctx)
+  def with_feedinfo(feedid, ctx)
     tasks = []
-    if user = ctx.user_for
-      tasks << Task.run {
-        @user_profiles[user] = User.ff_profile(auth, user)
-      }
-    end
-    if room = ctx.room_for
-      tasks << Task.run {
-        @room_profiles[room] = Room.ff_profile(auth, room)
-      }
-    end
-    if list = ctx.list
-      tasks << Task.run {
-        @list_profiles[list] = List.ff_profile(auth, list)
-      }
-    end
+    tasks << Task.run {
+      @feedlist = User.ff_feedlist(auth)
+    }
+    tasks << Task.run {
+      @feedinfo = User.ff_feedinfo(auth, feedid)
+    }
     yield
+    # just pull the result
     tasks.each do |task|
-      task.result # just pull the result
+      task.result
     end
   end
 end

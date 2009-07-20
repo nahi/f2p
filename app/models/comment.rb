@@ -3,36 +3,37 @@ require 'hash_utils'
 
 class Comment
   include HashUtils
+  EMPTY = [].freeze
 
   attr_accessor :id
-  attr_accessor :body
   attr_accessor :date
-  attr_accessor :user
+  attr_accessor :body
+  attr_accessor :from
   attr_accessor :via
+  attr_accessor :commands
+  attr_accessor :clipped
 
   attr_accessor :index
   attr_accessor :entry
   attr_accessor :view_links
 
   def initialize(hash)
-    initialize_with_hash(hash, 'id', 'body', 'date')
-    @user = EntryUser[hash['user']]
+    initialize_with_hash(hash, 'id', 'date', 'commands', 'clipped')
+    @body = hash['rawBody']
+    @commands ||= EMPTY
+    @from = From[hash['from']]
     @via = Via[hash['via']]
     @index = nil
     @entry = nil
     @view_links = nil
   end
 
-  def user_id
-    user.id
+  def from_id
+    from.id
   end
 
-  def nickname
-    user.nickname
-  end
-
-  def by_user(nickname)
-    self.nickname == nickname
+  def by_user(id)
+    self.from_id == id
   end
 
   def last?
@@ -40,7 +41,7 @@ class Comment
   end
 
   def posted_with_entry?
-    self.entry.nickname == self.nickname and (entry.published_at - self.date_at).abs < 30.seconds
+    self.entry.from_id == self.from_id and (entry.date_at - self.date_at).abs < 30.seconds
   end
 
   def view_unread

@@ -99,12 +99,12 @@ class EntryThread
     end
 
     def fetch_entries(auth, opt)
-      if opt[:id]
+      if opt[:eid]
         fetch_single_entry_as_array(auth, opt)
       else
         entries = fetch_list_entries(auth, opt)
         if updated_id = opt[:updated_id]
-          entry = wrap(get_entry(auth, :id => updated_id)).first
+          entry = wrap([get_entry(auth, :eid => updated_id)]).first
           if entry
             update_cache_entry(auth, entry)
             if entries.find { |e| e.id == updated_id }
@@ -121,22 +121,20 @@ class EntryThread
     def fetch_single_entry_as_array(auth, opt)
       if opt[:allow_cache]
         if cache = get_cached_entries(auth)
-          if found = cache.find { |e| e.id == opt[:id] && e.id != opt[:updated_id] }
-            logger.info("[cache] entry cache found for #{opt[:id]}")
+          if found = cache.find { |e| e.id == opt[:eid] && e.id != opt[:updated_id] }
+            logger.info("[cache] entry cache found for #{opt[:eid]}")
             return [found]
           end
         end
       end
-      wrap(Task.run { get_entry(auth, opt) }.result)
+      wrap(Task.run { [get_entry(auth, opt)] }.result)
     end
 
     def fetch_list_entries(auth, opt)
       cache_entries(auth, opt) {
         if opt[:inbox]
-          start = opt[:start]
-          num = opt[:num]
-          wrap(Task.run { get_inbox_entries(auth, start, num) }.result)
-        elsif opt[:ids]
+          wrap(Task.run { get_feed(auth, 'home', opt) }.result)
+        elsif opt[:eids]
           wrap(Task.run { get_entries(auth, opt) }.result)
         elsif opt[:link]
           if opt[:query]
@@ -152,28 +150,22 @@ class EntryThread
             merged = merged.inject({}) { |r, e| r[e.id] = e; r }.values
           end
           merged
+        elsif opt[:feed]
+          wrap(Task.run { get_feed(auth, opt[:feed], opt) }.result)
         elsif opt[:query]
           wrap(Task.run { search_entries(auth, opt) }.result)
-        elsif opt[:like] == 'likes'
-          wrap(Task.run { get_likes(auth, opt) }.result)
         elsif opt[:like] == 'liked'
           wrap(Task.run { get_liked(auth, opt) }.result)
-        elsif opt[:comment] == 'comments'
-          wrap(Task.run { get_comments(auth, opt) }.result)
-        elsif opt[:comment] == 'discussion'
-          wrap(Task.run { get_discussion(auth, opt) }.result)
         elsif opt[:user]
-          wrap(Task.run { get_user_entries(auth, opt) }.result)
+          wrap(Task.run { get_feed(auth, opt[:user], opt) }.result)
         elsif opt[:list]
-          wrap(Task.run { get_list_entries(auth, opt) }.result)
+          wrap(Task.run { get_feed(auth, opt[:list], opt) }.result)
         elsif opt[:label] == 'pin'
           wrap(Task.run { pinned_entries(auth, opt) }.result)
         elsif opt[:room]
-          wrap(Task.run { get_room_entries(auth, opt) }.result)
-        elsif opt[:friends]
-          wrap(Task.run { get_friends_entries(auth, opt) }.result)
+          wrap(Task.run { get_feed(auth, opt[:room], opt) }.result)
         else
-          wrap(Task.run { get_home_entries(auth, opt) }.result)
+          wrap(Task.run { get_feed(auth, 'home', opt) }.result)
         end
       }
     end
@@ -300,17 +292,17 @@ class EntryThread
       )
       pinned_id = pinned.map { |e| e.eid }
       if opt[:service]
-        entries = get_entries(auth, :ids => pinned_id).find_all { |e|
+        entries = get_entries(auth, :eids => pinned_id).find_all { |e|
           e['service'] && (opt[:service] == e['service']['id'])
         }
         entries || []
       elsif opt[:room]
-        entries = get_entries(auth, :ids => pinned_id).find_all { |e|
+        entries = get_entries(auth, :eids => pinned_id).find_all { |e|
           e['room'] && (opt[:room] == e['room']['nickname'])
         }
         entries || []
       elsif pinned_id
-        entries = get_entries(auth, :ids => pinned_id)
+        entries = get_entries(auth, :eids => pinned_id)
         return nil unless entries
         map = entries.inject({}) { |r, e| r[e['id']] = e; r }
         pinned_id.map { |eid|
@@ -319,7 +311,7 @@ class EntryThread
           else
             pin = pinned.find { |e| e.eid == eid }
             date = pin ? pin.created_at.xmlschema : nil
-            {'id' => eid, 'updated' => date, 'published' => date, '__f2p_orphan' => true}
+            {'id' => eid, 'date' => date, '__f2p_orphan' => true}
           end
         }
       end
@@ -333,46 +325,23 @@ class EntryThread
       search[:friends] = opt[:friends]
       search[:likes] = opt[:likes] if opt[:likes]
       search[:comments] = opt[:comments] if opt[:comments]
-      ff_client.search_entries(auth.name, auth.remote_key, query, search)
+      feed = ff_client.search(query, search.merge(auth_opt(auth)))
+      feed['entries'] if feed and feed.key?('entries')
     end
 
-    def get_inbox_entries(auth, start, num)
-      ff_client.get_inbox_entries(auth.name, auth.remote_key, start, num)
-    end
-
-    def get_home_entries(auth, opt)
-      ff_client.get_home_entries(auth.name, auth.remote_key, filter_opt(opt))
-    end
-
-    def get_user_entries(auth, opt)
-      user = opt[:user]
-      ff_client.get_user_entries(auth.name, auth.remote_key, user, filter_opt(opt))
-    end
-
-    def get_list_entries(auth, opt)
-      list = opt[:list]
-      ff_client.get_list_entries(auth.name, auth.remote_key, list, filter_opt(opt))
-    end
-
-    def get_room_entries(auth, opt)
-      room = opt[:room]
-      room = nil if room == '*'
-      ff_client.get_room_entries(auth.name, auth.remote_key, room, filter_opt(opt))
-    end
-
-    def get_friends_entries(auth, opt)
-      friends = opt[:friends]
-      ff_client.get_friends_entries(auth.name, auth.remote_key, friends, filter_opt(opt))
+    def get_feed(auth, feedid, opt)
+      feed = ff_client.feed(feedid, filter_opt(opt).merge(auth_opt(auth)))
+      feed['entries'] if feed and feed.key?('entries')
     end
 
     def get_link_entries(auth, opt)
       link = opt[:link]
-      ff_client.get_url_entries(auth.name, auth.remote_key, link, filter_opt(opt))
-    end
-
-    def get_likes(auth, opt)
-      user = opt[:user]
-      ff_client.get_likes(auth.name, auth.remote_key, user, filter_opt(opt))
+      query = filter_opt(opt)
+      query[:url] = link
+      query[:subscribed] = opt[:subscribed]
+      query[:from] = opt[:from]
+      feed = ff_client.url(query.merge(auth_opt(auth)))
+      feed['entries'] if feed and feed.key?('entries')
     end
 
     def get_liked(auth, opt)
@@ -381,27 +350,19 @@ class EntryThread
       search.delete(:user)
       search[:from] = user
       search[:likes] = 1
-      ff_client.search_entries(auth.name, auth.remote_key, '', search)
-    end
-
-    def get_comments(auth, opt)
-      user = opt[:user]
-      ff_client.get_comments(auth.name, auth.remote_key, user, filter_opt(opt))
-    end
-
-    def get_discussion(auth, opt)
-      user = opt[:user]
-      ff_client.get_discussion(auth.name, auth.remote_key, user, filter_opt(opt))
+      feed = ff_client.search('', search.merge(auth_opt(auth)))
+      feed['entries'] if feed and feed.key?('entries')
     end
 
     def get_entry(auth, opt)
-      id = opt[:id]
-      ff_client.get_entry(auth.name, auth.remote_key, id)
+      eid = opt[:eid]
+      ff_client.entry(eid, auth_opt(auth).merge(:raw => 1))
     end
 
     def get_entries(auth, opt)
-      ids = opt[:ids]
-      ff_client.get_entries(auth.name, auth.remote_key, ids)
+      eids = opt[:eids]
+      feed = ff_client.entries(eids, auth_opt(auth).merge(:raw => 1))
+      feed['entries'] if feed and feed.key?('entries')
     end
 
     def filter_entries(auth, opt, entries)
@@ -417,21 +378,28 @@ class EntryThread
       end
       if opt[:inbox]
         entries = sort_by_detection(entries)
-      elsif opt[:ids]
-        entries = sort_by_ids(entries, opt[:ids])
+      elsif opt[:eids]
+        entries = sort_by_ids(entries, opt[:eids])
+      elsif sorted?(opt)
+        # do nothing
       else
         entries = sort_by_modified(entries)
       end
       if opt[:link]
         # You comes first
-        entries = entries.partition { |e| e.nickname == auth.name }.flatten
+        entries = entries.partition { |e| e.from_id == auth.name }.flatten
       end
       entries
     end
 
+    def sorted?(opt)
+      /\bsummary\b/ =~ opt[:feed]
+    end
+
     def filter_opt(opt)
       {
-        :service => opt[:service],
+        :raw => 1,
+        :fof => opt[:fof],
         :start => opt[:start],
         :num => opt[:num]
       }
@@ -439,6 +407,13 @@ class EntryThread
 
     def ff_client
       ApplicationController.ff_client
+    end
+
+    def auth_opt(auth)
+      {
+        :name => auth.name,
+        :remote_key => auth.remote_key
+      }
     end
 
     def wrap(entries)
@@ -499,7 +474,7 @@ class EntryThread
           pre = entry
           entry_tag = tag(entry, opt)
           buf.each do |e|
-            if entry_tag == tag(e, opt) and ((e.published_at - pre.published_at).abs < F2P::Config.service_grouping_threashold) and !kinds.include?(e)
+            if entry_tag == tag(e, opt) and ((e.date_at - pre.date_at).abs < F2P::Config.service_grouping_threashold) and !kinds.include?(e)
               kinds << (pre = e)
               # too agressive?
               #similar_entries(buf, e).each do |e2|
@@ -519,13 +494,13 @@ class EntryThread
 
     def sort_by_published(entries)
       entries.sort_by { |e|
-        -e.published_at.to_i
+        -e.date_at.to_i
       }
     end
 
     def tag(entry, opt)
-      t = [entry.user_id, entry.room ? entry.room.id : nil]
-      t << entry.service.id unless opt[:merge_service]
+      t = [entry.from_id]
+      t << entry.via.name if entry.via and !opt[:merge_service]
       t
     end
 
