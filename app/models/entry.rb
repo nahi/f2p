@@ -144,8 +144,11 @@ class Entry
   attr_accessor :view_map
 
   def initialize(hash)
-    initialize_with_hash(hash, 'id', 'url', 'link', 'date', 'commands')
-    @link = @url
+    initialize_with_hash(hash, 'id', 'url', 'date', 'commands')
+    @link = hash['rawLink']
+    if %r(\Ahttp://friendfeed.com/e/) =~ @link
+      @link = nil
+    end
     @commands ||= EMPTY
     @twitter_username = nil
     @twitter_reply_to = nil
