@@ -132,7 +132,8 @@ private
   end
 
   def set_timezone(tz)
-    session[:timezone] = tz
+    @setting = session[:setting] ||= Setting.new
+    @setting.timezone = tz
   end
 
   def logout

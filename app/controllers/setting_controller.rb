@@ -8,6 +8,7 @@ class SettingController < ApplicationController
   end
 
   def index
+    @timezone = param(:timezone) || @setting.timezone
     @font_size = (param(:font_size) || @setting.font_size).to_i
     @entries_in_page = (param(:entries_in_page) || @setting.entries_in_page).to_i
     @entries_in_thread = (param(:entries_in_thread) || @setting.entries_in_thread).to_i
@@ -24,6 +25,7 @@ class SettingController < ApplicationController
   def update
     original_value = {}
     [
+      :timezone,
       :font_size,
       :entries_in_page,
       :entries_in_thread,
@@ -50,6 +52,7 @@ class SettingController < ApplicationController
       instance_variable_set('@' + key.to_s, param(key) == 'checked')
       @setting.send(key.to_s + '=', param(key) == 'checked')
     end
+    @setting.timezone = param(:timezone)
     @setting.link_type = nil
     if param(:link_type_gwt) == 'checked'
       @setting.link_type = 'gwt'

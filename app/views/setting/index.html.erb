@@ -4,6 +4,7 @@
 <p>Settings used in this session.</p>
 <%- form_tag({:action => 'update'}, {:name => 'post'}) do -%>
   <p>
+    timezone: <%= timezone_select_tag('timezone', @timezone) %><br />
     font size: <%= text_field_tag('font_size', @font_size) %><br />
     entries in page: <%= text_field_tag('entries_in_page', @entries_in_page) %><br />
     comments in list view: <%= text_field_tag('entries_in_thread', @entries_in_thread) %><br />

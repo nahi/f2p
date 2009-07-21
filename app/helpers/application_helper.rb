@@ -1,9 +1,12 @@
 # Methods added to this helper will be available to all templates in the application.
 
 require 'time'
+require 'xsd/datatypes'
 
 
 module ApplicationHelper
+  include XSD::XSDDateTimeImpl
+
   APPNAME = 'f2p'
   DATE_THRESHOLD = (24 - 8).hours
   YEAR_THRESHOLD = 1.year - 2.days
@@ -19,7 +22,7 @@ module ApplicationHelper
     'comment_add' => 'comment_add.png',
     'comment_edit' => 'comment_edit.png',
     'delete' => 'delete.png',
-    'more' => 'add.png',
+    #'more' => 'add.png',
     'write' => 'pencil_add.png',
     'settings' => 'cog_edit.png',
     'search' => 'find.png',
@@ -41,6 +44,7 @@ module ApplicationHelper
     'private' => 'shield.png',
     'hide' => 'sound_mute.png',
   }
+  OAUTH_IMAGE_URL = 'http://friendfeed.com/static/images/sign-in-with-friendfeed.png'
 
   def jpmobile?
     @controller.request.respond_to?(:mobile)
@@ -76,9 +80,9 @@ module ApplicationHelper
 
   def inline_stylesheet
     return if i_mode?
-    h1_size = setting.font_size + 1
-    h2_size = setting.font_size
-    body_size = setting.font_size
+    h1_size = setting ? setting.font_size + 1 : 11
+    h2_size = setting ? setting.font_size : 10
+    body_size = setting ? setting.font_size : 10
     content = <<__EOS__
   h1 { font-size: #{h1_size}pt; }
   h2 { font-size: #{h2_size}pt; }
@@ -100,7 +104,7 @@ module ApplicationHelper
   .older { color: #008; }
   .comment { color: #666; }
   .comment-block {
-    margin-bottom: 1.5ex;
+    margin-bottom: 0.6ex;
   }
   .comment-block p { }
   .inbox { font-weight: bold; }
@@ -109,11 +113,11 @@ module ApplicationHelper
     border-top: 1px solid #ccc;
     border-bottom: 1px solid #ccc;
     padding-top: 0.5ex;
-    padding-bottom: 1.0ex;
+    padding-bottom: 0.4ex;
   }
   div.listings .thread2 {
     padding-top: 0.5ex;
-    padding-bottom: 1.0ex;
+    padding-bottom: 0.4ex;
   }
   div.listings hr.separator { display: none; }
   div.listings ul {
@@ -126,7 +130,7 @@ module ApplicationHelper
     margin-bottom: 0pt;
   }
   div.listings .entry {
-    margin-bottom: 0.4ex;
+    margin-bottom: 1.0ex;
   }
   div.listings .related {
     margin-bottom: 0.4ex;
@@ -159,6 +163,11 @@ __EOS__
     end
   end
 
+  def oauth_image_tag
+    label = 'OAuth'
+    link_to(image_tag(icon_url('sign-in-with-friendfeed.gif'), :alt => h(label), :title => h(label)), :controller => :login, :action => :initiate_oauth_login)
+  end
+
   def top_menu
     [
       write_new_link, 
@@ -174,11 +183,20 @@ __EOS__
   end
 
   def timezone
-    session[:timezone] || F2P::Config.timezone
+    if setting
+      setting.timezone ||= F2P::Config.timezone
+    else
+      F2P::Config.timezone
+    end
   end
 
   def now
     @now ||= Time.now.in_time_zone(timezone)
+  end
+
+  def lock_icon_tag
+    label = 'private'
+    image_tag(icon_url(:lock), :alt => h(label), :title => h(label), :size => '8x10')
   end
 
   def icon_url(name)
@@ -205,7 +223,7 @@ __EOS__
     if i_mode? and %r{([^/]*)\.png\b} =~ url
       url = icon_url($1 + '.gif')
     end
-    image_tag(url, :alt => h(alt), :title => h(title), :size => '16x16')
+    image_tag(url, :class => h('inline'), :alt => h(alt), :title => h(title), :size => '16x16')
   end
 
   def profile_image_tag(url, alt, title)
@@ -250,10 +268,6 @@ __EOS__
     @auth
   end
 
-  def service_icon(via, link = nil)
-    nil # TODO
-  end
-
   def entry_status(entry)
     if entry.from_id
       user_status(entry.from_id)
@@ -286,12 +300,6 @@ __EOS__
     end
     image_url = User.ff_picture_url(id, size)
     profile_image_tag(image_url, name, name)
-  end
-
-  def status_icon(status)
-    if status != 'public'
-      icon_tag(:private)
-    end
   end
 
   def user(user)
@@ -390,7 +398,7 @@ __EOS__
   end
 
   def link_to(name, options = {}, html_options = {})
-    if options.is_a?(String) and !url_for_app?(options)
+    if setting and options.is_a?(String) and !url_for_app?(options)
       if setting.link_open_new_window
         html_options = html_options.merge(:target => '_blank')
       end
@@ -524,5 +532,17 @@ __EOS__
 
   def link_entry_list(opt = {})
     link_entry_action('list', opt)
+  end
+
+  def timezone_select_tag(varname, default)
+    candidates = ActiveSupport::TimeZone::ZONES.sort { |a, b|
+      a.utc_offset <=> b.utc_offset
+    }.map { |z|
+      tz = z.utc_offset
+      zone = of2tz(tz / 86400.0).sub('Z', '+00:00')
+      name = "(#{zone}) " + z.name
+      [name, z.name]
+    }
+    select_tag(varname, options_for_select(candidates, default))
   end
 end

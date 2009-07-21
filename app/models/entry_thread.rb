@@ -152,7 +152,7 @@ class EntryThread
           merged
         elsif opt[:feed]
           wrap(Task.run { get_feed(auth, opt[:feed], opt) }.result)
-        elsif opt[:query]
+        elsif opt[:query] or opt[:service]
           wrap(Task.run { search_entries(auth, opt) }.result)
         elsif opt[:like] == 'liked'
           wrap(Task.run { get_liked(auth, opt) }.result)
@@ -323,14 +323,17 @@ class EntryThread
       search[:from] = opt[:user]
       search[:room] = opt[:room]
       search[:friends] = opt[:friends]
+      search[:service] = opt[:service] if opt[:service]
       search[:likes] = opt[:likes] if opt[:likes]
       search[:comments] = opt[:comments] if opt[:comments]
-      feed = ff_client.search(query, search.merge(auth_opt(auth)))
+      STDERR.puts("!!!!!")
+      STDERR.puts(query)
+      feed = ff_client.search(query, search.merge(auth.new_cred))
       feed['entries'] if feed and feed.key?('entries')
     end
 
     def get_feed(auth, feedid, opt)
-      feed = ff_client.feed(feedid, filter_opt(opt).merge(auth_opt(auth)))
+      feed = ff_client.feed(feedid, filter_opt(opt).merge(auth.new_cred))
       feed['entries'] if feed and feed.key?('entries')
     end
 
@@ -340,7 +343,7 @@ class EntryThread
       query[:url] = link
       query[:subscribed] = opt[:subscribed]
       query[:from] = opt[:from]
-      feed = ff_client.url(query.merge(auth_opt(auth)))
+      feed = ff_client.url(query.merge(auth.new_cred))
       feed['entries'] if feed and feed.key?('entries')
     end
 
@@ -350,18 +353,18 @@ class EntryThread
       search.delete(:user)
       search[:from] = user
       search[:likes] = 1
-      feed = ff_client.search('', search.merge(auth_opt(auth)))
+      feed = ff_client.search('', search.merge(auth.new_cred))
       feed['entries'] if feed and feed.key?('entries')
     end
 
     def get_entry(auth, opt)
       eid = opt[:eid]
-      ff_client.entry(eid, auth_opt(auth).merge(:raw => 1))
+      ff_client.entry(eid, auth.new_cred.merge(:raw => 1))
     end
 
     def get_entries(auth, opt)
       eids = opt[:eids]
-      feed = ff_client.entries(eids, auth_opt(auth).merge(:raw => 1))
+      feed = ff_client.entries(eids, auth.new_cred.merge(:raw => 1))
       feed['entries'] if feed and feed.key?('entries')
     end
 
@@ -389,6 +392,7 @@ class EntryThread
         # You comes first
         entries = entries.partition { |e| e.from_id == auth.name }.flatten
       end
+      add_service_icon(entries)
       entries
     end
 
@@ -407,13 +411,6 @@ class EntryThread
 
     def ff_client
       ApplicationController.ff_client
-    end
-
-    def auth_opt(auth)
-      {
-        :name => auth.name,
-        :remote_key => auth.remote_key
-      }
     end
 
     def wrap(entries)
@@ -518,6 +515,18 @@ class EntryThread
           entries[idx] = entry
           entry.view_nextid = e.view_nextid
           return
+        end
+      end
+    end
+
+    # TODO: uglish.
+    def add_service_icon(entries)
+      entries.each do |e|
+        if e.via and e.via.name and !e.via.service_id
+          if s = Service.find_by_name(e.via.name)
+            e.via.service_id = s.service_id
+            e.via.service_icon_url = s.icon_url
+          end
         end
       end
     end

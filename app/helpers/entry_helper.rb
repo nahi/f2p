@@ -104,30 +104,9 @@ module EntryHelper
   end
 
   def icon(from)
-=begin
-    via = entry.via
-    return unless via
-    if ctx.user
-      user = entry.from_id
-    end
-    if entry.from.group?
-      opt = { :room => entry.from.id }
-    else
-      opt = { :service => via.name }
-    end
-    opt[:label] = ctx.label
-    link = link_user(user, opt)
-    if entry.from.group?
-      str = room_icon(entry.from, link)
-    else
-      str = service_icon(via, link)
-    end
-=end
-    str = ''
     if from.private
-      str = icon_tag(:private) + str
+      lock_icon_tag
     end
-    str
   end
 
   def media_disabled?
@@ -160,13 +139,14 @@ module EntryHelper
   def common_content(entry)
     body = entry.body
     return '' unless body
-    if entry.link
+    if link_entry?(entry)
       content = link_content(body, entry)
     else
       fold, str, links = escape_text(body, ctx.fold ? setting.text_folding_size : nil)
       entry.view_links = links
       if fold
-        str += link_to(inline_icon_tag(:more), link_show(entry.id))
+        msg = '(more)'
+        str += link_to(h(msg), link_show(entry.id))
       end
       content = str
     end
@@ -197,6 +177,10 @@ module EntryHelper
       content += ' ' + google_maps_link(point, entry, zoom, width, height)
     end
     content
+  end
+
+  def link_entry?(entry)
+    entry.link and !(ctx.list? and entry.via and entry.via.twitter?)
   end
 
   def scan_media_from_link(entry)
@@ -246,6 +230,15 @@ module EntryHelper
     (icon(entry.from) || '') + (user(entry) || '') + (friend_of(entry) || '')
   end
 
+  def service_icon(entry)
+    if via = entry.via
+      if via.service_icon_url
+        link_to(service_icon_tag(via.service_icon_url, via.name, via.name),
+                search_opt(:action => :list, :query => '', :service => via.service_id))
+      end
+    end
+  end
+
   def comment_author_link(comment)
     unless comment.posted_with_entry?
       h('by ') + user(comment)
@@ -257,7 +250,7 @@ module EntryHelper
   end
 
   def original_link(entry)
-    link = entry.link || entry.url
+    link = entry.url
     link_content = "See original (#{uri_domain(link)})"
     entry_link_to(h(link_content), link)
   end
@@ -315,7 +308,7 @@ module EntryHelper
     }.join(' ')
     if medias.size != display.size
       msg = " (#{medias.size - display.size} more images)"
-      str += link_to(icon_tag(:more), link_show(entry.id)) + h(msg)
+      str += link_to(msg, link_show(entry.id))
     end
     str
   end
@@ -468,7 +461,7 @@ module EntryHelper
   end
 
   def via(entry_or_comment)
-    label = entry_or_comment.respond_to?(:service) ? 'from' : 'via'
+    label = entry_or_comment.respond_to?(:comments) ? 'from' : 'via'
     super(entry_or_comment.via, label)
   end
 
@@ -591,14 +584,16 @@ module EntryHelper
       by_self = true
       label = nil
     end
-    by_self ? icon_tag(:comment, label) : icon_tag(:friend_comment, label)
+    opt = { :class => 'comment-icon' }
+    by_self ? icon_tag(:comment, label, opt) : icon_tag(:friend_comment, label, opt)
   end
 
   def comment(comment)
     fold, str, links = escape_text(comment.body, ctx.fold ? setting.text_folding_size : nil)
     comment.view_links = links
     if fold
-      str += link_to(inline_icon_tag(:more), link_show(comment.entry.id))
+      msg = '(more)'
+      str += link_to(h(msg), link_show(comment.entry.id))
     end
     str
   end
@@ -697,13 +692,13 @@ module EntryHelper
   end
 
   def fold_link(entry)
-    msg = " (#{entry.fold_entries} related entries)"
-    link_to(icon_tag(:more), list_opt(ctx.link_opt(:start => ctx.start, :num => ctx.num, :fold => 'no'))) + h(msg)
+    msg = "(#{entry.fold_entries} related entries)"
+    link_to(msg, list_opt(ctx.link_opt(:start => ctx.start, :num => ctx.num, :fold => 'no')))
   end
 
   def fold_comment_link(fold)
-    msg = " (#{fold.fold_entries} more comments)"
-    link_to(icon_tag(:more), link_show(fold.entry_id)) + h(msg)
+    msg = "(#{fold.fold_entries} more comments)"
+    link_to(msg, link_show(fold.entry_id))
   end
 
   def write_new_link
@@ -959,11 +954,11 @@ module EntryHelper
   def comment_link(comment)
     if comment.last?
       if comment.entry.commands.include?('comment')
-        label = 'comment'
+        label = inline_icon_tag(:comment_add)
       else
-        label = 'show'
+        label = h('show')
       end
-      link_to(h(label), link_show(comment.entry.id))
+      link_to(label, link_show(comment.entry.id))
     end
   end
 
@@ -979,9 +974,9 @@ module EntryHelper
         str = emphasize_as_unread(str)
       end
     elsif entry.commands.include?('comment')
-      str = 'comment'
+      str = inline_icon_tag(:comment_add)
     else
-      str = 'show'
+      str = h('show')
     end
     link_to(str, link_show(entry.id))
   end

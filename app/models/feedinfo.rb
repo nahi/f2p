@@ -21,7 +21,7 @@ class Feedinfo
     @subscriptions = sort_by_name((hash['subscriptions'] || EMPTY).map { |e| From[e] })
     @subscribers = sort_by_name((hash['subscribers'] || EMPTY).map { |e| From[e] })
     @feeds = sort_by_name((hash['feeds'] || EMPTY).map { |e| From[e] })
-    @services = sort_by_name((hash['services'] || EMPTY).map { |e| Service[e] })
+    @services = sort_by_name((hash['services'] || EMPTY).map { |e| From[e] })
   end
 
   def sort_by_name(lists)

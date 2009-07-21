@@ -9,6 +9,7 @@
         <%= author_link(entry) %>
         <%= to(entry) -%>
         <%= published(entry, false) %>
+        <%= service_icon(entry) -%>
         <%= menu_link(menu_icon(:bottom, '8'), '#bottom', accesskey('8')) %>
       </p>
     </div>
@@ -22,8 +23,7 @@
           post.body.focus();
           //--></script>
         <%- else -%>
-<%= content(entry) -%>
-  <%= via(entry) -%>
+<%= content(entry) -%> <span class="comment"><%= via(entry) %></span>
         <%- end -%>
       </p>
     </div>

@@ -26,13 +26,13 @@ module Encrypt
 
     def before_save(model)
       @attrs.each do |attr|
-        model[attr] = pack(encrypt(model[attr]))
+        model[attr] = pack(encrypt(model[attr])) if model[attr] and !model[attr].empty?
       end
     end
 
     def after_save(model)
       @attrs.each do |attr|
-        model[attr] = decrypt(unpack(model[attr]))
+        model[attr] = decrypt(unpack(model[attr])) if model[attr] and !model[attr].empty?
       end
     end
 
@@ -53,6 +53,7 @@ module Encrypt
     end
 
     def encrypt(bytes)
+      return '' if bytes.empty?
       cipher = OpenSSL::Cipher::Cipher.new(@algorithm)
       iv = OpenSSL::Random.random_bytes(@block_size)
       cipher.encrypt

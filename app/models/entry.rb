@@ -17,7 +17,7 @@ class Entry
       auth = opt[:auth]
       to = opt[:to]
       body = opt[:body]
-      if entry = ff_client.post_entry(to, body, opt.merge(:name => auth.name, :remote_key => auth.remote_key))
+      if entry = ff_client.post_entry(to, body, opt.merge(auth.new_cred))
         Entry[entry]
       end
     end
@@ -25,7 +25,7 @@ class Entry
     def update(opt)
       auth = opt[:auth]
       eid = opt[:eid]
-      if entry = ff_client.edit_entry(eid, opt.merge(:name => auth.name, :remote_key => auth.remote_key))
+      if entry = ff_client.edit_entry(eid, opt.merge(auth.new_cred))
         Entry[entry]
       end
     end
@@ -35,9 +35,9 @@ class Entry
       id = opt[:eid]
       undelete = !!opt[:undelete]
       if undelete
-        ff_client.undelete_entry(id, :name => auth.name, :remote_key => auth.remote_key)
+        ff_client.undelete_entry(id, auth.new_cred)
       else
-        ff_client.delete_entry(id, :name => auth.name, :remote_key => auth.remote_key)
+        ff_client.delete_entry(id, auth.new_cred)
       end
     end
 
@@ -45,7 +45,7 @@ class Entry
       auth = opt[:auth]
       id = opt[:eid]
       body = opt[:body]
-      if comment = ff_client.post_comment(id, body, :name => auth.name, :remote_key => auth.remote_key)
+      if comment = ff_client.post_comment(id, body, auth.new_cred)
         Comment[comment]
       end
     end
@@ -54,7 +54,7 @@ class Entry
       auth = opt[:auth]
       comment = opt[:comment]
       body = opt[:body]
-      if comment = ff_client.edit_comment(comment, body, :name => auth.name, :remote_key => auth.remote_key)
+      if comment = ff_client.edit_comment(comment, body, auth.new_cred)
         Comment[comment]
       end
     end
@@ -64,28 +64,28 @@ class Entry
       comment = opt[:comment]
       undelete = !!opt[:undelete]
       if undelete
-        ff_client.undelete_comment(comment, :name => auth.name, :remote_key => auth.remote_key)
+        ff_client.undelete_comment(comment, auth.new_cred)
       else
-        ff_client.delete_comment(comment, :name => auth.name, :remote_key => auth.remote_key)
+        ff_client.delete_comment(comment, auth.new_cred)
       end
     end
 
     def add_like(opt)
       auth = opt[:auth]
       id = opt[:eid]
-      ff_client.like(id, :name => auth.name, :remote_key => auth.remote_key)
+      ff_client.like(id, auth.new_cred)
     end
 
     def delete_like(opt)
       auth = opt[:auth]
       id = opt[:eid]
-      ff_client.delete_like(id, :name => auth.name, :remote_key => auth.remote_key)
+      ff_client.delete_like(id, auth.new_cred)
     end
 
     def hide(opt)
       auth = opt[:auth]
       id = opt[:eid]
-      ff_client.hide_entry(id, :name => auth.name, :remote_key => auth.remote_key)
+      ff_client.hide_entry(id, auth.new_cred)
     end
 
     def add_pin(opt)

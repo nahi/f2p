@@ -4,6 +4,8 @@ require 'json'
 require 'monitor'
 require 'stringio'
 require 'zlib'
+require 'oauth'
+require 'net/http'
 
 
 module FriendFeed
@@ -99,7 +101,7 @@ module FriendFeed
         end
       end
 
-      def client(remote_key)
+      def client(remote_key = nil)
         @client.synchronize do
           if remote_key != @remote_key
             @remote_key = remote_key
@@ -151,13 +153,13 @@ module FriendFeed
       end
     end
 
-    def create_client(name, remote_key)
+    def create_client(name, remote_key = nil)
       client = UserClient.new(name, remote_key, @logger, @http_proxy)
       client.httpclient_max_keepalive = @httpclient_max_keepalive
       client
     end
 
-    def client_sync(uri, name, remote_key)
+    def client_sync(uri, name, remote_key = nil)
       @mutex.synchronize do
         clients = {}
         @clients.each do |key, value|
@@ -208,7 +210,13 @@ module FriendFeed
     end
 
     def post_request(client, uri, query = {}, ext = {})
-      query = query.merge(:apikey => @apikey) if @apikey
+      if @apikey
+        if query.is_a?(Hash)
+          query = query.merge(:apikey => @apikey)
+        else
+          query << [:apikey, @apikey]
+        end
+      end
       client.post(uri, query, ext)
     end
 
@@ -546,6 +554,21 @@ module FriendFeed
   class APIV2Client < BaseClient
     URL_BASE = 'http://friendfeed-api.com/v2/'
 
+    attr_accessor :oauth_consumer_key
+    attr_accessor :oauth_consumer_secret
+    attr_accessor :oauth_site
+    attr_accessor :oauth_scheme
+    attr_accessor :oauth_signature_method
+
+    def initialize(*arg)
+      super
+      @oauth_consumer_key = nil
+      @oauth_consumer_secret = nil
+      @oauth_site = nil
+      @oauth_scheme = nil
+      @oauth_signature_method = nil
+    end
+
     # wrapper method for V1 compatibility
     def validate(name, remote_key)
       uri = uri("feedinfo/#{name}")
@@ -561,33 +584,33 @@ module FriendFeed
       uri = uri("feed/#{fid}")
       return nil unless uri
       query = opt.dup
-      name, remote_key = get_credential!(query)
-      get_and_parse(uri, name, remote_key, query)
+      cred = get_credential!(query)
+      get_and_parse(uri, cred, query)
     end
 
     def search(q, opt = {})
       uri = uri("search")
       return nil unless uri
       query = opt.dup
-      name, remote_key = get_credential!(query)
+      cred = get_credential!(query)
       query[:q] = search_opt_filter(q, query)
-      get_and_parse(uri, name, remote_key, query)
+      get_and_parse(uri, cred, query)
     end
 
     def feedlist(opt = {})
       uri = uri("feedlist")
       return nil unless uri
       query = opt.dup
-      name, remote_key = get_credential!(query)
-      get_and_parse(uri, name, remote_key, query)
+      cred = get_credential!(query)
+      get_and_parse(uri, cred, query)
     end
 
     def feedinfo(fid, opt = {})
       uri = uri("feedinfo/#{fid}")
       return nil unless uri
       query = opt.dup
-      name, remote_key = get_credential!(query)
-      get_and_parse(uri, name, remote_key, query)
+      cred = get_credential!(query)
+      get_and_parse(uri, cred, query)
     end
     alias profile feedinfo
 
@@ -599,32 +622,32 @@ module FriendFeed
       end
       uri = uri("entry")
       return nil unless uri
-      name, remote_key = get_credential!(query)
+      cred = get_credential!(query)
       query[:id] = args.join(',')
-      get_and_parse(uri, name, remote_key, query)
+      get_and_parse(uri, cred, query)
     end
 
     def entry(eid, opt = {})
       uri = uri("entry/#{eid}")
       return nil unless uri
       query = opt.dup
-      name, remote_key = get_credential!(query)
-      get_and_parse(uri, name, remote_key, query)
+      cred = get_credential!(query)
+      get_and_parse(uri, cred, query)
     end
 
     def url(opt = {})
       uri = uri("url")
       return nil unless uri
       query = opt.dup
-      name, remote_key = get_credential!(query)
-      get_and_parse(uri, name, remote_key, query)
+      cred = get_credential!(query)
+      get_and_parse(uri, cred, query)
     end
 
     # Publishing to FriendFeed
     def post_entry(to, body, opt = {})
       uri = uri("entry")
       return nil unless uri
-      name, remote_key = get_credential(opt)
+      cred = get_credential(opt)
       query = {}
       query[:body] = body
       set_if(query, opt, :link)
@@ -634,6 +657,7 @@ module FriendFeed
       set_if(query, opt, :audio_url)
       set_if(query, opt, :short)
       set_if(query, opt, :geo)
+      ext = nil
       query = query.to_a
       if opt[:file]
         opt[:file].each do |filedef|
@@ -646,22 +670,20 @@ module FriendFeed
             end
             file.mime_type = content_type
             file.path = filename
-            logger.info("!!!!!!!")
-            logger.info(filedef.inspect)
           end
           file
           query << [:file, file]
         end
+        boundary = Digest::SHA1.hexdigest(Time.now.to_s)
+        ext = { 'Content-Type' => "multipart/form-data; boundary=#{boundary}" }
       end
-      boundary = Digest::SHA1.hexdigest(Time.now.to_s)
-      ext = { 'Content-Type' => "multipart/form-data; boundary=#{boundary}" }
-      post_and_parse(uri, name, remote_key, query, ext)
+      post_and_parse(uri, cred, query, ext)
     end
 
     def edit_entry(eid, opt)
       uri = uri("entry")
       return nil unless uri
-      name, remote_key = get_credential(opt)
+      cred = get_credential(opt)
       query = {}
       query[:id] = eid
       if opt[:to]
@@ -672,78 +694,85 @@ module FriendFeed
       set_if(query, opt, :link)
       set_if(query, opt, :comment)
       set_if(query, opt, :image_url)
+      ext = nil
+      query = query.to_a
       if opt[:file]
-        query[:file] = opt[:file].map { |file|
-          file, content_type = file
+        opt[:file].each do |filedef|
+          file, content_type, filename = filedef
           unless file.respond_to?(:read)
             file = StringIO.new(file.to_s)
             class << file
               attr_accessor :mime_type
+              attr_accessor :path
             end
             file.mime_type = content_type
+            file.path = filename
           end
           file
-        }
+          query << [:file, file]
+        end
+        boundary = Digest::SHA1.hexdigest(Time.now.to_s)
+        ext = { 'Content-Type' => "multipart/form-data; boundary=#{boundary}" }
       end
-      post_and_parse(uri, name, remote_key, query)
+      post_and_parse(uri, cred, query, ext)
     end
 
     def delete_entry(eid, opt = {})
       uri = uri("entry/delete")
       return nil unless uri
-      name, remote_key = get_credential(opt)
+      cred = get_credential(opt)
       query = {}
       query[:id] = eid
-      post_and_parse(uri, name, remote_key, query)
+      post_and_parse(uri, cred, query)
     end
 
     def undelete_entry(eid, opt = {})
       uri = uri("entry/delete")
       return nil unless uri
-      name, remote_key = get_credential(opt)
+      cred = get_credential(opt)
       query = {}
       query[:id] = eid
       query[:undelete] = 1
-      post_and_parse(uri, name, remote_key, query)
+      post_and_parse(uri, cred, query)
     end
 
     def post_comment(eid, body, opt = {})
       uri = uri("comment")
       return nil unless uri
-      name, remote_key = get_credential(opt)
+      cred = get_credential(opt)
       query = {}
       query[:entry] = eid
       query[:body] = body
-      post_and_parse(uri, name, remote_key, query)
+      post_and_parse(uri, cred, query)
     end
 
     def edit_comment(cid, body, opt = {})
       uri = uri("comment")
       return nil unless uri
-      name, remote_key = get_credential(opt)
+      cred = get_credential(opt)
       query = {}
       query[:id] = cid
       query[:body] = body
-      post_and_parse(uri, name, remote_key, query)
+      post_and_parse(uri, cred, query)
     end
 
     def delete_comment(cid, opt = {})
       uri = uri("comment/delete")
       return nil unless uri
-      name, remote_key = get_credential(opt)
+      cred = get_credential(opt)
       query = {}
       query[:id] = cid
-      post_and_parse(uri, name, remote_key, query)
+      post_and_parse(uri, cred, query)
     end
 
     def undelete_comment(cid, opt = {})
       uri = uri("comment/delete")
       return nil unless uri
-      name, remote_key = get_credential(opt)
+      cred = get_credential(opt)
       query = {}
       query[:id] = cid
       query[:undelete] = 1
-      post_and_parse(uri, name, remote_key, query)
+      post_and_parse(uri, cred, query)
     end
 
     def like(eid, opt = {})
@@ -761,21 +790,21 @@ module FriendFeed
     def subscribe(fid, opt = {})
       uri = uri("subscribe")
       return nil unless uri
-      name, remote_key = get_credential(opt)
+      cred = get_credential(opt)
       query = {}
       query[:feed] = fid
       query[:list] = opt[:list] if opt.key?(:list)
-      post_and_parse(uri, name, remote_key, query)
+      post_and_parse(uri, cred, query)
     end
 
     def unsubscribe(fid, opt = {})
       uri = uri("unsubscribe")
       return nil unless uri
-      name, remote_key = get_credential(opt)
+      cred = get_credential(opt)
       query = {}
       query[:feed] = fid
       query[:list] = opt[:list] if opt.key?(:list)
-      post_and_parse(uri, name, remote_key, query)
+      post_and_parse(uri, cred, query)
     end
 
     def hide_entry(eid, opt = {})
@@ -787,38 +816,42 @@ module FriendFeed
     def unhide_entry(eid, opt = {})
       uri = uri("hide")
       return nil unless uri
-      name, remote_key = get_credential(opt)
+      cred = get_credential(opt)
       query = {}
       query[:entry] = eid
       query[:unhide] = 1
-      post_and_parse(uri, name, remote_key, query)
+      post_and_parse(uri, cred, query)
     end
 
   private
 
     def perform_entry_action(uri, eid, opt)
-      name, remote_key = get_credential(opt)
+      cred = get_credential(opt)
       query = {}
       query[:entry] = eid
-      post_and_parse(uri, name, remote_key, query)
+      post_and_parse(uri, cred, query)
     end
 
-    def get_credential(query = nil)
-      if query.nil?
-        return [@name, @remote_key]
-      end
-      name = query[:name] || @name
-      remote_key = query[:remote_key] || @remote_key
-      [name, remote_key]
+    def get_credential(query = {})
+      get_credential!(query.dup)
     end
 
     def get_credential!(query = nil)
-      if query.nil?
-        return [@name, @remote_key]
+      if query.key?(:oauth_token) and query.key?(:oauth_token_secret)
+        name = query.delete(:name) || @name
+        oauth_token = query.delete(:oauth_token)
+        oauth_token_secret = query.delete(:oauth_token_secret)
+        [:oauth, {:access_token => oauth_token, :access_token_secret => oauth_token_secret}]
+      else
+        if query.nil?
+          name = @name
+          remote_key = @remote_key
+        else
+          name = query.delete(:name) || @name
+          remote_key = query.delete(:remote_key) || @remote_key
+        end
+        [:basicauth, [name, remote_key]]
       end
-      name = query.delete(:name) || @name
-      remote_key = query.delete(:remote_key) || @remote_key
-      [name, remote_key]
     end
 
     def set_if(new, old, key)
@@ -829,24 +862,107 @@ module FriendFeed
       URL_BASE
     end
 
-    def get_and_parse(uri, name, remote_key, query = {})
-      res = client_sync(uri, name, remote_key) { |client|
-        get_request(client, uri, query)
-      }
-      parse_response(res)
+    def get_and_parse(uri, cred, query = {})
+      case cred.first
+      when :basicauth
+        name, remote_key = cred[1]
+        res = client_sync(uri, name, remote_key) { |client|
+          get_request(client, uri, query)
+        }
+        parse_response(res)
+      when :oauth
+        uri.scheme = 'http'
+        uri = uri.to_s
+        unless query.empty?
+          uri = uri + '?' + query.map { |k, v|
+            [CGI.escape(k.to_s), CGI.escape(v.to_s)].join('=')
+          }.join('&')
+        end
+        token = create_access_token(cred[1])
+        res = token.get(uri)
+        JSONFilter.parse(res.body)
+      else
+        raise "unsupported scheme: #{cred.first}"
+      end
     end
 
-    def post_and_parse(uri, name, remote_key, query = {}, ext = {})
-      res = client_sync(uri, name, remote_key) { |client|
-        post_request(client, uri, query, ext)
+    def post_and_parse(uri, cred, query = {}, ext = {})
+      case cred.first
+      when :basicauth
+        name, remote_key = cred[1]
+        res = client_sync(uri, name, remote_key) { |client|
+          post_request(client, uri, query, ext)
+        }
+        parse_response(res)
+      when :oauth
+        uri.scheme = 'http'
+        token = create_access_token(cred[1], :scheme => :query_string)
+        data = query_to_hash(query)
+        if data.key?(:file)
+          # based on http://gist.github.com/97756 but not work...
+          boundary = Digest::SHA1.hexdigest(Time.now.to_s)
+          data = create_multipart_form_data(data, boundary)
+          req = Net::HTTP::Post.new(uri.request_uri)
+          req.body = data
+          req['Content-Length'] = req.body.size
+          req['Content-Type'] = "multipart/form-data; boundary=#{boundary}"
+          token.consumer.sign!(req, token)
+          res = token.consumer.http.request(req)
+        else
+          res = token.post(uri.to_s, data, ext)
+        end
+        JSONFilter.parse(res.body)
+      else
+        raise "unsupported scheme: #{cred.first}"
+      end
+    end
+
+    # oauth gem does not support [k, v] array...
+    # How we do multiple file upload? Design failure?
+    def query_to_hash(query)
+      hash = {}
+      query.each do |k, v|
+        hash[k] = v.respond_to?(:read) ? v.read : v.to_s
+      end
+      hash
+    end
+
+    # TODO: uglish... HTTPClient should allow to use this.
+    def create_multipart_form_data(query, boundary)
+      dummy = HTTP::Message::Body.new
+      dummy.init_request
+      obj = dummy.instance_eval {
+        build_query_multipart_str(query, boundary)
       }
-      parse_response(res)
+      obj.parts.collect { |part|
+        if part.respond_to?(:read)
+          part.read
+        else
+          part
+        end
+      }.join
     end
 
     def parse_response(res)
       if res.status == 200
         JSONFilter.parse(res.content)
       end
+    end
+
+    def create_access_token(auth, opt = {})
+      access_token = auth[:access_token]
+      access_token_secret = auth[:access_token_secret]
+      OAuth::AccessToken.new(create_oauth_consumer(opt), access_token, access_token_secret)
+    end
+
+    def create_oauth_consumer(opt = {})
+      opt = {
+        :site              => @oauth_site,
+        :scheme            => @oauth_scheme,
+        :signature_method  => @oauth_signature_method,
+        :proxy             => @http_proxy || ENV['http_proxy']
+      }.merge(opt)
+      OAuth::Consumer.new(@oauth_consumer_key, @oauth_consumer_secret, opt)
     end
   end
 end

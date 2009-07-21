@@ -22,6 +22,15 @@ module F2P
       attr_accessor :http_proxy
 
       attr_accessor :friendfeed_api_key
+      attr_accessor :friendfeed_api_oauth_consumer_key
+      attr_accessor :friendfeed_api_oauth_consumer_secret
+      attr_accessor :friendfeed_api_oauth_site
+      attr_accessor :friendfeed_api_oauth_request_token_url
+      attr_accessor :friendfeed_api_oauth_authorize_url
+      attr_accessor :friendfeed_api_oauth_access_token_url
+      attr_accessor :friendfeed_api_oauth_scheme
+      attr_accessor :friendfeed_api_oauth_signature_method
+      attr_accessor :friendfeed_api_oauth_http_method
       attr_accessor :friendfeed_api_timeout
       attr_accessor :friendfeed_api_daemon_drb_uri
 
@@ -128,9 +137,19 @@ Rails::Initializer.run do |config|
 
   F2P::Config.http_proxy = nil
 
-  F2P::Config.friendfeed_api_timeout = 15
   # don't touch this.  apikey needs to be private.
   F2P::Config.friendfeed_api_key = nil
+  F2P::Config.friendfeed_api_oauth_consumer_key = nil
+  F2P::Config.friendfeed_api_oauth_consumer_secret = nil
+
+  F2P::Config.friendfeed_api_oauth_site = 'http://friendfeed-api.com/'
+  F2P::Config.friendfeed_api_oauth_request_token_url = 'https://friendfeed.com/account/oauth/request_token'
+  F2P::Config.friendfeed_api_oauth_authorize_url = 'https://friendfeed.com/account/oauth/authorize'
+  F2P::Config.friendfeed_api_oauth_access_token_url = 'https://friendfeed.com/account/oauth/access_token'
+  F2P::Config.friendfeed_api_oauth_scheme = :header
+  F2P::Config.friendfeed_api_oauth_signature_method = 'HMAC-SHA1'
+  F2P::Config.friendfeed_api_oauth_http_method = :get # FriendFeed does not allow POST now.
+  F2P::Config.friendfeed_api_timeout = 15
   F2P::Config.friendfeed_api_daemon_drb_uri = 'druby://localhost:17171'
 
   F2P::Config.google_maps_maptype = 'mobile'

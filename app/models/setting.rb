@@ -11,6 +11,7 @@ class Setting
   attr_accessor :google_maps_zoom
   attr_accessor :list_view_profile_picture
   attr_accessor :disable_fof
+  attr_accessor :timezone
 
   def initialize
     super
@@ -26,6 +27,7 @@ class Setting
     @google_maps_zoom = F2P::Config.google_maps_zoom
     @list_view_profile_picture = F2P::Config.list_view_profile_picture
     @disable_fof = F2P::Config.disable_fof
+    @timezone = F2P::Config.timezone
   end
 
   def validate
