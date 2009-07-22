@@ -219,7 +219,11 @@ module EntryHelper
   end
 
   def media_indent
-    "<br />\n&nbsp;&nbsp;&nbsp;"
+    "<br />\n" + indent
+  end
+
+  def indent
+    "&nbsp;" * 4
   end
 
   def friend_of(entry)
@@ -689,7 +693,7 @@ module EntryHelper
 
   def fold_comment_link(fold)
     msg = "(#{fold.fold_entries} more comments)"
-    link_to(msg, link_show(fold.entry_id))
+    indent + link_to(msg, link_show(fold.entry_id))
   end
 
   def write_new_link
@@ -916,7 +920,7 @@ module EntryHelper
       listid = 'home'
       summary = 'summary/'
     else
-      summary = listid + 'summary/'
+      summary = listid + '/summary/'
     end
     links = []
     feedid = summary + '1'
