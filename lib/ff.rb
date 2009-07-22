@@ -647,12 +647,14 @@ module FriendFeed
     def post_entry(to, body, opt = {})
       uri = uri("entry")
       return nil unless uri
+      to = [*to] # idiom for to_a
+      to << 'me' if to.empty?
       cred = get_credential(opt)
       query = {}
       query[:body] = body
       set_if(query, opt, :link)
       set_if(query, opt, :comment)
-      query[:to] = [*to].join(',')
+      query[:to] = to.join(',')
       set_if(query, opt, :image_url)
       set_if(query, opt, :audio_url)
       set_if(query, opt, :short)
@@ -689,7 +691,6 @@ module FriendFeed
       if opt[:to]
         query[:to] = opt[:to].join(',')
       end
-      set_if(query, opt, :to)
       set_if(query, opt, :body)
       set_if(query, opt, :link)
       set_if(query, opt, :comment)
@@ -895,18 +896,35 @@ module FriendFeed
         }
         parse_response(res)
       when :oauth
+        # OAuth + multipart/form-data seems to be fairly complex.  No clear
+        # definition in OAuth Core 1.0 spec.
+        # Let's do it in this way;
+        # <following is just a draft for now. updated later>
+        #   1. When Content-Type is multipart/form-data (for stream upload)
+        #   2. Use HTTP message-body only for uploading streams.  What must
+        #      be stream is application specific. FriendFeed API V2 defines
+        #      'file' is it.
+        #   3. Other (non stream) parameters must be in HTTP Request-URI as
+        #      an encoded query part of URI (RFC3986). Bear in mind that
+        #      it's not embedded in body so Content-Type is not
+        #      'application/x-www-urlencoded'.
+        #   4. For OAuth signature calculation, treat only parameters stated #3
+        #      as if it's from a HTTP request body in
+        #      'application/x-www-urleocoded' content-type.
         uri.scheme = 'http'
         token = create_access_token(cred[1], :scheme => :query_string)
         data = query_to_hash(query)
         if data.key?(:file)
           # based on http://gist.github.com/97756 but not work...
           boundary = Digest::SHA1.hexdigest(Time.now.to_s)
-          data = create_multipart_form_data(data, boundary)
+          body = create_multipart_form_data({:file => data[:file]}, boundary)
+          query_data = data.reject { |k, v| k == :file }
           req = Net::HTTP::Post.new(uri.request_uri)
-          req.body = data
-          req['Content-Length'] = req.body.size
-          req['Content-Type'] = "multipart/form-data; boundary=#{boundary}"
+          req.set_form_data(query_data)
           token.consumer.sign!(req, token)
+          req.body = body
+          req['Content-Length'] = body.size
+          req['Content-Type'] = "multipart/form-data; boundary=#{boundary}"
           res = token.consumer.http.request(req)
         else
           res = token.post(uri.to_s, data, ext)
