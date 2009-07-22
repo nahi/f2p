@@ -1,22 +1,11 @@
 <h1><%= appname %> login</h1>
 
 <hr />
-<p>
-1. Click the banner for granting access to FriendFeed by f2p.
-You don't have to register your credential to dev.ctor.org any more.
-(You're redirected to FriendFeed Web site. It's easy to follow steps.)<br />
-<%= oauth_image_tag %><br />
-You can remove the grant anytime at <%= link_to('http://friendfeed.com/settings/applications', 'http://friendfeed.com/settings/applications') %>.
-</p>
+<%= oauth_message %>
 
 <p>
-Or
-</p>
-
-<p>
-2. You can login f2p by registering your remote key to dev.ctor.org.
-Remote key is sent to FriendFeed for each access in PLAIN data.
-Do NOT enter your FriendFeed PASSWORD here.  Please find your remote key from PC using this link: <%= link_to('http://friendfeed.com/account/api', 'https://friendfeed.com/account/api') %><br />
+You can login f2p by registering your remote key to dev.ctor.org.
+Remote key and nickname are saved in this site.
 <%- form_tag :action => 'authenticate' do -%>
   <%- if flash[:error] -%>
     <p class="message"><%= flash[:error] %></p>
@@ -24,6 +13,7 @@ Do NOT enter your FriendFeed PASSWORD here.  Please find your remote key from PC
   <p>
     FriendFeed user nickname: <%= text_field_tag 'name' %><br />
     Remote key(NOT A PASSWORD): <%= password_field_tag 'remote_key' %><br />
+    Do NOT enter your FriendFeed PASSWORD here.  Please find your remote key from PC using this link: <%= link_to('http://friendfeed.com/account/api', 'https://friendfeed.com/account/api') %><br />
     <%= submit_tag 'login' %>
   </p>
 <%- end -%>

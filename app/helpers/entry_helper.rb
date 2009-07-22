@@ -154,7 +154,9 @@ module EntryHelper
       content += entry.files.map { |file|
         label = file.type
         icon = image_tag(file.icon, :alt => h(label), :title => h(label), :size => '16x16')
-        media_indent + link_to(icon + h(file.name), file.url) + h(" (#{file.size} bytes)")
+        str = media_indent + link_to(icon + h(file.name), file.url)
+        str += h(" (#{file.size} bytes)") if file.size
+        str
       }.join(', ')
     end
     if !entry.thumbnails.empty?
