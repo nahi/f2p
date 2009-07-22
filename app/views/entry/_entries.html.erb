@@ -71,7 +71,7 @@
     <%= page_links(:for_bottom => true, :threads => @threads) %>
   </p>
 <%- end -%>
-<%- if ctx.list_for -%>
+<%- if ctx.list_for and /summary\/\d+\z/ !~ ctx.list_for -%>
   <hr />
 <p><a name="list">List:</a></p>
   <p><%= feed_subscriptions_user %></p>
@@ -82,6 +82,3 @@
 <p>My: <%= user_page_links %></p>
 <p>Lists: <%= list_links %></p>
 <p>Searches: <%= saved_search_links %></p>
-<script type='text/javascript'><!--
-document.getElementById('first_link').focus();
-//--></script>

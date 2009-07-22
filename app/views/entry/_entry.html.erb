@@ -3,14 +3,17 @@
 <%= published(entry) -%>
   (Entry not found; deleted?)
 <%- else -%>
-<%= pin_link(entry) -%>
 <%- if root.nil? -%>
 <%= author_picture(entry) -%><%= author_link(entry) %> <%= to(entry) %>
   <%= published(entry, true) -%>
   <%= service_icon(entry) -%>
   <%= friends_likes(entry) -%><br />
+<%= pin_link(entry) -%>
 <%- elsif !entry.same_feed?(root) and root.origin_id != entry.origin_id -%>
+<%= pin_link(entry) -%>
 <%= author_picture(entry) -%><%= author_link(entry) -%> <%= to(entry) %>
+<%- else -%>
+<%= pin_link(entry) -%>
 <%- end -%>
 <%= content(entry) %> <span class="comment"><%= via(entry) %></span>
 <%= published(entry, true) unless root.nil? -%>

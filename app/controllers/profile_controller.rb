@@ -55,7 +55,7 @@ class ProfileController < ApplicationController
           status = User.ff_unsubscribe(auth, id, listid)
         end
         if status
-          log << "#{status['status']} #{feedname} from #{name}."
+          log << "#{status['status']} #{feedname} on #{name}."
         else
           log << "Subscription status change failed for #{name}."
         end
@@ -70,16 +70,22 @@ private
   def create_subscription_summary(id)
     sub = []
     if feedinfo = User.ff_feedinfo(auth, 'home')
-      sub << extract_subscription_summary(id, feedinfo)
+      sub[0] = extract_subscription_summary(id, feedinfo)
     end
     if feedlist = User.ff_feedlist(auth)
-      feedlist['lists'].each do |list|
-        if feedinfo = User.ff_feedinfo(auth, list.id)
-          sub << extract_subscription_summary(id, feedinfo)
-        end
+      tasks = []
+      feedlist['lists'].each_with_index do |list, idx|
+        tasks << Task.run {
+          if feedinfo = User.ff_feedinfo(auth, list.id)
+            sub[idx + 1] = extract_subscription_summary(id, feedinfo)
+          end
+        }
+      end
+      tasks.each do |task|
+        task.result
       end
     end
-    sub
+    sub.compact
   end
 
   def extract_subscription_summary(id, feedinfo)

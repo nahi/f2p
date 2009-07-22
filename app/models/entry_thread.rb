@@ -21,13 +21,13 @@ class EntryThread
       end
       opt.delete(:auth)
       logger.info('[perf] start entries fetch')
-      original = entries = fetch_entries(auth, opt)
+      entries = fetch_entries(auth, opt)
       logger.info('[perf] start internal data handling')
       record_last_modified(entries)
       logger.info('[perf] record_last_modified done')
       pins = check_inbox(auth, entries)
       logger.info('[perf] check_inbox done')
-      entries = filter_entries(auth, opt, entries)
+      original = entries = filter_entries(auth, opt, entries)
       logger.info('[perf] filter_entries done')
       if opt[:merge_entry]
         entries = sort_by_service(entries, opt)

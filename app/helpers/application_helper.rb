@@ -14,6 +14,7 @@ module ApplicationHelper
   GWT_URL_BASE = 'http://www.google.com/gwt/n?u='
   ICON_NAME = {
     'star' => 'star.png',
+    'mini_star' => 'bullet_star.png',
     #'star' => 'heart.png', # for special 2/14 configuration!
     'like' => 'thumb_up.png',
     'comment' => 'comment.png',
@@ -35,7 +36,7 @@ module ApplicationHelper
     'go' => 'page_white_world.png',
     'media_disabled' => 'image_link.png',
     'pinned' => 'tick.png',
-    'pin' => 'anchor.png',
+    'pin' => 'bullet_arrow_down.png',
     'bottom' => 'arrow_down.png',
     'top' => 'arrow_up.png',
     'map' => 'map.png',
@@ -93,7 +94,6 @@ module ApplicationHelper
     margin-top: 1ex;
     margin-bottom: 1ex;
   }
-  img { margin-right: 0.3ex; }
   img.inline  { vertical-align: text-top; }
   img.media   { border: 1px solid #ccc; padding: 1px; }
   img.profile { border: 1px solid #ccc; padding: 0px; }
@@ -104,7 +104,7 @@ module ApplicationHelper
   .older { color: #008; }
   .comment { color: #666; }
   .comment-block {
-    margin-bottom: 0.6ex;
+    margin-bottom: 1.0ex;
   }
   .comment-block p { }
   .inbox { font-weight: bold; }
@@ -113,11 +113,11 @@ module ApplicationHelper
     border-top: 1px solid #ccc;
     border-bottom: 1px solid #ccc;
     padding-top: 0.5ex;
-    padding-bottom: 0.4ex;
+    padding-bottom: 1.0ex;
   }
   div.listings .thread2 {
     padding-top: 0.5ex;
-    padding-bottom: 0.4ex;
+    padding-bottom: 1.0ex;
   }
   div.listings hr.separator { display: none; }
   div.listings ul {
@@ -130,7 +130,7 @@ module ApplicationHelper
     margin-bottom: 0pt;
   }
   div.listings .entry {
-    margin-bottom: 1.0ex;
+    margin-bottom: 1.2ex;
   }
   div.listings .related {
     margin-bottom: 0.4ex;

@@ -82,9 +82,9 @@ module EntryHelper
 
   def pin_link(entry)
     if entry.view_pinned
-      link_to(icon_tag(:pinned, 'unpin'), link_action('unpin', :eid => entry.id))
+      link_to(inline_icon_tag(:pinned, 'unpin'), link_action('unpin', :eid => entry.id))
     else
-      link_to(icon_tag(:pin), link_action('pin', :eid => entry.id))
+      link_to(inline_icon_tag(:pin), link_action('pin', :eid => entry.id))
     end
   end
 
@@ -93,7 +93,7 @@ module EntryHelper
       if to.group?
         opt = { :room => to.id }
         link = link_list(opt)
-        (icon(to) || '') + link_to(h(to.name), link)
+        [link_to(h(to.name), link), icon(to)].join
       elsif to.id != entry.from_id
         (icon(to) || '') + h(to.name)
       end
@@ -229,7 +229,7 @@ module EntryHelper
   end
 
   def author_link(entry)
-    (icon(entry.from) || '') + (user(entry) || '') + (friend_of(entry) || '')
+    [user(entry), icon(entry.from), friend_of(entry)].join
   end
 
   def service_icon(entry)
@@ -254,21 +254,12 @@ module EntryHelper
   def original_link(entry)
     link = entry.url
     link_content = "See original (#{uri_domain(link)})"
-    entry_link_to(h(link_content), link)
+    link_to(h(link_content), link)
   end
 
   def link_content(body, entry)
     link = entry.link
-    h(body) + ' ' + entry_link_to(h("(#{uri_domain(link)})"), link)
-  end
-
-  def entry_link_to(name, options = {}, html_options = {})
-    @already_linked ||= false
-    unless @already_linked
-      @already_linked = true
-      html_options = html_options.merge(:id => 'first_link')
-    end
-    link_to(name, options, html_options)
+    h(body) + ' ' + link_to(h("(#{uri_domain(link)})"), link)
   end
 
   def uri(str)
@@ -503,14 +494,12 @@ module EntryHelper
     likes = entry.likes.find_all { |e| !e.from.commands.include?('subscribe') }
     if !entry.likes.empty?
       if liked?(entry)
-        icon = link_to(icon_tag(:star, 'unlike'), link_action('unlike', :eid => entry.id))
+        icon = link_to(icon_tag(:mini_star, 'unlike'), link_action('unlike', :eid => entry.id))
       else
-        icon = icon_tag(:star)
+        icon = icon_tag(:mini_star)
       end
       if entry.likes.size != likes.size
         icon += link_to(h(entry.likes.size.to_s), link_show(entry.id))
-      else
-        icon += h(entry.likes.size.to_s)
       end
       if !likes.empty?
         members = likes.collect { |like| user(like) }.join(' ')
@@ -714,6 +703,7 @@ module EntryHelper
   def list_links
     return unless @feedlist
     links = []
+    links << menu_link(menu_label('Home'), link_list)
     @feedlist['lists'].each do |list|
       links << menu_link(menu_label(list.name), link_feed(list.id)) {
         @ctx.feed != list.id
@@ -826,9 +816,6 @@ module EntryHelper
         links << menu_link(menu_label('next', '1'), link_show(entry.id), accesskey('1'))
       end
     end
-    if ctx.inbox
-      links << menu_link(menu_label('all', '7'), link_list(), accesskey('7'))
-    end
     pin_label = 'pin'
     if threads = opt[:threads]
       if threads.pins and threads.pins > 0
@@ -902,15 +889,11 @@ module EntryHelper
       ctx.user_for != auth.name
     }
     feedid = 'filter/direct'
-    links << menu_link(menu_label('Direct msg'), link_feed(feedid)) {
+    links << menu_link(menu_label('Direct messages'), link_feed(feedid)) {
       ctx.feed != feedid
     }
     feedid = 'filter/discussions'
     links << menu_link(menu_label('My discussions'), link_feed(feedid)) {
-      ctx.feed != feedid
-    }
-    feedid = 'summary/1'
-    links << menu_link(menu_label('Best of a day'), link_feed(feedid)) {
       ctx.feed != feedid
     }
     feedid = [auth.name, 'likes'].join('/')
@@ -929,16 +912,22 @@ module EntryHelper
 
   def best_of_list_links(listid)
     listid = listid.split('/')[0, 2].join('/')
+    if /\Alist/ !~ listid
+      listid = 'home'
+      summary = 'summary/'
+    else
+      summary = listid + 'summary/'
+    end
     links = []
-    feedid = [listid, 'summary/1'].join('/')
+    feedid = summary + '1'
     links << menu_link(menu_label('a day'), link_feed(feedid)) {
       ctx.feed != feedid
     }
-    feedid = [listid, 'summary/3'].join('/')
+    feedid = summary + '3'
     links << menu_link(menu_label('3 days'), link_feed(feedid)) {
       ctx.feed != feedid
     }
-    feedid = [listid, 'summary/7'].join('/')
+    feedid = summary + '7'
     links << menu_link(menu_label('7 days'), link_feed(feedid)) {
       ctx.feed != feedid
     }

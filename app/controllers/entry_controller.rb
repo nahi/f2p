@@ -163,7 +163,11 @@ class EntryController < ApplicationController
     end
 
     def list_for
-      /\Alist\b/ =~ @feed ? @feed : nil
+      if /\Alist\b/ =~ @feed or /\Asummary\b/ =~ @feed
+        @feed
+      elsif self.home
+        'home'
+      end
     end
 
     def link_opt(opt = {})
