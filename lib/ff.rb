@@ -896,37 +896,38 @@ module FriendFeed
         }
         parse_response(res)
       when :oauth
-        # OAuth + multipart/form-data seems to be fairly complex.  No clear
-        # definition in OAuth Core 1.0 spec.
-        # Let's do it in this way;
-        # <following is just a draft for now. updated later>
+        # OAuth + multipart/form-data seems to be fairly complex issue.
+        # No clear definition in OAuth Core 1.0 spec. Let's do it in this way;
         #   1. When Content-Type is multipart/form-data (for stream upload)
         #   2. Use HTTP message-body only for uploading streams.  What must
-        #      be stream is application specific. FriendFeed API V2 defines
-        #      'file' is it.
+        #      be a stream is application specific.
+        #      For example, FriendFeed API V2 defines multipart parameter
+        #      which hash 'Content-Disposition' with 'filename' is a stream.
         #   3. Other (non stream) parameters must be in HTTP Request-URI as
         #      an encoded query part of URI (RFC3986). Bear in mind that
         #      it's not embedded in body so Content-Type is not
         #      'application/x-www-urlencoded'.
-        #   4. For OAuth signature calculation, treat only parameters stated #3
+        #   4. For OAuth signature calculation, treat parameters stated #3
         #      as if it's from a HTTP request body in
-        #      'application/x-www-urleocoded' content-type.
+        #      'application/x-www-urleocoded' content-type. This means that
+        #      stream parameters are not signed.
         uri.scheme = 'http'
         token = create_access_token(cred[1], :scheme => :query_string)
-        data = query_to_hash(query)
-        if data.key?(:file)
-          # based on http://gist.github.com/97756 but not work...
+        file = query.find_all { |k, v| k == :file }
+        unless file.empty?
           boundary = Digest::SHA1.hexdigest(Time.now.to_s)
-          body = create_multipart_form_data({:file => data[:file]}, boundary)
+          body = create_multipart_form_data(file, boundary)
+          data = query_to_hash(query)
           query_data = data.reject { |k, v| k == :file }
-          req = Net::HTTP::Post.new(uri.request_uri)
-          req.set_form_data(query_data)
+          path = create_query_uri(uri, query_data)
+          req = Net::HTTP::Post.new(path)
           token.consumer.sign!(req, token)
           req.body = body
           req['Content-Length'] = body.size
           req['Content-Type'] = "multipart/form-data; boundary=#{boundary}"
           res = token.consumer.http.request(req)
         else
+          data = query_to_hash(query)
           res = token.post(uri.to_s, data, ext)
         end
         JSONFilter.parse(res.body)
@@ -943,6 +944,13 @@ module FriendFeed
         hash[k] = v.respond_to?(:read) ? v.read : v.to_s
       end
       hash
+    end
+
+    # TODO: uglish... HTTPClient should allow to use this.
+    def create_query_uri(uri, query)
+      HTTP::Message::Headers.new.instance_eval {
+        create_query_uri(uri, query)
+      }
     end
 
     # TODO: uglish... HTTPClient should allow to use this.
