@@ -41,7 +41,7 @@ module ApplicationHelper
     'map' => 'map.png',
     'help' => 'help.png',
     'group' => 'group.png',
-    'private' => 'shield.png',
+    'private' => 'lock.png',
     'hide' => 'sound_mute.png',
   }
   OAUTH_IMAGE_URL = 'http://friendfeed.com/static/images/sign-in-with-friendfeed.png'
@@ -196,7 +196,7 @@ __EOS__
 
   def lock_icon_tag
     label = 'private'
-    image_tag(icon_url(:lock), :alt => h(label), :title => h(label), :size => '8x10')
+    image_tag(icon_url('private'), :class => h('inline'), :alt => h(label), :title => h(label))
   end
 
   def icon_url(name)

@@ -1,3 +1,6 @@
+require 'user'
+
+
 class CreateProfiles < ActiveRecord::Migration
   def self.up
     create_table :profiles do |t|
