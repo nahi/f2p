@@ -155,9 +155,6 @@ class Entry
 
   def initialize(hash)
     initialize_with_hash(hash, 'id', 'url', 'date', 'commands')
-    if %r(\Ahttp://friendfeed.com/e/) =~ @link
-      @link = nil
-    end
     @commands ||= EMPTY
     @twitter_username = nil
     @twitter_reply_to = nil
@@ -170,6 +167,9 @@ class Entry
     @view_map = false
     @body = hash['rawBody']
     @link = hash['rawLink']
+    if %r(\Ahttp://friendfeed.com/e/) =~ @link
+      @link = nil
+    end
     @short_id = hash['shortId']
     @short_url = hash['shortUrl']
     @from = From[hash['from']]

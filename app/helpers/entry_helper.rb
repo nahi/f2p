@@ -177,12 +177,6 @@ module EntryHelper
     if entry.view_links and entry.view_medias.empty?
       entry.view_links.each do |link|
         case link
-        # http://twitpic.com/api.do#thumbnails
-        when /\btwitpic.com\b/
-          if uri = uri(link)
-            uri.path = "/show/mini#{uri.path}"
-            entry.view_medias << uri.to_s
-          end
         # via gotoken
         when /\bmovapic.com\/pic\/([a-z0-9]+)/
           uri = "http://image.movapic.com/pic/t_#{$1}.jpeg"
@@ -190,16 +184,6 @@ module EntryHelper
         # http://code.google.com/p/imageshackapi/wiki/YFROGthumbnails
         when /\byfrog.com\b/
           uri = link + '.th.jpg'
-          entry.view_medias << uri
-        # http://pic.im/website/api
-        when /\bpic.im\b/
-          if uri = uri(link)
-            uri.path = "/website/thumbnail#{uri.path}"
-            entry.view_medias << uri.to_s
-          end
-        # http://pix.im/api#thumbnails
-        when /\bpix.im\b/
-          uri = link + '/thumbnail'
           entry.view_medias << uri
         end
       end
@@ -686,12 +670,12 @@ module EntryHelper
 
   # override
   def write_new_link
-    link_to(menu_label('New'), link_action('new', :room => ctx.room_for))
+    link_to(menu_label('post'), link_action('new', :room => ctx.room_for))
   end
 
   # override
   def search_link
-    link_to(menu_label('Search'), search_opt(link_action('search')))
+    link_to(menu_label('search'), search_opt(link_action('search')))
   end
 
   def list_links
