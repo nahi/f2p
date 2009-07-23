@@ -640,7 +640,8 @@ module EntryHelper
           default = "@#{default} "
         end
       end
-      text_field_tag('body', default, :placeholder => 'comment') + submit_tag('post')
+      text_field_tag('body', default, :placeholder => 'comment') +
+        submit_tag('post')
     else
       h('(comment disabled)')
     end
@@ -669,6 +670,14 @@ module EntryHelper
   end
 
   # override
+  def pinned_link
+    pin_label = 'pin'
+    if @threads and @threads.pins and @threads.pins > 0
+      pin_label += "(#{@threads.pins})"
+    end
+    menu_link(menu_label(pin_label, '9'), link_list(:label => 'pin'), accesskey('9'))
+  end
+
   def write_new_link
     link_to(menu_label('post'), link_action('new', :room => ctx.room_for))
   end
@@ -784,27 +793,20 @@ module EntryHelper
         !no_page and start - num >= 0
       }
     end
-    links << menu_link(menu_label('inbox', '0'), link_action('inbox'), accesskey('0'))
-    if ctx.list? and threads = opt[:threads]
+    if ctx.list? and threads = opt[:threads] and opt[:for_top]
       if entry = find_show_entry(threads)
-        links << menu_link(menu_label('next', '1'), link_show(entry.id), accesskey('1'))
+        links << menu_link(menu_label('from the top', '1'), link_show(entry.id), accesskey('1'))
       end
     end
-    pin_label = 'pin'
-    if threads = opt[:threads]
-      if threads.pins and threads.pins > 0
-        pin_label += "(#{threads.pins})"
-      end
+    if ctx.inbox and opt[:for_bottom]
+      links << archive_button
     end
-    links << menu_link(menu_label(pin_label, '9'), link_list(:label => 'pin'), accesskey('9'))
+    links << pinned_link
     if ctx.list?
       links << menu_link(menu_label('>', '6'), list_opt(ctx.link_opt(:start => start + num, :num => num)), accesskey('6')) { !no_page }
       if threads = opt[:threads] and opt[:for_top]
         links << list_range_notation(threads)
       end
-    end
-    if ctx.inbox and opt[:for_bottom]
-      links << archive_button
     end
     links.join(' ')
   end

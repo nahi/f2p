@@ -130,10 +130,10 @@ module ApplicationHelper
     margin-bottom: 0pt;
   }
   div.listings .entry {
-    margin-bottom: 1.2ex;
+    margin-bottom: 0.8ex;
   }
   div.listings .related {
-    margin-bottom: 0.4ex;
+    margin-bottom: 0.8ex;
   }
   div.listings .title-header {
     background-color: #EEE;
@@ -179,7 +179,8 @@ __EOS__
       search_link,
       settings_link,
       help_link,
-      logout_link
+      logout_link,
+      to_top_menu
     ].join(' ')
   end
 
@@ -240,7 +241,15 @@ __EOS__
   end
 
   def inbox_link
-    link_to(menu_label('inbox'), :controller => 'entry', :action => 'inbox')
+    menu_link(menu_label('inbox', '0'), { :controller => :entry, :action => :inbox }, accesskey('0'))
+  end
+
+  def all_link
+    menu_link(menu_label('show all entries in Home feed', '7'), { :controller => :entry, :action => :list }, accesskey('7'))
+  end
+
+  def pinned_link
+    menu_link(menu_label('pin', '9'), { :controller => :entry, :action => :list, :label => 'pin' }, accesskey('9'))
   end
 
   def write_new_link
@@ -500,13 +509,9 @@ __EOS__
     end
   end
 
-  def subscribe_status_link
-    if status = subscribe_status
-      if auth.oauth_access_token
-        link_to(h(status), :id => @id, :action => :edit)
-      else
-        h(status)
-      end
+  def subscribe_status_edit_link
+    if auth.oauth_access_token
+      link_to(menu_label('edit'), :id => @id, :action => :edit)
     end
   end
 

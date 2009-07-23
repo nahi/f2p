@@ -4,13 +4,7 @@
 <%- form_tag({:action => 'add'}, {:name => 'post', :multipart => !@with_form.nil?}) do -%>
   <p>
     Message: <%= text_field_tag('body', @body) %><br />
-    Link: <%= text_field_tag('link', @link) %>
-    <%- @to_lines.times do |idx| -%>
-      <br />To: <%= to_select_tag("to_#{idx}", @to[idx]) %>
-    <%- end -%>
-    <%= hidden_field_tag('to_lines', @to_lines) %>
-    <%= submit_tag 'more' %><br />
-    CC to my feed: <%= check_box_tag('cc', 'checked', @cc) %><br />
+    Link: <%= text_field_tag('link', @link) %><br />
     <%= hidden_field_tag('with_form', @with_form) %>
     <%- if @with_form -%>
       image upload: <%= file_field_tag('file') %><br />
@@ -21,6 +15,17 @@
     <%= hidden_field_tag('long', @long) %>
     <%= hidden_field_tag('address', @address) %>
     <%= submit_tag 'post' %>
+  </p>
+  <hr />
+  <p>Recipient: (posted to my feed by default)</p>
+  <p>
+    <%- @to_lines.times do |idx| -%>
+      <%= '<br />' if idx != 0 %>
+      To: <%= to_select_tag("to_#{idx}", @to[idx]) %>
+    <%- end -%>
+    <%= hidden_field_tag('to_lines', @to_lines) %>
+    <%= submit_tag 'more' %><br />
+    CC to my feed: <%= check_box_tag('cc', 'checked', @cc) %>
   </p>
   <hr />
   <p>For posting with location info:</p>
@@ -49,7 +54,7 @@
   <%- end -%>
 <%- end -%>
 <hr />
-<p><a name="bottom">Menu:</a><%= to_top_menu %></p>
+<p><a name="bottom">Menu:</a>
 <p><%= common_menu %></p.
 <script type='text/javascript'><!--
 <%- if @with_form -%>

@@ -2,22 +2,26 @@
   <p>
     Message: <%= text_field_tag('link_title', @link_title) %><br />
     <%- if @link -%>
-      Link: <%= link_to(h(@link), @link) %>
+    Link: <%= link_to(h(@link), @link) %><br />
     <%- end -%>
     <%= hidden_field_tag('link', @link) %>
     <%= hidden_field_tag('reshared_from', @reshared_from) %>
-    <%- @to_lines.times do |idx| -%>
-      <br />To: <%= to_select_tag("to_#{idx}", @to[idx]) %>
-    <%- end -%>
-    <%= hidden_field_tag('to_lines', @to_lines) %>
-    <%= submit_tag 'more' %><br />
-    CC to my feed: <%= check_box_tag('cc', 'checked', @cc) %><br />
     Comment: <%= text_field_tag('body', @body) %><br />
     <%= submit_tag 'post' %>
   </p>
+  <hr />
+  <p>Recipient: (posted to my feed by default)</p>
+    <%- @to_lines.times do |idx| -%>
+      <%= '<br />' if idx != 0 %>
+      To: <%= to_select_tag("to_#{idx}", @to[idx]) %>
+    <%- end -%>
+    <%= hidden_field_tag('to_lines', @to_lines) %>
+    <%= submit_tag 'more' %><br />
+    CC to my feed: <%= check_box_tag('cc', 'checked', @cc) %>
+  </p>
 <%- end -%>
 <hr />
-<p><a name="bottom">Menu:</a><%= to_top_menu %></p>
+<p><a name="bottom">Menu:</a>
 <p><%= common_menu %></p>
 <script type='text/javascript'><!--
 post.body.focus();

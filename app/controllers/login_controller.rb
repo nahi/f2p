@@ -79,7 +79,7 @@ private
 
   def login_successful(user)
     set_user(user)
-    flash[:message] = "You can change TimeZone, font size and other settings. Follow the 3rd 'gear' icon above."
+    flash[:login] = true
     if params = session[:redirect_to_after_authenticate]
       session[:redirect_to_after_authenticate] = nil
       redirect_to url_for(params)

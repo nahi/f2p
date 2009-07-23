@@ -1,3 +1,8 @@
+<%- if flash[:login] -%>
+  <p class="message">
+    You can change TimeZone, font size and other settings from <%= settings_link %> menu.
+  </p>
+<%- end -%>
 <%- if flash[:deleted_id] -%>
   <p class="message"><%= undo_delete_link(flash[:deleted_id], flash[:deleted_comment]) %></p>
 <%- elsif flash[:added_comment] -%>

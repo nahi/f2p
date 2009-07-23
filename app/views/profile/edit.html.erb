@@ -1,4 +1,4 @@
-<p><%= picture(@id) %> <%= h(feed_name) %> <%= h(subscribe_status) %></p>
+<p><%= picture(@id) %> <%= h(feed_name) %> <%= h(subscribe_status) %> <%= link_to(menu_label('back'), :id => @id, :action => :show) %></p>
 <%- if flash[:message] -%>
   <p class="message"><%= h(flash[:message]) %></p>
 <%- end -%>
@@ -13,5 +13,5 @@
   <%= submit_tag 'update' %><br />
 <%- end -%>
 <hr />
-<p><a name="bottom">Menu:</a><%= to_top_menu %></p>
+<p><a name="bottom">Menu:</a>
 <p><%= common_menu %></p>

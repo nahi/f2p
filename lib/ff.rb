@@ -80,8 +80,19 @@ module FriendFeed
     class UserClient
       attr_accessor :httpclient_max_keepalive
 
+      # !!!
+      # [2009-07-23] Current friendfeed-api.com SSL server users certificate
+      # for friendfeed.com. It causes post connection check error in SSL
+      # negotiation. Disable SSL server cert verification temporarily.
+      # http://friendfeed.com/friendfeed-api-v2/25f08288
+      # !!!
+      def temporary_ssl_configuration(client)
+        client.ssl_config.verify_mode = OpenSSL::SSL::VERIFY_NONE
+      end
+
       def initialize(name, remote_key, logger, http_proxy)
         @client = HTTPClient.new(http_proxy)
+        temporary_ssl_configuration(@client)
         @name = name
         @remote_key = remote_key
         @client.debug_dev = LShiftLogger.new(logger)
@@ -552,7 +563,7 @@ module FriendFeed
   end
 
   class APIV2Client < BaseClient
-    URL_BASE = 'http://friendfeed-api.com/v2/'
+    URL_BASE = 'https://friendfeed-api.com/v2/'
 
     attr_accessor :oauth_consumer_key
     attr_accessor :oauth_consumer_secret
@@ -659,7 +670,7 @@ module FriendFeed
       set_if(query, opt, :audio_url)
       set_if(query, opt, :short)
       set_if(query, opt, :geo)
-      ext = nil
+      ext = {}
       query = query.to_a
       if opt[:file]
         opt[:file].each do |filedef|
@@ -677,7 +688,7 @@ module FriendFeed
           query << [:file, file]
         end
         boundary = Digest::SHA1.hexdigest(Time.now.to_s)
-        ext = { 'Content-Type' => "multipart/form-data; boundary=#{boundary}" }
+        ext['Content-Type'] = "multipart/form-data; boundary=#{boundary}"
       end
       post_and_parse(uri, cred, query, ext)
     end
@@ -873,6 +884,7 @@ module FriendFeed
       case cred.first
       when :basicauth
         name, remote_key = cred[1]
+        query = add_appid_for_basicauth(query)
         res = client_sync(uri, name, remote_key) { |client|
           get_request(client, uri, query)
         }
@@ -897,6 +909,7 @@ module FriendFeed
       case cred.first
       when :basicauth
         name, remote_key = cred[1]
+        query = add_appid_for_basicauth(query)
         res = client_sync(uri, name, remote_key) { |client|
           post_request(client, uri, query, ext)
         }
@@ -939,6 +952,18 @@ module FriendFeed
         JSONFilter.parse(res.body)
       else
         raise "unsupported scheme: #{cred.first}"
+      end
+    end
+
+    def add_appid_for_basicauth(query)
+      if @oauth_consumer_key
+        if query.is_a?(Hash)
+          query.merge(:appid => @oauth_consumer_key)
+        else
+          query + [[:appid, @oauth_consumer_key]]
+        end
+      else
+        query
       end
     end
 

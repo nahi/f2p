@@ -70,15 +70,13 @@ class User < ActiveRecord::Base
 
     def convert_feedlist(feedlist)
       feedlist = feedlist.dup
-      if list = feedlist['groups']
-        feedlist['groups'] = sort_by_name(list.map { |e| From[e] })
-      end
-      if list = feedlist['searches']
-        feedlist['searches'] = sort_by_name(list.map { |e| From[e] })
-      end
-      if list = feedlist['lists']
-        feedlist['lists'] = sort_by_name(list.map { |e| From[e] })
-      end
+      list = feedlist['groups'] || []
+      feedlist['groups'] = sort_by_name(list.map { |e| From[e] })
+      list = feedlist['searches'] || []
+      feedlist['searches'] = sort_by_name(list.map { |e| From[e] })
+      list = feedlist['lists'] || []
+      feedlist['lists'] = sort_by_name(list.map { |e| From[e] })
+      feedlist['commands'] ||= []
       feedlist
     end
 
