@@ -510,9 +510,7 @@ __EOS__
   end
 
   def subscribe_status_edit_link
-    if auth.oauth_access_token
-      link_to(menu_label('edit'), :id => @id, :action => :edit)
-    end
+    link_to(menu_label('edit'), :id => @id, :action => :edit)
   end
 
   def subscribe_status
