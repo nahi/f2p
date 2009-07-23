@@ -169,13 +169,22 @@ __EOS__
   end
 
   def top_menu
+    menu_link(menu_icon(:bottom, '8') + h('menu'), '#bottom', accesskey('8'))
+  end
+
+  def common_menu(*arg)
     [
-      write_new_link, 
-      search_link, 
-      settings_link, 
-      help_link, 
+      inbox_link,
+      write_new_link,
+      search_link,
+      settings_link,
+      help_link,
       logout_link
-    ].join
+    ].join(' ')
+  end
+
+  def to_top_menu
+    menu_link(menu_icon(:top, '2'), '#top', accesskey('2'))
   end
 
   def self_label
@@ -230,24 +239,28 @@ __EOS__
     image_tag(url, :class => h('profile'), :alt => h(alt), :title => h(title), :size => '25x25')
   end
 
+  def inbox_link
+    link_to(menu_label('inbox'), :controller => 'entry', :action => 'inbox')
+  end
+
   def write_new_link
-    link_to(icon_tag(:write), :controller => 'entry', :action => 'new')
+    link_to(menu_label('post'), :controller => 'entry', :action => 'new')
   end
 
   def search_link
-    link_to(icon_tag(:search), :controller => 'entry', :action => 'search')
+    link_to(menu_label('search'), :controller => 'entry', :action => 'search')
   end
 
   def settings_link
-    link_to(icon_tag(:settings), :controller => 'setting', :action => 'index')
+    link_to(menu_label('settings'), :controller => 'setting', :action => 'index')
   end
 
   def logout_link
-    link_to(icon_tag(:logout), :controller => 'login', :action => 'clear')
+    link_to(menu_label('logout'), :controller => 'login', :action => 'clear')
   end
 
   def help_link
-    link_to(icon_tag(:help), :controller => 'help', :action => 'index')
+    link_to(menu_label('help'), :controller => 'help', :action => 'index')
   end
 
   def u(arg)
@@ -277,7 +290,7 @@ __EOS__
   end
 
   def list_name(id)
-    if @feedlist
+    if @feedlist and @feedlist['lists']
       if found = @feedlist['lists'].find { |e| e.id == id }
         found.name
       end
@@ -471,6 +484,10 @@ __EOS__
     h("[#{label_with_accesskey(label, accesskey, reverse)}]")
   end
 
+  def menu_icon(icon, accesskey = nil, reverse = false)
+    label_with_accesskey(inline_icon_tag(icon), accesskey, reverse)
+  end
+
   def label_with_accesskey(label, accesskey = nil, reverse = false)
     if accesskey and cell_phone?
       if reverse
@@ -480,6 +497,16 @@ __EOS__
       end
     else
       label
+    end
+  end
+
+  def subscribe_status_link
+    if status = subscribe_status
+      if auth.oauth_access_token
+        link_to(h(status), :id => @id, :action => :edit)
+      else
+        h(status)
+      end
     end
   end
 

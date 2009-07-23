@@ -1,4 +1,3 @@
-<p><a name="top"></a></p>
 <div class="listings">
   <div class="single-entry">
   <%- if @threads.first && entry = @threads.first.root -%>
@@ -10,7 +9,6 @@
         <%= to(entry) -%>
         <%= published(entry, false) %>
         <%= service_icon(entry) -%>
-        <%= menu_link(menu_icon(:bottom, '8'), '#bottom', accesskey('8')) %>
       </p>
     </div>
     <div class="title">
@@ -95,10 +93,13 @@
   <p>
     <%= link_to(h('Back'), :controller => 'entry') %>
   </p>
-<p><a name="bottom"></a>
+<p>
   <%= page_links(:for_bottom => true, :threads => @threads) %>
 </p>
 <hr />
-<p><a name="filter">[Filter]</a></p>
+<p><a name="bottom">Menu:</a><%= to_top_menu %></p>
+<p><%= common_menu %></p>
+<hr />
+<p><a name="filter">Filter:</a></p>
 <p>My: <%= user_page_links %></p>
 <p>Lists: <%= list_links %></p>

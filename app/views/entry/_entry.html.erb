@@ -25,7 +25,7 @@
 <%= friends_likes(entry) unless root.nil? -%>
   <%- comments = fold_comments(entry.comments) -%>
   <%- if comments.empty? or comment_inline?(entry) or (comments.size == 1 and fold_item?(comments.first))-%>
-<%= post_comment_link(entry) %>
+  <%= post_comment_link(entry) %>
   <%- else -%>
     <div class="comment comment-block">
       <%- comments.each do |comment| -%>

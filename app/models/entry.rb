@@ -88,6 +88,14 @@ class Entry
       ff_client.hide_entry(id, auth.new_cred)
     end
 
+    def create_short_url(opt)
+      auth = opt[:auth]
+      id = opt[:eid]
+      if entry = ff_client.create_short_url(id, auth.new_cred)
+        Entry[entry]
+      end
+    end
+
     def add_pin(opt)
       auth = opt[:auth]
       id = opt[:eid]
@@ -132,6 +140,8 @@ class Entry
   attr_accessor :friend_of
   attr_accessor :checked_at
   attr_accessor :commands
+  attr_accessor :short_id
+  attr_accessor :short_url
 
   attr_accessor :twitter_username
   attr_accessor :twitter_reply_to
@@ -145,7 +155,6 @@ class Entry
 
   def initialize(hash)
     initialize_with_hash(hash, 'id', 'url', 'date', 'commands')
-    @link = hash['rawLink']
     if %r(\Ahttp://friendfeed.com/e/) =~ @link
       @link = nil
     end
@@ -160,6 +169,9 @@ class Entry
     @view_medias = []
     @view_map = false
     @body = hash['rawBody']
+    @link = hash['rawLink']
+    @short_id = hash['shortId']
+    @short_url = hash['shortUrl']
     @from = From[hash['from']]
     @to = (hash['to'] || EMPTY).map { |e| From[e] }
     @thumbnails = (hash['thumbnails'] || EMPTY).map { |e| Thumbnail[e] }

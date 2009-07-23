@@ -824,6 +824,12 @@ module FriendFeed
       post_and_parse(uri, cred, query)
     end
 
+    def create_short_url(eid, opt = {})
+      uri = uri("short")
+      return nil unless uri
+      perform_entry_action(uri, eid, opt)
+    end
+
   private
 
     def perform_entry_action(uri, eid, opt)
@@ -856,7 +862,7 @@ module FriendFeed
     end
 
     def set_if(new, old, key)
-      new[key] = old[key] if old.key?(key)
+      new[key] = old[key] if old.key?(key) and old[key]
     end
 
     def url_base

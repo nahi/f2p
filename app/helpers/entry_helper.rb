@@ -3,17 +3,6 @@ module EntryHelper
   BRIGHTKITE_MAP_WIDTH = 120
   BRIGHTKITE_MAP_HEIGHT = 80
 
-  def top_menu
-    if ctx.list?
-      super
-    else
-      [
-        write_new_link, 
-        search_link 
-      ].join
-    end
-  end
-
   def viewname
     if ctx.service
       viewname_base + "(#{ctx.service})"
@@ -139,16 +128,15 @@ module EntryHelper
   def common_content(entry)
     body = entry.body
     return '' unless body
+    fold, content, links = escape_text(body, ctx.fold ? setting.text_folding_size : nil)
+    entry.view_links = links
+    if fold
+      msg = '(more)'
+      content += link_to(h(msg), link_show(entry.id))
+    end
     if link_entry?(entry)
-      content = link_content(body, entry)
-    else
-      fold, str, links = escape_text(body, ctx.fold ? setting.text_folding_size : nil)
-      entry.view_links = links
-      if fold
-        msg = '(more)'
-        str += link_to(h(msg), link_show(entry.id))
-      end
-      content = str
+      link = entry.link
+      content += ' ' + link_to(h("(#{uri_domain(link)})"), link)
     end
     if !entry.files.empty?
       content += entry.files.map { |file|
@@ -696,19 +684,22 @@ module EntryHelper
     indent + link_to(msg, link_show(fold.entry_id))
   end
 
+  # override
   def write_new_link
-    link_to(icon_tag(:write), link_action('new', :room => ctx.room_for))
+    link_to(menu_label('New'), link_action('new', :room => ctx.room_for))
   end
 
+  # override
   def search_link
-    link_to(icon_tag(:search), search_opt(link_action('search')))
+    link_to(menu_label('Search'), search_opt(link_action('search')))
   end
 
   def list_links
     return unless @feedlist
     links = []
     links << menu_link(menu_label('Home'), link_list)
-    @feedlist['lists'].each do |list|
+    lists = @feedlist['lists'] || []
+    lists.each do |list|
       links << menu_link(menu_label(list.name), link_feed(list.id)) {
         @ctx.feed != list.id
       }
@@ -719,7 +710,8 @@ module EntryHelper
   def saved_search_links
     return unless @feedlist
     links = []
-    @feedlist['searches'].each do |search|
+    lists = @feedlist['searches'] || []
+    lists.each do |search|
       links << menu_link(menu_label(search.name), link_feed(search.id)) {
         @ctx.feed != search.id
       }
@@ -803,12 +795,6 @@ module EntryHelper
     start = ctx.start || 0
     num = ctx.num || 0
     links = []
-    if opt[:for_top]
-      links << menu_link(menu_icon(:bottom, '8'), '#bottom', accesskey('8'))
-    end
-    if opt[:for_bottom]
-      links << menu_link(menu_icon(:top, '2'), '#top', accesskey('2'))
-    end
     if ctx.list?
       links << menu_link(menu_label('<', '4', true), list_opt(ctx.link_opt(:start => start - num, :num => num, :direction => 'rewind')), accesskey('4')) {
         !no_page and start - num >= 0
@@ -911,6 +897,10 @@ module EntryHelper
     links << menu_link(menu_label('With friends'), link_feed(feedid)) {
       ctx.feed != feedid
     }
+    feedid = 'notifications/desktop'
+    links << menu_link(menu_label('Desktop notifications'), link_feed(feedid)) {
+      ctx.feed != feedid
+    }
     links.join(' ')
   end
 
@@ -940,10 +930,6 @@ module EntryHelper
       ctx.feed != feedid
     }
     links.join(' ')
-  end
-
-  def menu_icon(icon, accesskey = nil, reverse = false)
-    label_with_accesskey(inline_icon_tag(icon), accesskey, reverse)
   end
 
   def comment_link(comment)
@@ -1006,13 +992,13 @@ module EntryHelper
 
   def url_link_to(link, query = nil)
     if link and ctx.link != link
-      link_to(inline_menu_label(:url, 'Search link'), link_list(:link => link, :query => query))
+      link_to(inline_menu_label(:url, 'search link'), link_list(:link => link, :query => query))
     end
   end
 
   def delete_link(entry)
     if entry.commands.include?('delete')
-      link_to(inline_menu_label(:delete, 'Delete'), link_action('delete', :eid => entry.id), :confirm => 'Delete?')
+      link_to(inline_menu_label(:delete, 'delete'), link_action('delete', :eid => entry.id), :confirm => 'Delete?')
     end
   end
 
@@ -1030,7 +1016,7 @@ module EntryHelper
 
   def moderate_link(entry)
     if !ctx.moderate and editable?(entry)
-      link_to(inline_menu_label(:comment_edit, 'Edit'),
+      link_to(inline_menu_label(:comment_edit, 'edit'),
               link_action('show', :eid => entry.id, :moderate => true))
     end
   end
@@ -1058,7 +1044,7 @@ module EntryHelper
 
   def inline_menu_label(icon, label = nil)
     if ctx.single?
-      label || icon.to_s
+      menu_label(label || icon.to_s)
     else
       inline_icon_tag(icon, label)
     end
@@ -1066,23 +1052,23 @@ module EntryHelper
 
   def like_link(entry)
     if entry.commands.include?('like')
-      link_to(inline_menu_label(:like, 'Like'),
+      link_to(inline_menu_label(:like, 'like'),
               link_action('like', :eid => entry.id))
     end
   end
 
   def hide_link(entry)
     if entry.commands.include?('hide')
-      link_to(inline_menu_label(:hide, 'Hide'),
+      link_to(inline_menu_label(:hide, 'hide'),
               link_action('hide', :eid => entry.id), :confirm => 'Hide?')
     end
   end
 
   def reshare_link(entry)
     if (ctx.single? or entry.view_pinned) and
-        entry.from_id != auth.name and entry.link
-      link_to(inline_menu_label(:reshare, 'Reshare'),
-              link_action('reshare', :eid => entry.id))
+        entry.from_id != auth.name
+      link_to(inline_menu_label(:reshare, 'reshare'),
+              link_action('reshare', :reshared_from => entry.id))
     end
   end
 

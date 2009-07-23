@@ -121,7 +121,11 @@ class EntryController < ApplicationController
       elsif @friends
         opt.merge(:friends => @friends, :merge_service => true)
       elsif @feed
-        opt.merge(:feed => @feed, :merge_service => true)
+        if @feed == 'filter/direct'
+          opt.merge(:feed => @feed, :merge_entry => false)
+        else
+          opt.merge(:feed => @feed, :merge_service => true)
+        end
       elsif @room
         opt.merge(:room => @room, :merge_service => true, :merge_entry => (@room != '*'))
       elsif @inbox
@@ -351,24 +355,37 @@ class EntryController < ApplicationController
 
   verify :only => :reshare,
           :method => :get,
-          :params => [:eid],
+          :params => [:reshared_from],
           :add_flash => {:error => 'verify failed'},
           :redirect_to => {:action => 'inbox'}
 
   def reshare
     @ctx = EntryContext.new(auth)
     @ctx.viewname = 'reshare entry'
-    @ctx.room = param(:room)
-    @eid = param(:eid)
-    opt = create_opt(:eid => @eid)
+    @to_lines = 1
+    @to = []
+    @cc = true
+    @reshared_from = param(:reshared_from)
+    opt = create_opt(:eid => @reshared_from)
     t = find_entry_thread(opt).first
     if t.nil?
       redirect_to_list
       return
     end
     @entry = t.root
-    @link = @entry.link
-    @link_title = %Q("#{@entry.body}")
+    if !@entry.short_url
+      opt = create_opt(:eid => @entry.id)
+      entry = Entry.create_short_url(opt)
+      @entry.short_id = entry.short_id
+      @entry.short_url = entry.short_url
+    end
+    if @entry.link
+      @link = @entry.link
+      @link_title = %Q[Fwd: "#{@entry.body}" via (#{@entry.short_url || @entry.url})]
+    else
+      @link = @entry.short_url || @entry.url
+      @link_title = %Q[Fwd: "#{@entry.body}"]
+    end
     @feedinfo = User.ff_feedinfo(auth, auth.name)
   end
 
@@ -390,7 +407,7 @@ class EntryController < ApplicationController
     if ctx = session[:ctx]
       @ctx.inbox = ctx.inbox
     end
-    @to_lines = intparam(:to_lines)
+    @to_lines = intparam(:to_lines) || 0
     @to = []
     @to_lines.times do |idx|
       @to[idx] = param("to_#{idx}")
@@ -399,9 +416,10 @@ class EntryController < ApplicationController
     @body = param(:body)
     link_title = param(:link_title)
     @link = param(:link)
+    @link_title = param(:link_title)
     @with_form = param(:with_form)
     file = param(:file)
-    reshared_from = param(:reshared_from)
+    @reshared_from = param(:reshared_from)
     @title = param(:title)
     @lat = param(:lat)
     @long = param(:long)
@@ -417,7 +435,11 @@ class EntryController < ApplicationController
     when 'more'
       @to_lines += 1
       @feedinfo = User.ff_feedinfo(auth, auth.name)
-      render :action => 'new'
+      if @reshared_from
+        render :action => 'reshare'
+      else
+        render :action => 'new'
+      end
       return
     end
     opt = create_opt(:to => @to.compact)
@@ -463,7 +485,7 @@ class EntryController < ApplicationController
       render :action => 'new'
       return
     end
-    unpin_entry(reshared_from, false)
+    unpin_entry(@reshared_from, false)
     if session[:ctx]
       session[:ctx].reset_for_new
     end

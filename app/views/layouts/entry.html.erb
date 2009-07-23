@@ -5,9 +5,7 @@
     <%= inline_stylesheet -%>
   </head>
   <body>
-    <%- form_tag({:action => 'list'}) do -%>
-      <p class="header"><%= link_to(h(appname), :controller => 'entry') %> <%= h(viewname) %> at <%= title_date %> <%= top_menu %></p>
-    <%- end -%>
+    <p class="header"><%= link_to(h(appname), :controller => 'entry') %> <a name="top"><%= h(viewname) %></a> at <%= title_date %> <%= top_menu %></p>
     <%= yield %>
   </body>
 </html>

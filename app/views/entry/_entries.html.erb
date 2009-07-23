@@ -6,7 +6,7 @@
   <%- end -%>
 <%- else -%>
   <%- form_tag({:action => 'add'}) do -%>
-    <p><a name="top"></a><%= post_entry_form %></p>
+    <p><%= post_entry_form %></p>
   <%- end -%>
   <%- if ctx.profile_for -%>
     <p><%= picture(ctx.profile_for) %> <%= h(feed_name) %> <%= h(subscribe_status) %> <%= link_to(h('[profile]'), :controller => :profile, :action => :show, :id => ctx.profile_for) %></p>
@@ -19,7 +19,7 @@
   <%- end -%>
 <%- end -%>
 <%- form_tag(link_action('archive')) do -%>
-  <p><a name="top"></a>
+  <p>
     <%= page_links(:for_top => true, :threads => @threads) %>
   </p>
 <%- end -%>
@@ -67,10 +67,11 @@
   <%- end -%>
 </div>
 <%- form_tag(link_action('archive')) do -%>
-  <p><a name="bottom"></a>
-    <%= page_links(:for_bottom => true, :threads => @threads) %>
-  </p>
+  <p><%= page_links(:for_bottom => true, :threads => @threads) %></p>
 <%- end -%>
+<hr />
+<p><a name="bottom">Menu:</a><%= to_top_menu %></p>
+<p><%= common_menu %></p>
 <%- if ctx.list_for and /summary\/\d+\z/ !~ ctx.list_for -%>
   <hr />
 <p><a name="list">List:</a></p>

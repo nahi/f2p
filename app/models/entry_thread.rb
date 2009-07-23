@@ -380,7 +380,7 @@ class EntryThread
         }
       end
       if opt[:inbox]
-        entries = sort_by_detection(entries)
+        entries = sort_by_modified(entries)
       elsif opt[:eids]
         entries = sort_by_ids(entries, opt[:eids])
       elsif sorted?(opt)
