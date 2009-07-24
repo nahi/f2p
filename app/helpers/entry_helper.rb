@@ -266,7 +266,7 @@ module EntryHelper
     end
     str = display.collect { |tb|
       link = tb.link
-      label = entry.body
+      label = '[media]'
       size = image_size(tb.width, tb.height) if tb.width and tb.height
       safe_content = media_tag(entry, tb.url, :alt => h(label), :title => h(label), :size => size)
       if !media_disabled? and link
