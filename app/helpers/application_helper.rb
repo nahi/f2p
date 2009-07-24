@@ -145,7 +145,7 @@ module ApplicationHelper
   div.listings .single-entry {
     border-top: 1px solid #ccc;
     border-bottom: 1px solid #ccc;
-    margin-bottom: 1ex;
+    padding-bottom: 1.5ex;
   }
   #{ inline_stylesheet_iphone }
 __EOS__
@@ -174,7 +174,6 @@ __EOS__
 
   def common_menu(*arg)
     [
-      inbox_link,
       write_new_link,
       search_link,
       settings_link,
@@ -233,7 +232,7 @@ __EOS__
     if i_mode? and %r{([^/]*)\.png\b} =~ url
       url = icon_url($1 + '.gif')
     end
-    image_tag(url, :class => h('inline'), :alt => h(alt), :title => h(title), :size => '16x16')
+    image_tag(url, :alt => h(alt), :title => h(title), :size => '16x16')
   end
 
   def profile_image_tag(url, alt, title)
@@ -537,7 +536,12 @@ __EOS__
     max = F2P::Config.max_friend_list_num
     if lists = @feedinfo.feeds || @feedinfo.subscriptions
       lists = lists.find_all { |e| e.user? }
-      links_if_exists(lists.size.to_s + ' users: ', lists, max) { |e|
+      if lists.size == 1
+        title = '1 user: '
+      else
+        title = lists.size.to_s + ' users: '
+      end
+      links_if_exists(title, lists, max) { |e|
         label = "[#{e.name}]"
         link_to(h(label), link_entry_list(:user => e.id))
       }
@@ -549,7 +553,12 @@ __EOS__
     max = F2P::Config.max_friend_list_num
     if lists = @feedinfo.feeds || @feedinfo.subscriptions
       lists = lists.find_all { |e| e.group? }
-      links_if_exists(lists.size.to_s + ' groups: ', lists, max) { |e|
+      if lists.size == 1
+        title = '1 group: '
+      else
+        title = lists.size.to_s + ' groups: '
+      end
+      links_if_exists(title, lists, max) { |e|
         label = "[#{e.name}]"
         link_to(h(label), link_entry_list(:room => e.id))
       }

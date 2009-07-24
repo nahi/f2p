@@ -71,9 +71,9 @@ module EntryHelper
 
   def pin_link(entry)
     if entry.view_pinned
-      link_to(inline_icon_tag(:pinned, 'unpin'), link_action('unpin', :eid => entry.id))
+      link_to(icon_tag(:pinned, 'unpin'), link_action('unpin', :eid => entry.id))
     else
-      link_to(inline_icon_tag(:pin), link_action('pin', :eid => entry.id))
+      link_to(icon_tag(:pin), link_action('pin', :eid => entry.id))
     end
   end
 
@@ -170,7 +170,7 @@ module EntryHelper
   end
 
   def link_entry?(entry)
-    entry.link and !(ctx.list? and entry.via and entry.via.twitter?)
+    entry.link and !(entry.via and entry.via.twitter?)
   end
 
   def scan_media_from_link(entry)
@@ -793,6 +793,7 @@ module EntryHelper
         !no_page and start - num >= 0
       }
     end
+    links << inbox_link
     if ctx.list? and threads = opt[:threads] and opt[:for_top]
       if entry = find_show_entry(threads)
         links << menu_link(menu_label('from the top', '1'), link_show(entry.id), accesskey('1'))

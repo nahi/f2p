@@ -5,7 +5,7 @@
     <%= inline_stylesheet %>
   </head>
   <body>
-    <p class="herader"><%= link_to(h(appname), :controller => 'entry') %> <a name="top"><%= h(viewname) %></a> at <%= title_date %> <%= top_menu %></p>
+    <p class="herader"><%= link_to(h(appname), :controller => :entry, :action => :inbox) %> <a name="top"><%= h(viewname) %></a> at <%= title_date %> <%= top_menu %></p>
     <%= yield %>
   </body>
 </html>

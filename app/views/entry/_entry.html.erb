@@ -21,8 +21,8 @@
   -- <span class="comment"><%= inline_comment(entry.comments.first) %></span>
 <%- end -%>
   <%= like_link(entry) -%>
-<%= reshare_link(entry) -%>
-<%= friends_likes(entry) unless root.nil? -%>
+  <%= reshare_link(entry) -%>
+  <%= friends_likes(entry) unless root.nil? -%>
   <%- comments = fold_comments(entry.comments) -%>
   <%- if comments.empty? or comment_inline?(entry) or (comments.size == 1 and fold_item?(comments.first))-%>
   <%= post_comment_link(entry) %>

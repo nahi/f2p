@@ -60,15 +60,15 @@
         <%- end -%>
       </div>
     <%- end -%>
+    <p>
+      <%= original_link(entry) %>
+    </p>
     <%- commit_checked_modified(entry) -%>
   <%- else -%>
     <p>No feed is good feed.</p>
   <%- end -%>
   </div>
 </div>
-<p>
-  <%= original_link(entry) %>
-</p>
 <%- if next_entry = next_entry(entry) -%>
   <p>
     Next: <%= link_to_next_entry(next_entry) %>
