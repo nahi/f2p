@@ -622,15 +622,21 @@ module EntryHelper
   end
 
   def post_entry_form
-    unless ctx.direct_message?
-      str = ''
-      str += hidden_field_tag('to_lines', '1')
-      if ctx.room_for and @feedinfo.commands.include?('post')
-        str += hidden_field_tag('to_0', ctx.room_for) + h(feed_name) + ': '
+    return if ctx.direct_message?
+    str = ''
+    str += hidden_field_tag('to_lines', '1')
+    if ctx.user_for
+      if @feedinfo.commands.include?('dm')
+        str += hidden_field_tag('to_0', ctx.user_for) + h(feed_name) + ': '
+      else
+        return
       end
-      str += text_field_tag('body', nil, :placeholder => 'post') + submit_tag('post')
-      str
     end
+    if ctx.room_for and @feedinfo.commands.include?('post')
+      str += hidden_field_tag('to_0', ctx.room_for) + h(feed_name) + ': '
+    end
+    str += text_field_tag('body', nil, :placeholder => 'post') + submit_tag('post')
+    str
   end
 
   def post_comment_form(entry)
@@ -720,8 +726,8 @@ module EntryHelper
 
   def to_select_tag(varname, default)
     user = auth.name
-    candidates = @feedinfo.subscriptions.find_all { |e| e.group? and e.commands.include?('post') }.map { |e| ['(group) ' + e.name, e.id] }
-    candidates += @feedinfo.subscribers.find_all { |e| e.user? and e.commands.include?('dm') }.map { |e| ['(direct) ' + e.name, e.id] }
+    candidates = @feedinfo.subscriptions.find_all { |e| e.group? and e.commands.include?('post') }.map { |e| [e.name, e.id] }
+    candidates += @feedinfo.subscriptions.find_all { |e| e.user? and e.commands.include?('dm') }.map { |e| [e.name, e.id] }
     candidates.unshift([nil, nil])
     select_tag(varname, options_for_select(candidates, default))
   end
