@@ -1051,10 +1051,10 @@ module EntryHelper
   end
 
   def hide_link(entry)
-    if entry.commands.include?('hide')
+    #if entry.commands.include?('hide')
       link_to(inline_menu_label(:hide, 'hide'),
               link_action('hide', :eid => entry.id), :confirm => 'Hide?')
-    end
+    #end
   end
 
   def reshare_link(entry)
