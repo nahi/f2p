@@ -137,7 +137,8 @@ class Entry
   attr_accessor :likes
   attr_accessor :via
   attr_accessor :geo
-  attr_accessor :friend_of
+  attr_accessor :fof
+  attr_accessor :fof_type
   attr_accessor :checked_at
   attr_accessor :commands
   attr_accessor :short_id
@@ -181,9 +182,10 @@ class Entry
     @via = Via[hash['via']]
     @geo = Geo[hash['geo']] || extract_geo_from_google_staticmap_url(@thumbnails)
     if hash['fof']
-      @friend_of = From[hash['fof']['from']]
+      @fof = From[hash['fof']['from']]
+      @fof_type = hash['fof']['type']
     else
-      @friend_of = nil
+      @fof = nil
     end
     @checked_at = nil
     @hidden = hash['hidden'] || false
@@ -194,6 +196,10 @@ class Entry
       end
     end
     @modified = nil
+  end
+
+  def to_ids
+    to.map { |e| e.id }
   end
 
   def similar?(rhs)
@@ -241,9 +247,24 @@ class Entry
     from.id
   end
 
+  def comments_size
+    if placeholder = comments.find { |e| e.placeholder }
+      comments.size + placeholder.num - 1
+    else
+      comments.size
+    end
+  end
+  
+  def likes_size
+    if placeholder = likes.find { |e| e.placeholder }
+      likes.size + placeholder.num - 1
+    else
+      likes.size
+    end
+  end
+
   def self_comment_only?
-    cs = comments
-    cs.size == 1 and self.from_id == cs.first.from_id
+    comments_size == 1 and self.from_id == self.comments.first.from_id
   end
 
   def origin_id

@@ -47,11 +47,15 @@ class EntryController < ApplicationController
       @param = param
       @eid = param(:eid)
       @eids = param(:eids).split(',') if param(:eids)
-      @query = param(:query)
+      @query = @param[:query]
       @user = param(:user)
       @feed = param(:feed)
       @room = param(:room)
       @friends = param(:friends)
+      if @friends == 'checked'
+        @friends = @user
+        @user = nil
+      end
       @like = param(:like)
       @comment = param(:comment)
       @link = param(:link)
@@ -102,20 +106,19 @@ class EntryController < ApplicationController
         :service => @service,
         :label => @label,
         :merge_entry => true,
+        # works only merge_entry == true
         :merge_service => false
       }
       if @eid
         opt.merge(:eid => @eid)
       elsif @eids
-        opt.merge(:eids => @eids, :merge_entry => false)
+        opt.merge(:eids => @eids, :merge_service => true)
       elsif @link
         opt.merge(:link => @link, :query => @query, :merge_service => true)
       elsif @query
         opt.merge(:query => @query, :likes => @likes, :comments => @comments, :user => @user, :room => @room, :friends => @friends, :service => @service, :merge_entry => false)
       elsif @like
-        opt.merge(:like => @like, :user => @user || @auth.name, :merge_entry => false)
-      elsif @comment
-        opt.merge(:comment => @comment, :user => @user || @auth.name, :merge_entry => false)
+        opt.merge(:like => @like, :user => @user || @auth.name, :merge_service => true)
       elsif @user
         opt.merge(:user => @user)
       elsif @friends
@@ -294,10 +297,10 @@ class EntryController < ApplicationController
     end
     with_feedinfo(@ctx.feedid, @ctx) do
       opt = find_opt()
-      # allow to use cache except self reloading
-      if flash[:show_reload_detection] != @ctx.eid and !updated_id_in_flash
-        opt[:allow_cache] = true
-      end
+      # We might not yet fetched comments.
+      opt.delete(:allow_cache)
+      opt.delete(:maxcomments)
+      opt.delete(:maxlikes)
       @threads = find_entry_thread(opt)
       if sess_ctx
         # pin/unpin redirect caused :eid set.
@@ -323,9 +326,12 @@ class EntryController < ApplicationController
   def new
     @ctx = EntryContext.new(auth)
     @ctx.viewname = 'post new entry'
-    @to_lines = 1
+    @to_lines = intparam(:to_lines) || 1
     @to = []
-    @cc = true
+    @to_lines.times do |idx|
+      @to[idx] = param("to_#{idx}")
+    end
+    @cc = params[:cc] != ''
     @body = param(:body)
     @link = param(:link)
     @with_form = param(:with_form)
@@ -646,10 +652,16 @@ private
 
   def find_opt(ctx = @ctx)
     updated_id = updated_id_in_flash()
+    max_comments = @setting.entries_in_thread
+    # for inline_comment, we need at least 1 comment.
+    if max_comments == 0
+      max_comments = 1
+    end
     ctx.find_opt.merge(
       :allow_cache => flash[:allow_cache],
       :updated_id => updated_id,
-      :fof => (@setting.disable_fof ? nil : 1)
+      :fof => (@setting.disable_fof ? nil : 1),
+      :maxcomments => max_comments
     )
   end
 

@@ -6,13 +6,15 @@ class Like
 
   attr_accessor :date
   attr_accessor :from
+  attr_accessor :placeholder
+  attr_accessor :num
 
   def initialize(hash)
-    initialize_with_hash(hash, 'date')
+    initialize_with_hash(hash, 'date', 'placeholder', 'num')
     @from = From[hash['from']]
   end
 
   def from_id
-    from.id
+    from ? from.id : nil
   end
 end

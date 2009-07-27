@@ -895,7 +895,7 @@ module FriendFeed
         unless query.empty?
           uri = uri + '?' + query.map { |k, v|
             [CGI.escape(k.to_s), CGI.escape(v.to_s)].join('=')
-          }.join('&')
+          }.compact.join('&')
         end
         token = create_access_token(cred[1])
         res = token.get(uri)

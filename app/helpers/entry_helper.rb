@@ -199,8 +199,8 @@ module EntryHelper
   end
 
   def friend_of(entry)
-    if fof = entry.friend_of
-      h(" (through #{fof.name})")
+    if entry.fof_type and entry.fof_type != 'like'
+      h(" (#{entry.fof.name} commented on this)")
     end
   end
 
@@ -467,15 +467,16 @@ module EntryHelper
   end
 
   def friends_likes(entry)
-    likes = entry.likes.find_all { |e| !e.from.commands.include?('subscribe') }
     if !entry.likes.empty?
+      likes = entry.likes.find_all { |e| e.from and !e.from.commands.include?('subscribe') }
       if liked?(entry)
-        icon = link_to(icon_tag(:mini_star, 'unlike'), link_action('unlike', :eid => entry.id))
+        icon = link_to(icon_tag(:star, 'unlike'), link_action('unlike', :eid => entry.id))
       else
-        icon = icon_tag(:mini_star)
+        icon = icon_tag(:star)
       end
-      if entry.likes.size != likes.size
-        icon += link_to(h(entry.likes.size.to_s), link_show(entry.id))
+      size = entry.likes_size
+      if size != likes.size
+        icon += link_to(h(size.to_s), link_show(entry.id))
       end
       if !likes.empty?
         members = likes.collect { |like| user(like) }.join(' ')
@@ -487,7 +488,7 @@ module EntryHelper
 
   def comments(entry, compact)
     unless entry.comments.empty?
-      link_to(icon_tag(:comment) + h(entry.comments.size.to_s), link_show(entry.id))
+      link_to(icon_tag(:comment) + h(entry.comments_size.to_s), link_show(entry.id))
     end
   end
 
@@ -725,6 +726,12 @@ module EntryHelper
     select_tag(varname, options_for_select(candidates, default))
   end
 
+  def service_select_tag(varname, default)
+    candidates = Service.find(:all).map { |s| [s.name, s.service_id] }
+    candidates.unshift([nil, nil])
+    select_tag(varname, options_for_select(candidates, default))
+  end
+
   def group_select_tag(varname, default)
     user = auth.name
     feeds = @feedinfo.subscriptions.find_all { |e| e.group? }
@@ -863,7 +870,7 @@ module EntryHelper
   def user_page_links
     links = []
     links << menu_link(menu_label('My feed'), link_user(auth.name)) {
-      ctx.user_for != auth.name
+      !ctx.user_only?
     }
     feedid = 'filter/direct'
     links << menu_link(menu_label('Direct messages'), link_feed(feedid)) {
@@ -921,30 +928,25 @@ module EntryHelper
 
   def comment_link(comment)
     if comment.last?
-      if comment.entry.commands.include?('comment')
-        label = inline_icon_tag(:comment_add)
-      else
-        label = h('show')
-      end
-      link_to(label, link_show(comment.entry.id))
+      label = ">>>#{comment.entry.comments_size}"
+      link_to(h(label), link_show(comment.entry.id))
     end
   end
 
   def post_comment_link(entry, opt = {})
     if !entry.comments.empty? and !comment_inline?(entry)
-      if entry.comments.size == 1
-        str = "#{entry.comments.size} comment"
+      if entry.comments_size == 1
+        str = ">>>#{entry.comments_size}"
       else
-        str = "#{entry.comments.size} comments"
+        str = ">>>#{entry.comments_size}"
       end
       str = latest(entry.modified_at, str)
       if emphasize_as_unread?(entry)
         str = emphasize_as_unread(str)
       end
-    elsif entry.commands.include?('comment')
-      str = inline_icon_tag(:comment_add)
+    #elsif entry.commands.include?('comment')
     else
-      str = h('show')
+      str = h('>>>')
     end
     link_to(str, link_show(entry.id))
   end
@@ -1030,11 +1032,9 @@ module EntryHelper
   end
 
   def inline_menu_label(icon, label = nil)
-    if ctx.single?
-      menu_label(label || icon.to_s)
-    else
-      inline_icon_tag(icon, label)
-    end
+    # when you like old icons...
+    # inline_icon_tag(icon, label)
+    menu_label(label || icon.to_s)
   end
 
   def like_link(entry)
@@ -1095,10 +1095,21 @@ module EntryHelper
   end
 
   def fold_comments(comments)
-    if !comments.empty? and ctx.fold
-      fold_items(comments.first.entry.id, comments)
+    if setting.entries_in_thread == 0
+      if comments.empty?
+        []
+      else
+        e = comments.first.entry
+        [Fold.new(e.id, e.comments_size)]
+      end
     else
-      comments.dup
+      comments.map { |comment|
+        if comment.placeholder
+          Fold.new(comment.entry.id, comment.num)
+        else
+          comment
+        end
+      }
     end
   end
 

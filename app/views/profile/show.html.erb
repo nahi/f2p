@@ -1,6 +1,9 @@
 <%- if @feedinfo -%>
 <p><%= picture(@id) %> <%= h(feed_name) %> <%= h(subscribe_status) %> <%= subscribe_status_edit_link %></p>
 <p><%= h(feed_description) %></p>
+<%- if str = dm_link -%>
+  <p><%= str %></p>
+<%- end -%>
 <p><%= user_page_links %></p>
 <hr />
 <p><%= feed_service_links %></p>

@@ -401,12 +401,15 @@ class EntryThread
     end
 
     def filter_opt(opt)
-      {
+      new_opt = {
         :raw => 1,
         :fof => opt[:fof],
         :start => opt[:start],
         :num => opt[:num]
       }
+      new_opt[:maxcomments] = opt[:maxcomments] if opt.key?(:maxcomments)
+      new_opt[:maxlikes] = opt[:maxlikes] if opt.key?(:maxlikes)
+      new_opt
     end
 
     def ff_client
@@ -497,7 +500,8 @@ class EntryThread
 
     def tag(entry, opt)
       t = [entry.from_id]
-      t << entry.via.name if entry.via and !opt[:merge_service]
+      t << entry.to_ids
+      t << entry.via.service_id if entry.via and entry.via.service_id and !opt[:merge_service]
       t
     end
 

@@ -2,9 +2,9 @@
   <p>
     keyword: <%= text_field_tag('query', ctx.query, :placeholder => 'keyword') %><br />
     from group: <%= group_select_tag('room', ctx.room) %><br />
-    from friends of: <%= text_field_tag('friends', ctx.friends) %><br />
-    from user: <%= text_field_tag('user', ctx.user) %><br />
-    from service: <%= text_field_tag('service', ctx.service) %><br />
+    from user: <%= text_field_tag('user', ctx.user_for || ctx.friends) %>
+      with friends: <%= check_box_tag('friends', 'checked', ctx.friends ? 'checked' : nil) %><br />
+    from service: <%= service_select_tag('service', ctx.service) %><br />
     with likes: <%= likes_select_tag('likes', ctx.likes) %><br />
     with comments: <%= likes_select_tag('comments', ctx.comments) %><br />
     <br />

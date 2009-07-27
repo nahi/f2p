@@ -12,13 +12,15 @@ class Comment
   attr_accessor :via
   attr_accessor :commands
   attr_accessor :clipped
+  attr_accessor :placeholder
+  attr_accessor :num
 
   attr_accessor :index
   attr_accessor :entry
   attr_accessor :view_links
 
   def initialize(hash)
-    initialize_with_hash(hash, 'id', 'date', 'commands', 'clipped')
+    initialize_with_hash(hash, 'id', 'date', 'commands', 'clipped', 'placeholder', 'num')
     @body = hash['rawBody']
     @commands ||= EMPTY
     @from = From[hash['from']]
@@ -26,10 +28,11 @@ class Comment
     @index = nil
     @entry = nil
     @view_links = nil
+    @date ||= ''
   end
 
   def from_id
-    from.id
+    from ? from.id : nil
   end
 
   def by_user(id)
