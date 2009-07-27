@@ -95,7 +95,7 @@ module FriendFeed
         temporary_ssl_configuration(@client)
         @name = name
         @remote_key = remote_key
-        @client.debug_dev = LShiftLogger.new(logger)
+        #@client.debug_dev = LShiftLogger.new(logger)
         @logger = logger
         @client.extend(MonitorMixin)
         @last_accessed = Time.now
