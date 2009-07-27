@@ -292,17 +292,17 @@ class EntryThread
       )
       pinned_id = pinned.map { |e| e.eid }
       if opt[:service]
-        entries = get_entries(auth, :eids => pinned_id).find_all { |e|
+        entries = get_entries(auth, opt.merge(:eids => pinned_id)).find_all { |e|
           e['service'] && (opt[:service] == e['service']['id'])
         }
         entries || []
       elsif opt[:room]
-        entries = get_entries(auth, :eids => pinned_id).find_all { |e|
+        entries = get_entries(auth, opt.merge(:eids => pinned_id)).find_all { |e|
           e['room'] && (opt[:room] == e['room']['nickname'])
         }
         entries || []
       elsif pinned_id
-        entries = get_entries(auth, :eids => pinned_id)
+        entries = get_entries(auth, opt.merge(:eids => pinned_id))
         return nil unless entries
         map = entries.inject({}) { |r, e| r[e['id']] = e; r }
         pinned_id.map { |eid|
@@ -326,8 +326,6 @@ class EntryThread
       search[:service] = opt[:service] if opt[:service]
       search[:likes] = opt[:likes] if opt[:likes]
       search[:comments] = opt[:comments] if opt[:comments]
-      STDERR.puts("!!!!!")
-      STDERR.puts(query)
       feed = ff_client.search(query, search.merge(auth.new_cred))
       feed['entries'] if feed and feed.key?('entries')
     end
@@ -364,7 +362,8 @@ class EntryThread
 
     def get_entries(auth, opt)
       eids = opt[:eids]
-      feed = ff_client.entries(eids, auth.new_cred.merge(:raw => 1))
+      query = filter_opt(opt)
+      feed = ff_client.entries(eids, query.merge(auth.new_cred))
       feed['entries'] if feed and feed.key?('entries')
     end
 
