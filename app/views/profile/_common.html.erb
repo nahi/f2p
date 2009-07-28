@@ -1,0 +1,9 @@
+<hr />
+<p>My: <%= user_page_links %></p>
+<p>Special: <%= special_feed_links %></p>
+<%- if str = list_links -%>
+<p>Lists: <%= str %></p>
+<%- end -%>
+<%- if str = saved_search_links -%>
+<p>Searches: <%= str %></p>
+<%- end -%>

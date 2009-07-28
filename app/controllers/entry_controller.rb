@@ -315,10 +315,9 @@ class EntryController < ApplicationController
         opt.delete(:updated_id)
         # avoid inbox threds update
         opt[:filter_inbox_except] = @ctx.eid
-        feed = find_entry_thread(opt)
-        @original_threads = feed.entries
+        @original_feed = find_entry_thread(opt)
       else
-        @original_threads = []
+        @original_feed = nil
       end
     end
     if sess_ctx

@@ -61,6 +61,9 @@ module EntryHelper
   end
 
   def link_back(label, opt = {})
+    if @original_feed and @original_feed.name
+      label += ' to ' + @original_feed.name
+    end
     if ctx = (ctx || session[:ctx]).dup
       ctx.eid = nil
       link_to(h(label), ctx.back_opt.merge(opt))
@@ -703,31 +706,6 @@ module EntryHelper
     link_to(menu_label('search'), search_opt(link_action('search')))
   end
 
-  def list_links
-    return unless @feedlist
-    links = []
-    links << menu_link(menu_label('Home'), link_list)
-    lists = @feedlist['lists'] || []
-    lists.each do |list|
-      links << menu_link(menu_label(list.name), link_feed(list.id)) {
-        @ctx.feed != list.id
-      }
-    end
-    links.join(' ')
-  end
-
-  def saved_search_links
-    return unless @feedlist
-    links = []
-    lists = @feedlist['searches'] || []
-    lists.each do |search|
-      links << menu_link(menu_label(search.name), link_feed(search.id)) {
-        @ctx.feed != search.id
-      }
-    end
-    links.join(' ')
-  end
-
   def zoom_select_tag(varname, default)
     candidates = (0..19).map { |e| [e, e] }
     select_tag(varname, options_for_select(candidates, default))
@@ -871,8 +849,8 @@ module EntryHelper
   end
 
   def next_entry(entry)
-    return if entry.nil? or @original_threads.nil? or @original_threads.empty?
-    entries = @original_threads.map { |thread| thread.entries }.flatten
+    return if entry.nil? or @original_feed.nil?
+    entries = @original_feed.entries.map { |thread| thread.entries }.flatten
     if found = entries.find { |e| e.id == entry.id }
       if found.view_nextid
         entries.find { |e| e.id == found.view_nextid }
@@ -894,43 +872,6 @@ module EntryHelper
     label = 'mark as read'
     label = '5.' + label if cell_phone?
     submit_tag(label, accesskey('5'))
-  end
-
-  def user_page_links
-    links = []
-    links << menu_link(menu_label('My feed'), link_user(auth.name)) {
-      ctx.feedid != auth.name
-    }
-    links << menu_link(menu_label('profile'), :controller => :profile, :action => :show, :id => auth.name)
-    links.join(' ')
-  end
-
-  def special_feed_links
-    links = []
-    feedid = 'filter/direct'
-    links << menu_link(menu_label('Direct messages'), link_feed(feedid)) {
-      ctx.feed != feedid
-    }
-    feedid = 'filter/discussions'
-    links << menu_link(menu_label('My discussions'), link_feed(feedid)) {
-      ctx.feed != feedid
-    }
-    feedid = [auth.name, 'likes'].join('/')
-    links << menu_link(menu_label('Likes'), link_feed(feedid)) {
-      ctx.feed != feedid
-    }
-    links << menu_link(menu_label('Liked'), link_list(:like => 'liked', :user => auth.name)) {
-      ctx.user_for != auth.name or ctx.like != 'liked'
-    }
-    feedid = [auth.name, 'friends'].join('/')
-    links << menu_link(menu_label('With friends'), link_feed(feedid)) {
-      ctx.feed != feedid
-    }
-    feedid = 'notifications/desktop'
-    links << menu_link(menu_label('Desktop notifications'), link_feed(feedid)) {
-      ctx.feed != feedid
-    }
-    links.join(' ')
   end
 
   def best_of_list_links(listid)

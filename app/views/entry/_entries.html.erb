@@ -81,9 +81,4 @@
   <p><%= feed_subscriptions_user %></p>
   <p><%= feed_subscriptions_group %></p>
 <%- end -%>
-  <hr />
-<p><a name="filter">Filter:</a></p>
-<p>My: <%= user_page_links %></p>
-<p>Special: <%= special_feed_links %></p>
-<p>Lists: <%= list_links %></p>
-<p>Searches: <%= saved_search_links %></p>
+<%= render :partial => 'common' %>

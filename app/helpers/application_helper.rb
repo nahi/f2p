@@ -577,4 +577,49 @@ __EOS__
     }
     select_tag(varname, options_for_select(candidates, default))
   end
+
+  def user_page_links
+    links = []
+    links << menu_link(menu_label('Inbox', '0'), { :controller => :entry, :action => :inbox }, accesskey('0'))
+    links << menu_link(menu_label('My feed'), :controller => :entry, :action => :list, :user => auth.name)
+    links << menu_link(menu_label('profile'), :controller => :profile, :action => :show, :id => auth.name)
+    links.join(' ')
+  end
+
+  def special_feed_links
+    links = []
+    feedid = 'filter/direct'
+    links << menu_link(menu_label('Direct messages'), :controller => :entry, :action => :list, :feed => feedid)
+    feedid = 'filter/discussions'
+    links << menu_link(menu_label('My discussions'), :controller => :entry, :action => :list, :feed => feedid)
+    feedid = [auth.name, 'likes'].join('/')
+    links << menu_link(menu_label('Likes'), :controller => :entry, :action => :list, :feed => feedid)
+    links << menu_link(menu_label('Liked'), :controller => :entry, :action => :list, :like => 'liked', :user => auth.name)
+    feedid = [auth.name, 'friends'].join('/')
+    links << menu_link(menu_label('With friends'), :controller => :entry, :action => :list, :feed => feedid)
+    feedid = 'notifications/desktop'
+    links << menu_link(menu_label('Desktop notifications'), :controller => :entry, :action => :list, :feed => feedid)
+    links.join(' ')
+  end
+
+  def list_links
+    return unless @feedlist
+    links = []
+    links << menu_link(menu_label('Home'), link_list)
+    lists = @feedlist['lists'] || []
+    lists.each do |list|
+      links << menu_link(menu_label(list.name), :controller => :entry, :action => :list, :feed => list.id)
+    end
+    links.join(' ')
+  end
+
+  def saved_search_links
+    return unless @feedlist
+    links = []
+    lists = @feedlist['searches'] || []
+    lists.each do |search|
+      links << menu_link(menu_label(search.name), :controller => :entry, :action => :list, :feed => search.id)
+    end
+    links.join(' ')
+  end
 end
