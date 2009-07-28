@@ -50,8 +50,8 @@ class User < ActiveRecord::Base
       convert_feedlist(ff_client.feedlist(auth.new_cred) || {})
     end
 
-    def ff_feedinfo(auth, feedid)
-      Feedinfo[ff_client.feedinfo(feedid, auth.new_cred) || {}]
+    def ff_feedinfo(auth, feedid, opt = {})
+      Feedinfo[ff_client.feedinfo(feedid, opt.merge(auth.new_cred)) || {}]
     end
 
     def ff_subscribe(auth, feed, list = nil)

@@ -84,14 +84,14 @@
 <%- elsif entry -%>
   <p>
     <%- if entry.view_pinned -%>
-      <%= link_to(h('Unpin this and Back'), :controller => 'entry', :unpin => entry.id) %><br />
+      <%= link_back('Unpin this and Back', :controller => 'entry', :unpin => entry.id) %><br />
     <%- else -%>
-      <%= link_to(h('Pin this and Back'), :controller => 'entry', :pin => entry.id) %><br />
+      <%= link_back('Pin this and Back', :controller => 'entry', :pin => entry.id) %><br />
     <%- end -%>
   </p>
 <%- end -%>
   <p>
-    <%= link_to(h('Back'), :controller => 'entry') %>
+    <%= link_back('Back') %>
   </p>
 <hr />
 <p><a name="bottom">Menu:</a>

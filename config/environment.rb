@@ -57,6 +57,7 @@ module F2P
       attr_accessor :medias_in_thread
       attr_accessor :next_entry_text_folding_size
       attr_accessor :disable_fof
+      attr_accessor :max_select_num
     end
   end
 end
@@ -149,7 +150,7 @@ Rails::Initializer.run do |config|
   F2P::Config.friendfeed_api_oauth_scheme = :header
   F2P::Config.friendfeed_api_oauth_signature_method = 'HMAC-SHA1'
   F2P::Config.friendfeed_api_oauth_http_method = :get # FriendFeed does not allow POST now.
-  F2P::Config.friendfeed_api_timeout = 15
+  F2P::Config.friendfeed_api_timeout = 30
   F2P::Config.friendfeed_api_daemon_drb_uri = 'druby://localhost:17171'
 
   F2P::Config.google_maps_maptype = 'mobile'
@@ -175,4 +176,5 @@ Rails::Initializer.run do |config|
   F2P::Config.medias_in_thread = 4
   F2P::Config.next_entry_text_folding_size = 40
   F2P::Config.disable_fof = false
+  F2P::Config.max_select_num = 50
 end

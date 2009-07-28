@@ -80,19 +80,8 @@ module FriendFeed
     class UserClient
       attr_accessor :httpclient_max_keepalive
 
-      # !!!
-      # [2009-07-23] Current friendfeed-api.com SSL server users certificate
-      # for friendfeed.com. It causes post connection check error in SSL
-      # negotiation. Disable SSL server cert verification temporarily.
-      # http://friendfeed.com/friendfeed-api-v2/25f08288
-      # !!!
-      def temporary_ssl_configuration(client)
-        client.ssl_config.verify_mode = OpenSSL::SSL::VERIFY_NONE
-      end
-
       def initialize(name, remote_key, logger, http_proxy)
         @client = HTTPClient.new(http_proxy)
-        temporary_ssl_configuration(@client)
         @name = name
         @remote_key = remote_key
         #@client.debug_dev = LShiftLogger.new(logger)
@@ -894,7 +883,7 @@ module FriendFeed
         uri = uri.to_s
         unless query.empty?
           uri = uri + '?' + query.map { |k, v|
-            [CGI.escape(k.to_s), CGI.escape(v.to_s)].join('=')
+            [CGI.escape(k.to_s), CGI.escape(v.to_s)].join('=') if v
           }.compact.join('&')
         end
         token = create_access_token(cred[1])

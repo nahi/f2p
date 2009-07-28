@@ -5,6 +5,12 @@ class Feedinfo
   include HashUtils
   EMPTY = [].freeze
 
+  def self.opt_exclude(*arg)
+    {
+      :include => [:id, :name, :type, :description, :sup_id, :subscriptions, :subscribers, :feeds, :services, :commands].reject { |e| arg.include?(e) }.join(',')
+    }
+  end
+
   attr_accessor :id
   attr_accessor :name
   attr_accessor :type

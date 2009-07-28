@@ -21,18 +21,18 @@ class EntryThread
       end
       opt.delete(:auth)
       logger.info('[perf] start entries fetch')
-      entries = fetch_entries(auth, opt)
+      feed = fetch_entries(auth, opt)
       logger.info('[perf] start internal data handling')
-      record_last_modified(entries)
+      record_last_modified(feed)
       logger.info('[perf] record_last_modified done')
-      pins = check_inbox(auth, entries)
+      pins = check_inbox(auth, feed)
       logger.info('[perf] check_inbox done')
-      original = entries = filter_entries(auth, opt, entries)
+      original = feed.entries = filter_entries(auth, opt, feed.entries)
       logger.info('[perf] filter_entries done')
       if opt[:merge_entry]
-        entries = sort_by_service(entries, opt)
+        entries = sort_by_service(feed.entries, opt)
       else
-        entries = entries.map { |e|
+        entries = feed.entries.map { |e|
           EntryThread.new(e)
         }
       end
@@ -50,7 +50,8 @@ class EntryThread
         threads.to_modified = original.first.modified
       end
       threads.pins = pins
-      threads
+      feed.entries = threads
+      feed
     end
 
     def update_checked_modified(auth, hash)
@@ -102,19 +103,19 @@ class EntryThread
       if opt[:eid]
         fetch_single_entry_as_array(auth, opt)
       else
-        entries = fetch_list_entries(auth, opt)
+        feed = fetch_list_entries(auth, opt)
         if updated_id = opt[:updated_id]
-          entry = wrap([get_entry(auth, :eid => updated_id)]).first
+          entry = wrap(Task.run { get_feed(auth, :eid => updated_id) }.result).entries.first
           if entry
             update_cache_entry(auth, entry)
-            if entries.find { |e| e.id == updated_id }
-              replace_entry(entries, entry)
+            if feed.entries.find { |e| e.id == updated_id }
+              replace_entry(feed, entry)
             else
-              entries = [entry] + entries
+              feed.entries = [entry] + feed.entries
             end
           end
         end
-        entries
+        feed
       end
     end
 
@@ -127,7 +128,7 @@ class EntryThread
           end
         end
       end
-      wrap(Task.run { [get_entry(auth, opt)] }.result)
+      wrap(Task.run { get_feed(auth, opt[:eid], opt) }.result)
     end
 
     def fetch_list_entries(auth, opt)
@@ -146,8 +147,8 @@ class EntryThread
           link_task = Task.run { get_link_entries(auth, opt) }
           merged = wrap(link_task.result)
           if opt[:query]
-            merged += wrap(search_task.result)
-            merged = merged.inject({}) { |r, e| r[e.id] = e; r }.values
+            merged.entries += wrap(search_task.result).entries
+            merged.entries = merged.entries.inject({}) { |r, e| r[e.id] = e; r }.values
           end
           merged
         elsif opt[:feed]
@@ -180,18 +181,16 @@ class EntryThread
       opt.delete(:filter_inbox_except)
       if allow_cache
         if cache = get_cached_entries(auth)
-          if opt == cache.opt
+          if opt == cache.feed_opt
             logger.info("[cache] entries cache found for #{opt.inspect}")
             return cache
           end
         end
       end
-      entries = yield
-      cache = CachedEntries.new
-      cache.opt = opt
-      cache.replace(entries)
+      cache = yield
+      cache.feed_opt = opt
       set_cached_entries(auth, cache)
-      entries
+      cache
     end
 
     def update_cache_entry(auth, entry)
@@ -209,15 +208,15 @@ class EntryThread
       ff_client.set_cached_entries(auth.name, cache)
     end
 
-    def record_last_modified(entries)
-      found = LastModified.find_all_by_eid(entries.map { |e| e.id })
+    def record_last_modified(feed)
+      found = LastModified.find_all_by_eid(feed.entries.map { |e| e.id })
       found_map = found.inject({}) { |r, e|
         r[e.eid] = e
         r
       }
       # do update/create without transaction.  we can use transaction and retry
       # invoking this method (whole transaction) but it's too expensive.
-      entries.each do |entry|
+      feed.entries.each do |entry|
         if m = found_map[entry.id]
           d = entry.modified_at
           if m.date != d
@@ -243,11 +242,11 @@ class EntryThread
       end
     end
 
-    def check_inbox(auth, entries)
-      eids = entries.map { |e| e.id }
+    def check_inbox(auth, feed)
+      eids = feed.entries.map { |e| e.id }
       checked_map = checked_map(auth, eids)
       pinned_map = pinned_map(auth)
-      entries.each do |entry|
+      feed.entries.each do |entry|
         entry.view_pinned = pinned_map.key?(entry.id)
         if checked = checked_map[entry.id]
           entry.checked_at = checked
@@ -291,30 +290,19 @@ class EntryThread
         :limit => num
       )
       pinned_id = pinned.map { |e| e.eid }
-      if opt[:service]
-        entries = get_entries(auth, opt.merge(:eids => pinned_id)).find_all { |e|
-          e['service'] && (opt[:service] == e['service']['id'])
-        }
-        entries || []
-      elsif opt[:room]
-        entries = get_entries(auth, opt.merge(:eids => pinned_id)).find_all { |e|
-          e['room'] && (opt[:room] == e['room']['nickname'])
-        }
-        entries || []
-      elsif pinned_id
-        entries = get_entries(auth, opt.merge(:eids => pinned_id))
-        return nil unless entries
-        map = entries.inject({}) { |r, e| r[e['id']] = e; r }
-        pinned_id.map { |eid|
-          if map.key?(eid)
-            map[eid]
-          else
-            pin = pinned.find { |e| e.eid == eid }
-            date = pin ? pin.created_at.xmlschema : nil
-            {'id' => eid, 'date' => date, '__f2p_orphan' => true}
-          end
-        }
-      end
+      hash = get_entries(auth, opt.merge(:eids => pinned_id))
+      return {} if hash.nil? or hash['entries'].nil?
+      map = hash['entries'].inject({}) { |r, e| r[e['id']] = e; r }
+      hash['entries'] = pinned_id.map { |eid|
+        if map.key?(eid)
+          map[eid]
+        else
+          pin = pinned.find { |e| e.eid == eid }
+          date = pin ? pin.created_at.xmlschema : nil
+          {'id' => eid, 'date' => date, '__f2p_orphan' => true}
+        end
+      }
+      hash
     end
 
     def search_entries(auth, opt)
@@ -326,13 +314,11 @@ class EntryThread
       search[:service] = opt[:service] if opt[:service]
       search[:likes] = opt[:likes] if opt[:likes]
       search[:comments] = opt[:comments] if opt[:comments]
-      feed = ff_client.search(query, search.merge(auth.new_cred))
-      feed['entries'] if feed and feed.key?('entries')
+      ff_client.search(query, search.merge(auth.new_cred)) || {}
     end
 
     def get_feed(auth, feedid, opt)
-      feed = ff_client.feed(feedid, filter_opt(opt).merge(auth.new_cred))
-      feed['entries'] if feed and feed.key?('entries')
+      ff_client.feed(feedid, filter_opt(opt).merge(auth.new_cred)) || {}
     end
 
     def get_link_entries(auth, opt)
@@ -341,8 +327,7 @@ class EntryThread
       query[:url] = link
       query[:subscribed] = opt[:subscribed]
       query[:from] = opt[:from]
-      feed = ff_client.url(query.merge(auth.new_cred))
-      feed['entries'] if feed and feed.key?('entries')
+      ff_client.url(query.merge(auth.new_cred)) || {}
     end
 
     def get_liked(auth, opt)
@@ -351,20 +336,13 @@ class EntryThread
       search.delete(:user)
       search[:from] = user
       search[:likes] = 1
-      feed = ff_client.search('', search.merge(auth.new_cred))
-      feed['entries'] if feed and feed.key?('entries')
-    end
-
-    def get_entry(auth, opt)
-      eid = opt[:eid]
-      ff_client.entry(eid, auth.new_cred.merge(:raw => 1))
+      ff_client.search('', search.merge(auth.new_cred)) || {}
     end
 
     def get_entries(auth, opt)
       eids = opt[:eids]
       query = filter_opt(opt)
-      feed = ff_client.entries(eids, query.merge(auth.new_cred))
-      feed['entries'] if feed and feed.key?('entries')
+      ff_client.entries(eids, query.merge(auth.new_cred)) || {}
     end
 
     def filter_entries(auth, opt, entries)
@@ -402,9 +380,9 @@ class EntryThread
     def filter_opt(opt)
       new_opt = {
         :raw => 1,
-        :fof => opt[:fof],
-        :start => opt[:start],
-        :num => opt[:num]
+        :fof => opt[:fof] || 1,
+        :start => opt[:start] || 0,
+        :num => opt[:num] || 100
       }
       new_opt[:maxcomments] = opt[:maxcomments] if opt.key?(:maxcomments)
       new_opt[:maxlikes] = opt[:maxlikes] if opt.key?(:maxlikes)
@@ -415,9 +393,8 @@ class EntryThread
       ApplicationController.ff_client
     end
 
-    def wrap(entries)
-      return EMPTY if entries.nil?
-      entries.map { |e| Entry[e] }
+    def wrap(hash)
+      Feed[hash]
     end
 
     def filter_hidden(entries)
@@ -512,10 +489,10 @@ class EntryThread
       opt[:start].nil? or opt[:start] == 0
     end
 
-    def replace_entry(entries, entry)
-      entries.each_with_index do |e, idx|
+    def replace_entry(feed, entry)
+      feed.entries.each_with_index do |e, idx|
         if e.id == entry.id
-          entries[idx] = entry
+          feed.entries[idx] = entry
           entry.view_nextid = e.view_nextid
           return
         end

@@ -142,6 +142,10 @@ class EntryController < ApplicationController
       @eid = @comment = nil
     end
 
+    def back_opt
+      list_opt.merge(:controller => :entry, :action => default_action, :start => @start, :num => @num)
+    end
+
     def list_opt
       {
         :query => @query,
@@ -175,6 +179,10 @@ class EntryController < ApplicationController
       elsif self.home
         'home'
       end
+    end
+
+    def list_base?
+      /\Alist\b/ =~ @feed and /\/summary\/\d+\z/ !~ @feed
     end
 
     def link_opt(opt = {})
@@ -212,22 +220,19 @@ class EntryController < ApplicationController
           :redirect_to => {:action => 'inbox'}
 
   def list
+    pin_check
     @ctx = restore_ctx { |ctx|
       ctx.parse(params, @setting)
     }
-    with_feedinfo(@ctx.feedid, @ctx) do
-      @threads = find_entry_thread(find_opt)
+    with_feedinfo(@ctx) do
+      @feed = find_entry_thread(find_opt)
+      @threads = @feed.entries
     end
     initialize_checked_modified
   end
 
   def index
-    if unpin = param(:unpin)
-      unpin_entry(unpin)
-    end
-    if pin = param(:pin)
-      pin_entry(pin)
-    end
+    pin_check
     redirect_to_list
   end
 
@@ -237,6 +242,7 @@ class EntryController < ApplicationController
           :redirect_to => {:action => 'inbox'}
 
   def inbox
+    pin_check
     @ctx = restore_ctx { |ctx|
       ctx.start = (param(:start) || '0').to_i
       ctx.num = intparam(:num) || @setting.entries_in_page
@@ -245,8 +251,9 @@ class EntryController < ApplicationController
       ctx.fold = param(:fold) != 'no'
     }
     retry_times = @ctx.start.zero? ? 0 : F2P::Config.max_skip_empty_inbox_pages
-    with_feedinfo(@ctx.feedid, @ctx) do
-      @threads = find_entry_thread(find_opt)
+    with_feedinfo(@ctx) do
+      @feed = find_entry_thread(find_opt)
+      @threads = @feed.entries
     end
     retry_times.times do
       break unless @threads.empty?
@@ -256,7 +263,8 @@ class EntryController < ApplicationController
       else
         @ctx.start += @ctx.num
       end
-      @threads = find_entry_thread(find_opt)
+      @feed = find_entry_thread(find_opt)
+      @threads = @feed.entries
     end
     initialize_checked_modified
     render :action => 'list'
@@ -289,19 +297,15 @@ class EntryController < ApplicationController
     @ctx.moderate = param(:moderate)
     @ctx.home = false
     sess_ctx = session[:ctx]
-    if unpin = param(:unpin)
-      unpin_entry(unpin)
-    end
-    if pin = param(:pin)
-      pin_entry(pin)
-    end
-    with_feedinfo(@ctx.feedid, @ctx) do
+    pin_check
+    with_feedinfo(@ctx) do
       opt = find_opt()
       # We might not yet fetched comments.
       opt.delete(:allow_cache)
       opt.delete(:maxcomments)
       opt.delete(:maxlikes)
-      @threads = find_entry_thread(opt)
+      @feed = find_entry_thread(opt)
+      @threads = @feed.entries
       if sess_ctx
         # pin/unpin redirect caused :eid set.
         ctx = sess_ctx.dup
@@ -311,7 +315,8 @@ class EntryController < ApplicationController
         opt.delete(:updated_id)
         # avoid inbox threds update
         opt[:filter_inbox_except] = @ctx.eid
-        @original_threads = find_entry_thread(opt)
+        feed = find_entry_thread(opt)
+        @original_threads = feed.entries
       else
         @original_threads = []
       end
@@ -335,6 +340,7 @@ class EntryController < ApplicationController
     @body = param(:body)
     @link = param(:link)
     @with_form = param(:with_form)
+    @file = nil
     @title = param(:title)
     @lat = param(:lat)
     @long = param(:long)
@@ -373,7 +379,7 @@ class EntryController < ApplicationController
     @cc = true
     @reshared_from = param(:reshared_from)
     opt = create_opt(:eid => @reshared_from)
-    t = find_entry_thread(opt).first
+    t = find_entry_thread(opt).entries.first
     if t.nil?
       redirect_to_list
       return
@@ -424,7 +430,7 @@ class EntryController < ApplicationController
     @link = param(:link)
     @link_title = param(:link_title)
     @with_form = param(:with_form)
-    file = param(:file)
+    @file = param(:file)
     @reshared_from = param(:reshared_from)
     @title = param(:title)
     @lat = param(:lat)
@@ -455,7 +461,7 @@ class EntryController < ApplicationController
       generator = GoogleMaps::URLGenerator.new
       image_link = generator.link_url(@lat, @long, @address)
       @body += " ([map] #{@address})"
-      if !@link and !file
+      if !@link and !@file
         opt[:link] = image_link
       end
     end
@@ -470,8 +476,8 @@ class EntryController < ApplicationController
     elsif @body
       opt[:body] = @body
     end
-    if file
-      (opt[:file] ||= []) << file
+    if @file
+      (opt[:file] ||= []) << @file
     end
     unless opt[:body]
       @feedinfo = User.ff_feedinfo(auth, auth.name)
@@ -752,21 +758,30 @@ private
   end
 
   def find_entry_thread(opt)
-    EntryThread.find(opt) || []
+    EntryThread.find(opt)
   end
 
-  def with_feedinfo(feedid, ctx)
+  def with_feedinfo(ctx)
     tasks = []
     tasks << Task.run {
       @feedlist = User.ff_feedlist(auth)
     }
     tasks << Task.run {
-      @feedinfo = User.ff_feedinfo(auth, feedid)
+      @feedinfo = User.ff_feedinfo(auth, @ctx.feedid, Feedinfo.opt_exclude(:subscriptions, :subscribers, :services))
     }
     yield
     # just pull the result
     tasks.each do |task|
       task.result
+    end
+  end
+
+  def pin_check
+    if unpin = param(:unpin)
+      unpin_entry(unpin)
+    end
+    if pin = param(:pin)
+      pin_entry(pin)
     end
   end
 end

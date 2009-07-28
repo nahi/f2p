@@ -9,7 +9,7 @@
     <p><%= post_entry_form %></p>
   <%- end -%>
   <%- if ctx.profile_for -%>
-    <p><%= picture(ctx.profile_for) %> <%= h(feed_name) %> <%= h(subscribe_status) %> <%= link_to(h('[profile]'), :controller => :profile, :action => :show, :id => ctx.profile_for) %></p>
+    <p><%= picture(ctx.profile_for) %> <%= h(feed_name) %> <%= h(subscribe_status) %> <%= profile_link(ctx.profile_for) %></p>
   <%- end -%>
   <%- if ctx.list_for -%>
     <p>Best of: <%= best_of_list_links(ctx.list_for) %></p>
@@ -75,7 +75,7 @@
 <%- if ctx.inbox -%>
   <p><%= all_link %></p>
 <%- end -%>
-<%- if ctx.list_for and /summary\/\d+\z/ !~ ctx.list_for -%>
+<%- if ctx.list_base? -%>
   <hr />
 <p><a name="list">List:</a></p>
   <p><%= feed_subscriptions_user %></p>
@@ -84,5 +84,6 @@
   <hr />
 <p><a name="filter">Filter:</a></p>
 <p>My: <%= user_page_links %></p>
+<p>Special: <%= special_feed_links %></p>
 <p>Lists: <%= list_links %></p>
 <p>Searches: <%= saved_search_links %></p>

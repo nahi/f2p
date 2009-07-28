@@ -7,7 +7,7 @@
     Link: <%= text_field_tag('link', @link) %><br />
     <%= hidden_field_tag('with_form', @with_form) %>
     <%- if @with_form -%>
-      image upload: <%= file_field_tag('file') %><br />
+      image upload: <%= file_field_tag('file', @file) %><br />
     <%- else -%>
       <%= link_to(h('image upload'), :action => 'new', :with_form => '1') %><br />
     <%- end -%>

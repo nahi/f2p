@@ -5,7 +5,7 @@ module ProfileHelper
 
   def dm_link
     return unless @feedinfo
-    if @feedinfo.commands.include?('dm')
+    if @feedinfo.commands.include?('dm') and @feedinfo.id != auth.name
       link_to(h('Send direct message'), :controller => :entry, :action => :new, :to_lines => 1, :to_0 => @id, :cc => '')
     end
   end

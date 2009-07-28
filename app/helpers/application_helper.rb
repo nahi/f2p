@@ -235,6 +235,10 @@ __EOS__
     image_tag(url, :alt => h(alt), :title => h(title), :size => '16x16')
   end
 
+  def profile_link(id)
+    link_to(menu_label('profile'), :controller => :profile, :action => :show, :id => id)
+  end
+
   def profile_image_tag(url, alt, title)
     image_tag(url, :class => h('profile'), :alt => h(alt), :title => h(title), :size => '25x25')
   end
@@ -294,18 +298,6 @@ __EOS__
       user_status(entry.from_id)
     else # imaginary user
       'private'
-    end
-  end
-
-  def list_name(id)
-    if @feedlist and @feedlist['lists']
-      if found = @feedlist['lists'].find { |e| e.id == id }
-        found.name
-      end
-    elsif @feedinfo
-      if @feedinfo.id == id
-        @feedinfo.name
-      end
     end
   end
 
@@ -522,8 +514,11 @@ __EOS__
   end
 
   def feed_name
-    return unless @feedinfo
-    @feedinfo.name
+    if @feed
+      @feed.name
+    elsif @feedinfo
+      @feedinfo.name
+    end
   end
 
   def feed_description
@@ -534,35 +529,33 @@ __EOS__
   def feed_subscriptions_user
     return unless @feedinfo
     max = F2P::Config.max_friend_list_num
-    if lists = @feedinfo.feeds || @feedinfo.subscriptions
-      lists = lists.find_all { |e| e.user? }
-      if lists.size == 1
-        title = '1 user: '
-      else
-        title = lists.size.to_s + ' users: '
-      end
-      links_if_exists(title, lists, max) { |e|
-        label = "[#{e.name}]"
-        link_to(h(label), link_entry_list(:user => e.id))
-      }
+    lists = @feedinfo.feeds + @feedinfo.subscriptions
+    lists = lists.find_all { |e| e.user? }
+    if lists.size == 1
+      title = '1 user: '
+    else
+      title = lists.size.to_s + ' users: '
     end
+    links_if_exists(title, lists, max) { |e|
+      label = "[#{e.name}]"
+      link_to(h(label), link_entry_list(:user => e.id))
+    }
   end
 
   def feed_subscriptions_group
     return unless @feedinfo
     max = F2P::Config.max_friend_list_num
-    if lists = @feedinfo.feeds || @feedinfo.subscriptions
-      lists = lists.find_all { |e| e.group? }
-      if lists.size == 1
-        title = '1 group: '
-      else
-        title = lists.size.to_s + ' groups: '
-      end
-      links_if_exists(title, lists, max) { |e|
-        label = "[#{e.name}]"
-        link_to(h(label), link_entry_list(:room => e.id))
-      }
+    lists = @feedinfo.feeds + @feedinfo.subscriptions
+    lists = lists.find_all { |e| e.group? }
+    if lists.size == 1
+      title = '1 group: '
+    else
+      title = lists.size.to_s + ' groups: '
     end
+    links_if_exists(title, lists, max) { |e|
+      label = "[#{e.name}]"
+      link_to(h(label), link_entry_list(:room => e.id))
+    }
   end
 
   def link_entry_action(action, opt = {})

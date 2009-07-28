@@ -60,6 +60,15 @@ module EntryHelper
     link_list(opt.merge(:feed => feedid))
   end
 
+  def link_back(label, opt = {})
+    if ctx = (ctx || session[:ctx]).dup
+      ctx.eid = nil
+      link_to(h(label), ctx.back_opt.merge(opt))
+    else
+      link_to(h(label), opt.merge(:controller => :entry))
+    end
+  end
+
   def author_picture(entry)
     return if !setting.list_view_profile_picture
     if id = entry.origin_id
@@ -729,13 +738,21 @@ module EntryHelper
     candidates = @feedinfo.subscriptions.find_all { |e| e.group? and e.commands.include?('post') }.map { |e| [e.name, e.id] }
     candidates += @feedinfo.subscriptions.find_all { |e| e.user? and e.commands.include?('dm') }.map { |e| [e.name, e.id] }
     candidates.unshift([nil, nil])
-    select_tag(varname, options_for_select(candidates, default))
+    if candidates.size >= F2P::Config.max_select_num
+      text_field_tag(varname, default)
+    else
+      select_tag(varname, options_for_select(candidates, default))
+    end
   end
 
   def service_select_tag(varname, default)
     candidates = Service.find(:all).map { |s| [s.name, s.service_id] }
     candidates.unshift([nil, nil])
-    select_tag(varname, options_for_select(candidates, default))
+    if candidates.size >= F2P::Config.max_select_num
+      text_field_tag(varname, default)
+    else
+      select_tag(varname, options_for_select(candidates, default))
+    end
   end
 
   def group_select_tag(varname, default)
@@ -743,7 +760,11 @@ module EntryHelper
     feeds = @feedinfo.subscriptions.find_all { |e| e.group? }
     candidates = feeds.map { |e| [e.name, e.id] }
     candidates.unshift([nil, nil])
-    select_tag(varname, options_for_select(candidates, default))
+    if candidates.size >= F2P::Config.max_select_num
+      text_field_tag(varname, default)
+    else
+      select_tag(varname, options_for_select(candidates, default))
+    end
   end
 
   def likes_select_tag(varname, default)
@@ -810,6 +831,8 @@ module EntryHelper
     if ctx.list? and threads = opt[:threads] and opt[:for_top]
       if entry = find_show_entry(threads)
         links << menu_link(menu_label('from the top', '1'), link_show(entry.id), accesskey('1'))
+      else
+        links << menu_label('from the top')
       end
     end
     if ctx.inbox and opt[:for_bottom]
@@ -876,8 +899,14 @@ module EntryHelper
   def user_page_links
     links = []
     links << menu_link(menu_label('My feed'), link_user(auth.name)) {
-      !ctx.user_only?
+      ctx.feedid != auth.name
     }
+    links << menu_link(menu_label('profile'), :controller => :profile, :action => :show, :id => auth.name)
+    links.join(' ')
+  end
+
+  def special_feed_links
+    links = []
     feedid = 'filter/direct'
     links << menu_link(menu_label('Direct messages'), link_feed(feedid)) {
       ctx.feed != feedid
@@ -934,8 +963,7 @@ module EntryHelper
 
   def comment_link(comment)
     if comment.last?
-      label = ">>>#{comment.entry.comments_size}"
-      link_to(h(label), link_show(comment.entry.id))
+      link_to(h('>>>'), link_show(comment.entry.id))
     end
   end
 
