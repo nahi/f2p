@@ -105,7 +105,7 @@ class EntryThread
       else
         feed = fetch_list_entries(auth, opt)
         if updated_id = opt[:updated_id]
-          entry = wrap(Task.run { get_feed(auth, :eid => updated_id) }.result).entries.first
+          entry = wrap(Task.run { get_feed(auth, updated_id, opt) }.result).entries.first
           if entry
             update_cache_entry(auth, entry)
             if feed.entries.find { |e| e.id == updated_id }
