@@ -106,6 +106,9 @@ module ApplicationHelper
     text-indent: -16px;
     margin-left: 16px;
   }
+  .comment-body {
+    margin-bottom: 0.5ex;
+  }
   div.listings .thread1 {
     background-color: #EEE;
     border-top: 1px solid #ccc;
@@ -119,7 +122,7 @@ module ApplicationHelper
   }
   div.listings hr.separator { display: none; }
   div.listings .body {
-    padding-bottom: 0.2ex;
+    padding-bottom: 0.5ex;
   }
   div.listings .entry {
     margin-bottom: 0.8ex;
@@ -574,27 +577,18 @@ __EOS__
     select_tag(varname, options_for_select(candidates, default))
   end
 
-  def user_page_links
-    links = []
-    links << menu_link(menu_label('Inbox', '0'), { :controller => :entry, :action => :inbox }, accesskey('0'))
-    links << menu_link(menu_label('My feed'), :controller => :entry, :action => :list, :user => auth.name)
-    links << menu_link(menu_label('profile'), :controller => :profile, :action => :show, :id => auth.name)
-    links.join(' ')
-  end
-
   def special_feed_links
     links = []
+    links << menu_link(menu_label('Profile'), :controller => :profile, :action => :show, :id => auth.name)
+    links << menu_link(menu_label('Inbox', '0'), { :controller => :entry, :action => :inbox }, accesskey('0'))
+    links << menu_link(menu_label('My feed'), :controller => :entry, :action => :list, :user => auth.name)
     feedid = 'filter/direct'
     links << menu_link(menu_label('Direct messages'), :controller => :entry, :action => :list, :feed => feedid)
     feedid = 'filter/discussions'
     links << menu_link(menu_label('My discussions'), :controller => :entry, :action => :list, :feed => feedid)
     feedid = [auth.name, 'likes'].join('/')
-    links << menu_link(menu_label('Likes'), :controller => :entry, :action => :list, :feed => feedid)
-    links << menu_link(menu_label('Liked'), :controller => :entry, :action => :list, :like => 'liked', :user => auth.name)
-    feedid = [auth.name, 'friends'].join('/')
-    links << menu_link(menu_label('With friends'), :controller => :entry, :action => :list, :feed => feedid)
     feedid = 'notifications/desktop'
-    links << menu_link(menu_label('Desktop notifications'), :controller => :entry, :action => :list, :feed => feedid)
+    links << menu_link(menu_label('Notifications'), :controller => :entry, :action => :list, :feed => feedid)
     links.join(' ')
   end
 

@@ -83,9 +83,9 @@ module EntryHelper
 
   def pin_link(entry)
     if entry.view_pinned
-      link_to(icon_tag(:pinned, 'unpin'), link_action('unpin', :eid => entry.id))
+      link_to(inline_icon_tag(:pinned, 'unpin'), link_action('unpin', :eid => entry.id))
     else
-      link_to(icon_tag(:pin), link_action('pin', :eid => entry.id))
+      link_to(inline_icon_tag(:pin), link_action('pin', :eid => entry.id))
     end
   end
 
@@ -500,7 +500,7 @@ module EntryHelper
 
   def comments(entry, compact)
     unless entry.comments.empty?
-      link_to(icon_tag(:comment) + h(entry.comments_size.to_s), link_show(entry.id))
+      link_to(inline_icon_tag(:comment) + h(entry.comments_size.to_s), link_show(entry.id))
     end
   end
 
@@ -564,8 +564,7 @@ module EntryHelper
       by_self = true
       label = nil
     end
-    opt = { :class => 'comment-icon' }
-    by_self ? icon_tag(:comment, label, opt) : icon_tag(:friend_comment, label, opt)
+    by_self ? inline_icon_tag(:comment, label) : inline_icon_tag(:friend_comment, label)
   end
 
   def comment(comment)
