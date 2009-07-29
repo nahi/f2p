@@ -102,7 +102,7 @@ module ApplicationHelper
   .older { color: #008; }
   .comment { color: #666; }
   .inbox { font-weight: bold; }
-  .body,.comment-body,.likes {
+  .comment-body,.likes {
     text-indent: -16px;
     margin-left: 16px;
   }
@@ -126,6 +126,8 @@ module ApplicationHelper
   div.listings hr.separator { display: none; }
   div.listings .body {
     padding-bottom: 0.5ex;
+    text-indent: -16px;
+    margin-left: 16px;
   }
   div.listings .entry {
     margin-bottom: 0.8ex;
