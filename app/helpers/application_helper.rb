@@ -124,9 +124,6 @@ module ApplicationHelper
   div.listings .entry {
     margin-bottom: 0.8ex;
   }
-  div.listings .related {
-    margin-bottom: 0.8ex;
-  }
   div.single {
     border-top: 1px solid #ccc;
     border-bottom: 1px solid #ccc;
