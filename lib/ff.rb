@@ -579,6 +579,19 @@ module FriendFeed
       res.status == 200
     end
 
+    # validate OAuth credential
+    def oauth_validate(opt)
+      uri = uri("feedlist")
+      return false unless uri
+      cred = get_credential(opt)
+      return false unless cred.first == :oauth
+      uri.scheme = 'http'
+      uri = uri.to_s
+      token = create_access_token(cred[1])
+      res = token.get(uri)
+      res.code.to_i == 200 # Net::HTTP returns in String
+    end
+
     # Reading data from FriendFeed
     def feed(fid, opt = {})
       uri = uri("feed/#{fid}")

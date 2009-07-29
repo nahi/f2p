@@ -339,7 +339,6 @@ class EntryController < ApplicationController
     @body = param(:body)
     @link = param(:link)
     @with_form = param(:with_form)
-    @file = nil
     @title = param(:title)
     @lat = param(:lat)
     @long = param(:long)
@@ -429,7 +428,7 @@ class EntryController < ApplicationController
     @link = param(:link)
     @link_title = param(:link_title)
     @with_form = param(:with_form)
-    @file = param(:file)
+    file = param(:file)
     @reshared_from = param(:reshared_from)
     @title = param(:title)
     @lat = param(:lat)
@@ -460,7 +459,7 @@ class EntryController < ApplicationController
       generator = GoogleMaps::URLGenerator.new
       image_link = generator.link_url(@lat, @long, @address)
       @body += " ([map] #{@address})"
-      if !@link and !@file
+      if !@link and !file
         opt[:link] = image_link
       end
     end
@@ -475,8 +474,8 @@ class EntryController < ApplicationController
     elsif @body
       opt[:body] = @body
     end
-    if @file
-      (opt[:file] ||= []) << @file
+    if file
+      (opt[:file] ||= []) << file
     end
     unless opt[:body]
       @feedinfo = User.ff_feedinfo(auth, auth.name)

@@ -44,6 +44,7 @@ module ApplicationHelper
     'group' => 'group.png',
     'private' => 'lock.png',
     'hide' => 'sound_mute.png',
+    'shield' => 'shield.png',
   }
   OAUTH_IMAGE_URL = 'http://friendfeed.com/static/images/sign-in-with-friendfeed.png'
 
@@ -169,7 +170,12 @@ __EOS__
   end
 
   def top_menu
-    menu_link(menu_icon(:bottom, '8') + h('menu'), '#bottom', accesskey('8'))
+    menu = menu_link(menu_icon(:bottom, '8') + h('menu'), '#bottom', accesskey('8'))
+    if auth and auth.oauth?
+      icon_tag(:shield) + ' ' + menu
+    else
+      menu
+    end
   end
 
   def common_menu(*arg)

@@ -94,6 +94,7 @@ module FriendFeed
     extend ClientProxy
 
     define_proxy_method :validate
+    define_proxy_method :oauth_validate
     define_proxy_method :feed
     define_proxy_method :search
     define_proxy_method :feedlist
@@ -397,6 +398,7 @@ module FriendFeed
     attr_reader :client
 
     define_proxy_method :validate
+    define_proxy_method :oauth_validate
     define_proxy_method :feed
     define_proxy_method :search
     define_proxy_method :feedlist

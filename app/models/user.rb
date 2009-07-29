@@ -15,7 +15,12 @@ class User < ActiveRecord::Base
         if ff_client.validate(name, remote_key)
           ActiveRecord::Base.transaction do
             if user = User.find_by_name(name)
-              user.store_remote_key(remote_key)
+              if user.oauth? and ff_client.oauth_validate(user.new_cred)
+                # reusable OAuth access token found. just use it.
+              else
+                # store remote_key in DB.
+                user.store_remote_key(remote_key)
+              end
             else
               user = User.new
               user.name = name
@@ -89,8 +94,12 @@ class User < ActiveRecord::Base
     end
   end
 
+  def oauth?
+    !!self.oauth_access_token
+  end
+
   def new_cred
-    if self.oauth_access_token
+    if oauth?
       {
         :name => self.name,
         :oauth_token => self.oauth_access_token,
