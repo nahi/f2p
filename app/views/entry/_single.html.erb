@@ -1,73 +1,68 @@
-<div class="listings">
-  <div class="single-entry">
+<div class="single">
   <%- if @threads.first && entry = @threads.first.root -%>
-    <div class="title-header">
-      <p>
-        <%= author_picture(entry) -%>
-        <%= pin_link(entry) %>
-        <%= author_link(entry) %>
-        <%= to(entry) -%>
-        <%= published(entry, false) %>
-        <%= service_icon(entry) -%>
-      </p>
+    <div class="header">
+      <%= pin_link(entry) %>
+      <%= author_picture(entry) -%>
+      <%= author_link(entry) %>
+      <%= to(entry) -%>
+      <%= published(entry, false) %>
+      <%= service_icon(entry) -%>
     </div>
-    <div class="title">
-      <p>
-        <%- if ctx.moderate -%>
-          <%- form_tag({:action => 'update', :eid => entry.id}, {:name => 'post'}) do -%>
-            <%= edit_entry_form(entry) -%>
-          <%- end -%>
-          <script type='text/javascript'><!--
-          post.body.focus();
-          //--></script>
-        <%- else -%>
-<%= content(entry) -%> <span class="comment"><%= via(entry) %></span>
+    <div class="body">
+      <%- if ctx.moderate -%>
+        <%- form_tag({:action => 'update', :eid => entry.id}, {:name => 'post'}) do -%>
+          <%= edit_entry_form(entry) -%>
         <%- end -%>
-      </p>
+        <script type='text/javascript'><!--
+        post.body.focus();
+        //--></script>
+      <%- else -%>
+<%= content(entry) -%>
+<%- if str = via(entry) -%>
+<br /><span class="comment"><%= str %></span>
+<%- end -%>
+      <%- end -%>
     </div>
     <%- form_tag({:action => 'add_comment', :eid => entry.id, :comment => ctx.comment ? ctx.comment : nil}, {:name => 'post'}) do -%>
-      <div class="comment comment-block">
-        <%- entry.comments.each do |comment| -%>
-          <p>
-            <%- if ctx.comment != comment.id -%>
-              <%= comment_icon(comment) %><%= comment(comment) %> <%= comment_author_link(comment) %> <%= via(comment) %>
-              <%= date(comment.date, false) %>
+      <%- entry.comments.each do |comment| -%>
+        <div class="comment comment-body">
+          <%- if ctx.comment != comment.id -%>
+            <%= comment_icon(comment) %><%= comment(comment) %> <%= comment_author_link(comment) %> <%= via(comment) %>
+            <%= date(comment.date, false) %>
 <%= edit_comment_link(comment) -%>
 <%= delete_comment_link(comment) -%>
-            <%- else -%>
-              <%= comment_icon(comment) %><%= edit_comment_form(comment) %>
-            <%- end -%>
-          </p>
-        <%- end -%>
-        <%- if ctx.comment.nil? and !ctx.moderate -%>
-          <%= comment_icon %><%= post_comment_form(entry) %><br />
-          <script type='text/javascript'><!--
-          post.body.focus();
-          //--></script>
-        <%- end -%>
-        <p class="likes">
-          <%= likes(entry) -%>
-        </p>
-        <%- if ctx.comment.nil? -%>
-          <p>
-            <%= like_link(entry) %>
-            <%= moderate_link(entry) %>
-            <%= hide_link(entry) %>
-            <%= delete_link(entry) %>
-            <%= reshare_link(entry) %>
-            <%= url_link(entry) %>
-          </p>
-        <%- end -%>
+          <%- else -%>
+            <%= comment_icon(comment) %><%= edit_comment_form(comment) %>
+          <%- end -%>
+        </div>
+      <%- end -%>
+      <%- if ctx.comment.nil? and !ctx.moderate -%>
+        <%= comment_icon %><%= post_comment_form(entry) %>
+        <script type='text/javascript'><!--
+        post.body.focus();
+        //--></script>
+      <%- end -%>
+      <div class="likes">
+        <%= likes(entry) -%>
       </div>
     <%- end -%>
-    <p>
+    <%- if ctx.comment.nil? -%>
+      <div class="entry-menu">
+        <%= like_link(entry) %>
+        <%= moderate_link(entry) %>
+        <%= hide_link(entry) %>
+        <%= delete_link(entry) %>
+        <%= reshare_link(entry) %>
+        <%= url_link(entry) %>
+      </div>
+    <%- end -%>
+    <div class="entry-menu">
       <%= original_link(entry) %>
-    </p>
+    </div>
     <%- commit_checked_modified(entry) -%>
   <%- else -%>
     <p>No feed is good feed.</p>
   <%- end -%>
-  </div>
 </div>
 <%- if next_entry = next_entry(entry) -%>
   <p>

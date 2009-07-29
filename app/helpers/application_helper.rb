@@ -83,32 +83,29 @@ module ApplicationHelper
   def inline_stylesheet
     return if i_mode?
     h1_size = setting ? setting.font_size + 1 : 11
-    h2_size = setting ? setting.font_size : 10
     body_size = setting ? setting.font_size : 10
     content = <<__EOS__
-  h1 { font-size: #{h1_size}pt; }
-  h2 { font-size: #{h2_size}pt; }
   p.header { font-size: #{h1_size}pt; }
   body { font-size: #{body_size}pt; }
+  img.inline  { vertical-align: text-top; }
+  img.media   { border: 1px solid #ccc; padding: 1px; }
+  img.profile { border: 1px solid #ccc; padding: 0px; }
   a img { border: none; }
   p {
     margin-top: 1ex;
     margin-bottom: 1ex;
   }
-  img.inline  { vertical-align: text-top; }
-  img.media   { border: 1px solid #ccc; padding: 1px; }
-  img.profile { border: 1px solid #ccc; padding: 0px; }
   p.message { color: red; }
   .latest1 { color: #F00; }
   .latest2 { color: #C00; }
   .latest3 { color: #900; }
   .older { color: #008; }
   .comment { color: #666; }
-  .comment-block {
-    margin-bottom: 1.0ex;
-  }
-  .comment-block p { }
   .inbox { font-weight: bold; }
+  .related,.comment-body,.likes {
+    text-indent: -16px;
+    margin-left: 16px;
+  }
   div.listings .thread1 {
     background-color: #EEE;
     border-top: 1px solid #ccc;
@@ -121,14 +118,8 @@ module ApplicationHelper
     padding-bottom: 1.0ex;
   }
   div.listings hr.separator { display: none; }
-  div.listings ul {
-    list-style-type: none;
-    margin-top: 0pt;
-    margin-bottom: 0pt;
-  }
-  div.listings p {
-    margin-top: 0pt;
-    margin-bottom: 0pt;
+  div.listings .body {
+    padding-bottom: 0.2ex;
   }
   div.listings .entry {
     margin-bottom: 0.8ex;
@@ -136,17 +127,19 @@ module ApplicationHelper
   div.listings .related {
     margin-bottom: 0.8ex;
   }
-  div.listings .title-header {
-    background-color: #EEE;
-  }
-  div.listings .title {
-    padding-top: 1.5ex;
-    padding-bottom: 1.0ex;
-  }
-  div.listings .single-entry {
+  div.single {
     border-top: 1px solid #ccc;
     border-bottom: 1px solid #ccc;
-    padding-bottom: 1.5ex;
+  }
+  div.single .header {
+    background-color: #EEE;
+  }
+  div.single .body {
+    padding-top: 1ex;
+    padding-bottom: 1ex;
+  }
+  div.single .entry-menu {
+    margin-bottom: 1ex;
   }
   #{ inline_stylesheet_iphone }
 __EOS__

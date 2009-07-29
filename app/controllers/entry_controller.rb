@@ -107,30 +107,30 @@ class EntryController < ApplicationController
         :label => @label,
         :merge_entry => true,
         # works only merge_entry == true
-        :merge_service => false
+        :merge_service => true
       }
       if @eid
         opt.merge(:eid => @eid)
       elsif @eids
-        opt.merge(:eids => @eids, :merge_service => true)
+        opt.merge(:eids => @eids)
       elsif @link
-        opt.merge(:link => @link, :query => @query, :merge_service => true)
-      elsif @query
-        opt.merge(:query => @query, :likes => @likes, :comments => @comments, :user => @user, :room => @room, :friends => @friends, :service => @service, :merge_entry => false)
+        opt.merge(:link => @link, :query => @query)
+      elsif @query or @service
+        opt.merge(:query => @query, :likes => @likes, :comments => @comments, :user => @user, :room => @room, :friends => @friends, :service => @service, :merge_entry => @query.empty?)
       elsif @like
-        opt.merge(:like => @like, :user => @user || @auth.name, :merge_service => true)
+        opt.merge(:like => @like, :user => @user || @auth.name)
       elsif @user
-        opt.merge(:user => @user)
+        opt.merge(:user => @user, :merge_service => false)
       elsif @friends
-        opt.merge(:friends => @friends, :merge_service => true)
+        opt.merge(:friends => @friends)
       elsif @feed
         if @feed == 'filter/direct'
-          opt.merge(:feed => @feed, :merge_entry => false)
+          opt.merge(:feed => @feed, :merge_entry => false, :merge_service => false)
         else
-          opt.merge(:feed => @feed, :merge_service => true)
+          opt.merge(:feed => @feed)
         end
       elsif @room
-        opt.merge(:room => @room, :merge_service => true, :merge_entry => (@room != '*'))
+        opt.merge(:room => @room, :merge_entry => (@room != '*'))
       elsif @inbox
         opt.merge(:inbox => true, :merge_service => true)
       else
@@ -764,9 +764,11 @@ private
     tasks << Task.run {
       @feedlist = User.ff_feedlist(auth)
     }
-    tasks << Task.run {
-      @feedinfo = User.ff_feedinfo(auth, @ctx.feedid, Feedinfo.opt_exclude(:subscriptions, :subscribers, :services))
-    }
+    if @ctx.list?
+      tasks << Task.run {
+        @feedinfo = User.ff_feedinfo(auth, @ctx.feedid, Feedinfo.opt_exclude(:subscriptions, :subscribers, :services))
+      }
+    end
     yield
     # just pull the result
     tasks.each do |task|

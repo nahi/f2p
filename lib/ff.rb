@@ -571,7 +571,7 @@ module FriendFeed
 
     # wrapper method for V1 compatibility
     def validate(name, remote_key)
-      uri = uri("feedinfo/#{name}")
+      uri = uri("feedlist")
       return false unless uri
       res = client_sync(uri, name, remote_key) { |client|
         get_request(client, uri)
@@ -893,6 +893,7 @@ module FriendFeed
         parse_response(res)
       when :oauth
         uri.scheme = 'http'
+        tag = uri.path
         uri = uri.to_s
         unless query.empty?
           uri = uri + '?' + query.map { |k, v|
@@ -900,10 +901,21 @@ module FriendFeed
           }.compact.join('&')
         end
         token = create_access_token(cred[1])
-        res = token.get(uri)
+        oauth_logging(tag) do
+          res = token.get(uri)
+        end
         JSONFilter.parse(res.body)
       else
         raise "unsupported scheme: #{cred.first}"
+      end
+    end
+
+    def oauth_logging(uri)
+      begin
+        logger.info("accessing to %s via OAuth (%0x)" % [uri, Thread.current.object_id])
+        yield
+      ensure
+        logger.info("done (%0x)" % Thread.current.object_id)
       end
     end
 
@@ -933,6 +945,7 @@ module FriendFeed
         #      'application/x-www-urleocoded' content-type. This means that
         #      stream parameters are not signed.
         uri.scheme = 'http'
+        tag = uri.path
         token = create_access_token(cred[1], :scheme => :query_string)
         file = query.find_all { |k, v| k == :file }
         unless file.empty?
@@ -946,10 +959,14 @@ module FriendFeed
           req.body = body
           req['Content-Length'] = body.size
           req['Content-Type'] = "multipart/form-data; boundary=#{boundary}"
-          res = token.consumer.http.request(req)
+          oauth_logging(tag) do
+            res = token.consumer.http.request(req)
+          end
         else
           data = query_to_hash(query)
-          res = token.post(uri.to_s, data, ext)
+          oauth_logging(tag) do
+            res = token.post(uri.to_s, data, ext)
+          end
         end
         JSONFilter.parse(res.body)
       else

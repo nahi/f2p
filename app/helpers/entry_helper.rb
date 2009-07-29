@@ -203,7 +203,7 @@ module EntryHelper
   end
 
   def media_indent
-    "<br />\n" + indent
+    "<br />\n"
   end
 
   def indent
