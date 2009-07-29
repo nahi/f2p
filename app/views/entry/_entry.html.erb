@@ -5,13 +5,12 @@
 <%- else -%>
 <%- if root.nil? -%>
 <div class="header">
-<%= pin_link(entry) -%>
 <%= author_picture(entry) -%><%= author_link(entry) %> <%= to(entry) %>
   <%= published(entry, true) -%>
   <%= service_icon(entry) -%>
-  <%= friends_likes(entry) -%>
 </div>
 <div class="body">
+<%= pin_link(entry) -%>
 <%- elsif !entry.same_feed?(root) and root.origin_id != entry.origin_id -%>
 <div class="body">
 <%= pin_link(entry) -%>
@@ -27,24 +26,26 @@
 <%- end -%>
   <%= like_link(entry) -%>
   <%= reshare_link(entry) -%>
-  <%= friends_likes(entry) unless root.nil? -%>
+  <%= friends_likes(entry) -%>
   <%- comments = fold_comments(entry.comments) -%>
   <%- if comments.empty? or comment_inline?(entry) or (comments.size == 1 and fold_item?(comments.first))-%>
   <%= post_comment_link(entry) %>
     </div>
   <%- else -%>
     </div>
-    <%- comments.each do |comment| -%>
-      <div class="comment comment-body">
-        <%- if comment.respond_to?(:fold_entries) -%>
-          <%= fold_comment_link(comment) %>
-        <%- else -%>
-          <%= comment_icon(comment) %><%= comment(comment) %> <%= comment_author_link(comment) %> <%= via(comment) %>
+    <div class="comment-block">
+      <%- comments.each do |comment| -%>
+        <div class="comment comment-body">
+          <%- if comment.respond_to?(:fold_entries) -%>
+            <%= fold_comment_link(comment) %>
+          <%- else -%>
+            <%= comment_icon(comment) %><%= comment(comment) %> <%= comment_author_link(comment) %> <%= via(comment) %>
 <%= comment_date(comment, true) unless comment.posted_with_entry? -%>
 <%= comment_url_link(comment) -%>
-  <%= comment_link(comment) -%>
-        <%- end -%>
-      </div>
-    <%- end -%>
+            <%= comment_link(comment) -%>
+          <%- end -%>
+        </div>
+      <%- end -%>
+    </div>
   <%- end -%>
 <%- end -%>

@@ -488,9 +488,9 @@ module EntryHelper
     if !entry.likes.empty?
       likes = entry.likes.find_all { |e| e.from and !e.from.commands.include?('subscribe') }
       if liked?(entry)
-        icon = link_to(icon_tag(:star, 'unlike'), link_action('unlike', :eid => entry.id))
+        icon = link_to(inline_icon_tag(:star, 'unlike'), link_action('unlike', :eid => entry.id))
       else
-        icon = icon_tag(:star)
+        icon = inline_icon_tag(:star)
       end
       size = entry.likes_size
       if size != likes.size

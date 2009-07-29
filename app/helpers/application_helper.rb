@@ -102,12 +102,15 @@ module ApplicationHelper
   .older { color: #008; }
   .comment { color: #666; }
   .inbox { font-weight: bold; }
-  .related,.comment-body,.likes {
+  .body,.comment-body,.likes {
     text-indent: -16px;
     margin-left: 16px;
   }
   .comment-body {
     margin-bottom: 0.5ex;
+  }
+  .related {
+    margin-top: 1.5ex;
   }
   div.listings .thread1 {
     background-color: #EEE;
@@ -247,7 +250,8 @@ __EOS__
   end
 
   def all_link
-    menu_link(menu_label('show all entries in Home feed', '7'), { :controller => :entry, :action => :list }, accesskey('7'))
+    name = feed_name || 'Home feed'
+    menu_link(menu_label('show all entries in ' + name, '7'), { :controller => :entry, :action => :list }, accesskey('7'))
   end
 
   def pinned_link
