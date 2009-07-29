@@ -61,12 +61,18 @@ module EntryHelper
   end
 
   def link_back(label, opt = {})
-    if @original_feed and @original_feed.name
+    list_ctx = session[:ctx]
+    if list_ctx and list_ctx.inbox
+      label += ' to Inbox'
+    elsif list_ctx and list_ctx.label == 'pin'
+      label += ' to Pin list'
+    elsif @original_feed and @original_feed.name
       label += ' to ' + @original_feed.name
     end
-    if ctx = (ctx || session[:ctx]).dup
-      ctx.eid = nil
-      link_to(h(label), ctx.back_opt.merge(opt))
+    if list_ctx
+      list_ctx = list_ctx.dup
+      list_ctx.eid = nil
+      link_to(h(label), list_ctx.back_opt.merge(opt))
     else
       link_to(h(label), opt.merge(:controller => :entry))
     end

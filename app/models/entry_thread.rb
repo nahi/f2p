@@ -122,7 +122,7 @@ class EntryThread
     def fetch_single_entry_as_array(auth, opt)
       if opt[:allow_cache]
         if cache = get_cached_entries(auth)
-          if found = cache.find { |e| e.id == opt[:eid] && e.id != opt[:updated_id] }
+          if found = cache.entries.find { |e| e.id == opt[:eid] && e.id != opt[:updated_id] }
             logger.info("[cache] entry cache found for #{opt[:eid]}")
             return [found]
           end
