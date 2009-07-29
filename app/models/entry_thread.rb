@@ -394,7 +394,7 @@ class EntryThread
     end
 
     def wrap(hash)
-      Feed[hash]
+      Feed[hash || {}]
     end
 
     def filter_hidden(entries)
