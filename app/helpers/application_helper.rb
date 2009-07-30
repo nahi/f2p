@@ -540,6 +540,14 @@ __EOS__
     end
   end
 
+  def feed_name_with_icon
+    if @feedinfo
+      str = h(feed_name)
+      str += lock_icon_tag if @feedinfo.private
+      str
+    end
+  end
+
   def feed_description
     return unless @feedinfo
     @feedinfo.description
@@ -555,8 +563,14 @@ __EOS__
     else
       title = lists.size.to_s + ' users: '
     end
+    map = @feedinfo.subscribers.inject({}) { |r, e| r[e.id] = true; r }
+    lists = lists.partition { |e| map.key?(e.id) }.flatten
     links_if_exists(title, lists, max) { |e|
-      label = "[#{e.name}]"
+      if map.key?(e.id)
+        label = "[*#{e.name}]"
+      else
+        label = "[#{e.name}]"
+      end
       link_to(h(label), link_entry_list(:user => e.id))
     }
   end

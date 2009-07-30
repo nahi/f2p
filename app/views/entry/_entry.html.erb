@@ -13,13 +13,17 @@
     <%= pin_link(entry) -%>
 <%- else -%>
   <div class="body">
-<%= pin_link(entry) -%>
-  <%- if entry.identity != root.identity -%>
-    <%= author_picture(entry) -%><%= author_link(entry) -%> <%= to(entry) %>
+    <%= pin_link(entry) -%>
+  <%- if entry.from_id != root.from_id -%>
+    <%= author_picture(entry) -%><%= author_link(entry) %>
+  <%- end -%>
+  <%- if entry.to_ids != root.to_ids -%>
+    <%= to(entry) %>
   <%- end -%>
 <%- end -%>
 <%= content(entry) %> <span class="comment"><%= via(entry) %></span>
 <%= published(entry, true) unless root.nil? -%>
+  <%= service_icon(entry) if root and entry.service_id != root.service_id -%>
 <%- if comment_inline?(entry) -%>
   -- <span class="comment"><%= inline_comment(entry.comments.first) %></span>
 <%- end -%>

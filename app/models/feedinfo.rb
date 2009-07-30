@@ -7,13 +7,14 @@ class Feedinfo
 
   def self.opt_exclude(*arg)
     {
-      :include => [:id, :name, :type, :description, :sup_id, :subscriptions, :subscribers, :feeds, :services, :commands].reject { |e| arg.include?(e) }.join(',')
+      :include => [:id, :name, :type, :private, :description, :sup_id, :subscriptions, :subscribers, :feeds, :services, :commands].reject { |e| arg.include?(e) }.join(',')
     }
   end
 
   attr_accessor :id
   attr_accessor :name
   attr_accessor :type
+  attr_accessor :private
   attr_accessor :description
   attr_accessor :sup_id
   attr_accessor :subscriptions
@@ -23,7 +24,7 @@ class Feedinfo
   attr_accessor :commands
 
   def initialize(hash)
-    initialize_with_hash(hash, 'id', 'name', 'type', 'description', 'commands', 'sup_id')
+    initialize_with_hash(hash, 'id', 'name', 'type', 'private', 'description', 'commands', 'sup_id')
     @subscriptions = sort_by_name((hash['subscriptions'] || EMPTY).map { |e| From[e] })
     @subscribers = sort_by_name((hash['subscribers'] || EMPTY).map { |e| From[e] })
     @feeds = sort_by_name((hash['feeds'] || EMPTY).map { |e| From[e] })
@@ -32,6 +33,6 @@ class Feedinfo
   end
 
   def sort_by_name(lists)
-    lists.sort_by { |e| e.name }
+    lists.sort_by { |e| e.name.downcase }
   end
 end

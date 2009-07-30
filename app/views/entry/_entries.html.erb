@@ -9,7 +9,7 @@
     <p><%= post_entry_form %></p>
   <%- end -%>
   <%- if ctx.profile_for -%>
-    <p><%= picture_link(ctx.profile_for) %> <%= h(feed_name) %> <%= h(subscribe_status) %> <%= profile_link(ctx.profile_for) %></p>
+    <p><%= picture_link(ctx.profile_for) %> <%= feed_name_with_icon %> <%= h(subscribe_status) %> <%= profile_link(ctx.profile_for) %></p>
   <%- end -%>
   <%- if ctx.list_for -%>
     <p>Best of: <%= best_of_list_links(ctx.list_for) %></p>
@@ -73,7 +73,7 @@
 <%- end -%>
 <%- if ctx.list_base? -%>
   <hr />
-<p><a name="list">List:</a></p>
+<p><a name="list">Subscriptions:</a></p>
   <p><%= feed_subscriptions_user %></p>
   <p><%= feed_subscriptions_group %></p>
 <%- end -%>

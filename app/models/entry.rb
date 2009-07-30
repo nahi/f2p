@@ -214,11 +214,17 @@ class Entry
     result
   end
 
+  def service_id
+    if via
+      via.service_id
+    end
+  end
+
   def identity(opt = {})
     @identity ||= [self.from_id, self.to_ids]
     if !opt[:merge_service]
-      if self.via and self.via.service_id
-        return @identity + [self.via.service_id]
+      if self.service_id
+        return @identity + [self.service_id]
       end
     end
     @identity
