@@ -135,7 +135,7 @@ module EntryHelper
     end
     scan_media_from_link(entry)
     unless entry.view_medias.empty?
-      content += media_indent
+      content += "<br />\n"
       entry.view_medias.each do |uri|
         content += media_tag(entry, uri)
       end
@@ -154,13 +154,13 @@ module EntryHelper
     end
     if link_entry?(entry)
       link = entry.link
-      content += ' ' + link_to(h("(#{uri_domain(link)})"), link)
+      content += ' - ' + link_to(h(summary_uri(link)), link)
     end
     if !entry.files.empty?
       content += entry.files.map { |file|
         label = file.type
         icon = image_tag(file.icon, :alt => h(label), :title => h(label), :size => '16x16')
-        str = media_indent + link_to(icon + h(file.name), file.url)
+        str = "<br />\n" + link_to(icon + h(file.name), file.url)
         str += h(" (#{file.size} bytes)") if file.size
         str
       }.join(', ')
@@ -168,7 +168,7 @@ module EntryHelper
     if !entry.thumbnails.empty?
       # entries from Hatena contains 'enclosure' but no title and link for now.
       with_media = content_with_media(entry)
-      content += media_indent + with_media unless with_media.empty?
+      content += "<br />\n" + with_media unless with_media.empty?
     end
     if entry.geo and !entry.view_map
       point = GoogleMaps::Point.new(body, entry.geo.lat, entry.geo.long)
@@ -208,14 +208,6 @@ module EntryHelper
     end
   end
 
-  def media_indent
-    "<br />\n"
-  end
-
-  def indent
-    "&nbsp;" * 4
-  end
-
   def friend_of(entry)
     if entry.fof_type and entry.fof_type != 'like'
       h(" (#{entry.fof.name} commented on this)")
@@ -251,11 +243,6 @@ module EntryHelper
     link_to(h(link_content), link)
   end
 
-  def link_content(body, entry)
-    link = entry.link
-    h(body) + ' ' + link_to(h("(#{uri_domain(link)})"), link)
-  end
-
   def uri(str)
     begin
       uri = URI.parse(str)
@@ -263,6 +250,19 @@ module EntryHelper
       uri
     rescue
       nil
+    end
+  end
+
+  def summary_uri(str)
+    uri = uri(str)
+    if uri
+      if uri.path and !uri.path.empty?
+        uri.scheme + '://' + uri.host + '/...'
+      else
+        uri.scheme + '://' + uri.host
+      end
+    else
+      str
     end
   end
 
@@ -690,7 +690,7 @@ module EntryHelper
 
   def fold_comment_link(fold)
     msg = "(#{fold.fold_entries} more comments)"
-    indent + link_to(msg, link_show(fold.entry_id))
+    link_to(msg, link_show(fold.entry_id))
   end
 
   # override

@@ -106,30 +106,38 @@ module ApplicationHelper
     text-indent: -16px;
     margin-left: 16px;
   }
+  .comment-block {
+    margin-top: 0.2ex;
+  }
   .comment-body {
-    margin-bottom: 0.5ex;
+    margin-top: 0.6ex;
   }
-  .related {
-    margin-top: 1.5ex;
+  .comment-fold {
+    margin-left: 16px;
   }
+  .comment-fold a { color: #666; }
   div.listings .thread1 {
     background-color: #EEE;
     border-top: 1px solid #ccc;
     border-bottom: 1px solid #ccc;
     padding-top: 0.5ex;
-    padding-bottom: 1.0ex;
+    padding-bottom: 0.8ex;
   }
   div.listings .thread2 {
     padding-top: 0.5ex;
-    padding-bottom: 1.0ex;
+    padding-bottom: 0.8ex;
   }
   div.listings hr.separator { display: none; }
   div.listings .body {
-    padding-bottom: 0.5ex;
+    margin-top: 0.5ex;
     text-indent: -16px;
     margin-left: 16px;
   }
   div.listings .entry {
+    margin-bottom: 0.8ex;
+  }
+  div.listings .related {
+    margin-top: 1.0ex;
     margin-bottom: 0.8ex;
   }
   div.single {
@@ -236,7 +244,7 @@ __EOS__
     if i_mode? and %r{([^/]*)\.png\b} =~ url
       url = icon_url($1 + '.gif')
     end
-    image_tag(url, :alt => h(alt), :title => h(title), :size => '16x16')
+    image_tag(url, :class => 'inline', :alt => h(alt), :title => h(title), :size => '16x16')
   end
 
   def profile_link(id)
@@ -308,6 +316,12 @@ __EOS__
 
   def imaginary?(id)
     /\A[0-9a-f]{32}\z/ =~ id
+  end
+
+  def picture_link(id, size = 'small')
+    if picture = picture(id, size)
+      link_to(picture, User.ff_url(id))
+    end
   end
 
   def picture(id, size = 'small')
@@ -585,7 +599,6 @@ __EOS__
 
   def special_feed_links
     links = []
-    links << menu_link(menu_label('Profile'), :controller => :profile, :action => :show, :id => auth.name)
     links << menu_link(menu_label('Inbox', '0'), { :controller => :entry, :action => :inbox }, accesskey('0'))
     links << menu_link(menu_label('My feed'), :controller => :entry, :action => :list, :user => auth.name)
     feedid = 'filter/direct'

@@ -448,9 +448,9 @@ class EntryThread
         buf -= kinds
         if kinds.empty?
           pre = entry
-          entry_tag = tag(entry, opt)
+          entry_tag = entry.identity(opt)
           buf.each do |e|
-            if entry_tag == tag(e, opt) and ((e.date_at - pre.date_at).abs < F2P::Config.service_grouping_threashold) and !kinds.include?(e)
+            if entry_tag == e.identity(opt) and ((e.date_at - pre.date_at).abs < F2P::Config.service_grouping_threashold) and !kinds.include?(e)
               kinds << (pre = e)
               # too agressive?
               #similar_entries(buf, e).each do |e2|
@@ -472,13 +472,6 @@ class EntryThread
       entries.sort_by { |e|
         -e.date_at.to_i
       }
-    end
-
-    def tag(entry, opt)
-      t = [entry.from_id]
-      t << entry.to_ids
-      t << entry.via.service_id if entry.via and entry.via.service_id and !opt[:merge_service]
-      t
     end
 
     def similar_entries(collection, entry)

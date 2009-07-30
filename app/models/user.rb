@@ -45,6 +45,10 @@ class User < ActiveRecord::Base
       end
     end
   
+    def ff_url(name)
+      "http://friendfeed.com/#{name}"
+    end
+  
     def ff_picture_url(user, size = 'small')
       # uglish but for reducing DRb overhead...
       # ff_client.get_user_picture_url(user, size)

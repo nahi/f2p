@@ -1,4 +1,4 @@
-<p><%= picture(@id) %> <%= h(feed_name) %> <%= h(subscribe_status) %> <%= link_to(menu_label('back'), :id => @id, :action => :show) %></p>
+<p><%= picture_link(@id) %> <%= h(feed_name) %> <%= h(subscribe_status) %> <%= link_to(menu_label('back'), :id => @id, :action => :show) %></p>
 <%- if flash[:message] -%>
   <p class="message"><%= h(flash[:message]) %></p>
 <%- end -%>

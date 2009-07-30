@@ -9,7 +9,7 @@
     <p><%= post_entry_form %></p>
   <%- end -%>
   <%- if ctx.profile_for -%>
-    <p><%= picture(ctx.profile_for) %> <%= h(feed_name) %> <%= h(subscribe_status) %> <%= profile_link(ctx.profile_for) %></p>
+    <p><%= picture_link(ctx.profile_for) %> <%= h(feed_name) %> <%= h(subscribe_status) %> <%= profile_link(ctx.profile_for) %></p>
   <%- end -%>
   <%- if ctx.list_for -%>
     <p>Best of: <%= best_of_list_links(ctx.list_for) %></p>

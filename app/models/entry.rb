@@ -214,12 +214,14 @@ class Entry
     result
   end
 
-  def same_feed?(rhs)
-    rhs and from_id == rhs.from_id and service_identity == rhs.service_identity
-  end
-
-  def service_identity
-    via ? via.name : nil
+  def identity(opt = {})
+    @identity ||= [self.from_id, self.to_ids]
+    if !opt[:merge_service]
+      if self.via and self.via.service_id
+        return @identity + [self.via.service_id]
+      end
+    end
+    @identity
   end
 
   def date_at
