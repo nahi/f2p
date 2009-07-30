@@ -102,6 +102,7 @@ module ApplicationHelper
   .older { color: #008; }
   .comment { color: #666; }
   .inbox { font-weight: bold; }
+  .hashtag a { color: #000; }
   .comment-body,.likes {
     text-indent: -16px;
     margin-left: 16px;

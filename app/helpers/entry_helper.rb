@@ -397,7 +397,7 @@ module EntryHelper
     while content.match(URI.regexp(['http', 'https']))
       m = $~
       added, part = fold_concat(m.pre_match, fold_size - org_size)
-      str += h(part)
+      str += markup_sentence(part)
       if added
         org_size += added
       else
@@ -412,7 +412,7 @@ module EntryHelper
       uri = uri(target)
       added, part = fold_concat(target, fold_size - org_size)
       if uri.nil? or !uri.is_a?(URI::HTTP)
-        str += h(part)
+        str += markup_sentence(part)
         if added
           org_size += added
         else
@@ -421,16 +421,16 @@ module EntryHelper
       else
         links << target
         if added
-          str += link_to(h(target), target)
+          str += link_to(markup_sentence(target), target)
           org_size += added
         else
-          str += link_to(h(part), target)
+          str += link_to(markup_sentence(part), target)
           return true, str, links
         end
       end
     end
     added, part = fold_concat(content, fold_size - org_size)
-    str += h(part)
+    str += markup_sentence(part)
     unless added
       return true, str, links
     end
@@ -445,6 +445,19 @@ module EntryHelper
     else
       return size, str
     end
+  end
+
+  def markup_sentence(str)
+    ary = []
+    while str.match(/#[a-zA-Z0-9]+/)
+      m = $~
+      ary << h(m.pre_match)
+      link = link_to(h(m[0]), search_opt(:action => :list, :query => m[0]))
+      ary << content_tag('span', link, :class => 'hashtag')
+      str = m.post_match
+    end
+    ary << h(str)
+    ary.join
   end
 
   def via(entry_or_comment)
