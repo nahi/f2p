@@ -58,6 +58,7 @@ module F2P
       attr_accessor :next_entry_text_folding_size
       attr_accessor :disable_fof
       attr_accessor :max_select_num
+      attr_accessor :reload_list_in_minutes
     end
   end
 end
@@ -177,4 +178,5 @@ Rails::Initializer.run do |config|
   F2P::Config.next_entry_text_folding_size = 40
   F2P::Config.disable_fof = false
   F2P::Config.max_select_num = 150
+  F2P::Config.reload_list_in_minutes = 0
 end

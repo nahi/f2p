@@ -726,7 +726,7 @@ module EntryHelper
   end
 
   def write_new_link
-    link_to(h('>>>'), link_action('new', :room => ctx.room_for))
+    link_to(menu_label('more'), link_action('new', :room => ctx.room_for))
   end
 
   # override

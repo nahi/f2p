@@ -72,12 +72,18 @@ module ApplicationHelper
     {:accesskey => key}
   end
 
-  def inline_meta
+  def inline_meta(opt = {})
     if iphone?
-      content_tag('meta', nil, :name => 'viewport', :content => 'width=device-width; initial-scale=1.0')
+      str = content_tag('meta', nil, :name => 'viewport', :content => 'width=device-width; initial-scale=1.0')
     else
-      content_tag('meta', nil, :name => 'viewport', :content => 'width=device-width, height=device-height')
+      str = content_tag('meta', nil, :name => 'viewport', :content => 'width=device-width, height=device-height')
     end
+    if opt[:reload] and setting
+      if setting.reload_list_in_minutes and setting.reload_list_in_minutes > 0
+        str += content_tag('meta', nil, 'http-equiv' => 'refresh', :content => setting.reload_list_in_minutes * 60)
+      end
+    end
+    str
   end
 
   def inline_stylesheet
@@ -195,9 +201,10 @@ __EOS__
 
   def common_menu(*arg)
     [
+      profile_link(auth.name),
       settings_link,
-      help_link,
       logout_link,
+      help_link,
       to_top_menu
     ].join(' ')
   end
@@ -288,7 +295,7 @@ __EOS__
   end
 
   def help_link
-    link_to(menu_label('help'), :controller => 'help', :action => 'index')
+    link_to(menu_label('?'), :controller => 'help', :action => 'index')
   end
 
   def u(arg)

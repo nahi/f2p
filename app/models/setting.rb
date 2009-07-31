@@ -12,6 +12,7 @@ class Setting
   attr_accessor :list_view_profile_picture
   attr_accessor :disable_fof
   attr_accessor :timezone
+  attr_accessor :reload_list_in_minutes
 
   def initialize
     super
@@ -28,6 +29,7 @@ class Setting
     @list_view_profile_picture = F2P::Config.list_view_profile_picture
     @disable_fof = F2P::Config.disable_fof
     @timezone = F2P::Config.timezone
+    @reload_list_in_minutes = F2P::Config.reload_list_in_minutes
   end
 
   def validate
@@ -46,6 +48,9 @@ class Setting
     end
     unless (0..19) === @google_maps_zoom
       errors << 'zoom must be in 0..19'
+    end
+    if @reload_list_in_minutes and !((1..60) === @reload_list_in_minutes)
+      errors << 'reload list in minutes must be in 1..60'
     end
     errors.empty? ? nil : errors
   end

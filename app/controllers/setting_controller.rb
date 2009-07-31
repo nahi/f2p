@@ -20,6 +20,7 @@ class SettingController < ApplicationController
     @link_open_new_window = param(:link_open_new_window) || @setting.link_open_new_window
     @link_type = param(:link_type) || @setting.link_type
     @google_maps_geocoding_lang = param(:google_maps_geocoding_lang) || @setting.google_maps_geocoding_lang
+    @reload_list_in_minutes = param(:reload_list_in_minutes) || @setting.reload_list_in_minutes
   end
 
   def update
@@ -36,7 +37,8 @@ class SettingController < ApplicationController
       :list_view_profile_picture,
       :link_open_new_window,
       :link_type,
-      :google_maps_geocoding_lang
+      :google_maps_geocoding_lang,
+      :reload_list_in_minutes
     ].each do |key|
       original_value[key] = @setting.send(key)
     end
@@ -59,6 +61,11 @@ class SettingController < ApplicationController
     end
     @setting.google_maps_geocoding_lang = param(:google_maps_geocoding_lang)
     @setting.google_maps_zoom ||= F2P::Config.google_maps_zoom
+    if str = param(:reload_list_in_minutes)
+      @setting.reload_list_in_minutes = str.to_i
+    else
+      @setting.reload_list_in_minutes = nil
+    end
     if errors = @setting.validate
       original_value.each do |key, value|
         @setting.send(key.to_s + '=', value)
