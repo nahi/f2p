@@ -571,7 +571,7 @@ module FriendFeed
 
     # wrapper method for V1 compatibility
     def validate(name, remote_key)
-      uri = uri("feedlist")
+      uri = uri("validate")
       return false unless uri
       res = client_sync(uri, name, remote_key) { |client|
         get_request(client, uri)
@@ -581,7 +581,7 @@ module FriendFeed
 
     # validate OAuth credential
     def oauth_validate(opt)
-      uri = uri("feedlist")
+      uri = uri("validate")
       return false unless uri
       cred = get_credential(opt)
       return false unless cred.first == :oauth

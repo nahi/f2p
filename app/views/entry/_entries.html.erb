@@ -65,16 +65,17 @@
 <%- form_tag(link_action('archive')) do -%>
   <p><%= page_links(:for_bottom => true, :threads => @threads) %></p>
 <%- end -%>
-<hr />
-<p><a name="bottom">Menu:</a>
-<p><%= common_menu %></p>
 <%- if ctx.inbox -%>
   <p><%= all_link %></p>
 <%- end -%>
+<hr />
+<p>
+  <a name="bottom">Menu:</a>
+  <%= common_menu %>
+</p>
+<%= render :partial => 'common' %>
 <%- if ctx.list_base? -%>
   <hr />
-<p><a name="list">Subscriptions:</a></p>
   <p><%= feed_subscriptions_user %></p>
   <p><%= feed_subscriptions_group %></p>
 <%- end -%>
-<%= render :partial => 'common' %>

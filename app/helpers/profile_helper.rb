@@ -17,9 +17,9 @@ module ProfileHelper
         r[e.id] = e.name
         r
       }
-      links_if_exists("#{map.size} services: ", map.to_a.sort_by { |k, v| k }) { |id, name|
-        label = "[#{name}]"
-        link_to(h(label), link_entry_action(:search, :q => 'service:' + id))
+      title = "Services(#{map.size}): "
+      links_if_exists(title, map.to_a.sort_by { |k, v| k }) { |id, name|
+        link_to(h(name), link_entry_action(:search, :q => 'service:' + id))
       }
     end
   end
@@ -30,11 +30,12 @@ module ProfileHelper
     if lists = @feedinfo.subscribers
       map = @feedinfo.subscriptions.inject({}) { |r, e| r[e.id] = true; r }
       lists = lists.partition { |e| map.key?(e.id) }.flatten
-      links_if_exists(lists.size.to_s + ' subscribers: ', lists, max) { |e|
+      title = "Subscribers(#{lists.size}): "
+      links_if_exists(title, lists, max) { |e|
         if map.key?(e.id)
-          label = "[*#{e.name}]"
+          label = '*' + e.name
         else
-          label = "[#{e.name}]"
+          label = e.name
         end
         link_to(h(label), link_entry_list(:user => e.id))
       }
@@ -43,12 +44,12 @@ module ProfileHelper
 
   def user_page_links
     links = []
-    links << menu_link(menu_label(feed_name), link_entry_list(:user => @id))
+    links << menu_link(h(feed_name), link_entry_list(:user => @id))
     feedid = [@id, 'likes'].join('/')
-    links << menu_link(menu_label('Likes'), link_entry_list(:feed => feedid))
-    links << menu_link(menu_label('Liked'), link_entry_list(:like => 'liked', :user => @id))
+    links << menu_link(h('Likes'), link_entry_list(:feed => feedid))
+    links << menu_link(h('Liked'), link_entry_list(:like => 'liked', :user => @id))
     feedid = [@id, 'friends'].join('/')
-    links << menu_link(menu_label('With friends'), link_entry_list(:feed => feedid))
+    links << menu_link(h('With friends'), link_entry_list(:feed => feedid))
     links.join(' ')
   end
 end

@@ -165,10 +165,10 @@ module EntryHelper
         str
       }.join(', ')
     end
+    with_media = with_geo = nil
     if !entry.thumbnails.empty?
       # entries from Hatena contains 'enclosure' but no title and link for now.
       with_media = content_with_media(entry)
-      content += "<br />\n" + with_media unless with_media.empty?
     end
     if entry.geo and !entry.view_map
       point = GoogleMaps::Point.new(body, entry.geo.lat, entry.geo.long)
@@ -182,7 +182,11 @@ module EntryHelper
           height = BRIGHTKITE_MAP_HEIGHT
         end
       end
-      content += ' ' + google_maps_link(point, entry, zoom, width, height)
+      with_geo = google_maps_link(point, entry, zoom, width, height)
+    end
+    ext = [with_media, with_geo].join(' ')
+    unless ext.strip.empty?
+      content += "<br />\n" + ext
     end
     content
   end
@@ -449,11 +453,15 @@ module EntryHelper
 
   def markup_sentence(str)
     ary = []
-    while str.match(/#[a-zA-Z0-9]+/)
+    while str.match(/#[a-zA-Z0-9\-_\.+:=]+/)
       m = $~
       ary << h(m.pre_match)
-      link = link_to(h(m[0]), search_opt(:action => :list, :query => m[0]))
-      ary << content_tag('span', link, :class => 'hashtag')
+      if m.pre_match.empty? or /\s\z/ =~ m.pre_match
+        link = link_to(h(m[0]), search_opt(:action => :list, :query => m[0]))
+        ary << content_tag('span', link, :class => 'hashtag')
+      else
+        ary << h(m[0])
+      end
       str = m.post_match
     end
     ary << h(str)
@@ -665,8 +673,10 @@ module EntryHelper
     if ctx.room_for and @feedinfo.commands.include?('post')
       str += hidden_field_tag('to_0', ctx.room_for) + h(feed_name) + ': '
     end
-    str += text_field_tag('body', nil, :placeholder => 'post') + submit_tag('post')
-    str
+    str +
+      text_field_tag('body', nil, :placeholder => 'post') +
+      submit_tag('post') +
+      write_new_link
   end
 
   def post_comment_form(entry)
@@ -716,7 +726,7 @@ module EntryHelper
   end
 
   def write_new_link
-    link_to(menu_label('post'), link_action('new', :room => ctx.room_for))
+    link_to(h('>>>'), link_action('new', :room => ctx.room_for))
   end
 
   # override
@@ -1045,8 +1055,7 @@ module EntryHelper
   end
 
   def reshare_link(entry)
-    if (ctx.single? or entry.view_pinned) and
-        entry.from_id != auth.name
+    if ctx.single? or entry.view_pinned
       link_to(inline_menu_label(:reshare, 'reshare'),
               link_action('reshare', :reshared_from => entry.id))
     end

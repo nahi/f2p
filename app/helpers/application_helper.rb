@@ -88,8 +88,12 @@ module ApplicationHelper
   p.header { font-size: #{h1_size}pt; }
   body { font-size: #{body_size}pt; }
   img.inline  { vertical-align: text-top; }
-  img.media   { border: 1px solid #ccc; padding: 1px; }
   img.profile { border: 1px solid #ccc; padding: 0px; }
+  img.media   {
+    border: 1px solid #ccc;
+    padding: 1px;
+    vertical-align: text-top;
+  }
   a img { border: none; }
   p {
     margin-top: 1ex;
@@ -176,19 +180,21 @@ __EOS__
     link_to(image_tag(icon_url('sign-in-with-friendfeed.gif'), :alt => h(label), :title => h(label)), :controller => :login, :action => :initiate_oauth_login)
   end
 
-  def top_menu
-    menu = menu_link(menu_icon(:bottom, '8') + h('menu'), '#bottom', accesskey('8'))
+  def top_marker
     if auth and auth.oauth?
-      icon_tag(:shield) + ' ' + menu
-    else
-      menu
+      icon_tag(:shield)
     end
+  end
+
+  def top_menu
+    links = []
+    links << search_link
+    links << menu = menu_link(menu_icon(:bottom, '8'), '#bottom', accesskey('8'))
+    links.join(' ')
   end
 
   def common_menu(*arg)
     [
-      write_new_link,
-      search_link,
       settings_link,
       help_link,
       logout_link,
@@ -267,10 +273,6 @@ __EOS__
 
   def pinned_link
     menu_link(menu_label('pin', '9'), { :controller => :entry, :action => :list, :label => 'pin' }, accesskey('9'))
-  end
-
-  def write_new_link
-    link_to(menu_label('post'), :controller => 'entry', :action => 'new')
   end
 
   def search_link
@@ -559,18 +561,14 @@ __EOS__
     max = F2P::Config.max_friend_list_num
     lists = @feedinfo.feeds + @feedinfo.subscriptions
     lists = lists.find_all { |e| e.user? }
-    if lists.size == 1
-      title = '1 user: '
-    else
-      title = lists.size.to_s + ' users: '
-    end
+    title = "User subscription(#{lists.size}): "
     map = @feedinfo.subscribers.inject({}) { |r, e| r[e.id] = true; r }
     lists = lists.partition { |e| map.key?(e.id) }.flatten
     links_if_exists(title, lists, max) { |e|
       if map.key?(e.id)
-        label = "[*#{e.name}]"
+        label = '*' + e.name
       else
-        label = "[#{e.name}]"
+        label = e.name
       end
       link_to(h(label), link_entry_list(:user => e.id))
     }
@@ -581,13 +579,9 @@ __EOS__
     max = F2P::Config.max_friend_list_num
     lists = @feedinfo.feeds + @feedinfo.subscriptions
     lists = lists.find_all { |e| e.group? }
-    if lists.size == 1
-      title = '1 group: '
-    else
-      title = lists.size.to_s + ' groups: '
-    end
+    title = "Group subscription(#{lists.size}): "
     links_if_exists(title, lists, max) { |e|
-      label = "[#{e.name}]"
+      label = e.name
       link_to(h(label), link_entry_list(:room => e.id))
     }
   end
@@ -614,25 +608,25 @@ __EOS__
 
   def special_feed_links
     links = []
-    links << menu_link(menu_label('Inbox', '0'), { :controller => :entry, :action => :inbox }, accesskey('0'))
-    links << menu_link(menu_label('My feed'), :controller => :entry, :action => :list, :user => auth.name)
+    links << menu_link(h('Inbox'), { :controller => :entry, :action => :inbox }, accesskey('0'))
+    links << menu_link(h('My feed'), :controller => :entry, :action => :list, :user => auth.name)
     feedid = 'filter/direct'
-    links << menu_link(menu_label('Direct messages'), :controller => :entry, :action => :list, :feed => feedid)
+    links << menu_link(h('Direct messages'), :controller => :entry, :action => :list, :feed => feedid)
     feedid = 'filter/discussions'
-    links << menu_link(menu_label('My discussions'), :controller => :entry, :action => :list, :feed => feedid)
+    links << menu_link(h('My discussions'), :controller => :entry, :action => :list, :feed => feedid)
     feedid = [auth.name, 'likes'].join('/')
     feedid = 'notifications/desktop'
-    links << menu_link(menu_label('Notifications'), :controller => :entry, :action => :list, :feed => feedid)
+    links << menu_link(h('Notifications'), :controller => :entry, :action => :list, :feed => feedid)
     links.join(' ')
   end
 
   def list_links
     return unless @feedlist
     links = []
-    links << menu_link(menu_label('Home'), link_list)
+    links << menu_link(h('Home'), link_list)
     lists = @feedlist['lists'] || []
     lists.each do |list|
-      links << menu_link(menu_label(list.name), :controller => :entry, :action => :list, :feed => list.id)
+      links << menu_link(h(list.name), :controller => :entry, :action => :list, :feed => list.id)
     end
     links.join(' ')
   end
@@ -642,7 +636,7 @@ __EOS__
     links = []
     lists = @feedlist['searches'] || []
     lists.each do |search|
-      links << menu_link(menu_label(search.name), :controller => :entry, :action => :list, :feed => search.id)
+      links << menu_link(h(search.name), :controller => :entry, :action => :list, :feed => search.id)
     end
     links.join(' ')
   end
