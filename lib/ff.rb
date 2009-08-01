@@ -906,7 +906,7 @@ module FriendFeed
         oauth_logging(tag) do
           res = token.get(uri, ext)
           enc = res.header['content-encoding']
-          if enc.downcase == 'gzip'
+          if enc and enc.downcase == 'gzip'
             body = Zlib::GzipReader.wrap(StringIO.new(res.body)) { |gz| gz.read }
           else
             body = res.body
