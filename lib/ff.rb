@@ -894,6 +894,7 @@ module FriendFeed
       when :oauth
         uri.scheme = 'http'
         tag = uri.path
+        ext = { 'Accept-Encoding' => 'gzip' }
         uri = uri.to_s
         unless query.empty?
           uri = uri + '?' + query.map { |k, v|
@@ -901,10 +902,17 @@ module FriendFeed
           }.compact.join('&')
         end
         token = create_access_token(cred[1])
+        body = nil
         oauth_logging(tag) do
-          res = token.get(uri)
+          res = token.get(uri, ext)
+          enc = res.header['content-encoding']
+          if enc.downcase == 'gzip'
+            body = Zlib::GzipReader.wrap(StringIO.new(res.body)) { |gz| gz.read }
+          else
+            body = res.body
+          end
         end
-        JSONFilter.parse(res.body)
+        JSONFilter.parse(body)
       else
         raise "unsupported scheme: #{cred.first}"
       end

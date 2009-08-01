@@ -131,7 +131,7 @@ module EntryHelper
   def content(entry)
     content = common_content(entry)
     if entry.via and entry.via.twitter?
-      content = twitter_content(content, entry)
+      content = twitter_content(content)
     end
     scan_media_from_link(entry)
     unless entry.view_medias.empty?
@@ -386,7 +386,7 @@ module EntryHelper
     link_to(content, link_list(:eids => ids))
   end
 
-  def twitter_content(common, entry)
+  def twitter_content(common)
     common.gsub(/@([a-zA-Z0-9_]+)/) {
       '@' + link_to($1, "http://twitter.com/#{$1}")
     }
@@ -600,6 +600,9 @@ module EntryHelper
     if fold
       msg = '(more)'
       str += link_to(h(msg), link_show(comment.entry.id))
+    end
+    if comment.entry.via and comment.entry.via.twitter?
+      str = twitter_content(str)
     end
     str
   end
