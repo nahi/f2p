@@ -756,7 +756,7 @@ private
   end
 
   def find_entry_thread(opt)
-    EntryThread.find(opt)
+    Feed.find(opt)
   end
 
   def with_feedinfo(ctx)

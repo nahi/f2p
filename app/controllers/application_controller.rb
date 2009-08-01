@@ -153,7 +153,7 @@ private
   def update_checked_modified
     store = session[:checked]
     if auth and store
-      EntryThread.update_checked_modified(auth, store)
+      Feed.update_checked_modified(auth, store)
       session[:checked] = {}
     end
   end
@@ -176,7 +176,7 @@ private
     if store = session[:checked]
       if e = store.find { |k, v| k == eid }
         only = Hash[*e]
-        EntryThread.update_checked_modified(auth, only)
+        Feed.update_checked_modified(auth, only)
         store.delete(eid)
       end
     end

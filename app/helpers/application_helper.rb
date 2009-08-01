@@ -485,7 +485,7 @@ __EOS__
       if store = @controller.request.session[:checked]
         store.delete(entry.id)
       end
-      EntryThread.update_checked_modified(auth, entry.id => entry.modified)
+      Feed.update_checked_modified(auth, entry.id => entry.modified)
     end
   end
 

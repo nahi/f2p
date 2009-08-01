@@ -32,7 +32,7 @@ module EntryHelper
     elsif ctx.inbox
       'inbox'
     else
-      'archived'
+      feed_name
     end
   end
 

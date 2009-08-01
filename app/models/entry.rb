@@ -119,6 +119,10 @@ class Entry
 
   private
 
+    def logger
+      ActiveRecord::Base.logger
+    end
+
     def ff_client
       ApplicationController.ff_client
     end
@@ -241,6 +245,9 @@ class Entry
   def modified
     return @modified if @modified
     @modified = self.date
+    unless likes.empty?
+      @modified = [@modified, likes.last.date].max
+    end
     unless comments.empty?
       @modified = [@modified, comments.last.date].max
     end
