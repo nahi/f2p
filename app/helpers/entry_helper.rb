@@ -260,11 +260,8 @@ module EntryHelper
   def summary_uri(str)
     uri = uri(str)
     if uri
-      if uri.path and !uri.path.empty?
-        uri.scheme + '://' + uri.host + '/...'
-      else
-        uri.scheme + '://' + uri.host
-      end
+      added, part = fold_concat(uri.request_uri, 9)
+      uri.scheme + '://' + uri.host + part
     else
       str
     end
