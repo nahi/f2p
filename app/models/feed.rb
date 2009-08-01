@@ -42,7 +42,7 @@ class Feed
       elsif sorted?(opt)
         # do nothing
       else
-        entries = sort_by_modified(entries)
+        #entries = sort_by_modified(entries)
       end
       if opt[:link]
         # You comes first
