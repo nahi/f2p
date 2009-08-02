@@ -242,16 +242,27 @@ class Entry
     @modified_at ||= Time.parse(modified)
   end
 
+  def pick?
+    likes.any? { |e| e.from and e.from.me? } or
+      comments.any? { |e| e.from and e.from.me? }
+  end
+
   def modified
     return @modified if @modified
     @modified = self.date
+    # When you like/comment it, all likes/comments
+    picked = self.pick?
     unless likes.empty?
-      if m = likes.find_all { |e| e.from and e.from.friend? }.map { |e| e.date || '' }.max
+      if picked
+        @modified = [@modified, likes.last.date].max
+      elsif m = likes.find_all { |e| e.from and e.from.friend? }.map { |e| e.date || '' }.max
         @modified = [@modified, m].max
       end
     end
     unless comments.empty?
-      if m = comments.find_all { |e| e.from and e.from.friend? }.map { |e| e.date || '' }.max
+      if picked
+        @modified = [@modified, comments.last.date].max
+      elsif m = comments.find_all { |e| e.from and e.from.friend? }.map { |e| e.date || '' }.max
         @modified = [@modified, m].max
       end
     end

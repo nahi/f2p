@@ -21,6 +21,10 @@ class From
     type == 'user'
   end
 
+  def me?
+    commands and !commands.include?('post')
+  end
+
   def friend?
     commands and !commands.include?('subscribe')
   end
