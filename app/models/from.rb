@@ -22,7 +22,7 @@ class From
   end
 
   def friend?
-    !commands.include?('subscribe')
+    commands and !commands.include?('subscribe')
   end
 
   def group?
