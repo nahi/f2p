@@ -563,21 +563,37 @@ __EOS__
     @feedinfo.description
   end
 
+  def subscription_name(from)
+    if from.friend?
+      '*' + from.name
+    else
+      from.name
+    end
+  end
+
+  def feed_subscriptions_friend
+    return unless @feedinfo
+    max = F2P::Config.max_friend_list_num
+    map = @feedinfo.subscribers.inject({}) { |r, e| r[e.id] = true; r }
+    lists = @feedinfo.feeds + @feedinfo.subscriptions
+    lists = lists.find_all { |e| e.user? and map.key?(e.id) }
+    lists = lists.partition { |e| e.friend? }.flatten
+    title = "Friend(#{lists.size}): "
+    links_if_exists(title, lists, max) { |e|
+      link_to(h(subscription_name(e)), link_entry_list(:user => e.id))
+    }
+  end
+
   def feed_subscriptions_user
     return unless @feedinfo
     max = F2P::Config.max_friend_list_num
-    lists = @feedinfo.feeds + @feedinfo.subscriptions
-    lists = lists.find_all { |e| e.user? }
-    title = "User subscription(#{lists.size}): "
     map = @feedinfo.subscribers.inject({}) { |r, e| r[e.id] = true; r }
-    lists = lists.partition { |e| map.key?(e.id) }.flatten
+    lists = @feedinfo.feeds + @feedinfo.subscriptions
+    lists = lists.find_all { |e| e.user? and !map.key?(e.id) }
+    lists = lists.partition { |e| e.friend? }.flatten
+    title = "User subscription(#{lists.size}): "
     links_if_exists(title, lists, max) { |e|
-      if map.key?(e.id)
-        label = '*' + e.name
-      else
-        label = e.name
-      end
-      link_to(h(label), link_entry_list(:user => e.id))
+      link_to(h(subscription_name(e)), link_entry_list(:user => e.id))
     }
   end
 
@@ -586,10 +602,23 @@ __EOS__
     max = F2P::Config.max_friend_list_num
     lists = @feedinfo.feeds + @feedinfo.subscriptions
     lists = lists.find_all { |e| e.group? }
+    lists = lists.partition { |e| e.friend? }.flatten
     title = "Group subscription(#{lists.size}): "
     links_if_exists(title, lists, max) { |e|
-      label = e.name
-      link_to(h(label), link_entry_list(:room => e.id))
+      link_to(h(subscription_name(e)), link_entry_list(:room => e.id))
+    }
+  end
+
+  def feed_subscribers
+    return unless @feedinfo
+    max = F2P::Config.max_friend_list_num
+    map = @feedinfo.subscriptions.inject({}) { |r, e| r[e.id] = true; r }
+    lists = @feedinfo.subscribers
+    lists = lists.find_all { |e| !map.key?(e.id) }
+    lists = lists.partition { |e| e.friend? }.flatten
+    title = "Subscribers(#{lists.size}): "
+    links_if_exists(title, lists, max) { |e|
+      link_to(h(subscription_name(e)), link_entry_list(:user => e.id))
     }
   end
 

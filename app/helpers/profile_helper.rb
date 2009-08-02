@@ -24,24 +24,6 @@ module ProfileHelper
     end
   end
 
-  def feed_subscribers
-    return unless @feedinfo
-    max = F2P::Config.max_friend_list_num
-    if lists = @feedinfo.subscribers
-      map = @feedinfo.subscriptions.inject({}) { |r, e| r[e.id] = true; r }
-      lists = lists.partition { |e| map.key?(e.id) }.flatten
-      title = "Subscribers(#{lists.size}): "
-      links_if_exists(title, lists, max) { |e|
-        if map.key?(e.id)
-          label = '*' + e.name
-        else
-          label = e.name
-        end
-        link_to(h(label), link_entry_list(:user => e.id))
-      }
-    end
-  end
-
   def user_page_links
     links = []
     links << menu_link(h(feed_name), link_entry_list(:user => @id))
