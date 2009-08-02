@@ -136,9 +136,8 @@ module EntryHelper
     scan_media_from_link(entry)
     unless entry.view_medias.empty?
       content += "<br />\n"
-      entry.view_medias.each do |uri|
-        content += media_tag(entry, uri)
-      end
+      content += entry.view_medias.map { |uri| media_tag(entry, uri) }.join(' ')
+      content += "<br />\n"
     end
     content
   end
@@ -186,7 +185,7 @@ module EntryHelper
     end
     ext = [with_media, with_geo].join(' ')
     unless ext.strip.empty?
-      content += "<br />\n" + ext
+      content += "<br />\n" + ext + "<br />\n"
     end
     content
   end
