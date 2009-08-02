@@ -21,6 +21,10 @@ class From
     type == 'user'
   end
 
+  def friend?
+    !commands.include?('subscribe')
+  end
+
   def group?
     type == 'group'
   end

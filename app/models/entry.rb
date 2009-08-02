@@ -246,10 +246,12 @@ class Entry
     return @modified if @modified
     @modified = self.date
     unless likes.empty?
-      @modified = [@modified, likes.last.date].max
+      m = likes.map { |e| e.from.friend? ? e.date : '' }.max
+      @modified = [@modified, m].max
     end
     unless comments.empty?
-      @modified = [@modified, comments.last.date].max
+      m = comments.map { |e| e.from.friend? ? e.date : '' }.max
+      @modified = [@modified, m].max
     end
     @modified || Time.now.xmlschema
   end
