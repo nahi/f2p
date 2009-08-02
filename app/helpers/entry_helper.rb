@@ -879,6 +879,7 @@ module EntryHelper
   def next_entry(entry)
     return if entry.nil? or @original_feed.nil?
     entries = @original_feed.entries.map { |thread| thread.entries }.flatten
+    # need to find the entry from cache; view_nextid is set only in thread.
     if found = entries.find { |e| e.id == entry.id }
       if found.view_nextid
         entries.find { |e| e.id == found.view_nextid }

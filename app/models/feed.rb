@@ -26,43 +26,34 @@ class Feed
       logger.info('[perf] add_service_icon done')
       feed.entries = filter_hidden(feed.entries)
       entries = feed.entries
-      if opt[:inbox]
-        entries = entries.find_all { |entry|
-          entry.view_unread or entry.view_pinned or entry.id == opt[:filter_inbox_except]
-        }
-      elsif opt[:label] == 'pin'
-        entries = entries.find_all { |entry|
-          entry.view_pinned or entry.id == opt[:updated_id] or entry.id == opt[:filter_inbox_except]
-        }
-      end
-      if opt[:inbox]
-        #entries = sort_by_modified(entries)
-      elsif opt[:eids]
+      if opt[:eids]
         entries = sort_by_ids(entries, opt[:eids])
-      elsif sorted?(opt)
-        # do nothing
-      else
-        #entries = sort_by_modified(entries)
-      end
-      if opt[:link]
+      elsif opt[:link]
         # You comes first
         entries = entries.partition { |e| e.from_id == auth.name }.flatten
       end
+      # build entry thread
       if opt[:merge_entry]
-        entries = sort_by_service(entries, opt)
+        threads = sort_by_service(entries, opt)
       else
-        entries = entries.map { |e|
+        threads = entries.map { |e|
           EntryThread.new(e)
         }
       end
-      threads = EntryThread::EntryThreads[*entries]
+      # update threads for inbox
+      if opt[:inbox]
+        threads = filter_unread_entries(threads, opt)
+      elsif opt[:label] == 'pin'
+        threads = filter_pinned_entries(threads, opt)
+      end
+      threads = EntryThread::EntryThreads[*threads]
       flatten = threads.map { |t| t.entries }.flatten
       prev = nil
       flatten.reverse_each do |e|
         e.view_nextid = prev
         prev = e.id
       end
-      unless entries.empty?
+      unless feed.entries.empty?
         threads.from_modified = feed.entries.last.modified
         threads.to_modified = feed.entries.first.modified
       end
@@ -118,7 +109,11 @@ class Feed
 
     def fetch_entries(auth, opt)
       if opt[:eid]
-        fetch_single_entry_as_array(auth, opt)
+        feed = fetch_single_entry_as_array(auth, opt)
+        if entry = feed.entries.first
+          update_cache_entry(auth, entry)
+        end
+        feed
       else
         feed = fetch_list_entries(auth, opt)
         if updated_id = opt[:updated_id]
@@ -195,7 +190,6 @@ class Feed
       opt.delete(:updated_id)
       opt.delete(:merge_entry)
       opt.delete(:merge_service)
-      opt.delete(:filter_inbox_except)
       if allow_cache
         if cache = get_cached_entries(auth)
           if opt == cache.feed_opt
@@ -219,16 +213,10 @@ class Feed
 
     def get_cached_entries(auth)
       cache = ff_client.get_cached_entries(auth.name)
-      STDERR.puts(">>>>")
-      STDERR.puts(cache.class)
-      STDERR.puts("<<<<")
       cache
     end
 
     def set_cached_entries(auth, cache)
-      STDERR.puts(">>>>")
-      STDERR.puts(cache.class)
-      STDERR.puts("<<<<")
       ff_client.set_cached_entries(auth.name, cache)
     end
 
@@ -369,7 +357,33 @@ class Feed
       ff_client.entries(eids, query.merge(auth.new_cred)) || {}
     end
 
-    def filter_entries(auth, opt, feed)
+    # pick up only unread entries
+    def filter_unread_entries(threads, opt)
+      threads.map { |th|
+        entries = th.entries.find_all { |e|
+          e.view_unread or e.view_pinned
+        }
+        unless entries.empty?
+          t = EntryThread.new
+          t.add(*entries)
+          t.root = entries.first
+          t
+        end
+      }.compact
+    end
+
+    def filter_pinned_entries(threads, opt)
+      threads.map { |th|
+        entries = th.entries.find_all { |e|
+          e.view_pinned or e.id == opt[:updated_id]
+        }
+        unless entries.empty?
+          t = EntryThread.new
+          t.add(*entries)
+          t.root = entries.first
+          t
+        end
+      }.compact
     end
 
     def sorted?(opt)

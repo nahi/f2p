@@ -313,8 +313,6 @@ class EntryController < ApplicationController
         opt = find_opt(ctx)
         opt[:allow_cache] = true
         opt.delete(:updated_id)
-        # avoid inbox threds update
-        opt[:filter_inbox_except] = @ctx.eid
         @original_feed = find_entry_thread(opt)
       else
         @original_feed = nil
