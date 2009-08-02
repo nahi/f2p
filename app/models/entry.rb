@@ -243,7 +243,8 @@ class Entry
   end
 
   def pick?
-    likes.any? { |e| e.from and e.from.me? } or
+    (self.from and self.from.me?) or
+      likes.any? { |e| e.from and e.from.me? } or
       comments.any? { |e| e.from and e.from.me? }
   end
 
