@@ -22,7 +22,7 @@ class From
   end
 
   def me?
-    commands and !commands.include?('post')
+    commands and commands.include?('post')
   end
 
   def friend?
