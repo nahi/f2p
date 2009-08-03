@@ -272,10 +272,14 @@ class Entry
     end
 =end
     unless likes.empty?
-      @modified = [@modified, likes.last.date].max
+      if m = likes.map { |e| e.date || '' }.max
+        @modified = [@modified, m].max
+      end
     end
     unless comments.empty?
-      @modified = [@modified, comments.last.date].max
+      if m = comments.map { |e| e.date || '' }.max
+        @modified = [@modified, m].max
+      end
     end
     @modified || Time.now.xmlschema
   end
