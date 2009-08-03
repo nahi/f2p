@@ -190,6 +190,7 @@ class Feed
       opt.delete(:updated_id)
       opt.delete(:merge_entry)
       opt.delete(:merge_service)
+      opt.delete(:filter_except)
       if allow_cache
         if cache = get_cached_entries(auth)
           if opt == cache.feed_opt
@@ -361,7 +362,7 @@ class Feed
     def filter_unread_entries(threads, opt)
       threads.map { |th|
         entries = th.entries.find_all { |e|
-          e.view_unread or e.view_pinned
+          e.view_unread or e.view_pinned or e.id == opt[:filter_except]
         }
         unless entries.empty?
           t = EntryThread.new
@@ -375,7 +376,7 @@ class Feed
     def filter_pinned_entries(threads, opt)
       threads.map { |th|
         entries = th.entries.find_all { |e|
-          e.view_pinned or e.id == opt[:updated_id]
+          e.view_pinned or e.id == opt[:updated_id] or e.id == opt[:filter_except]
         }
         unless entries.empty?
           t = EntryThread.new

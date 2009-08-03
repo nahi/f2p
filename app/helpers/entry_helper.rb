@@ -111,7 +111,7 @@ module EntryHelper
   end
 
   def icon(from)
-    if from.private
+    if from and from.private
       lock_icon_tag
     end
   end
