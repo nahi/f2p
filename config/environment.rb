@@ -178,5 +178,5 @@ Rails::Initializer.run do |config|
   F2P::Config.next_entry_text_folding_size = 40
   F2P::Config.disable_fof = false
   F2P::Config.max_select_num = 150
-  F2P::Config.reload_list_in_minutes = 0
+  F2P::Config.reload_list_in_minutes = nil
 end
