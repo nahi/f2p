@@ -368,6 +368,7 @@ class Feed
           t = EntryThread.new
           t.add(*entries)
           t.root = entries.first
+          t.twitter_thread = th.twitter_thread
           t
         end
       }.compact
@@ -382,6 +383,7 @@ class Feed
           t = EntryThread.new
           t.add(*entries)
           t.root = entries.first
+          t.twitter_thread = th.twitter_thread
           t
         end
       }.compact
@@ -457,7 +459,8 @@ class Feed
         entry = buf.shift
         result << (t = EntryThread.new)
         group = [entry]
-        kinds = similar_entries(buf, entry)
+        opt = {}
+        kinds = similar_entries(buf, entry, opt)
         group += kinds
         buf -= kinds
         if kinds.empty?
@@ -478,6 +481,7 @@ class Feed
         sorted = sort_by_published(group)
         t.add(*sorted)
         t.root = sorted.first
+        t.twitter_thread = true if opt[:twitter_buddy]
       end
       result
     end
@@ -488,8 +492,8 @@ class Feed
       }
     end
 
-    def similar_entries(collection, entry)
-      collection.find_all { |e| entry.similar?(e) }
+    def similar_entries(collection, entry, opt)
+      collection.find_all { |e| entry.similar?(e, opt) }
     end
 
     def first_page_option?(opt)

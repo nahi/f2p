@@ -120,7 +120,7 @@ class EntryController < ApplicationController
       elsif @like
         opt.merge(:like => @like, :user => @user || @auth.name)
       elsif @user
-        opt.merge(:user => @user, :merge_service => false)
+        opt.merge(:user => @user, :merge_entry => false)
       elsif @friends
         opt.merge(:friends => @friends)
       elsif @feed
@@ -183,6 +183,10 @@ class EntryController < ApplicationController
 
     def list_base?
       /\Alist\b/ =~ @feed and /\/summary\/\d+\z/ !~ @feed
+    end
+
+    def is_summary?
+      /\Asummary\b/ =~ @feed or /\/summary\/\d+\z/ =~ @feed
     end
 
     def link_opt(opt = {})

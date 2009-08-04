@@ -206,16 +206,28 @@ class Entry
     to.map { |e| e.id }
   end
 
-  def similar?(rhs)
+  def similar?(rhs, opt)
     result = false
     if self.from_id == rhs.from_id
       result ||= same_origin?(rhs)
     end
     result ||= same_link?(rhs) || similar_body?(rhs)
     if self.via and rhs.via and self.via.twitter? and rhs.via.twitter?
-      result ||= self.twitter_reply_to == rhs.twitter_username || self.twitter_username == rhs.twitter_reply_to
+      if opt[:twitter_buddy]
+        # from me, and no @ or to the buddy
+        result ||= (self.twitter_username == rhs.twitter_username and reply_to?(rhs, opt[:twitter_buddy]))
+        # from buddy, and no @ or to me
+        result ||= (rhs.twitter_username == opt[:twitter_buddy] and reply_to?(rhs, self.twitter_username))
+      elsif self.twitter_reply_to == rhs.twitter_username || self.twitter_username == rhs.twitter_reply_to
+        result ||= true
+        opt[:twitter_buddy] = rhs.twitter_username
+      end
     end
     result
+  end
+
+  def reply_to?(rhs, target)
+    rhs.twitter_reply_to.nil? or rhs.twitter_reply_to == target
   end
 
   def service_id

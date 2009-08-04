@@ -11,10 +11,12 @@ class EntryThread
 
   # root is included in entries, too.
   attr_accessor :root
+  attr_accessor :twitter_thread
   attr_reader :entries
 
   def initialize(root = nil)
     @root = root
+    @twitter_thread = false
     @entries = []
     @entries << @root if @root
   end

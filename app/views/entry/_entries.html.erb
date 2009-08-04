@@ -36,7 +36,7 @@
     <hr class="separator" />
     <div class="<%= cycle('thread1', 'thread2') %>">
       <div class="entry">
-        <%= render :partial => 'entry', :locals => {:entry => thread.root, :root => nil} %>
+        <%= render :partial => 'entry', :locals => {:entry => thread.root, :root => nil, :twitter_thread => thread.twitter_thread} %>
       </div>
       <%- remember_checked(thread.root) -%>
       <%- unless thread.related_entries.empty? -%>
@@ -45,7 +45,7 @@
             <%- if fold_item?(entry) -%>
               <%= fold_link(entry) %>
             <%- else -%>
-              <%= render :partial => 'entry', :locals => {:entry => entry, :root => thread.root} %>
+            <%= render :partial => 'entry', :locals => {:entry => entry, :root => thread.root, :twitter_thread => thread.twitter_thread} %>
               <%- remember_checked(entry) -%>
             <%- end -%>
           </div>

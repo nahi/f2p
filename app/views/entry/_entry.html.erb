@@ -11,10 +11,13 @@
   </div>
   <div class="body">
     <%= pin_link(entry) -%>
+  <%- if twitter_thread -%>
+    <%= author_picture(entry) -%><%= author_link(entry) %>
+  <%- end -%>
 <%- else -%>
   <div class="body">
     <%= pin_link(entry) -%>
-  <%- if entry.from_id != root.from_id -%>
+  <%- if twitter_thread or entry.from_id != root.from_id -%>
     <%= author_picture(entry) -%><%= author_link(entry) %>
   <%- end -%>
   <%- if entry.to_ids != root.to_ids -%>

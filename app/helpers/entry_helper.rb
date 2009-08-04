@@ -449,7 +449,7 @@ module EntryHelper
 
   def markup_sentence(str)
     ary = []
-    while str.match(/#[a-zA-Z0-9\-_\.+:=]+/)
+    while str.match(/#[a-zA-Z0-9\-_\.+:=]{2,}/)
       m = $~
       ary << h(m.pre_match)
       if m.pre_match.empty? or /\s\z/ =~ m.pre_match
@@ -827,7 +827,7 @@ module EntryHelper
     start = ctx.start || 0
     num = ctx.num || 0
     links = []
-    if ctx.list?
+    if ctx.list? and !ctx.is_summary?
       links << menu_link(menu_label('<', '4', true), list_opt(ctx.link_opt(:start => start - num, :num => num, :direction => 'rewind')), accesskey('4')) {
         !no_page and start - num >= 0
       }
@@ -844,7 +844,7 @@ module EntryHelper
       links << archive_button
     end
     links << pinned_link
-    if ctx.list?
+    if ctx.list? and !ctx.is_summary?
       links << menu_link(menu_label('>', '6'), list_opt(ctx.link_opt(:start => start + num, :num => num)), accesskey('6')) { !no_page }
       if threads = opt[:threads] and opt[:for_top]
         links << list_range_notation(threads)
