@@ -217,7 +217,12 @@ module EntryHelper
   end
 
   def author_link(entry)
-    [user(entry), icon(entry.from), friend_of(entry)].join
+    if entry.from.group?
+      from = link_to(h(entry.from.name), link_list(:room => entry.from.id))
+    else
+      from = user(entry)
+    end
+    [from, icon(entry.from), friend_of(entry)].join
   end
 
   def service_icon(entry)
