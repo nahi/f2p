@@ -319,7 +319,7 @@ __EOS__
   def entry_status(entry)
     if entry.from_id
       user_status(entry.from_id)
-    else # imaginary user
+    else
       'private'
     end
   end
@@ -335,7 +335,6 @@ __EOS__
   end
 
   def picture(id, size = 'small')
-    return if imaginary?(id)
     name = id
     if name == auth.name
       name = self_label

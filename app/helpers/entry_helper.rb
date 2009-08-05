@@ -80,10 +80,9 @@ module EntryHelper
 
   def author_picture(entry)
     return if !setting.list_view_profile_picture
+    return if ctx.user_only?
     if id = entry.origin_id
-      unless imaginary?(id)
-        picture(entry.from_id)
-      end
+      picture(id)
     end
   end
 
