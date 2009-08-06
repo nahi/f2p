@@ -297,7 +297,7 @@ class Feed
       pinned = Pin.find(
         :all,
         :conditions => [ 'user_id = ?', auth.id ],
-        :joins => 'INNER JOIN last_modifieds ON pins.eid = last_modifieds.eid',
+        :joins => 'LEFT OUTER JOIN last_modifieds ON pins.eid = last_modifieds.eid',
         :order => 'last_modifieds.date desc',
         :offset => start,
         :limit => num

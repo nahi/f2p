@@ -606,7 +606,9 @@ module FriendFeed
 
     # validate OAuth credential
     def oauth_validate(opt)
-      uri = uri("validate", :http)
+      uri = uri("validate")
+      uri.scheme = 'http'
+      uri = URI.parse(uri.to_s)
       return false unless uri
       cred = get_credential(opt)
       return false unless cred.first == :oauth
