@@ -5,7 +5,6 @@ require 'monitor'
 require 'stringio'
 require 'zlib'
 require 'oauth'
-require 'net/http'
 
 
 module FriendFeed
