@@ -765,9 +765,6 @@ private
   def with_feedinfo(ctx)
     tasks = []
     tasks << Task.run {
-      yield
-    }
-    tasks << Task.run {
       @feedlist = User.ff_feedlist(auth)
     }
     if @ctx.list? and @ctx.label.nil? and !@ctx.inbox
@@ -775,6 +772,7 @@ private
         @feedinfo = User.ff_feedinfo(auth, @ctx.feedid, Feedinfo.opt_exclude(:subscriptions, :subscribers, :services))
       }
     end
+    yield
     # just pull the result
     tasks.each do |task|
       task.result

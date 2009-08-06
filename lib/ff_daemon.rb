@@ -111,6 +111,7 @@ module FriendFeed
     define_proxy_method :post_comment
     define_proxy_method :edit_comment
     define_proxy_method :delete_comment
+    define_proxy_method :undelete_comment
     define_proxy_method :like
     define_proxy_method :delete_like
     define_proxy_method :subscribe
@@ -415,6 +416,7 @@ module FriendFeed
     define_proxy_method :post_comment
     define_proxy_method :edit_comment
     define_proxy_method :delete_comment
+    define_proxy_method :undelete_comment
     define_proxy_method :like
     define_proxy_method :delete_like
     define_proxy_method :subscribe

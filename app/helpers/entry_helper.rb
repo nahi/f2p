@@ -999,15 +999,15 @@ module EntryHelper
   end
 
   def undo_delete_link(id, comment)
-    link_to(h('Deleted.  UNDO?'), link_action('undelete', :eid => id, :comment => comment))
+    link_to(h('Deleted.  UNDO?'), link_action('undelete', :eid => id, :comment => comment), :confirm => 'Undo?')
   end
 
   def undo_add_link(id)
-    link_to(h('Added.  UNDO?'), link_action('delete', :eid => id))
+    link_to(h('Added.  UNDO?'), link_action('delete', :eid => id), :confirm => 'Undo?')
   end
 
   def undo_add_comment_link(id, comment)
-    link_to(h('Added.  UNDO?'), link_action('delete', :eid => id, :comment => comment))
+    link_to(h('Added.  UNDO?'), link_action('delete', :eid => id, :comment => comment), :confirm => 'Undo?')
   end
 
   def moderate_link(entry)
