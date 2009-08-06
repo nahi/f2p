@@ -345,7 +345,7 @@ private
 
   def extract_geo_from_google_staticmap_url(tbs)
     tbs.each do |tb|
-      if /maps.google.com\/staticmap\b.*\bmarkers=([0-9\.]+),([0-9\.]+)\b/ =~ tb.url
+      if /maps.google.com\/maps\?q=([0-9\.]+),([0-9\.]+)\b/ =~ tb.link
         self.view_map = true
         return Geo['lat' => $1, 'long' => $2]
       end
