@@ -182,7 +182,7 @@ class EntryController < ApplicationController
     end
 
     def list_base?
-      /\Alist\b/ =~ @feed and /\/summary\/\d+\z/ !~ @feed
+      @home or (/\Alist\b/ =~ @feed and /\/summary\/\d+\z/ !~ @feed)
     end
 
     def is_summary?
@@ -765,14 +765,16 @@ private
   def with_feedinfo(ctx)
     tasks = []
     tasks << Task.run {
+      yield
+    }
+    tasks << Task.run {
       @feedlist = User.ff_feedlist(auth)
     }
-    if @ctx.list?
+    if @ctx.list? and @ctx.label.nil? and !@ctx.inbox
       tasks << Task.run {
         @feedinfo = User.ff_feedinfo(auth, @ctx.feedid, Feedinfo.opt_exclude(:subscriptions, :subscribers, :services))
       }
     end
-    yield
     # just pull the result
     tasks.each do |task|
       task.result

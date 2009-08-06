@@ -303,6 +303,7 @@ class Feed
         :limit => num
       )
       pinned_id = pinned.map { |e| e.eid }
+      return {} if pinned_id.empty?
       hash = get_entries(auth, opt.merge(:eids => pinned_id))
       return {} if hash.nil? or hash['entries'].nil?
       map = hash['entries'].inject({}) { |r, e| r[e['id']] = e; r }
