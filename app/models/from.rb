@@ -22,11 +22,11 @@ class From
   end
 
   def me?
-    commands and commands.include?('post')
+    user? and commands and commands.include?('post')
   end
 
   def friend?
-    commands and !commands.include?('subscribe')
+    user? and commands and !commands.include?('subscribe')
   end
 
   def group?
