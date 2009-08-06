@@ -4,7 +4,6 @@ require 'json'
 require 'monitor'
 require 'stringio'
 require 'zlib'
-require 'oauth'
 
 
 module FriendFeed
