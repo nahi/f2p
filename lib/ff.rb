@@ -63,6 +63,12 @@ module FriendFeed
     attr_accessor :name
     attr_accessor :remote_key
 
+    attr_accessor :oauth_consumer_key
+    attr_accessor :oauth_consumer_secret
+    attr_accessor :oauth_site
+    attr_accessor :oauth_scheme
+    attr_accessor :oauth_signature_method
+
     class LShiftLogger
       def initialize(logger)
         @logger = logger
@@ -79,16 +85,19 @@ module FriendFeed
 
     class UserClient
       attr_accessor :httpclient_max_keepalive
+      attr_accessor :oauth_site
+      attr_accessor :oauth_config
 
-      def initialize(name, remote_key, logger, http_proxy)
+      def initialize(name, logger, http_proxy)
         @client = HTTPClient.new(http_proxy)
         @name = name
-        @remote_key = remote_key
+        @cred = nil
+        @oauth_site = nil
+        @oauth_config = ::HTTPClient::OAuth::Config.new
         #@client.debug_dev = LShiftLogger.new(logger)
         @logger = logger
         @client.extend(MonitorMixin)
         @last_accessed = Time.now
-        reset_auth
       end
 
       def idle?
@@ -101,12 +110,14 @@ module FriendFeed
         end
       end
 
-      def client(remote_key = nil)
+      def client(uri, cred = nil)
         @client.synchronize do
-          if remote_key != @remote_key
-            @remote_key = remote_key
+          if cred != @cred
+            @cred = cred
             reset_auth
           end
+          @client.www_auth.basic_auth.challenge(uri)
+          @client.www_auth.oauth.challenge(uri)
           @last_accessed = Time.now
           @client
         end
@@ -119,7 +130,15 @@ module FriendFeed
     private
 
       def reset_auth
-        @client.set_auth(nil, @name, @remote_key)
+        if @cred.is_a?(Hash)
+          # OAuth Hash
+          @oauth_config.token = @cred[:access_token]
+          @oauth_config.secret = @cred[:access_token_secret]
+          @client.www_auth.oauth.set_config(@oauth_site, @oauth_config)
+        else
+          # remote key
+          @client.set_auth(nil, @name, @cred)
+        end
       end
     end
 
@@ -131,6 +150,11 @@ module FriendFeed
       @clients = {}
       @name = nil
       @remote_key = nil
+      @oauth_consumer_key = nil
+      @oauth_consumer_secret = nil
+      @oauth_site = nil
+      @oauth_scheme = nil
+      @oauth_signature_method = nil
       @mutex = Monitor.new
     end
 
@@ -153,13 +177,17 @@ module FriendFeed
       end
     end
 
-    def create_client(name, remote_key = nil)
-      client = UserClient.new(name, remote_key, @logger, @http_proxy)
+    def create_client(name)
+      client = UserClient.new(name, @logger, @http_proxy)
       client.httpclient_max_keepalive = @httpclient_max_keepalive
+      client.oauth_site = @oauth_site
+      client.oauth_config.consumer_key = @oauth_consumer_key
+      client.oauth_config.consumer_secret = @oauth_consumer_secret
+      client.oauth_config.signature_method = @oauth_signature_method
       client
     end
 
-    def client_sync(uri, name, remote_key = nil)
+    def client_sync(uri, name, cred = nil)
       @mutex.synchronize do
         clients = {}
         @clients.each do |key, value|
@@ -171,11 +199,10 @@ module FriendFeed
         end
         @clients = clients
       end
-      user_client = @clients[name] ||= create_client(name, remote_key)
-      client = user_client.client(remote_key)
+      user_client = @clients[name] ||= create_client(name)
+      client = user_client.client(uri, cred)
       logger.info("#{user_client.inspect} is accessing to #{uri.to_s} for #{name}")
       httpclient_protect do
-        client.www_auth.basic_auth.challenge(uri, true)
         yield(client)
       end
     end
@@ -218,6 +245,17 @@ module FriendFeed
         end
       end
       client.post(uri, query, ext)
+    end
+
+    def request(client, method, uri, query = nil, body = nil, ext = {})
+      if @apikey
+        if query.is_a?(Hash)
+          query = query.merge(:apikey => @apikey)
+        else
+          query << [:apikey, @apikey]
+        end
+      end
+      client.request(method, uri, query, body, ext)
     end
 
     def get_feed(uri, name, remote_key, query = {})
@@ -554,19 +592,8 @@ module FriendFeed
   class APIV2Client < BaseClient
     URL_BASE = 'https://friendfeed-api.com/v2/'
 
-    attr_accessor :oauth_consumer_key
-    attr_accessor :oauth_consumer_secret
-    attr_accessor :oauth_site
-    attr_accessor :oauth_scheme
-    attr_accessor :oauth_signature_method
-
     def initialize(*arg)
       super
-      @oauth_consumer_key = nil
-      @oauth_consumer_secret = nil
-      @oauth_site = nil
-      @oauth_scheme = nil
-      @oauth_signature_method = nil
     end
 
     # wrapper method for V1 compatibility
@@ -581,15 +608,15 @@ module FriendFeed
 
     # validate OAuth credential
     def oauth_validate(opt)
-      uri = uri("validate")
+      uri = uri("validate", :http)
       return false unless uri
       cred = get_credential(opt)
       return false unless cred.first == :oauth
-      uri.scheme = 'http'
-      uri = uri.to_s
-      token = create_access_token(cred[1])
-      res = token.get(uri)
-      res.code.to_i == 200 # Net::HTTP returns in String
+      name, oauth = cred[1]
+      res = client_sync(uri, name, oauth) { |client|
+        get_request(client, uri)
+      }
+      res.status == 200
     end
 
     # Reading data from FriendFeed
@@ -708,7 +735,7 @@ module FriendFeed
       set_if(query, opt, :link)
       set_if(query, opt, :comment)
       set_if(query, opt, :image_url)
-      ext = nil
+      ext = {}
       query = query.to_a
       if opt[:file]
         opt[:file].each do |filedef|
@@ -861,7 +888,7 @@ module FriendFeed
         name = query.delete(:name) || @name
         oauth_token = query.delete(:oauth_token)
         oauth_token_secret = query.delete(:oauth_token_secret)
-        [:oauth, {:access_token => oauth_token, :access_token_secret => oauth_token_secret}]
+        [:oauth, [name, {:access_token => oauth_token, :access_token_secret => oauth_token_secret}]]
       else
         if query.nil?
           name = @name
@@ -893,37 +920,14 @@ module FriendFeed
         parse_response(res)
       when :oauth
         uri.scheme = 'http'
-        tag = uri.path
-        ext = { 'Accept-Encoding' => 'gzip' }
-        uri = uri.to_s
-        unless query.empty?
-          uri = uri + '?' + query.map { |k, v|
-            [CGI.escape(k.to_s), CGI.escape(v.to_s)].join('=') if v
-          }.compact.join('&')
-        end
-        token = create_access_token(cred[1])
-        body = nil
-        oauth_logging(tag) do
-          res = token.get(uri, ext)
-          enc = res.header['content-encoding']
-          if enc and enc.downcase == 'gzip'
-            body = Zlib::GzipReader.wrap(StringIO.new(res.body)) { |gz| gz.read }
-          else
-            body = res.body
-          end
-        end
-        JSONFilter.parse(body)
+        uri = URI.parse(uri.to_s)
+        name, oauth = cred[1]
+        res = client_sync(uri, name, oauth) { |client|
+          get_request(client, uri, query)
+        }
+        parse_response(res)
       else
         raise "unsupported scheme: #{cred.first}"
-      end
-    end
-
-    def oauth_logging(uri)
-      begin
-        logger.info("accessing to %s via OAuth (%0x)" % [uri, Thread.current.object_id])
-        yield
-      ensure
-        logger.info("done (%0x)" % Thread.current.object_id)
       end
     end
 
@@ -953,30 +957,20 @@ module FriendFeed
         #      'application/x-www-urleocoded' content-type. This means that
         #      stream parameters are not signed.
         uri.scheme = 'http'
-        tag = uri.path
-        token = create_access_token(cred[1], :scheme => :query_string)
+        uri = URI.parse(uri.to_s)
+        name, oauth = cred[1]
         file = query.find_all { |k, v| k == :file }
         unless file.empty?
-          boundary = Digest::SHA1.hexdigest(Time.now.to_s)
-          body = create_multipart_form_data(file, boundary)
-          data = query_to_hash(query)
-          query_data = data.reject { |k, v| k == :file }
-          path = create_query_uri(uri, query_data)
-          req = Net::HTTP::Post.new(path)
-          token.consumer.sign!(req, token)
-          req.body = body
-          req['Content-Length'] = body.size
-          req['Content-Type'] = "multipart/form-data; boundary=#{boundary}"
-          oauth_logging(tag) do
-            res = token.consumer.http.request(req)
-          end
+          query = query.find_all { |k, v| k != :file }
+          res = client_sync(uri, name, oauth) { |client|
+            request(client, :post, uri, query, file)
+          }
         else
-          data = query_to_hash(query)
-          oauth_logging(tag) do
-            res = token.post(uri.to_s, data, ext)
-          end
+          res = client_sync(uri, name, oauth) { |client|
+            post_request(client, uri, query, ext)
+          }
         end
-        JSONFilter.parse(res.body)
+        parse_response(res)
       else
         raise "unsupported scheme: #{cred.first}"
       end
@@ -992,39 +986,6 @@ module FriendFeed
       else
         query
       end
-    end
-
-    # oauth gem does not support [k, v] array...
-    # How we do multiple file upload? Design failure?
-    def query_to_hash(query)
-      hash = {}
-      query.each do |k, v|
-        hash[k] = v.respond_to?(:read) ? v.read : v.to_s
-      end
-      hash
-    end
-
-    # TODO: uglish... HTTPClient should allow to use this.
-    def create_query_uri(uri, query)
-      HTTP::Message::Headers.new.instance_eval {
-        create_query_uri(uri, query)
-      }
-    end
-
-    # TODO: uglish... HTTPClient should allow to use this.
-    def create_multipart_form_data(query, boundary)
-      dummy = HTTP::Message::Body.new
-      dummy.init_request
-      obj = dummy.instance_eval {
-        build_query_multipart_str(query, boundary)
-      }
-      obj.parts.collect { |part|
-        if part.respond_to?(:read)
-          part.read
-        else
-          part
-        end
-      }.join
     end
 
     def parse_response(res)
