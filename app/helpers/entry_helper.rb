@@ -201,10 +201,6 @@ module EntryHelper
         when /\bmovapic.com\/pic\/([a-z0-9]+)/
           uri = "http://image.movapic.com/pic/t_#{$1}.jpeg"
           entry.view_medias << uri
-        # http://code.google.com/p/imageshackapi/wiki/YFROGthumbnails
-        when /\byfrog.com\b/
-          uri = link + '.th.jpg'
-          entry.view_medias << uri
         end
       end
     end
