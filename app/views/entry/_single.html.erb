@@ -2,7 +2,6 @@
   <%- if @threads.first && entry = @threads.first.root -%>
     <div class="header">
       <%= pin_link(entry) %>
-      <%= author_picture(entry) -%>
       <%= author_link(entry) %>
       <%= to(entry) -%>
       <%= published(entry, false) %>

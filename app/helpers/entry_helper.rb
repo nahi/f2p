@@ -79,10 +79,17 @@ module EntryHelper
   end
 
   def author_picture(entry)
-    return if !setting.list_view_profile_picture
     return if ctx.user_only?
-    if id = entry.origin_id
-      picture(id)
+    if ctx.single? or setting.list_view_profile_picture
+      if id = entry.origin_id
+        picture(id)
+      end
+    end
+  end
+
+  def to_picture(to)
+    if ctx.single? or setting.list_view_profile_picture
+      picture(to.id)
     end
   end
 
@@ -99,9 +106,9 @@ module EntryHelper
       if to.group?
         opt = { :room => to.id }
         link = link_list(opt)
-        [link_to(h(to.name), link), icon(to)].join
+        [to_picture(to), link_to(h(to.name), link), lock_icon(to)].join
       elsif to.id != entry.from_id
-        (icon(to) || '') + h(to.name)
+        [to_picture(to), h(to.name), lock_icon(to)].join
       end
     }.compact
     unless links.empty?
@@ -109,7 +116,7 @@ module EntryHelper
     end
   end
 
-  def icon(from)
+  def lock_icon(from)
     if from and from.private
       lock_icon_tag
     end
@@ -218,7 +225,7 @@ module EntryHelper
     else
       from = user(entry)
     end
-    [from, icon(entry.from), friend_of(entry)].join
+    [author_picture(entry), from, lock_icon(entry.from), friend_of(entry)].join
   end
 
   def service_icon(entry)
