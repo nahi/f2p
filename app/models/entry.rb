@@ -260,6 +260,12 @@ class Entry
       comments.any? { |e| e.from and e.from.me? }
   end
 
+  # allow to override
+  def modified=(modified)
+    @modified = modified
+    @modified_at = nil
+  end
+
   def modified
     return @modified if @modified
     @modified = self.date

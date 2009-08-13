@@ -18,8 +18,8 @@ class Feed
       logger.info('[perf] start entries fetch')
       feed = fetch_entries(auth, opt)
       logger.info('[perf] start internal data handling')
-      record_last_modified(feed)
-      logger.info('[perf] record_last_modified done')
+      update_last_modified(feed)
+      logger.info('[perf] update_last_modified done')
       pins = check_inbox(auth, feed)
       logger.info('[perf] check_inbox done')
       add_service_icon(feed.entries)
@@ -221,7 +221,7 @@ class Feed
       ff_client.set_cached_entries(auth.name, cache)
     end
 
-    def record_last_modified(feed)
+    def update_last_modified(feed)
       found = LastModified.find_all_by_eid(feed.entries.map { |e| e.id })
       found_map = found.inject({}) { |r, e|
         r[e.eid] = e
@@ -229,10 +229,16 @@ class Feed
       }
       # do update/create without transaction.  we can use transaction and retry
       # invoking this method (whole transaction) but it's too expensive.
+      oldest = nil
       feed.entries.each do |entry|
         if m = found_map[entry.id]
           d = entry.modified_at
-          if m.date != d
+          if oldest and d > oldest
+            # calced modified was newer than the date FF used for sorting.
+            # revert it and do not update DB.
+            STDERR.puts([entry.modified, m.date.xmlschema].inspect)
+            entry.modified = m.date.xmlschema
+          elsif m.date != d
             m.date = d
             begin
               m.save!
@@ -251,6 +257,11 @@ class Feed
             logger.warn("create LastModified failed for #{entry.id}")
             logger.warn(e)
           end
+        end
+        if oldest
+          oldest = [oldest, entry.modified_at].min
+        else
+          oldest = entry.modified_at
         end
       end
     end
