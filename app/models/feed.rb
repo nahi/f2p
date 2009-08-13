@@ -236,7 +236,7 @@ class Feed
           if oldest and d > oldest
             # calced modified was newer than the date FF used for sorting.
             # revert it and do not update DB.
-            STDERR.puts([entry.modified, m.date.xmlschema].inspect)
+            logger.info('modified time adjust: ' + [entry.modified, m.date.xmlschema].inspect)
             entry.modified = m.date.xmlschema
           elsif m.date != d
             m.date = d
