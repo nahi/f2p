@@ -693,9 +693,9 @@ module EntryHelper
     end
   end
 
-  def edit_entry_form(entry)
+  def edit_entry_form(entry, body = nil)
     if entry.commands.include?('edit')
-      default = entry.body
+      default = body || entry.body
       text_field_tag('body', default) + submit_tag('post')
     end
   end
@@ -1010,6 +1010,13 @@ module EntryHelper
     if !ctx.moderate and editable?(entry)
       link_to(inline_menu_label(:comment_edit, 'edit'),
               link_action('show', :eid => entry.id, :moderate => true))
+    end
+  end
+
+  def locate_link(entry)
+    if false #!ctx.moderate and editable?(entry)
+      link_to(inline_menu_label(:comment_edit, 'locate'),
+              link_action('show', :eid => entry.id, :moderate => 'geo'))
     end
   end
 

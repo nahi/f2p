@@ -11,7 +11,13 @@
     <div class="body">
       <%- if ctx.moderate -%>
         <%- form_tag({:action => 'update', :eid => entry.id}, {:name => 'post'}) do -%>
-          <%= edit_entry_form(entry) -%>
+          <%= edit_entry_form(entry, @body) -%>
+          <%- if ctx.moderate == 'geo' -%>
+            <%= hidden_field_tag('eid', @ctx.eid) %>
+            <%= hidden_field_tag('moderate', @ctx.moderate) %>
+            <p>For editing location info:</p>
+            <%= render :partial => 'address' %>
+          <%- end -%>
         <%- end -%>
         <script type='text/javascript'><!--
         post.body.focus();
@@ -50,6 +56,7 @@
       <div class="entry-menu">
         <%= like_link(entry) %>
         <%= moderate_link(entry) %>
+        <%= locate_link(entry) %>
         <%= hide_link(entry) %>
         <%= delete_link(entry) %>
         <%= reshare_link(entry) %>

@@ -300,34 +300,8 @@ class EntryController < ApplicationController
     @ctx.comment = param(:comment)
     @ctx.moderate = param(:moderate)
     @ctx.home = false
-    sess_ctx = session[:ctx]
     pin_check
-    with_feedinfo(@ctx) do
-      opt = find_opt()
-      # We might not yet fetched comments.
-      opt.delete(:allow_cache)
-      opt.delete(:maxcomments)
-      opt.delete(:maxlikes)
-      @feed = find_entry_thread(opt)
-      @threads = @feed.entries
-      if sess_ctx
-        # pin/unpin redirect caused :eid set.
-        ctx = sess_ctx.dup
-        ctx.eid = nil
-        opt = find_opt(ctx)
-        opt[:allow_cache] = true
-        opt.delete(:updated_id)
-        opt[:filter_except] = @ctx.eid
-        @original_feed = find_entry_thread(opt)
-      else
-        @original_feed = nil
-      end
-    end
-    if sess_ctx
-      sess_ctx.eid = @ctx.eid
-    end
-    flash[:show_reload_detection] = @ctx.eid
-    render :action => 'list'
+    render_single_entry
   end
 
   def new
@@ -513,9 +487,29 @@ class EntryController < ApplicationController
           :redirect_to => {:action => 'inbox'}
 
   def update
+    @body = param(:body)
+    @title = param(:title)
+    @lat = param(:lat)
+    @long = param(:long)
+    @address = param(:address)
+    @setting.google_maps_zoom = intparam(:zoom) if intparam(:zoom)
+    @placemark = nil
+    if param(:commit) == 'search'
+      @ctx = EntryContext.new(auth)
+      @ctx.eid = param(:eid)
+      @ctx.comment = param(:comment)
+      @ctx.moderate = param(:moderate)
+      @ctx.home = false
+      do_location_search
+      render_single_entry
+      return
+    end
     id = param(:eid)
-    body = param(:body)
-    if entry = Entry.update(create_opt(:eid => id, :body => body))
+    opt = create_opt(:eid => id, :body => @body)
+    if @body and @lat and @long
+      opt[:geo] = "#{@lat},#{@long}"
+    end
+    if entry = Entry.update(opt)
       flash[:updated_id] = entry.id
       flash[:allow_cache] = true
     end
@@ -786,5 +780,35 @@ private
     if pin = param(:pin)
       pin_entry(pin)
     end
+  end
+
+  def render_single_entry
+    sess_ctx = session[:ctx]
+    with_feedinfo(@ctx) do
+      opt = find_opt()
+      # We might not yet fetched comments.
+      opt.delete(:allow_cache)
+      opt.delete(:maxcomments)
+      opt.delete(:maxlikes)
+      @feed = find_entry_thread(opt)
+      @threads = @feed.entries
+      if sess_ctx
+        # pin/unpin redirect caused :eid set.
+        ctx = sess_ctx.dup
+        ctx.eid = nil
+        opt = find_opt(ctx)
+        opt[:allow_cache] = true
+        opt.delete(:updated_id)
+        opt[:filter_except] = @ctx.eid
+        @original_feed = find_entry_thread(opt)
+      else
+        @original_feed = nil
+      end
+    end
+    if sess_ctx
+      sess_ctx.eid = @ctx.eid
+    end
+    flash[:show_reload_detection] = @ctx.eid
+    render :action => 'list'
   end
 end

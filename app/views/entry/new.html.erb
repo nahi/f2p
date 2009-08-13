@@ -11,9 +11,6 @@
     <%- else -%>
       <%= link_to(h('image upload'), :action => 'new', :with_form => '1') %><br />
     <%- end -%>
-    <%= hidden_field_tag('lat', @lat) %>
-    <%= hidden_field_tag('long', @long) %>
-    <%= hidden_field_tag('address', @address) %>
     <%= submit_tag 'post' %>
   </p>
   <hr />
@@ -29,29 +26,7 @@
   </p>
   <hr />
   <p>For posting with location info:</p>
-  <p>
-  Address: <%= text_field_tag('title', @title) %> <%= submit_tag 'search' %><br />
-  geocoding language: '<%= h(setting.google_maps_geocoding_lang || 'ja') %>'<br />
-  zoom: <%= zoom_select_tag('zoom', setting.google_maps_zoom) %><br />
-  <%- if gps_link = gps_link(:action => 'new') -%>
-  get GPS data: <%= gps_link %>
-  <%- end -%>
-  </p>
-  <%- if @placemark -%>
-    <%- if @placemark.ambiguous? -%>
-      <p>Ambiguous:</p>
-      <ul>
-        <%- @placemark.candidates.each do |cand| -%>
-          <li><%= link_to(h(cand), :action => 'add', :commit => 'search', :body => @body, :link => @link, :room => @room, :with_form => @with_form, :title => cand) %></li>
-        <%- end -%>
-      </ul>
-    <%- else -%>
-      <dl>
-        <dt><%= h(@placemark.address) %></dt>
-        <dd><%= google_maps_link(@placemark, nil, setting.google_maps_zoom) %></dd>
-      </dl>
-    <%- end -%>
-  <%- end -%>
+  <%= render :partial => 'address' %>
 <%- end -%>
 <hr />
 <p>

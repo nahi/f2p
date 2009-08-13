@@ -691,10 +691,10 @@ module FriendFeed
       to << 'me' if to.empty?
       cred = get_credential(opt)
       query = {}
+      query[:to] = to.join(',')
       query[:body] = body
       set_if(query, opt, :link)
       set_if(query, opt, :comment)
-      query[:to] = to.join(',')
       set_if(query, opt, :image_url)
       set_if(query, opt, :audio_url)
       set_if(query, opt, :short)
@@ -735,6 +735,9 @@ module FriendFeed
       set_if(query, opt, :link)
       set_if(query, opt, :comment)
       set_if(query, opt, :image_url)
+      set_if(query, opt, :audio_url)
+      set_if(query, opt, :short)
+      set_if(query, opt, :geo)
       ext = {}
       query = query.to_a
       if opt[:file]
