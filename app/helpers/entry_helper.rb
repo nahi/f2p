@@ -244,7 +244,7 @@ module EntryHelper
   end
 
   def emphasize_as_unread?(entry_or_comment)
-    (ctx.home or ctx.inbox or ctx.label) and entry_or_comment.view_unread
+    (ctx.home or ctx.inbox or ctx.label) and entry_or_comment.emphasize?
   end
 
   def original_link(entry)
@@ -510,7 +510,7 @@ module EntryHelper
 
   def friends_likes(entry)
     if !entry.likes.empty?
-      likes = entry.likes.find_all { |e| e.from and !e.from.commands.include?('subscribe') }
+      likes = entry.likes.find_all { |e| e.from and e.from.friend? }
       if liked?(entry)
         icon = link_to(inline_icon_tag(:star, 'unlike'), link_action('unlike', :eid => entry.id))
       else
@@ -521,7 +521,13 @@ module EntryHelper
         icon += link_to(h(size.to_s), link_show(entry.id))
       end
       if !likes.empty?
-        members = likes.collect { |like| user(like) }.join(' ')
+        members = likes.collect { |like|
+          if like.emphasize?
+            emphasize_as_unread(user(like))
+          else
+            user(like)
+          end
+        }.join(' ')
         icon += '(' + members + ')'
       end
       icon

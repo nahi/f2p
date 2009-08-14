@@ -11,6 +11,7 @@ require 'via'
 class Entry
   include HashUtils
   EMPTY = [].freeze
+  TIME_ZERO = Time.at(0).freeze
 
   class << self
     def create(opt)
@@ -181,8 +182,8 @@ class Entry
     @to = (hash['to'] || EMPTY).map { |e| From[e] }
     @thumbnails = (hash['thumbnails'] || EMPTY).map { |e| Thumbnail[e] }
     @files = (hash['files'] || EMPTY).map { |e| Attachment[e] }
-    @comments = wrap_comment(hash['comments'] || EMPTY)
-    @likes = (hash['likes'] || EMPTY).map { |e| Like[e] }
+    @comments = wrap_comments(hash['comments'] || EMPTY)
+    @likes = wrap_likes(hash['likes'] || EMPTY)
     @via = Via[hash['via']]
     @geo = Geo[hash['geo']] || extract_geo_from_google_staticmap_url(@thumbnails)
     if hash['fof']
@@ -191,7 +192,7 @@ class Entry
     else
       @fof = nil
     end
-    @checked_at = nil
+    @checked_at = TIME_ZERO
     @hidden = hash['hidden'] || false
     if self.via and self.via.twitter?
       @twitter_username = (self.via.url || '').match(%r{twitter.com/([^/]+)})[1]
@@ -252,6 +253,10 @@ class Entry
 
   def modified_at
     @modified_at ||= Time.parse(modified)
+  end
+
+  def emphasize?
+    view_unread and checked_at < date_at
   end
 
   def pick?
@@ -338,7 +343,15 @@ class Entry
 
 private
 
-  def wrap_comment(comments)
+  def wrap_likes(likes)
+    likes.map { |e|
+      l = Like[e]
+      l.entry = self
+      l
+    }
+  end
+
+  def wrap_comments(comments)
     index = 0
     comments.map { |e|
       c = Comment[e]
