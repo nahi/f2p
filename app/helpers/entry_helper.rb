@@ -625,29 +625,22 @@ module EntryHelper
   end
 
   def search_form(opt = {})
-    str = ''
-    str += hidden_field_tag('user', ctx.user) if ctx.user
-    str += hidden_field_tag('room', ctx.room_for) if ctx.room_for
-    str += hidden_field_tag('friends', ctx.friends) if ctx.friends
-    str += hidden_field_tag('service', ctx.service) if ctx.service
-    if str.empty? and ctx.query.nil?
-      str += hidden_field_tag('friends', 'me')
-    end
-    if opt[:compact]
-      str += text_field_tag('query', ctx.query, :size => 6, :placeholder => 'search')
-    else
-      str += text_field_tag('query', ctx.query, :placeholder => 'search') + submit_tag('search')
-    end
-    str
+    search_opt.map { |key, value|
+      if key != :query
+        hidden_field_tag(key.to_s, value.to_s)
+      end
+    }.compact.join("\n") +
+      text_field_tag('query', ctx.query, :placeholder => 'search') +
+      submit_tag('search')
   end
 
   def search_drilldown_links
     opt = search_opt
     links = []
-    likes = opt[:likes].to_i + 1
-    links << menu_link(h("[likes >= #{likes}]"), opt.merge(:likes => likes))
-    comments = opt[:comments].to_i + 1
-    links << menu_link(h("[comments >= #{comments}]"), opt.merge(:comments => comments))
+    with_likes = opt[:with_likes].to_i + 1
+    links << menu_link(h("[likes >= #{with_likes}]"), opt.merge(:with_likes => with_likes))
+    with_comments = opt[:with_comments].to_i + 1
+    links << menu_link(h("[comments >= #{with_comments}]"), opt.merge(:with_comments => with_comments))
     mine_opt = opt.merge(:user => 'me')
     mine_opt.delete(:friends)
     links << menu_link(h('[mine]'), mine_opt) {
