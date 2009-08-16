@@ -153,6 +153,8 @@ Rails::Initializer.run do |config|
   F2P::Config.friendfeed_api_timeout = 30
   F2P::Config.friendfeed_api_daemon_drb_uri = 'druby://localhost:17171'
 
+  F2P::Config.json_parse_size_limit = 1.5 * 1024 * 1024
+
   F2P::Config.google_maps_maptype = 'mobile'
   F2P::Config.google_maps_zoom = 13
   F2P::Config.google_maps_width = 160

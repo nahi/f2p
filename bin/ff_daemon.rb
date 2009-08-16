@@ -35,6 +35,7 @@ front.client.oauth_consumer_secret = F2P::Config.friendfeed_api_oauth_consumer_s
 front.client.oauth_site = F2P::Config.friendfeed_api_oauth_site
 front.client.oauth_scheme = F2P::Config.friendfeed_api_oauth_scheme
 front.client.oauth_signature_method = F2P::Config.friendfeed_api_oauth_signature_method
+front.client.json_parse_size_limit = F2P::Config.json_parse_size_limit
 DRb.start_service(F2P::Config.friendfeed_api_daemon_drb_uri, front)
 
 trap(:INT) do

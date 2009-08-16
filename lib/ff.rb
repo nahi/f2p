@@ -67,6 +67,8 @@ module FriendFeed
     attr_accessor :oauth_scheme
     attr_accessor :oauth_signature_method
 
+    attr_accessor :json_parse_size_limit
+
     class LShiftLogger
       def initialize(logger)
         @logger = logger
@@ -153,6 +155,7 @@ module FriendFeed
       @oauth_site = nil
       @oauth_scheme = nil
       @oauth_signature_method = nil
+      @json_parse_size_limit = nil
       @mutex = Monitor.new
     end
 
@@ -993,7 +996,12 @@ module FriendFeed
 
     def parse_response(res)
       if res.status == 200
-        JSONFilter.parse(res.content)
+        if @json_parse_size_limit and res.content.size > @json_parse_size_limit
+          logger.warn("too big JSON stream: #{res.content.size}")
+          nil
+        else
+          JSONFilter.parse(res.content)
+        end
       end
     end
 
