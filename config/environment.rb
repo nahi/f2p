@@ -34,6 +34,8 @@ module F2P
       attr_accessor :friendfeed_api_timeout
       attr_accessor :friendfeed_api_daemon_drb_uri
 
+      attr_accessor :json_parse_size_limit
+
       attr_accessor :google_maps_maptype
       attr_accessor :google_maps_zoom
       attr_accessor :google_maps_width
