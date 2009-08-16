@@ -332,13 +332,24 @@ class Feed
 
     def search_entries(auth, opt)
       query = opt[:query]
+      from = opt[:user] || opt[:friends]
+      if from and (opt[:with_like] or opt[:with_comment])
+        ary = []
+        if opt[:user]
+          ary << "from:#{from}"
+        else
+          ary << "friends:#{from}"
+        end
+        ary << "like:#{from}" if opt[:with_like]
+        ary << "comment:#{from}" if opt[:with_comment]
+        from = '(' + ary.join(' OR ') + ')'
+      end
+      query += ' ' + from if from
       search = filter_opt(opt)
-      search[:from] = opt[:user]
       search[:room] = opt[:room]
-      search[:friends] = opt[:friends]
       search[:service] = opt[:service] if opt[:service]
-      search[:likes] = opt[:likes] if opt[:likes]
-      search[:comments] = opt[:comments] if opt[:comments]
+      search[:likes] = opt[:with_likes] if opt[:with_likes]
+      search[:comments] = opt[:with_comments] if opt[:with_comments]
       ff_client.search(query, search.merge(auth.new_cred)) || {}
     end
 
@@ -360,7 +371,7 @@ class Feed
       search = filter_opt(opt)
       search.delete(:user)
       search[:from] = user
-      search[:likes] = 1
+      search[:with_likes] = 1
       ff_client.search('', search.merge(auth.new_cred)) || {}
     end
 

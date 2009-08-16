@@ -22,8 +22,10 @@ class EntryController < ApplicationController
     attr_accessor :service
     attr_accessor :start
     attr_accessor :num
-    attr_accessor :likes
-    attr_accessor :comments
+    attr_accessor :with_likes
+    attr_accessor :with_comments
+    attr_accessor :with_like
+    attr_accessor :with_comment
     attr_accessor :fold
     attr_accessor :inbox
     attr_accessor :home
@@ -34,7 +36,7 @@ class EntryController < ApplicationController
     def initialize(auth)
       @auth = auth
       @viewname = nil
-      @eid = @eids = @query = @user = @feed = @room = @friends = @like = @comment = @link = @label = @service = @start = @num = @likes = @comments = nil
+      @eid = @eids = @query = @user = @feed = @room = @friends = @like = @comment = @link = @label = @service = @start = @num = @with_likes = @with_comments = @with_like = @with_comment = nil
       @fold = false
       @inbox = false
       @home = true
@@ -63,8 +65,10 @@ class EntryController < ApplicationController
       @service = param(:service)
       @start = (param(:start) || '0').to_i
       @num = intparam(:num) || setting.entries_in_page
-      @likes = intparam(:likes)
-      @comments = intparam(:comments)
+      @with_likes = intparam(:with_likes)
+      @with_comments = intparam(:with_comments)
+      @with_like = (param(:with_like) == 'checked')
+      @with_comment = (param(:with_comment) == 'checked')
       @fold = param(:fold) != 'no'
       @inbox = false
       @home = !(@eid or @eids or @inbox or @query or @like or @comment or @user or @friends or @feed or @room or @link or @label)
@@ -116,13 +120,11 @@ class EntryController < ApplicationController
       elsif @link
         opt.merge(:link => @link, :query => @query)
       elsif @query or @service
-        opt.merge(:query => @query, :likes => @likes, :comments => @comments, :user => @user, :room => @room, :friends => @friends, :service => @service, :merge_entry => @query.empty?)
+        opt.merge(:query => @query, :with_likes => @with_likes, :with_comments => @with_comments, :with_like => @with_like, :with_comment => @with_comment, :user => @user, :room => @room, :friends => @friends, :service => @service, :merge_entry => @query.empty?)
       elsif @like
         opt.merge(:like => @like, :user => @user || @auth.name)
       elsif @user
         opt.merge(:user => @user, :merge_entry => false)
-      elsif @friends
-        opt.merge(:friends => @friends)
       elsif @feed
         if @feed == 'filter/direct'
           opt.merge(:feed => @feed, :merge_entry => false, :merge_service => false)
@@ -149,8 +151,10 @@ class EntryController < ApplicationController
     def list_opt
       {
         :query => @query,
-        :likes => @likes,
-        :comments => @comments,
+        :with_likes => @with_likes,
+        :with_comments => @with_comments,
+        :with_like => @with_like ? 'checked' : nil,
+        :with_comment => @with_comment ? 'checked' : nil,
         :user => @user,
         :feed => @feed,
         :room => @room,
