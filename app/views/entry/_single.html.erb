@@ -73,7 +73,7 @@
 <%- if next_entry = next_entry(entry) -%>
   <p>
     Next: <%= link_to_next_entry(next_entry) %><br />
-    &nbsp;&nbsp;from <%= author_link(next_entry) %>
+    &nbsp;&nbsp;from <%= author_link(next_entry, false) %>
   </p>
   <p>
     <%- if entry.view_pinned -%>
