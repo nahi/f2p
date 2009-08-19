@@ -166,7 +166,7 @@ Rails::Initializer.run do |config|
   F2P::Config.font_size = 10
   F2P::Config.entries_in_page = 10
   F2P::Config.text_folding_size = 280
-  F2P::Config.entries_in_thread = 4
+  F2P::Config.entries_in_thread = 3
   F2P::Config.likes_in_page = 3
   F2P::Config.service_grouping_threashold = 5400
   F2P::Config.link_open_new_window = false
