@@ -258,10 +258,14 @@ class Feed
             logger.warn(e)
           end
         end
-        if oldest
-          oldest = [oldest, entry.modified_at].min
-        else
-          oldest = entry.modified_at
+        # count only modified entries. newly added entries are accidently
+        # dated as older one.
+        if entry.date != entry.modified
+          if oldest
+            oldest = [oldest, entry.modified_at].min
+          else
+            oldest = entry.modified_at
+          end
         end
       end
     end
@@ -332,14 +336,13 @@ class Feed
 
     def search_entries(auth, opt)
       query = opt[:query]
-      from = opt[:user] || opt[:friends]
+      if opt[:user]
+        from = "from:#{opt[:user]}"
+      elsif opt[:friends]
+        from = "friends:#{opt[:friends]}"
+      end
       if from and (opt[:with_like] or opt[:with_comment])
-        ary = []
-        if opt[:user]
-          ary << "from:#{from}"
-        else
-          ary << "friends:#{from}"
-        end
+        ary = [from]
         ary << "like:#{from}" if opt[:with_like]
         ary << "comment:#{from}" if opt[:with_comment]
         from = '(' + ary.join(' OR ') + ')'
