@@ -1,4 +1,4 @@
-<%- form_tag({:action => 'list'}, {:method => 'GET', :name => 'search'}) do -%>
+<%- form_tag({:action => 'list'}, {:method => 'POST', :name => 'search'}) do -%>
   <p>
     keyword: <%= text_field_tag('query', ctx.query, :placeholder => 'keyword') %><br />
     from group: <%= group_select_tag('room', ctx.room) %><br />
