@@ -263,7 +263,7 @@ class Feed
         end
         # count only modified entries. newly added entries are accidently
         # dated as older one.
-        if entry.date != entry.modified
+        if entry.date != entry.modified and !entry.self_comment_only?
           if oldest
             oldest = [oldest, entry.modified_at].min
           else
@@ -346,8 +346,9 @@ class Feed
       end
       if from and (opt[:with_like] or opt[:with_comment])
         ary = [from]
-        ary << "like:#{from}" if opt[:with_like]
-        ary << "comment:#{from}" if opt[:with_comment]
+        user = opt[:user] || opt[:friends]
+        ary << "like:#{user}" if opt[:with_like]
+        ary << "comment:#{user}" if opt[:with_comment]
         from = '(' + ary.join(' OR ') + ')'
       end
       query += ' ' + from if from
