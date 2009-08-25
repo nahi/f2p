@@ -271,7 +271,7 @@ module EntryHelper
   def summary_uri(str)
     uri = uri(str)
     if uri
-      added, part = fold_concat(uri.request_uri, 9)
+      added, part = fold_concat(uri.request_uri, 17)
       uri.scheme + '://' + uri.host + part
     else
       str
