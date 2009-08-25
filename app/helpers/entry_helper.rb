@@ -913,11 +913,14 @@ module EntryHelper
     submit_tag(label, accesskey('5'))
   end
 
-  def best_of_list_links(listid)
-    listid = listid.split('/')[0, 2].join('/')
-    if /\Alist/ !~ listid
+  def best_of_links(listid)
+    if listid == 'home' or %r(\Asummary/) =~ listid
       listid = 'home'
       summary = 'summary/'
+    elsif %r(/summary/) =~ listid
+      c = listid.split('/')
+      listid = c[0, c.size - 2].join('/')
+      summary = listid + '/summary/'
     else
       summary = listid + '/summary/'
     end
