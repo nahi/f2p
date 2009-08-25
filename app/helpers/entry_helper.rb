@@ -249,7 +249,7 @@ module EntryHelper
   end
 
   def emphasize_as_unread?(entry_or_comment)
-    (ctx.home or ctx.inbox or ctx.label) and entry_or_comment.emphasize?
+    (ctx.home or ctx.inbox) and entry_or_comment.emphasize?
   end
 
   def original_link(entry)
