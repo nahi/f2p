@@ -1,11 +1,10 @@
-<p class="header"><%= appname %> login</p>
+<p class="header"><%= appname %> sign in</p>
 
 <hr />
 <%= oauth_message %>
 
 <p>
-You can login f2p by registering your remote key to dev.ctor.org.
-Remote key and nickname are saved in this site.
+You can sign in to f2p by registering your remote key to dev.ctor.org.
 <%- form_tag :action => 'authenticate' do -%>
   <%- if flash[:error] -%>
     <p class="message"><%= flash[:error] %></p>
@@ -13,8 +12,8 @@ Remote key and nickname are saved in this site.
   <p>
     FriendFeed user nickname: <%= text_field_tag 'name' %><br />
     Remote key(NOT A PASSWORD): <%= password_field_tag 'remote_key' %><br />
-    Do NOT enter your FriendFeed PASSWORD here.  Please find your remote key from PC using this link: <%= link_to('http://friendfeed.com/account/api', 'https://friendfeed.com/account/api') %><br />
-    <%= submit_tag 'login' %>
+    Please find your remote key from PC using this link: <%= link_to('http://friendfeed.com/account/api', 'https://friendfeed.com/account/api') %><br />
+    <%= submit_tag 'sign in' %>
   </p>
 <%- end -%>
 <hr />
