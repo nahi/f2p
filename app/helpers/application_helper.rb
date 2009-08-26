@@ -470,9 +470,13 @@ __EOS__
     str.scan(Regexp.new("^.{0,#{len.to_s}}", Regexp::MULTILINE, 'u'))[0] || ''
   end
 
+  def need_unread_mgmt?
+    ctx.inbox or ctx.home
+  end
+
   # TODO: should move to controller
   def remember_checked(entry)
-    if ctx.inbox or ctx.home
+    if need_unread_mgmt?
       store = @controller.request.session[:checked]
       store[entry.id] = entry.modified
     end

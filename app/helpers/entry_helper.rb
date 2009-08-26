@@ -249,7 +249,7 @@ module EntryHelper
   end
 
   def emphasize_as_unread?(entry_or_comment)
-    (ctx.home or ctx.inbox) and entry_or_comment.emphasize?
+    need_unread_mgmt? and entry_or_comment.emphasize?
   end
 
   def original_link(entry)
@@ -527,7 +527,7 @@ module EntryHelper
       end
       if !likes.empty?
         members = likes.collect { |like|
-          if like.emphasize?
+          if need_unread_mgmt? and like.emphasize?
             emphasize_as_unread(user(like))
           else
             user(like)
