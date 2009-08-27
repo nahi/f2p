@@ -10,8 +10,12 @@ module FriendFeed
   module JSONFilter
     class << self
       def parse(str)
-        safe = filter_utf8(str)
-        JSON.parse(safe)
+        begin
+          JSON.parse(str)
+        rescue Exception
+          safe = filter_utf8(str)
+          JSON.parse(safe)
+        end
       end
 
       def pretty_generate(obj)
