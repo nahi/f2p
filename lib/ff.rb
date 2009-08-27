@@ -289,311 +289,6 @@ module FriendFeed
     end
   end
 
-  class ChannelClient < BaseClient
-    URL_BASE = 'http://chan.friendfeed.com/api/'
-
-    attr_reader :name
-    attr_reader :remote_key
-    attr_accessor :timeout
-
-    def initialize(name, remote_key, logger = nil)
-      super(logger)
-      @name = name
-      @remote_key = remote_key
-      @timeout = 60
-    end
-
-    def initialize_token
-      @token = get_token()
-    end
-
-    def get_home_entries(opt = {})
-      uri = URI.parse('https://friendfeed.com/api/feed/home')
-      get_feed(uri, @name, @remote_key, opt)
-    end
-
-    def updated_home_entries(opt = {})
-      initialize_token unless @token
-      uri = uri("updates/home")
-      query = opt.merge(:token => @token, :timeout => @timeout, :format => 'json')
-      res = client_sync(uri, @name, @remote_key) { |client|
-        client.receive_timeout = @timeout * 1.1
-        get_request(client, uri, query)
-      }
-      if res.status == 200 and !res.content.strip.empty?
-        begin
-          obj = JSONFilter.parse(res.content)
-          logger.debug { JSONFilter.pretty_generate(obj) }
-          @token = obj['update']['token']
-          obj
-        rescue Exception => e
-          logger.warn("JSON parsing failed: #{res.inspect}")
-          logger.warn(e)
-          nil
-        end
-      end
-    end
-
-  private
-
-    def get_token
-      uri = uri("updates")
-      query = { :format => 'json', :timeout => 0 }
-      res = client_sync(uri, @name, @remote_key) { |client|
-        get_request(client, uri, query)
-      }
-      if res.status == 200
-        JSONFilter.parse(res.content)['update']['token']
-      end
-    end
-
-    def url_base
-      URL_BASE
-    end
-  end
-
-  class APIClient < BaseClient
-    URL_BASE = 'https://friendfeed.com/api/'
-
-    def validate(name, remote_key)
-      uri = uri('validate')
-      res = client_sync(uri, name, remote_key) { |client|
-        get_request(client, uri)
-      }
-      res.status == 200
-    end
-
-    def get_profile(name, remote_key, user, opt = {})
-      uri = uri("user/#{user}/profile")
-      return nil unless uri
-      res = client_sync(uri, name, remote_key) { |client|
-        get_request(client, uri, opt)
-      }
-      if res.status == 200
-        JSONFilter.parse(res.content)
-      end
-    end
-
-    def get_profiles(name, remote_key, users)
-      uri = uri("profiles")
-      query = { 'nickname' => users.join(',') }
-      return nil unless uri
-      res = client_sync(uri, name, remote_key) { |client|
-        get_request(client, uri, query)
-      }
-      if res.status == 200
-        JSONFilter.parse(res.content)['profiles']
-      end
-    end
-
-    def get_room_profile(name, remote_key, room, opt = {})
-      uri = uri("room/#{room}/profile")
-      return nil unless uri
-      res = client_sync(uri, name, remote_key) { |client|
-        res = get_request(client, uri, opt)
-      }
-      if res.status == 200
-        JSONFilter.parse(res.content)
-      end
-    end
-
-    def get_list_profile(name, remote_key, list, opt = {})
-      uri = uri("list/#{list}/profile")
-      return nil unless uri
-      res = client_sync(uri, name, remote_key) { |client|
-        res = get_request(client, uri, opt)
-      }
-      if res.status == 200
-        JSONFilter.parse(res.content)
-      end
-    end
-
-    def get_entry(name, remote_key, eid, opt = {})
-      uri = uri("feed/entry/#{eid}")
-      return nil unless uri
-      get_feed(uri, name, remote_key, opt)
-    end
-
-    def get_entries(name, remote_key, eids, opt = {})
-      uri = uri("feed/entry")
-      opt = opt.merge(:entry_id => eids.join(','))
-      get_feed(uri, name, remote_key, opt)
-    end
-
-    def get_home_entries(name, remote_key, opt = {})
-      uri = uri("feed/home")
-      get_feed(uri, name, remote_key, opt)
-    end
-
-    def get_list_entries(name, remote_key, list, opt = {})
-      uri = uri("feed/list/#{list}")
-      return nil unless uri
-      get_feed(uri, name, remote_key, opt)
-    end
-
-    def get_user_entries(name, remote_key, user, opt = {})
-      uri = uri("feed/user/#{user}")
-      return nil unless uri
-      get_feed(uri, name, remote_key, opt)
-    end
-
-    def get_friends_entries(name, remote_key, user, opt = {})
-      uri = uri("feed/user/#{user}/friends")
-      return nil unless uri
-      get_feed(uri, name, remote_key, opt)
-    end
-
-    def get_room_entries(name, remote_key, room = nil, opt = {})
-      if room.nil?
-        uri = uri("feed/rooms")
-      else
-        uri = uri("feed/room/#{room}")
-      end
-      return nil unless uri
-      get_feed(uri, name, remote_key, opt)
-    end
-
-    def get_comments(name, remote_key, user, opt = {})
-      uri = uri("feed/user/#{user}/comments")
-      return nil unless uri
-      get_feed(uri, name, remote_key, opt)
-    end
-
-    def get_likes(name, remote_key, user, opt = {})
-      uri = uri("feed/user/#{user}/likes")
-      return nil unless uri
-      get_feed(uri, name, remote_key, opt)
-    end
-
-    def get_discussion(name, remote_key, user, opt = {})
-      uri = uri("feed/user/#{user}/discussion")
-      return nil unless uri
-      get_feed(uri, name, remote_key, opt)
-    end
-
-    def get_url_entries(name, remote_key, url, opt = {})
-      uri = uri("feed/url")
-      query = opt.merge(:url => url)
-      get_feed(uri, name, remote_key, query)
-    end
-
-    def search_entries(name, remote_key, query, opt = {})
-      uri = uri("feed/search")
-      opt[:q] = search_opt_filter(query, opt)
-      get_feed(uri, name, remote_key, opt)
-    end
-
-    def post(name, remote_key, title, link = nil, comment = nil, images = nil, files = nil, room = nil)
-      uri = uri("share")
-      query = { 'title' => title }
-      query['link'] = link if link
-      query['comment'] = comment if comment
-      if images
-        images.each_with_index do |image, idx|
-          image_url, image_link = image
-          query["image#{idx}_url"] = image_url
-          query["image#{idx}_link"] = image_link
-        end
-      end
-      if files
-        files.each_with_index do |file, idx|
-          file, file_link, content_type = file
-          unless file.respond_to?(:read)
-            file = StringIO.new(file.to_s)
-            class << file
-              attr_accessor :mime_type
-            end
-            file.mime_type = content_type
-          end
-          query["file#{idx}"] = file
-          query["file#{idx}_link"] = file_link
-        end
-      end
-      query['room'] = room if room
-      client_sync(uri, name, remote_key) do |client|
-        res = post_request(client, uri, query)
-        JSONFilter.parse(res.content)['entries']
-      end
-    end
-
-    def delete(name, remote_key, entry, undelete = false)
-      uri = uri("entry/delete")
-      query = { 'entry' => entry }
-      query['undelete'] = 1 if undelete
-      client_sync(uri, name, remote_key) do |client|
-        post_request(client, uri, query)
-      end
-    end
-
-    def post_comment(name, remote_key, entry, body)
-      uri = uri("comment")
-      query = {
-        'entry' => entry,
-        'body' => body
-      }
-      client_sync(uri, name, remote_key) do |client|
-        res = post_request(client, uri, query)
-        JSONFilter.parse(res.content)
-      end
-    end
-
-    def edit_comment(name, remote_key, entry, comment, body)
-      uri = uri("comment")
-      query = {
-        'entry' => entry,
-        'comment' => comment,
-        'body' => body
-      }
-      client_sync(uri, name, remote_key) do |client|
-        res = post_request(client, uri, query)
-        JSONFilter.parse(res.content)
-      end
-    end
-
-    def delete_comment(name, remote_key, entry, comment, undelete = false)
-      uri = uri("comment/delete")
-      query = {
-        'entry' => entry,
-        'comment' => comment
-      }
-      query['undelete'] = 1 if undelete
-      client_sync(uri, name, remote_key) do |client|
-        post_request(client, uri, query)
-      end
-    end
-
-    def like(name, remote_key, entry)
-      uri = uri("like")
-      query = {'entry' => entry}
-      client_sync(uri, name, remote_key) do |client|
-        post_request(client, uri, query)
-      end
-    end
-
-    def unlike(name, remote_key, entry)
-      uri = uri("like/delete")
-      query = {'entry' => entry}
-      client_sync(uri, name, remote_key) do |client|
-        post_request(client, uri, query)
-      end
-    end
-
-    def hide(name, remote_key, entry, unhide = false)
-      uri = uri("entry/hide")
-      query = {'entry' => entry}
-      query['unhide'] = 1 if unhide
-      client_sync(uri, name, remote_key) do |client|
-        post_request(client, uri, query)
-      end
-    end
-
-  private
-
-    def url_base
-      URL_BASE
-    end
-  end
-
   class APIV2Client < BaseClient
     URL_BASE = 'https://friendfeed-api.com/v2/'
 
@@ -1030,6 +725,248 @@ end
 if __FILE__ == $0
   require 'test/unit'
   require 'logger'
+
+  class APIClient < BaseClient
+    URL_BASE = 'https://friendfeed.com/api/'
+
+    def validate(name, remote_key)
+      uri = uri('validate')
+      res = client_sync(uri, name, remote_key) { |client|
+        get_request(client, uri)
+      }
+      res.status == 200
+    end
+
+    def get_profile(name, remote_key, user, opt = {})
+      uri = uri("user/#{user}/profile")
+      return nil unless uri
+      res = client_sync(uri, name, remote_key) { |client|
+        get_request(client, uri, opt)
+      }
+      if res.status == 200
+        JSONFilter.parse(res.content)
+      end
+    end
+
+    def get_profiles(name, remote_key, users)
+      uri = uri("profiles")
+      query = { 'nickname' => users.join(',') }
+      return nil unless uri
+      res = client_sync(uri, name, remote_key) { |client|
+        get_request(client, uri, query)
+      }
+      if res.status == 200
+        JSONFilter.parse(res.content)['profiles']
+      end
+    end
+
+    def get_room_profile(name, remote_key, room, opt = {})
+      uri = uri("room/#{room}/profile")
+      return nil unless uri
+      res = client_sync(uri, name, remote_key) { |client|
+        res = get_request(client, uri, opt)
+      }
+      if res.status == 200
+        JSONFilter.parse(res.content)
+      end
+    end
+
+    def get_list_profile(name, remote_key, list, opt = {})
+      uri = uri("list/#{list}/profile")
+      return nil unless uri
+      res = client_sync(uri, name, remote_key) { |client|
+        res = get_request(client, uri, opt)
+      }
+      if res.status == 200
+        JSONFilter.parse(res.content)
+      end
+    end
+
+    def get_entry(name, remote_key, eid, opt = {})
+      uri = uri("feed/entry/#{eid}")
+      return nil unless uri
+      get_feed(uri, name, remote_key, opt)
+    end
+
+    def get_entries(name, remote_key, eids, opt = {})
+      uri = uri("feed/entry")
+      opt = opt.merge(:entry_id => eids.join(','))
+      get_feed(uri, name, remote_key, opt)
+    end
+
+    def get_home_entries(name, remote_key, opt = {})
+      uri = uri("feed/home")
+      get_feed(uri, name, remote_key, opt)
+    end
+
+    def get_list_entries(name, remote_key, list, opt = {})
+      uri = uri("feed/list/#{list}")
+      return nil unless uri
+      get_feed(uri, name, remote_key, opt)
+    end
+
+    def get_user_entries(name, remote_key, user, opt = {})
+      uri = uri("feed/user/#{user}")
+      return nil unless uri
+      get_feed(uri, name, remote_key, opt)
+    end
+
+    def get_friends_entries(name, remote_key, user, opt = {})
+      uri = uri("feed/user/#{user}/friends")
+      return nil unless uri
+      get_feed(uri, name, remote_key, opt)
+    end
+
+    def get_room_entries(name, remote_key, room = nil, opt = {})
+      if room.nil?
+        uri = uri("feed/rooms")
+      else
+        uri = uri("feed/room/#{room}")
+      end
+      return nil unless uri
+      get_feed(uri, name, remote_key, opt)
+    end
+
+    def get_comments(name, remote_key, user, opt = {})
+      uri = uri("feed/user/#{user}/comments")
+      return nil unless uri
+      get_feed(uri, name, remote_key, opt)
+    end
+
+    def get_likes(name, remote_key, user, opt = {})
+      uri = uri("feed/user/#{user}/likes")
+      return nil unless uri
+      get_feed(uri, name, remote_key, opt)
+    end
+
+    def get_discussion(name, remote_key, user, opt = {})
+      uri = uri("feed/user/#{user}/discussion")
+      return nil unless uri
+      get_feed(uri, name, remote_key, opt)
+    end
+
+    def get_url_entries(name, remote_key, url, opt = {})
+      uri = uri("feed/url")
+      query = opt.merge(:url => url)
+      get_feed(uri, name, remote_key, query)
+    end
+
+    def search_entries(name, remote_key, query, opt = {})
+      uri = uri("feed/search")
+      opt[:q] = search_opt_filter(query, opt)
+      get_feed(uri, name, remote_key, opt)
+    end
+
+    def post(name, remote_key, title, link = nil, comment = nil, images = nil, files = nil, room = nil)
+      uri = uri("share")
+      query = { 'title' => title }
+      query['link'] = link if link
+      query['comment'] = comment if comment
+      if images
+        images.each_with_index do |image, idx|
+          image_url, image_link = image
+          query["image#{idx}_url"] = image_url
+          query["image#{idx}_link"] = image_link
+        end
+      end
+      if files
+        files.each_with_index do |file, idx|
+          file, file_link, content_type = file
+          unless file.respond_to?(:read)
+            file = StringIO.new(file.to_s)
+            class << file
+              attr_accessor :mime_type
+            end
+            file.mime_type = content_type
+          end
+          query["file#{idx}"] = file
+          query["file#{idx}_link"] = file_link
+        end
+      end
+      query['room'] = room if room
+      client_sync(uri, name, remote_key) do |client|
+        res = post_request(client, uri, query)
+        JSONFilter.parse(res.content)['entries']
+      end
+    end
+
+    def delete(name, remote_key, entry, undelete = false)
+      uri = uri("entry/delete")
+      query = { 'entry' => entry }
+      query['undelete'] = 1 if undelete
+      client_sync(uri, name, remote_key) do |client|
+        post_request(client, uri, query)
+      end
+    end
+
+    def post_comment(name, remote_key, entry, body)
+      uri = uri("comment")
+      query = {
+        'entry' => entry,
+        'body' => body
+      }
+      client_sync(uri, name, remote_key) do |client|
+        res = post_request(client, uri, query)
+        JSONFilter.parse(res.content)
+      end
+    end
+
+    def edit_comment(name, remote_key, entry, comment, body)
+      uri = uri("comment")
+      query = {
+        'entry' => entry,
+        'comment' => comment,
+        'body' => body
+      }
+      client_sync(uri, name, remote_key) do |client|
+        res = post_request(client, uri, query)
+        JSONFilter.parse(res.content)
+      end
+    end
+
+    def delete_comment(name, remote_key, entry, comment, undelete = false)
+      uri = uri("comment/delete")
+      query = {
+        'entry' => entry,
+        'comment' => comment
+      }
+      query['undelete'] = 1 if undelete
+      client_sync(uri, name, remote_key) do |client|
+        post_request(client, uri, query)
+      end
+    end
+
+    def like(name, remote_key, entry)
+      uri = uri("like")
+      query = {'entry' => entry}
+      client_sync(uri, name, remote_key) do |client|
+        post_request(client, uri, query)
+      end
+    end
+
+    def unlike(name, remote_key, entry)
+      uri = uri("like/delete")
+      query = {'entry' => entry}
+      client_sync(uri, name, remote_key) do |client|
+        post_request(client, uri, query)
+      end
+    end
+
+    def hide(name, remote_key, entry, unhide = false)
+      uri = uri("entry/hide")
+      query = {'entry' => entry}
+      query['unhide'] = 1 if unhide
+      client_sync(uri, name, remote_key) do |client|
+        post_request(client, uri, query)
+      end
+    end
+
+  private
+
+    def url_base
+      URL_BASE
+    end
+  end
 
   class APIV2ClientTest < Test::Unit::TestCase
     def setup
