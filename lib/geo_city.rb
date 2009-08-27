@@ -2,7 +2,13 @@ require 'geoip'
 require 'tzinfo'
 
 class GeoCity
-  GEO_CITY_DAT_FILE = File.expand_path('GeoLiteCity.dat', File.dirname(__FILE__))
+  # You need to download GeoLiteCity.dat.gz from here:
+  # http://www.maxmind.com/app/geolitecity
+  #   link: 'Download the latest GeoLite City Binary Format'
+  # CAUTION: You need to follow GeoCity Lite license.
+  #          Please read the page carefully.
+  GEO_CITY_DAT_FILE =
+    File.expand_path('GeoLiteCity.dat', File.dirname(__FILE__))
 
   def initialize
     if File.exist?(GEO_CITY_DAT_FILE)
@@ -10,6 +16,9 @@ class GeoCity
     end
   end
 
+  # Convert IPaddr String to TimeZone name.
+  # CAUTION: For getting tz name of ActiveResource::TimeZone::ZONES, you need
+  # to map the name with ActiveResource::TimeZone::MAPPING.
   def ip2tz(ip)
     return nil unless @geoip
     begin
