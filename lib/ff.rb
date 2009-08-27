@@ -58,7 +58,6 @@ module FriendFeed
 
   class BaseClient
     attr_accessor :logger
-    attr_accessor :apikey
     attr_accessor :http_proxy
     attr_accessor :httpclient_max_keepalive
 
@@ -146,9 +145,8 @@ module FriendFeed
       end
     end
 
-    def initialize(logger = nil, apikey = nil)
+    def initialize(logger = nil)
       @logger = logger || NullLogger.new
-      @apikey = apikey
       @http_proxy = nil
       @httpclient_max_keepalive = 5 * 60
       @clients = {}
@@ -228,7 +226,6 @@ module FriendFeed
 
     def get_request(client, uri, query = {})
       ext = { 'Accept-Encoding' => 'gzip' }
-      query = query.merge(:apikey => @apikey) if @apikey
       res = client.get(uri, query, ext)
       if res.status != 200
         logger.warn("got status #{res.status}: #{res.inspect}")
@@ -242,24 +239,10 @@ module FriendFeed
     end
 
     def post_request(client, uri, query = {}, ext = {})
-      if @apikey
-        if query.is_a?(Hash)
-          query = query.merge(:apikey => @apikey)
-        else
-          query << [:apikey, @apikey]
-        end
-      end
       client.post(uri, query, ext)
     end
 
     def request(client, method, uri, query = nil, body = nil, ext = {})
-      if @apikey
-        if query.is_a?(Hash)
-          query = query.merge(:apikey => @apikey)
-        else
-          query << [:apikey, @apikey]
-        end
-      end
       client.request(method, uri, query, body, ext)
     end
 
@@ -404,20 +387,7 @@ module FriendFeed
       ext = {}
       query = query.to_a
       if opt[:file]
-        opt[:file].each do |filedef|
-          file, content_type, filename = filedef
-          unless file.respond_to?(:read)
-            file = StringIO.new(file.to_s)
-            class << file
-              attr_accessor :mime_type
-              attr_accessor :path
-            end
-            file.mime_type = content_type
-            file.path = filename
-          end
-          file
-          query << [:file, file]
-        end
+        query += file_as_query(opt[:file])
         boundary = Digest::SHA1.hexdigest(Time.now.to_s)
         ext['Content-Type'] = "multipart/form-data; boundary=#{boundary}"
       end
@@ -443,24 +413,27 @@ module FriendFeed
       ext = {}
       query = query.to_a
       if opt[:file]
-        opt[:file].each do |filedef|
-          file, content_type, filename = filedef
-          unless file.respond_to?(:read)
-            file = StringIO.new(file.to_s)
-            class << file
-              attr_accessor :mime_type
-              attr_accessor :path
-            end
-            file.mime_type = content_type
-            file.path = filename
-          end
-          file
-          query << [:file, file]
-        end
+        query += file_as_query(opt[:file])
         boundary = Digest::SHA1.hexdigest(Time.now.to_s)
-        ext = { 'Content-Type' => "multipart/form-data; boundary=#{boundary}" }
+        ext['Content-Type'] = "multipart/form-data; boundary=#{boundary}"
       end
       post_and_parse(uri, cred, query, ext)
+    end
+
+    def file_as_query(files)
+      files.map { |filedef|
+        file, content_type, filename = filedef
+        unless file.respond_to?(:read)
+          file = StringIO.new(file.to_s)
+          class << file
+            attr_accessor :mime_type
+            attr_accessor :path
+          end
+          file.mime_type = content_type
+          file.path = filename
+        end
+        [:file, file]
+      }
     end
 
     def delete_entry(eid, opt = {})

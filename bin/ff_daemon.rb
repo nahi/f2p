@@ -28,7 +28,6 @@ File.open(pid_file, 'w') do |f|
 end
 
 front = FriendFeed::APIV2Daemon.new(RAILS_DEFAULT_LOGGER)
-front.client.apikey = F2P::Config.friendfeed_api_key
 front.client.http_proxy = F2P::Config.http_proxy
 front.client.oauth_consumer_key = F2P::Config.friendfeed_api_oauth_consumer_key
 front.client.oauth_consumer_secret = F2P::Config.friendfeed_api_oauth_consumer_secret

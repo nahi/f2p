@@ -21,7 +21,6 @@ module F2P
 
       attr_accessor :http_proxy
 
-      attr_accessor :friendfeed_api_key
       attr_accessor :friendfeed_api_oauth_consumer_key
       attr_accessor :friendfeed_api_oauth_consumer_secret
       attr_accessor :friendfeed_api_oauth_site
@@ -140,8 +139,6 @@ Rails::Initializer.run do |config|
 
   F2P::Config.http_proxy = nil
 
-  # don't touch this.  apikey needs to be private.
-  F2P::Config.friendfeed_api_key = nil
   F2P::Config.friendfeed_api_oauth_consumer_key = nil
   F2P::Config.friendfeed_api_oauth_consumer_secret = nil
 
