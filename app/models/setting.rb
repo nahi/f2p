@@ -28,7 +28,7 @@ class Setting
     @google_maps_zoom = F2P::Config.google_maps_zoom
     @list_view_profile_picture = F2P::Config.list_view_profile_picture
     @disable_fof = F2P::Config.disable_fof
-    @timezone = F2P::Config.timezone
+    @timezone = nil
     @reload_list_in_minutes = F2P::Config.reload_list_in_minutes
   end
 

@@ -2,6 +2,7 @@
 
 require 'time'
 require 'xsd/datatypes'
+require 'geo_city'
 
 
 module ApplicationHelper
@@ -47,6 +48,7 @@ module ApplicationHelper
     'shield' => 'shield.png',
   }
   OAUTH_IMAGE_URL = 'http://friendfeed.com/static/images/sign-in-with-friendfeed.png'
+  GEO = GeoCity.new
 
   def jpmobile?
     @controller.request.respond_to?(:mobile)
@@ -217,11 +219,19 @@ __EOS__
     SELF_LABEL
   end
 
+  def timezone_from_request_ip
+    if addr = @controller.request.remote_ip
+      if tz = GEO.ip2tz(addr)
+        ActiveSupport::TimeZone::MAPPING.key(tz)
+      end
+    end
+  end
+
   def timezone
     if setting
-      setting.timezone ||= F2P::Config.timezone
+      setting.timezone ||= timezone_from_request_ip || F2P::Config.timezone
     else
-      F2P::Config.timezone
+      timezone_from_request_ip || F2P::Config.timezone
     end
   end
 
