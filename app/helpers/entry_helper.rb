@@ -907,6 +907,24 @@ module EntryHelper
     link_to(content, link_show(entry.id), accesskey('5'))
   end
 
+  def link_opt_for_next_page
+    if list_ctx = session[:ctx]
+      unless list_ctx.is_summary?
+        list_ctx = list_ctx.dup
+        list_ctx.eid = nil
+        start = list_ctx.start || 0
+        num = list_ctx.num || 0
+        list_ctx.list_opt.merge(
+          list_ctx.link_opt(
+            :start => start + num,
+            :num => num,
+            :show_first => 1
+          )
+        )
+      end
+    end
+  end
+
   def archive_button
     label = 'mark as read'
     label = '5.' + label if cell_phone?

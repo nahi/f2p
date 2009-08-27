@@ -236,6 +236,7 @@ class EntryController < ApplicationController
       @feed = find_entry_thread(find_opt)
       @threads = @feed.entries
     end
+    return if redirect_to_entry(@threads)
     initialize_checked_modified
   end
 
@@ -274,6 +275,7 @@ class EntryController < ApplicationController
       @feed = find_entry_thread(find_opt)
       @threads = @feed.entries
     end
+    return if redirect_to_entry(@threads)
     initialize_checked_modified
     render :action => 'list'
   end
@@ -726,6 +728,17 @@ private
       session[:ctx] = ctx
     end
     ctx
+  end
+
+  def redirect_to_entry(threads)
+    if param(:show_first)
+      if t = threads.first
+        if e = t.root
+          redirect_to(:action => :show, :eid => e.id)
+          true
+        end
+      end
+    end
   end
 
   def redirect_to_list
