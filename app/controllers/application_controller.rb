@@ -16,6 +16,8 @@ class ApplicationController < ActionController::Base
   # from your application log (in this case, all fields with names like "password"). 
   # filter_parameter_logging :password
 
+  GEO = GeoCity.new
+
   # use URL rewriting feature if jpmobile plugin exists.
   if self.respond_to?(:trans_sid)
     trans_sid
@@ -54,6 +56,14 @@ class ApplicationController < ActionController::Base
 
     def create_ff_client(logger)
       FriendFeed::APIV2ClientProxy.new
+    end
+  end
+
+  def timezone_from_request_ip
+    if addr = request.remote_ip
+      if tz = GEO.ip2tz(addr)
+        ActiveSupport::TimeZone::MAPPING.key(tz)
+      end
     end
   end
 

@@ -8,7 +8,7 @@ class SettingController < ApplicationController
   end
 
   def index
-    @timezone = param(:timezone) || @setting.timezone
+    @timezone = param(:timezone) || @setting.timezone || timezone_from_request_ip || F2P::Config.timezone
     @font_size = (param(:font_size) || @setting.font_size).to_i
     @entries_in_page = (param(:entries_in_page) || @setting.entries_in_page).to_i
     @entries_in_thread = (param(:entries_in_thread) || @setting.entries_in_thread).to_i
