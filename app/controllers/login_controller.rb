@@ -41,10 +41,12 @@ class LoginController < ApplicationController
     if oauth_token == session_token
       request_token = OAuth::RequestToken.new(create_oauth_consumer, oauth_token, session[:request_token_secret])
       access_token = request_token.get_access_token
-      name = access_token.params[:username]
+      # We MUST NOT rely on this name; attacker can edit it freely.
+      # We should use API instead. See User#oauth_validate how to do that.
+      # name = access_token.params[:username]
       token = access_token.params[:oauth_token]
       secret = access_token.params[:oauth_token_secret]
-      if user = User.oauth_validate(name, token, secret)
+      if user = User.oauth_validate(token, secret)
         login_successful(user)
         return
       end

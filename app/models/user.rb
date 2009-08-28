@@ -33,8 +33,10 @@ class User < ActiveRecord::Base
       end
     end
 
-    def oauth_validate(name, token, secret)
+    def oauth_validate(token, secret)
       ActiveRecord::Base.transaction do
+        name = name_from_token(token, secret)
+        return unless name
         unless user = User.find_by_name(name)
           user = User.new
           user.name = name
@@ -76,6 +78,16 @@ class User < ActiveRecord::Base
     end
 
   private
+
+    def name_from_token(token, secret)
+      cred = {
+        :oauth_token => token,
+        :oauth_token_secret => secret
+      }
+      if id = ff_client.feedinfo('me', cred.merge(:include => :id))
+        id['id']
+      end
+    end
 
     def convert_feedlist(feedlist)
       feedlist = feedlist.dup
