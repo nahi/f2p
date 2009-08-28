@@ -378,7 +378,7 @@ class Feed
       search = filter_opt(opt)
       search.delete(:user)
       search[:from] = user
-      search[:with_likes] = 1
+      search[:likes] = 1
       ff_client.search('', search.merge(auth.new_cred)) || {}
     end
 

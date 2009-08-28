@@ -26,12 +26,16 @@ module ProfileHelper
 
   def user_page_links
     links = []
-    links << menu_link(h(feed_name), link_entry_list(:user => @id))
+    links << link_to(h(feed_name), link_entry_list(:user => @id))
     feedid = [@id, 'likes'].join('/')
-    links << menu_link(h('Likes'), link_entry_list(:feed => feedid))
-    links << menu_link(h('Liked'), link_entry_list(:like => 'liked', :user => @id))
+    links << link_to(h('Likes'), link_entry_list(:feed => feedid))
+    links << link_to(h('Liked'), link_entry_list(:like => 'liked', :user => @id))
     feedid = [@id, 'friends'].join('/')
-    links << menu_link(h('With friends'), link_entry_list(:feed => feedid))
+    links << link_to(h('With friends'), link_entry_list(:feed => feedid))
+    if auth.name == @id
+      feedid = 'notifications/desktop'
+      links << link_to(h('Notifications'), :controller => :entry, :action => :list, :feed => feedid)
+    end
     links.join(' ')
   end
 end

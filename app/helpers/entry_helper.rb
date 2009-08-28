@@ -736,12 +736,12 @@ module EntryHelper
   end
 
   def write_new_link
-    link_to(menu_label('more'), link_action('new', :room => ctx.room_for))
+    menu_link(menu_label('more'), link_action('new', :room => ctx.room_for))
   end
 
   # override
   def search_link
-    link_to(menu_label('search'), search_opt(link_action('search')))
+    menu_link(menu_label('search'), search_opt(link_action('search')))
   end
 
   def zoom_select_tag(varname, default)
@@ -843,7 +843,9 @@ module EntryHelper
         !no_page and start - num >= 0
       }
     end
-    links << inbox_link
+    if opt[:for_top] or !ctx.inbox
+      links << inbox_link
+    end
     if ctx.list? and threads = opt[:threads] and opt[:for_top]
       if entry = find_show_entry(threads)
         links << menu_link(menu_label('from the top', '1'), link_show(entry.id), accesskey('1'))
@@ -852,9 +854,12 @@ module EntryHelper
       end
     end
     if ctx.inbox and opt[:for_bottom]
-      links << archive_button
+      links << archive_link
+      links << all_link
     end
-    links << pinned_link
+    if opt[:for_top] or !ctx.inbox
+      links << pinned_link
+    end
     if ctx.list? and !ctx.is_summary?
       links << menu_link(menu_label('>', '6'), list_opt(ctx.link_opt(:start => start + num, :num => num)), accesskey('6')) { !no_page }
       if threads = opt[:threads] and opt[:for_top]
@@ -874,13 +879,13 @@ module EntryHelper
     if threads.from_modified and threads.to_modified
       from = ago(threads.from_modified)
       if ctx.start == 0
-        h("(#{from} ago ~ now)")
+        h("(latest)")
       else
         to = ago(threads.to_modified)
         if from == to
-          h("(#{from} ago)")
+          h("(#{to} ago)")
         else
-          h("(#{from} ~ #{to} ago)")
+          h("(~ #{to} ago)")
         end
       end
     end
@@ -925,10 +930,8 @@ module EntryHelper
     end
   end
 
-  def archive_button
-    label = 'mark as read'
-    label = '5.' + label if cell_phone?
-    submit_tag(label, accesskey('5'))
+  def archive_link
+    menu_link(menu_label('mark all as read', '5'), link_action('archive'), accesskey('5'))
   end
 
   def best_of_links(listid)
@@ -944,21 +947,13 @@ module EntryHelper
     end
     links = []
     feedid = summary + '1'
-    links << menu_link(menu_label('a day'), link_feed(feedid)) {
-      ctx.feed != feedid
-    }
+    links << link_to(h('a day'), link_feed(feedid))
     feedid = summary + '3'
-    links << menu_link(menu_label('3 days'), link_feed(feedid)) {
-      ctx.feed != feedid
-    }
+    links << link_to(h('3 days'), link_feed(feedid))
     feedid = summary + '7'
-    links << menu_link(menu_label('7 days'), link_feed(feedid)) {
-      ctx.feed != feedid
-    }
+    links << link_to(h('7 days'), link_feed(feedid))
     feedid = listid
-    links << menu_link(menu_label('all'), link_feed(feedid)) {
-      ctx.feed != feedid
-    }
+    links << link_to(h('Show all'), link_feed(feedid))
     links.join(' ')
   end
 
@@ -1016,13 +1011,13 @@ module EntryHelper
 
   def url_link_to(link, query = nil)
     if link and ctx.link != link
-      link_to(inline_menu_label(:url, 'search link'), link_list(:link => link, :query => query))
+      menu_link(inline_menu_label(:url, 'search link'), link_list(:link => link, :query => query))
     end
   end
 
   def delete_link(entry)
     if entry.commands.include?('delete')
-      link_to(inline_menu_label(:delete, 'delete'), link_action('delete', :eid => entry.id), :confirm => 'Delete?')
+      menu_link(inline_menu_label(:delete, 'delete'), link_action('delete', :eid => entry.id), :confirm => 'Delete?')
     end
   end
 
@@ -1040,14 +1035,14 @@ module EntryHelper
 
   def moderate_link(entry)
     if !ctx.moderate and editable?(entry)
-      link_to(inline_menu_label(:comment_edit, 'edit'),
+      menu_link(inline_menu_label(:comment_edit, 'edit'),
               link_action('show', :eid => entry.id, :moderate => true))
     end
   end
 
   def locate_link(entry)
     if false #!ctx.moderate and editable?(entry)
-      link_to(inline_menu_label(:comment_edit, 'locate'),
+      menu_link(inline_menu_label(:comment_edit, 'locate'),
               link_action('show', :eid => entry.id, :moderate => 'geo'))
     end
   end
@@ -1081,21 +1076,21 @@ module EntryHelper
 
   def like_link(entry)
     if entry.commands.include?('like')
-      link_to(inline_menu_label(:like, 'like'),
+      menu_link(inline_menu_label(:like, 'like'),
               link_action('like', :eid => entry.id))
     end
   end
 
   def hide_link(entry)
     #if entry.commands.include?('hide')
-      link_to(inline_menu_label(:hide, 'hide'),
+      menu_link(inline_menu_label(:hide, 'hide'),
               link_action('hide', :eid => entry.id), :confirm => 'Hide?')
     #end
   end
 
   def reshare_link(entry)
     if ctx.single? or entry.view_pinned
-      link_to(inline_menu_label(:reshare, 'reshare'),
+      menu_link(inline_menu_label(:reshare, 'reshare'),
               link_action('reshare', :reshared_from => entry.id))
     end
   end

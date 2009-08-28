@@ -1,12 +1,5 @@
 <div class="single">
   <%- if @threads.first && entry = @threads.first.root -%>
-    <div class="header">
-      <%= pin_link(entry) %>
-      <%= author_link(entry) %>
-      <%= to(entry) -%>
-      <%= published(entry, false) %>
-      <%= service_icon(entry) -%>
-    </div>
     <%- if ctx.comment.nil? -%>
       <div class="entry-menu">
         <%= like_link(entry) %>
@@ -18,6 +11,13 @@
         <%= url_link(entry) %>
       </div>
     <%- end -%>
+    <div class="header">
+      <%= pin_link(entry) %>
+      <%= author_link(entry) %>
+      <%= to(entry) -%>
+      <%= published(entry, false) %>
+      <%= service_icon(entry) -%>
+    </div>
     <div class="body">
       <%- if ctx.moderate -%>
         <%- form_tag({:action => 'update', :eid => entry.id}, {:name => 'post'}) do -%>

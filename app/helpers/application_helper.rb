@@ -102,6 +102,10 @@ module ApplicationHelper
     vertical-align: text-top;
   }
   a img { border: none; }
+  a.menu-link {
+    border: 1px outset;
+    text-decoration: none;
+  }
   p {
     margin-top: 1ex;
     margin-bottom: 1ex;
@@ -128,16 +132,25 @@ module ApplicationHelper
     margin-left: 16px;
   }
   .comment-fold a { color: #666; }
-  div.listings .thread1 {
-    background-color: #EEE;
+  div.listings .page-links {
     border-top: 1px solid #ccc;
-    border-bottom: 1px solid #ccc;
+    padding-top: 0.6ex;
+    padding-bottom: 0.6ex;
+  }
+  div.listings .thread1 {
+    background-color: #eee;
+    border-top: 1px solid #ccc;
     padding-top: 0.5ex;
     padding-bottom: 0.8ex;
   }
   div.listings .thread2 {
+    border-top: 1px solid #ccc;
     padding-top: 0.5ex;
     padding-bottom: 0.8ex;
+  }
+  div.listings .page-links-bottom {
+    border-bottom: 1px solid #ccc;
+    margin-bottom: 1em;
   }
   div.listings hr.separator { display: none; }
   div.listings .body {
@@ -153,11 +166,12 @@ module ApplicationHelper
     margin-bottom: 0.8ex;
   }
   div.single {
-    border-top: 1px solid #ccc;
     border-bottom: 1px solid #ccc;
   }
   div.single .header {
-    background-color: #EEE;
+    border-top: 1px solid #ccc;
+    border-bottom: 1px solid #ccc;
+    background-color: #eee;
   }
   div.single .body {
     padding-top: 1ex;
@@ -194,15 +208,13 @@ __EOS__
   end
 
   def top_menu
-    links = []
-    links << search_link
-    links << menu = menu_link(menu_icon(:bottom, '8'), '#bottom', accesskey('8'))
-    links.join(' ')
+    menu_link(menu_label('menu', '8'), '#bottom', accesskey('8'))
   end
 
   def common_menu(*arg)
     [
       profile_link(auth.name),
+      search_link,
       settings_link,
       logout_link,
       help_link,
@@ -211,7 +223,7 @@ __EOS__
   end
 
   def to_top_menu
-    menu_link(menu_icon(:top, '2'), '#top', accesskey('2'))
+    menu_link(menu_label('^', '2'), '#top', accesskey('2'))
   end
 
   def self_label
@@ -267,7 +279,7 @@ __EOS__
   end
 
   def profile_link(id)
-    link_to(menu_label('profile'), :controller => :profile, :action => :show, :id => id)
+    menu_link(menu_label('profile'), :controller => :profile, :action => :show, :id => id)
   end
 
   def profile_image_tag(url, alt, title)
@@ -279,8 +291,7 @@ __EOS__
   end
 
   def all_link
-    name = feed_name || 'Home feed'
-    menu_link(menu_label('show all entries in ' + name, '7'), { :controller => :entry, :action => :list }, accesskey('7'))
+    menu_link(menu_label('show all entries', '7'), { :controller => :entry, :action => :list }, accesskey('7'))
   end
 
   def pinned_link
@@ -288,19 +299,19 @@ __EOS__
   end
 
   def search_link
-    link_to(menu_label('search'), :controller => 'entry', :action => 'search')
+    menu_link(menu_label('search'), :controller => 'entry', :action => 'search')
   end
 
   def settings_link
-    link_to(menu_label('settings'), :controller => 'setting', :action => 'index')
+    menu_link(menu_label('settings'), :controller => 'setting', :action => 'index')
   end
 
   def logout_link
-    link_to(menu_label('logout'), :controller => 'login', :action => 'clear')
+    menu_link(menu_label('logout'), :controller => 'login', :action => 'clear')
   end
 
   def help_link
-    link_to(menu_label('?'), :controller => 'help', :action => 'index')
+    menu_link(menu_label('?'), :controller => 'help', :action => 'index')
   end
 
   def u(arg)
@@ -511,7 +522,7 @@ __EOS__
 
   def menu_link(label, opt, html_opt = {}, &block)
     if block.nil? or block.call
-      link_to(label, opt, html_opt)
+      link_to(label, opt, html_opt.merge(:class => 'menu-link'))
     else
       label
     end
@@ -652,25 +663,23 @@ __EOS__
 
   def special_feed_links
     links = []
-    links << menu_link(h('Inbox'), { :controller => :entry, :action => :inbox }, accesskey('0'))
-    links << menu_link(h('My feed'), :controller => :entry, :action => :list, :user => auth.name)
-    feedid = 'filter/direct'
-    links << menu_link(h('Direct messages'), :controller => :entry, :action => :list, :feed => feedid)
+    links << link_to(h('Inbox'), { :controller => :entry, :action => :inbox }, accesskey('0'))
+    links << link_to(h('My feed'), :controller => :entry, :action => :list, :user => auth.name)
     feedid = 'filter/discussions'
-    links << menu_link(h('My discussions'), :controller => :entry, :action => :list, :feed => feedid)
+    links << link_to(h('My discussions'), :controller => :entry, :action => :list, :feed => feedid)
+    feedid = 'filter/direct'
+    links << link_to(h('Direct messages'), :controller => :entry, :action => :list, :feed => feedid)
     feedid = [auth.name, 'likes'].join('/')
-    feedid = 'notifications/desktop'
-    links << menu_link(h('Notifications'), :controller => :entry, :action => :list, :feed => feedid)
     links.join(' ')
   end
 
   def list_links
     return unless @feedlist
     links = []
-    links << menu_link(h('Home'), link_list)
+    links << link_to(h('Home'), link_list)
     lists = @feedlist['lists'] || []
     lists.each do |list|
-      links << menu_link(h(list.name), :controller => :entry, :action => :list, :feed => list.id)
+      links << link_to(h(list.name), :controller => :entry, :action => :list, :feed => list.id)
     end
     links.join(' ')
   end
@@ -680,7 +689,7 @@ __EOS__
     links = []
     lists = @feedlist['searches'] || []
     lists.each do |search|
-      links << menu_link(h(search.name), :controller => :entry, :action => :list, :feed => search.id)
+      links << link_to(h(search.name), :controller => :entry, :action => :list, :feed => search.id)
     end
     links.join(' ')
   end
