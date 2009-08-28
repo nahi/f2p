@@ -1,16 +1,5 @@
 <div class="single">
   <%- if @threads.first && entry = @threads.first.root -%>
-    <%- if ctx.comment.nil? -%>
-      <div class="entry-menu">
-        <%= like_link(entry) %>
-        <%= moderate_link(entry) %>
-        <%= locate_link(entry) %>
-        <%= hide_link(entry) %>
-        <%= delete_link(entry) %>
-        <%= reshare_link(entry) %>
-        <%= url_link(entry) %>
-      </div>
-    <%- end -%>
     <div class="header">
       <%= pin_link(entry) %>
       <%= author_link(entry) %>
@@ -65,6 +54,17 @@
     <div class="entry-menu">
       <%= original_link(entry) %>
     </div>
+    <%- if ctx.comment.nil? -%>
+      <div class="entry-menu">
+        <%= like_link(entry) %>
+        <%= moderate_link(entry) %>
+        <%= locate_link(entry) %>
+        <%= hide_link(entry) %>
+        <%= delete_link(entry) %>
+        <%= reshare_link(entry) %>
+        <%= url_link(entry) %>
+      </div>
+    <%- end -%>
     <%- commit_checked_modified(entry) -%>
   <%- else -%>
     <p>No feed is good feed.</p>

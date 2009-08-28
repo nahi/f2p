@@ -241,7 +241,7 @@ class Feed
             # revert it and do not update DB.
             logger.info('modified time adjust: ' + [entry.modified, m.date.xmlschema].inspect)
             entry.modified = m.date.xmlschema
-          elsif m.date != d
+          elsif m.date < d
             m.date = d
             begin
               m.save!

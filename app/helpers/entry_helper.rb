@@ -878,9 +878,7 @@ module EntryHelper
   def list_range_notation(threads)
     if threads.from_modified and threads.to_modified
       from = ago(threads.from_modified)
-      if ctx.start == 0
-        h("(latest)")
-      else
+      if ctx.start != 0
         to = ago(threads.to_modified)
         if from == to
           h("(#{to} ago)")
