@@ -74,12 +74,12 @@ class Feed
       checked = CheckedModified.find(:all, :conditions => cond, :include => 'last_modified')
       # do update/create without transaction.  we can use transaction and retry
       # invoking this method (whole transaction) but it's too expensive.
-      hash.each do |eid, checked_modified|
-        next unless checked_modified
+      hash.each do |eid, last_modified|
+        next unless last_modified
+        modified_at = Time.parse(last_modified)
         if c = checked.find { |e| e.last_modified.eid == eid }
-          d = Time.parse(checked_modified)
-          if c.checked < d
-            c.checked = d
+          if c.checked < modified_at
+            c.checked = modified_at
             begin
               c.save!
             rescue ActiveRecord::ActiveRecordError => e
@@ -88,17 +88,27 @@ class Feed
             end
           end
         else
-          if m = LastModified.find_by_eid(eid)
-            c = CheckedModified.new
-            c.user = auth
-            c.last_modified = m
-            c.checked = Time.parse(checked_modified)
+          m = LastModified.find_by_eid(eid)
+          unless m
+            m = LastModified.new
+            m.eid = eid
+            m.date = modified_at
             begin
-              c.save!
+              m.save!
             rescue ActiveRecord::ActiveRecordError => e
-              logger.warn("create CheckedModified failed for #{eid}")
+              logger.warn("create LastModified failed for #{eid}")
               logger.warn(e)
             end
+          end
+          c = CheckedModified.new
+          c.user = auth
+          c.last_modified = m
+          c.checked = modified_at
+          begin
+            c.save!
+          rescue ActiveRecord::ActiveRecordError => e
+            logger.warn("create CheckedModified failed for #{eid}")
+            logger.warn(e)
           end
         end
       end

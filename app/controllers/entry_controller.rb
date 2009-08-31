@@ -679,7 +679,7 @@ private
   def pin_entry(id)
     if id
       Entry.add_pin(create_opt(:eid => id))
-      clear_checked_modified(id)
+      commit_checked_modified(id)
     end
   end
 

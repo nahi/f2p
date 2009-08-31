@@ -191,14 +191,4 @@ private
       end
     end
   end
-
-  def clear_checked_modified(eid)
-    cond = ['user_id = ? and last_modifieds.eid = ?', auth.id, eid]
-    if checked = CheckedModified.find(:first, :conditions => cond, :include => 'last_modified')
-      checked.destroy
-    end
-    if checked = session[:checked]
-      checked.delete(eid)
-    end
-  end
 end
