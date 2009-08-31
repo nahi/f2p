@@ -19,8 +19,7 @@ module ApplicationHelper
     #'star' => 'heart.png', # for special 2/14 configuration!
     'like' => 'thumb_up.png',
     'comment' => 'comment.png',
-    #'friend_comment' => 'user_comment.png',
-    'friend_comment' => 'comment.png',
+    'friend_comment' => 'user_comment.png',
     'comment_add' => 'comment_add.png',
     'comment_edit' => 'comment_edit.png',
     'delete' => 'delete.png',
@@ -103,7 +102,7 @@ module ApplicationHelper
   }
   a img { border: none; }
   a.menu-link {
-    background-color: #eee;
+    background-color: #fff8dc;
     border: 1px outset;
     text-decoration: none;
   }

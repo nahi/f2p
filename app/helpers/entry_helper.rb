@@ -599,13 +599,13 @@ module EntryHelper
 
   def comment_icon(comment = nil)
     if comment
-      by_self = comment.by_user(auth.name)
+      by_friend = comment.from.friend?
       label = "##{comment.index}"
     else
-      by_self = true
+      by_friend = true
       label = nil
     end
-    by_self ? inline_icon_tag(:comment, label) : inline_icon_tag(:friend_comment, label)
+    by_friend ? inline_icon_tag(:friend_comment, label) : inline_icon_tag(:comment, label)
   end
 
   def comment(comment)
