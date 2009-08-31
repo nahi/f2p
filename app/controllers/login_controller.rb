@@ -43,6 +43,10 @@ class LoginController < ApplicationController
       access_token = request_token.get_access_token
       # We MUST NOT rely on this name; attacker can edit it freely.
       # We should use API instead. See User#oauth_validate how to do that.
+      # -> Not too bad:
+      #    getting an access token from a request token is a direct request
+      #    over SSL. So it should be relyable when a SSL is properly
+      #    configured. (requires trust anchor CA cert setting for OAuth gem)
       # name = access_token.params[:username]
       token = access_token.params[:oauth_token]
       secret = access_token.params[:oauth_token_secret]
