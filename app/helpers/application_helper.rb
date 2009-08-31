@@ -103,6 +103,7 @@ module ApplicationHelper
   }
   a img { border: none; }
   a.menu-link {
+    background-color: #eee;
     border: 1px outset;
     text-decoration: none;
   }
