@@ -1,8 +1,7 @@
 <div class="single">
   <%- if @threads.first && entry = @threads.first.root -%>
-    <div class="header">
-      <%= pin_link(entry) %>
-      <%= author_link(entry) %>
+    <div class="menu-links">
+      <%= pin_link(entry) %><%= author_link(entry) %>
       <%= to(entry) -%>
       <%= published(entry, false) %>
       <%= service_icon(entry) -%>
@@ -51,11 +50,8 @@
         <%= likes(entry) -%>
       </div>
     <%- end -%>
-    <div class="entry-menu">
-      <%= original_link(entry) %>
-    </div>
     <%- if ctx.comment.nil? -%>
-      <div class="entry-menu">
+      <div class="menu-links">
         <%= like_link(entry) %>
         <%= moderate_link(entry) %>
         <%= locate_link(entry) %>
@@ -66,10 +62,12 @@
       </div>
     <%- end -%>
     <%- commit_checked_modified(entry) -%>
+    <p>
+      <%= original_link(entry) %>
+    </p>
   <%- else -%>
     <p>No feed is good feed.</p>
   <%- end -%>
-</div>
 <%- if next_entry = next_entry(entry) -%>
   <p>
     Next: <%= link_to_next_entry(next_entry) %><br />
@@ -105,7 +103,7 @@
   <p>
     <%= link_back('Back') %>
   </p>
-<hr />
+</div>
 <p>
   <a name="bottom">Menu:</a>
   <%= common_menu %>

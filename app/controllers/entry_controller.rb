@@ -571,11 +571,12 @@ class EntryController < ApplicationController
         flash[:updated_comment] = c.id
       end
     else
-      c = Entry.add_comment(create_opt(:eid => id, :body => body))
-      unpin_entry(id)
-      flash[:added_id] = id
-      flash[:added_comment] = c.id
-      flash[:allow_cache] = true
+      if c = Entry.add_comment(create_opt(:eid => id, :body => body))
+        unpin_entry(id)
+        flash[:added_id] = id
+        flash[:added_comment] = c.id
+        flash[:allow_cache] = true
+      end
     end
     redirect_to_entry_or_list
   end

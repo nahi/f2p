@@ -80,7 +80,7 @@ module EntryHelper
 
   def author_picture(entry)
     return if ctx.user_only?
-    if ctx.single? or setting.list_view_profile_picture
+    if setting.list_view_profile_picture
       if id = entry.origin_id
         picture(id)
       end
@@ -736,7 +736,7 @@ module EntryHelper
   end
 
   def write_new_link
-    menu_link(menu_label('more'), link_action('new', :room => ctx.room_for))
+    link_to(h('more'), link_action('new', :room => ctx.room_for))
   end
 
   # override
@@ -1078,8 +1078,12 @@ module EntryHelper
 
   def like_link(entry)
     if entry.commands.include?('like')
-      menu_link(inline_menu_label(:like, 'like'),
-              link_action('like', :eid => entry.id))
+      if ctx.single?
+        menu_link(inline_menu_label(:like, 'like'),
+                link_action('like', :eid => entry.id))
+      else
+        link_to(h('like'), link_action('like', :eid => entry.id))
+      end
     end
   end
 
@@ -1092,8 +1096,12 @@ module EntryHelper
 
   def reshare_link(entry)
     if ctx.single? or entry.view_pinned
-      menu_link(inline_menu_label(:reshare, 'reshare'),
-              link_action('reshare', :reshared_from => entry.id))
+      if ctx.single?
+        menu_link(inline_menu_label(:reshare, 'reshare'),
+                link_action('reshare', :reshared_from => entry.id))
+      else
+        link_to(h('reshare'), link_action('reshare', :reshared_from => entry.id))
+      end
     end
   end
 

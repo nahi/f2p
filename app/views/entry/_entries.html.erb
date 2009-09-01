@@ -21,7 +21,7 @@
   <%- end -%>
 <%- end -%>
 <div class="listings">
-  <div class="page-links"><%= page_links(:for_top => true, :threads => @threads) %></div>
+  <div class="menu-links"><%= page_links(:for_top => true, :threads => @threads) %></div>
   <%- if link = geo_markers_link(@threads) -%>
     <div class="entry">
       <p>
@@ -62,7 +62,7 @@
       <%- end -%>
     </div>
   <%- end -%>
-  <div class="page-links page-links-bottom"><%= page_links(:for_bottom => true, :threads => @threads) %></div>
+  <div class="menu-links page-links-bottom"><%= page_links(:for_bottom => true, :threads => @threads) %></div>
 </div>
 <p>
   <a name="bottom">Menu:</a>

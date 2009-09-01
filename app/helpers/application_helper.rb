@@ -97,11 +97,6 @@ module ApplicationHelper
     vertical-align: text-top;
   }
   a img { border: none; }
-  a.menu-link {
-    background-color: #e6e6fa;
-    border: 1px outset;
-    text-decoration: none;
-  }
   p {
     margin-top: 1ex;
     margin-bottom: 1ex;
@@ -123,26 +118,28 @@ module ApplicationHelper
   .comment-body { margin-top: 0.6ex; }
   .comment-fold { margin-left: 16px; }
   .comment-fold a { color: #666; }
-  div.listings .page-links {
-    background-color: #f0ffff;
-    border-top: 1px solid #ccc;
+  .menu-links {
+    background-color: #ddf;
+    border-top: 1px solid #aaf;
+    border-bottom: 1px solid #aaf;
     padding-top: 0.6ex;
     padding-bottom: 0.6ex;
   }
-  div.listings .thread1 {
-    background-color: #fff;
-    border-top: 1px solid #ccc;
-    padding-top: 0.5ex;
-    padding-bottom: 0.8ex;
+  a.menu-link {
+    border: outset 1px;
+    text-decoration: none;
   }
-  div.listings .thread2 {
-    background-color: #eee;
-    border-top: 1px solid #ccc;
+  .menu-links a.menu-link {
+    color: #000;
+    background-color: #aaf;
+  }
+  div.listings .thread1,.thread2 {
+    border-bottom: 1px solid #aaf;
     padding-top: 0.5ex;
     padding-bottom: 0.8ex;
   }
   div.listings .page-links-bottom {
-    border-bottom: 1px solid #ccc;
+    border-top: 0px;
     margin-bottom: 1em;
   }
   div.listings hr.separator { display: none; }
@@ -156,17 +153,14 @@ module ApplicationHelper
     margin-top: 1.0ex;
     margin-bottom: 0.8ex;
   }
-  div.single { border-bottom: 1px solid #ccc; }
-  div.single .header {
-    border-top: 1px solid #ccc;
-    border-bottom: 1px solid #ccc;
-    background-color: #eee;
+  div.single {
+    border-bottom: 1px solid #aaf;
+    margin-bottom: 1em;
   }
   div.single .body {
-    padding-top: 1ex;
+    padding-top: 1.5ex;
     padding-bottom: 1ex;
   }
-  div.single .entry-menu { margin-bottom: 1ex; }
   #{ inline_stylesheet_iphone }
 __EOS__
     if setting and setting.font_size
