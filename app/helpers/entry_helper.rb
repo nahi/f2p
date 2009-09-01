@@ -869,6 +869,10 @@ module EntryHelper
     links.join(' ')
   end
 
+  def all_link
+    menu_link(menu_label('show all entries', '7'), list_opt(:action => :list, :start => ctx.start, :num => ctx.num), accesskey('7'))
+  end
+
   def find_show_entry(threads)
     if thread = threads.first
       thread.root

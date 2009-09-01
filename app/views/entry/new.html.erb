@@ -3,7 +3,7 @@
 <%- end -%>
 <%- form_tag({:action => 'add'}, {:name => 'post', :multipart => !@with_form.nil?}) do -%>
   <p>
-    Message: <%= text_field_tag('body', @body) %><br />
+    Message: <%= text_area_tag('body', @body, :rows => 2) %><br />
     Link: <%= text_field_tag('link', @link) %><br />
     <%= hidden_field_tag('with_form', @with_form) %>
     <%- if @with_form -%>

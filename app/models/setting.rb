@@ -16,7 +16,7 @@ class Setting
 
   def initialize
     super
-    @font_size = F2P::Config.font_size
+    @font_size = nil
     @entries_in_page = F2P::Config.entries_in_page
     @entries_in_thread = F2P::Config.entries_in_thread
     @text_folding_size = F2P::Config.text_folding_size
@@ -34,7 +34,7 @@ class Setting
 
   def validate
     errors = []
-    if @font_size < 6
+    if @font_size and @font_size < 6
       errors << 'font size must be greater than 6'
     end
     unless (5..100) === @entries_in_page

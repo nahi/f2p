@@ -9,7 +9,10 @@ class SettingController < ApplicationController
 
   def index
     @timezone = param(:timezone) || @setting.timezone || timezone_from_request_ip || F2P::Config.timezone
-    @font_size = (param(:font_size) || @setting.font_size).to_i
+    @font_size = nil
+    if param(:font_size) || @setting.font_size
+      @font_size = (param(:font_size) || @setting.font_size).to_i
+    end
     @entries_in_page = (param(:entries_in_page) || @setting.entries_in_page).to_i
     @entries_in_thread = (param(:entries_in_thread) || @setting.entries_in_thread).to_i
     @text_folding_size = (param(:text_folding_size) || @setting.text_folding_size).to_i
@@ -43,7 +46,7 @@ class SettingController < ApplicationController
       original_value[key] = @setting.send(key)
     end
     # int settings
-    [:font_size, :entries_in_page, :entries_in_thread, :text_folding_size].each do |key|
+    [:entries_in_page, :entries_in_thread, :text_folding_size].each do |key|
       if param(key)
         instance_variable_set('@' + key.to_s, param(key))
         @setting.send(key.to_s + '=', param(key).to_i)
@@ -54,6 +57,8 @@ class SettingController < ApplicationController
       instance_variable_set('@' + key.to_s, param(key) == 'checked')
       @setting.send(key.to_s + '=', param(key) == 'checked')
     end
+    # for each
+    @setting.font_size = param(:font_size) ? param(:font_size).to_i : nil
     @setting.timezone = param(:timezone)
     @setting.link_type = nil
     if param(:link_type_gwt) == 'checked'

@@ -88,11 +88,7 @@ module ApplicationHelper
 
   def inline_stylesheet
     return if i_mode?
-    h1_size = setting ? setting.font_size + 1 : 11
-    body_size = setting ? setting.font_size : 10
     content = <<__EOS__
-  p.header { font-size: #{h1_size}pt; }
-  body { font-size: #{body_size}pt; }
   img.inline  { vertical-align: text-top; }
   img.profile { border: 1px solid #ccc; padding: 0px; }
   img.media   {
@@ -111,6 +107,7 @@ module ApplicationHelper
     margin-bottom: 1ex;
   }
   p.message { color: red; }
+  textarea { vertical-align: text-top; }
   .latest1 { color: #F00; }
   .latest2 { color: #C00; }
   .latest3 { color: #900; }
@@ -122,15 +119,9 @@ module ApplicationHelper
     text-indent: -16px;
     margin-left: 16px;
   }
-  .comment-block {
-    margin-top: 0.2ex;
-  }
-  .comment-body {
-    margin-top: 0.6ex;
-  }
-  .comment-fold {
-    margin-left: 16px;
-  }
+  .comment-block { margin-top: 0.2ex; }
+  .comment-body { margin-top: 0.6ex; }
+  .comment-fold { margin-left: 16px; }
   .comment-fold a { color: #666; }
   div.listings .page-links {
     border-top: 1px solid #ccc;
@@ -158,16 +149,12 @@ module ApplicationHelper
     text-indent: -16px;
     margin-left: 16px;
   }
-  div.listings .entry {
-    margin-bottom: 0.8ex;
-  }
+  div.listings .entry { margin-bottom: 0.8ex; }
   div.listings .related {
     margin-top: 1.0ex;
     margin-bottom: 0.8ex;
   }
-  div.single {
-    border-bottom: 1px solid #ccc;
-  }
+  div.single { border-bottom: 1px solid #ccc; }
   div.single .header {
     border-top: 1px solid #ccc;
     border-bottom: 1px solid #ccc;
@@ -177,11 +164,17 @@ module ApplicationHelper
     padding-top: 1ex;
     padding-bottom: 1ex;
   }
-  div.single .entry-menu {
-    margin-bottom: 1ex;
-  }
+  div.single .entry-menu { margin-bottom: 1ex; }
   #{ inline_stylesheet_iphone }
 __EOS__
+    if setting and setting.font_size
+      h1_size = setting.font_size + 1
+      body_size = setting.font_size
+      content += <<__EOS__
+  p.header { font-size: #{h1_size}pt; }
+  body { font-size: #{body_size}pt; }
+__EOS__
+    end
     content_tag('style', content, :type => "text/css")
   end
 
@@ -288,10 +281,6 @@ __EOS__
 
   def inbox_link
     menu_link(menu_label('inbox', '0'), { :controller => :entry, :action => :inbox }, accesskey('0'))
-  end
-
-  def all_link
-    menu_link(menu_label('show all entries', '7'), { :controller => :entry, :action => :list }, accesskey('7'))
   end
 
   def pinned_link
