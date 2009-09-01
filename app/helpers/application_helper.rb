@@ -98,7 +98,7 @@ module ApplicationHelper
   }
   a img { border: none; }
   a.menu-link {
-    background-color: #fff8dc;
+    background-color: #e6e6fa;
     border: 1px outset;
     text-decoration: none;
   }
@@ -124,6 +124,7 @@ module ApplicationHelper
   .comment-fold { margin-left: 16px; }
   .comment-fold a { color: #666; }
   div.listings .page-links {
+    background-color: #f0ffff;
     border-top: 1px solid #ccc;
     padding-top: 0.6ex;
     padding-bottom: 0.6ex;
@@ -135,6 +136,7 @@ module ApplicationHelper
     padding-bottom: 0.8ex;
   }
   div.listings .thread2 {
+    background-color: #fff;
     border-top: 1px solid #ccc;
     padding-top: 0.5ex;
     padding-bottom: 0.8ex;
