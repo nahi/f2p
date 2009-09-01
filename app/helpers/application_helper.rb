@@ -130,13 +130,13 @@ module ApplicationHelper
     padding-bottom: 0.6ex;
   }
   div.listings .thread1 {
-    background-color: #eee;
+    background-color: #fff;
     border-top: 1px solid #ccc;
     padding-top: 0.5ex;
     padding-bottom: 0.8ex;
   }
   div.listings .thread2 {
-    background-color: #fff;
+    background-color: #eee;
     border-top: 1px solid #ccc;
     padding-top: 0.5ex;
     padding-bottom: 0.8ex;
