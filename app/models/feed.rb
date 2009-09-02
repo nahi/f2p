@@ -36,9 +36,6 @@ class Feed
       if opt[:merge_entry]
         threads = sort_by_service(entries, opt)
       else
-        if opt[:user]
-          entries = sort_by_published(entries)
-        end
         threads = entries.map { |e|
           EntryThread.new(e)
         }

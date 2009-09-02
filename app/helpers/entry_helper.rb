@@ -1078,30 +1078,19 @@ module EntryHelper
 
   def like_link(entry)
     if entry.commands.include?('like')
-      if ctx.single?
-        menu_link(inline_menu_label(:like, 'like'),
-                link_action('like', :eid => entry.id))
-      else
-        link_to(h('like'), link_action('like', :eid => entry.id))
-      end
+      menu_link(inline_menu_label(:like, 'like'), link_action('like', :eid => entry.id))
     end
   end
 
   def hide_link(entry)
     #if entry.commands.include?('hide')
-      menu_link(inline_menu_label(:hide, 'hide'),
-              link_action('hide', :eid => entry.id), :confirm => 'Hide?')
+      menu_link(inline_menu_label(:hide, 'hide'), link_action('hide', :eid => entry.id), :confirm => 'Hide?')
     #end
   end
 
   def reshare_link(entry)
     if ctx.single? or entry.view_pinned
-      if ctx.single?
-        menu_link(inline_menu_label(:reshare, 'reshare'),
-                link_action('reshare', :reshared_from => entry.id))
-      else
-        link_to(h('reshare'), link_action('reshare', :reshared_from => entry.id))
-      end
+      menu_link(inline_menu_label(:reshare, 'reshare'), link_action('reshare', :reshared_from => entry.id))
     end
   end
 

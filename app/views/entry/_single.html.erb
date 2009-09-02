@@ -80,25 +80,27 @@
       <%= link_to(h('Pin this and Go Next'), link_show(next_entry.id, :pin => entry.id)) %><br />
     <%- end -%>
   </p>
-<%- elsif opt = link_opt_for_next_page -%>
-  <p>
-    Next: <%= link_to(h('go top of the next page'), opt) %>
-  </p>
-  <p>
-    <%- if entry.view_pinned -%>
-      <%= link_to(h('Unpin this and Go Next'), opt.merge(:unpin => entry.id)) %><br />
-    <%- else -%>
-      <%= link_to(h('Pin this and Go Next'), opt.merge(:pin => entry.id)) %><br />
-    <%- end -%>
-  </p>
 <%- elsif entry -%>
-  <p>
-    <%- if entry.view_pinned -%>
-      <%= link_back('Unpin this and Back', :controller => 'entry', :unpin => entry.id) %><br />
-    <%- else -%>
-      <%= link_back('Pin this and Back', :controller => 'entry', :pin => entry.id) %><br />
-    <%- end -%>
-  </p>
+  <%- if opt = link_opt_for_next_page -%>
+    <p>
+      Next: <%= link_to(h('go top of the next page'), opt) %>
+    </p>
+    <p>
+      <%- if entry.view_pinned -%>
+        <%= link_to(h('Unpin this and Go Next'), opt.merge(:unpin => entry.id)) %><br />
+      <%- else -%>
+        <%= link_to(h('Pin this and Go Next'), opt.merge(:pin => entry.id)) %><br />
+      <%- end -%>
+    </p>
+  <%- else -%>
+    <p>
+      <%- if entry.view_pinned -%>
+        <%= link_back('Unpin this and Back', :controller => 'entry', :unpin => entry.id) %><br />
+      <%- else -%>
+        <%= link_back('Pin this and Back', :controller => 'entry', :pin => entry.id) %><br />
+      <%- end -%>
+    </p>
+  <%- end -%>
 <%- end -%>
   <p>
     <%= link_back('Back') %>
