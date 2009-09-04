@@ -728,11 +728,11 @@ module EntryHelper
 
   # override
   def pinned_link
-    pin_label = 'pin'
+    pin_label = 'Pin'
     if @threads and @threads.pins and @threads.pins > 0
       pin_label += "(#{@threads.pins})"
     end
-    menu_link(menu_label(pin_label, '9'), link_list(:label => 'pin'), accesskey('9'))
+    link_to(h(pin_label), link_list(:label => 'pin'), accesskey('9'))
   end
 
   def write_new_link
@@ -843,22 +843,20 @@ module EntryHelper
         !no_page and start - num >= 0
       }
     end
-    if opt[:for_top] or !ctx.inbox
-      links << inbox_link
-    end
     if ctx.list? and threads = opt[:threads] and opt[:for_top]
       if entry = find_show_entry(threads)
-        links << menu_link(menu_label('from the top', '1'), link_show(entry.id), accesskey('1'))
+        links << menu_link(menu_label('show first', '1'), link_show(entry.id), accesskey('1'))
       else
         links << menu_label('from the top')
       end
     end
-    if ctx.inbox and opt[:for_bottom]
-      links << archive_link
-      links << all_link
-    end
-    if opt[:for_top] or !ctx.inbox
-      links << pinned_link
+    if opt[:for_bottom]
+      if ctx.inbox
+        links << archive_link
+        links << all_link
+      else
+        links << inbox_link
+      end
     end
     if ctx.list? and !ctx.is_summary?
       links << menu_link(menu_label('>', '6'), list_opt(ctx.link_opt(:start => start + num, :num => num)), accesskey('6')) { !no_page }
@@ -870,7 +868,7 @@ module EntryHelper
   end
 
   def all_link
-    menu_link(menu_label('show all entries', '7'), list_opt(:action => :list, :start => ctx.start, :num => ctx.num), accesskey('7'))
+    menu_link(menu_label('show all', '7'), list_opt(:action => :list, :start => ctx.start, :num => ctx.num), accesskey('7'))
   end
 
   def find_show_entry(threads)
@@ -933,7 +931,7 @@ module EntryHelper
   end
 
   def archive_link
-    menu_link(menu_label('mark all as read', '5'), link_action('archive'), accesskey('5'))
+    menu_link(menu_label('archive all', '5'), link_action('archive'), accesskey('5'))
   end
 
   def best_of_links(listid)

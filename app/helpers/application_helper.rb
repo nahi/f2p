@@ -276,11 +276,11 @@ __EOS__
   end
 
   def inbox_link
-    menu_link(menu_label('inbox', '0'), { :controller => :entry, :action => :inbox }, accesskey('0'))
+    menu_link(menu_label('show inbox', '0'), { :controller => :entry, :action => :inbox }, accesskey('0'))
   end
 
   def pinned_link
-    menu_link(menu_label('pin', '9'), { :controller => :entry, :action => :list, :label => 'pin' }, accesskey('9'))
+    link_to(h('Pin'), { :controller => :entry, :action => :list, :label => 'pin' }, accesskey('9'))
   end
 
   def search_link
@@ -649,6 +649,7 @@ __EOS__
   def special_feed_links
     links = []
     links << link_to(h('Inbox'), { :controller => :entry, :action => :inbox }, accesskey('0'))
+    links << pinned_link
     links << link_to(h('My feed'), :controller => :entry, :action => :list, :user => auth.name)
     feedid = 'filter/discussions'
     links << link_to(h('My discussions'), :controller => :entry, :action => :list, :feed => feedid)
