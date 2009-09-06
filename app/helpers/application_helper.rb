@@ -164,7 +164,7 @@ module ApplicationHelper
   #{ inline_stylesheet_iphone }
 __EOS__
     if setting and setting.font_size
-      h1_size = setting.font_size + 1
+      h1_size = setting.font_size
       body_size = setting.font_size
       content += <<__EOS__
   p.header { font-size: #{h1_size}pt; }
@@ -197,7 +197,11 @@ __EOS__
   end
 
   def top_menu
-    menu_link(menu_label('menu', '8'), '#bottom', accesskey('8'))
+    links = []
+    links << link_to(h('Inbox'), { :controller => :entry, :action => :inbox }, accesskey('0'))
+    links << pinned_link
+    links << menu_link(menu_label('menu', '8'), '#bottom', accesskey('8'))
+    links.join(' ')
   end
 
   def common_menu(*arg)
@@ -650,11 +654,11 @@ __EOS__
     links = []
     links << link_to(h('Inbox'), { :controller => :entry, :action => :inbox }, accesskey('0'))
     links << pinned_link
-    links << link_to(h('My feed'), :controller => :entry, :action => :list, :user => auth.name)
+    links << link_to(h('You'), :controller => :entry, :action => :list, :user => auth.name)
     feedid = 'filter/discussions'
-    links << link_to(h('My discussions'), :controller => :entry, :action => :list, :feed => feedid)
+    links << link_to(h('Discussions'), :controller => :entry, :action => :list, :feed => feedid)
     feedid = 'filter/direct'
-    links << link_to(h('Direct messages'), :controller => :entry, :action => :list, :feed => feedid)
+    links << link_to(h('DM'), :controller => :entry, :action => :list, :feed => feedid)
     feedid = [auth.name, 'likes'].join('/')
     links.join(' ')
   end
