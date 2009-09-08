@@ -7,24 +7,27 @@
   <div class="header">
 <%= author_link(entry) %> <%= to(entry) %>
     <%= published(entry, true) -%>
+    <span class="comment"><%= via(entry) %></span>
     <%= service_icon(entry) -%>
   </div>
   <div class="body">
     <%= pin_link(entry) -%>
-  <%- if twitter_thread -%>
-    <%= author_link(entry) %>
-  <%- end -%>
 <%- else -%>
   <div class="body">
     <%= pin_link(entry) -%>
-  <%- if twitter_thread or entry.from_id != root.from_id -%>
-    <%= author_link(entry) %>
-  <%- end -%>
-  <%- if entry.to_ids != root.to_ids -%>
-    <%= to(entry) %>
-  <%- end -%>
+    <%- if !twitter_thread and entry.from_id != root.from_id -%>
+<%= author_link(entry) %>
+    <%- end -%>
+    <%- if entry.to_ids != root.to_ids -%>
+      <%= to(entry) %>
+    <%- end -%>
 <%- end -%>
-<%= content(entry) %> <span class="comment"><%= via(entry) %></span>
+<%= content(entry) %>
+<%- if twitter_thread and root -%>
+  by <%= author_link(entry) %>
+<%- elsif root -%>
+  <span class="comment"><%= via(entry) %></span>
+<%- end -%>
 <%= published(entry, true) unless root.nil? -%>
   <%= service_icon(entry) if root and entry.service_id != root.service_id -%>
 <%- if comment_inline?(entry) -%>

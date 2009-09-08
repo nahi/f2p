@@ -150,6 +150,7 @@ module ApplicationHelper
   }
   div.listings .entry { margin-bottom: 0.8ex; }
   div.listings .related {
+    color: #666;
     margin-top: 1.0ex;
     margin-bottom: 0.8ex;
   }

@@ -534,7 +534,11 @@ class Feed
         sorted = sort_by_published(group)
         t.add(*sorted)
         t.root = sorted.first
-        t.twitter_thread = true if opt[:twitter_buddy]
+        if opt[:twitter_buddy] and
+            sorted.all? { |e| e.via and e.via.twitter? } and
+            sorted.any? { |e| e.twitter_username == opt[:twitter_buddy] }
+          t.twitter_thread = true
+        end
       end
       result
     end

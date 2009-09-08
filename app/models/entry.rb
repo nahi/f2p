@@ -215,6 +215,7 @@ class Entry
     result ||= same_link?(rhs) || similar_body?(rhs)
     # Twitter thread construction.
     if self.via and rhs.via and self.via.twitter? and rhs.via.twitter?
+      opt[:twitter_buddy] ||= self.twitter_reply_to
       if opt[:twitter_buddy]
         # from me, and @ to the buddy
         result ||= (self.twitter_username == rhs.twitter_username and reply_to?(rhs, opt[:twitter_buddy]))
@@ -229,7 +230,7 @@ class Entry
   end
 
   def reply_to?(rhs, target)
-    rhs.twitter_reply_to == target
+    rhs.twitter_reply_to.nil? or rhs.twitter_reply_to == target
   end
 
   def service_id
