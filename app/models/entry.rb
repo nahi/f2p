@@ -212,7 +212,9 @@ class Entry
     if self.from_id == rhs.from_id
       result ||= same_origin?(rhs)
     end
-    result ||= same_link?(rhs) || similar_body?(rhs)
+    if !self.from.private and !rhs.from.private
+      result ||= same_link?(rhs) || similar_body?(rhs)
+    end
     # Twitter thread construction.
     if self.via and rhs.via and self.via.twitter? and rhs.via.twitter?
       opt[:twitter_buddy] ||= self.twitter_reply_to
@@ -262,9 +264,9 @@ class Entry
   end
 
   def pick?
-    (self.from and self.from.me?) or
-      likes.any? { |e| e.from and e.from.me? } or
-      comments.any? { |e| e.from and e.from.me? }
+    (self.from.me?) or
+      likes.any? { |e| e.from.me? } or
+      comments.any? { |e| e.from.me? }
   end
 
   def modified
