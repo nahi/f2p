@@ -259,7 +259,7 @@ class EntryController < ApplicationController
       ctx.home = false
       ctx.fold = param(:fold) != 'no'
     }
-    retry_times = @ctx.start.zero? ? 0 : F2P::Config.max_skip_empty_inbox_pages
+    retry_times = F2P::Config.max_skip_empty_inbox_pages
     with_feedinfo(@ctx) do
       @feed = find_entry_thread(find_opt)
       @threads = @feed.entries
@@ -270,7 +270,7 @@ class EntryController < ApplicationController
         break if @ctx.start - @ctx.num < 0
         @ctx.start -= @ctx.num
       else
-        @ctx.start += @ctx.num
+        @ctx.start += @ctx.num * F2P::Config.entries_buffer_rate_for_inbox
       end
       @feed = find_entry_thread(find_opt)
       @threads = @feed.entries

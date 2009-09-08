@@ -14,6 +14,8 @@ class Feed
       unless opt.key?(:merge_entry)
         opt[:merge_entry] = true
       end
+      opt[:start] ||= 0
+      opt[:num] ||= 100
       opt.delete(:auth)
       logger.info('[perf] start entries fetch')
       feed = fetch_entries(auth, opt)
@@ -156,13 +158,15 @@ class Feed
     def fetch_list_entries(auth, opt)
       cache_entries(auth, opt) {
         if opt[:inbox]
+          opt = opt.dup
+          opt[:num] = opt[:num] * F2P::Config.entries_buffer_rate_for_inbox
           wrap(Task.run { get_feed(auth, 'home', opt) }.result)
         elsif opt[:eids]
           wrap(Task.run { get_entries(auth, opt) }.result)
         elsif opt[:link]
           if opt[:query]
-            start = (opt[:start] || 0) / 2
-            num = (opt[:num] || 0) / 2
+            start = opt[:start] / 2
+            num = opt[:num] / 2
             opt = opt.merge(:start => start, :num => num)
             search_task = Task.run { search_entries(auth, opt) }
           end
@@ -397,9 +401,14 @@ class Feed
 
     # pick up only unread entries
     def filter_unread_entries(threads, opt)
+      num = opt[:num]
+      c = 0
       threads.map { |th|
         entries = th.entries.find_all { |e|
-          e.view_unread or e.view_pinned or e.id == opt[:filter_except]
+          if e.view_unread or e.view_pinned or e.id == opt[:filter_except]
+            c += 1
+            (c <= num)
+          end
         }
         unless entries.empty?
           t = EntryThread.new
