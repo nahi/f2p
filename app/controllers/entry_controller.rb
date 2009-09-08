@@ -120,7 +120,7 @@ class EntryController < ApplicationController
       elsif @link
         opt.merge(:link => @link, :query => @query)
       elsif @query or @service
-        opt.merge(:query => @query, :with_likes => @with_likes, :with_comments => @with_comments, :with_like => @with_like, :with_comment => @with_comment, :user => @user, :room => @room, :friends => @friends, :service => @service, :merge_entry => @query.empty?)
+        opt.merge(:query => @query, :with_likes => @with_likes, :with_comments => @with_comments, :with_like => @with_like, :with_comment => @with_comment, :user => @user, :room => @room, :friends => @friends, :service => @service, :merge_entry => (@query.nil? or @query.empty?))
       elsif @like
         opt.merge(:like => @like, :user => @user || @auth.name)
       elsif @user

@@ -19,7 +19,7 @@ module ProfileHelper
       }
       title = "Services(#{map.size}): "
       links_if_exists(title, map.to_a.sort_by { |k, v| k }) { |id, name|
-        link_to(h(name), link_entry_action(:search, :q => 'service:' + id))
+        link_to(h(name), link_entry_action(:list, :user => @feedinfo.id, :query => nil, :service => id))
       }
     end
   end

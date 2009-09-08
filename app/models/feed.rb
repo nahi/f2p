@@ -345,7 +345,7 @@ class Feed
     end
 
     def search_entries(auth, opt)
-      query = opt[:query]
+      query = opt[:query] || ''
       if opt[:user]
         from = "from:#{opt[:user]}"
       elsif opt[:friends]
