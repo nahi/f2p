@@ -158,9 +158,14 @@ class Feed
     def fetch_list_entries(auth, opt)
       cache_entries(auth, opt) {
         if opt[:inbox]
+          num = opt[:num]
           opt = opt.dup
-          opt[:num] = opt[:num] * F2P::Config.entries_buffer_rate_for_inbox
-          wrap(Task.run { get_feed(auth, 'home', opt) }.result)
+          opt[:num] = num * F2P::Config.entries_buffer_rate_for_inbox
+          feed = wrap(Task.run { get_feed(auth, 'home', opt) }.result)
+          feed.entries[num, opt[:num]].each do |e|
+            e.as_inbox_buffer = true
+          end
+          feed
         elsif opt[:eids]
           wrap(Task.run { get_entries(auth, opt) }.result)
         elsif opt[:link]
@@ -406,8 +411,9 @@ class Feed
       threads.map { |th|
         entries = th.entries.find_all { |e|
           if e.view_unread or e.view_pinned or e.id == opt[:filter_except]
-            c += 1
-            (c <= num)
+            r = (c < num)
+            c += 1 unless e.as_inbox_buffer
+            r
           end
         }
         unless entries.empty?

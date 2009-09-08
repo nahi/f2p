@@ -152,6 +152,7 @@ class Entry
   attr_accessor :twitter_username
   attr_accessor :twitter_reply_to
   attr_accessor :orphan
+  attr_accessor :as_inbox_buffer
   attr_accessor :view_pinned
   attr_accessor :view_unread
   attr_accessor :view_nextid
@@ -165,6 +166,7 @@ class Entry
     @twitter_username = nil
     @twitter_reply_to = nil
     @orphan = hash['__f2p_orphan']
+    @as_inbox_buffer = false
     @view_pinned = nil
     @view_unread = nil
     @view_nextid = nil
