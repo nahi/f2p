@@ -23,7 +23,7 @@
     <%- end -%>
 <%- end -%>
 <%= content(entry) %>
-<%- if twitter_thread and root -%>
+<%- if twitter_thread -%>
   by <%= author_link(entry) %>
 <%- elsif root -%>
   <span class="comment"><%= via(entry) %></span>

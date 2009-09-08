@@ -158,14 +158,7 @@ class Feed
     def fetch_list_entries(auth, opt)
       cache_entries(auth, opt) {
         if opt[:inbox]
-          num = opt[:num]
-          opt = opt.dup
-          opt[:num] = num * F2P::Config.entries_buffer_rate_for_inbox
-          feed = wrap(Task.run { get_feed(auth, 'home', opt) }.result)
-          feed.entries[num, opt[:num]].each do |e|
-            e.as_inbox_buffer = true
-          end
-          feed
+          wrap(Task.run { get_feed(auth, 'home', opt) }.result)
         elsif opt[:eids]
           wrap(Task.run { get_entries(auth, opt) }.result)
         elsif opt[:link]
@@ -406,15 +399,9 @@ class Feed
 
     # pick up only unread entries
     def filter_unread_entries(threads, opt)
-      num = opt[:num]
-      c = 0
       threads.map { |th|
         entries = th.entries.find_all { |e|
-          if e.view_unread or e.view_pinned or e.id == opt[:filter_except]
-            r = (c < num)
-            c += 1 unless e.as_inbox_buffer
-            r
-          end
+          e.view_unread or e.view_pinned or e.id == opt[:filter_except]
         }
         unless entries.empty?
           t = EntryThread.new

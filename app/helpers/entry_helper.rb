@@ -396,7 +396,7 @@ module EntryHelper
 
   def twitter_content(common)
     common.gsub(/@([a-zA-Z0-9_]+)/) {
-      '@' + link_to($1, "http://twitter.com/#{$1}")
+      '@' + link_to($1, "http://twitter.com/#{$1}", :class => 'twname')
     }
   end
 

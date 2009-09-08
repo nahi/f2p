@@ -97,6 +97,10 @@ module ApplicationHelper
     vertical-align: text-top;
   }
   a img { border: none; }
+  a.twname {
+    text-decoration: none;
+    color: black;
+  }
   p {
     margin-top: 1ex;
     margin-bottom: 1ex;
@@ -108,6 +112,7 @@ module ApplicationHelper
   .latest3 { color: #900; }
   .older { color: #008; }
   .comment { color: #666; }
+  .comment a.twname { color: #666; }
   .inbox { font-weight: bold; }
   .hashtag a { color: #000; }
   .comment-body,.likes {
@@ -154,6 +159,7 @@ module ApplicationHelper
     margin-top: 1.0ex;
     margin-bottom: 0.8ex;
   }
+  div.listings .related a.twname { color: #666; }
   div.single {
     border-bottom: 1px solid #aaf;
     margin-bottom: 1em;
