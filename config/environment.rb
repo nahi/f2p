@@ -47,6 +47,7 @@ module F2P
       attr_accessor :entries_in_thread
       attr_accessor :likes_in_page
       attr_accessor :service_grouping_threashold
+      attr_accessor :twitter_grouping_threashold
       attr_accessor :link_open_new_window
       attr_accessor :link_type # nil or 'gwt'
       attr_accessor :list_view_media_rendering
@@ -165,7 +166,8 @@ Rails::Initializer.run do |config|
   F2P::Config.text_folding_size = 280
   F2P::Config.entries_in_thread = 3
   F2P::Config.likes_in_page = 3
-  F2P::Config.service_grouping_threashold = 5400
+  F2P::Config.service_grouping_threashold = 5400 # 90min
+  F2P::Config.twitter_grouping_threashold = 600  # 10min
   F2P::Config.link_open_new_window = false
   F2P::Config.link_type = 'gwt'
   F2P::Config.list_view_media_rendering = true

@@ -504,12 +504,19 @@ class Feed
           pre = entry
           entry_tag = entry.identity(opt)
           buf.each do |e|
-            if entry_tag == e.identity(opt) and ((e.date_at - pre.date_at).abs < F2P::Config.service_grouping_threashold) and !kinds.include?(e)
-              kinds << (pre = e)
-              # too agressive?
-              #similar_entries(buf, e).each do |e2|
-              #  kinds << e2 unless kinds.include?(e2)
-              #end
+            if entry_tag == e.identity(opt) and !kinds.include?(e)
+              if e.via and e.via.twitter?
+                threashold = F2P::Config.twitter_grouping_threashold
+              else
+                threashold = F2P::Config.service_grouping_threashold
+              end
+              if (e.date_at - pre.date_at).abs < threashold
+                kinds << (pre = e)
+                # too agressive?
+                #similar_entries(buf, e).each do |e2|
+                #  kinds << e2 unless kinds.include?(e2)
+                #end
+              end
             end
           end
           group += kinds
