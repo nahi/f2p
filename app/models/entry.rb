@@ -213,7 +213,6 @@ class Entry
       result ||= same_origin?(rhs)
     end
     result ||= same_link?(rhs) || similar_body?(rhs)
-=begin
     # Twitter thread construction.
     if self.via and rhs.via and self.via.twitter? and rhs.via.twitter?
       if opt[:twitter_buddy]
@@ -226,7 +225,6 @@ class Entry
         opt[:twitter_buddy] = rhs.twitter_username
       end
     end
-=end
     result
   end
 
