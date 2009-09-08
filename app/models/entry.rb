@@ -267,35 +267,9 @@ class Entry
       comments.any? { |e| e.from and e.from.me? }
   end
 
-  # allow to override
-  def modified=(modified)
-    @modified = modified
-    @modified_at = nil
-  end
-
   def modified
     return @modified if @modified
     @modified = self.date
-    # When you like/comment it, all likes/comments
-    # NG: comments may not be fully fetched so we cannot check if a friend
-    # exactly commented on it...
-=begin
-    picked = self.pick?
-    unless likes.empty?
-      if picked
-        @modified = [@modified, likes.last.date].max
-      elsif m = likes.find_all { |e| e.from and e.from.friend? }.map { |e| e.date || '' }.max
-        @modified = [@modified, m].max
-      end
-    end
-    unless comments.empty?
-      if picked
-        @modified = [@modified, comments.last.date].max
-      elsif m = comments.find_all { |e| e.from and e.from.friend? }.map { |e| e.date || '' }.max
-        @modified = [@modified, m].max
-      end
-    end
-=end
     unless likes.empty?
       if m = likes.map { |e| e.date || '' }.max
         @modified = [@modified, m].max

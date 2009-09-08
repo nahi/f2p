@@ -241,16 +241,10 @@ class Feed
       }
       # do update/create without transaction.  we can use transaction and retry
       # invoking this method (whole transaction) but it's too expensive.
-      oldest = nil
       feed.entries.each do |entry|
         if m = found_map[entry.id]
           d = entry.modified_at
-          if oldest and d > oldest
-            # calced modified was newer than the date FF used for sorting.
-            # revert it and do not update DB.
-            logger.info('modified time adjust: ' + [entry.modified, m.date.xmlschema].inspect)
-            entry.modified = m.date.xmlschema
-          elsif m.date < d
+          if m.date < d
             m.date = d
             begin
               m.save!
@@ -268,15 +262,6 @@ class Feed
           rescue ActiveRecord::ActiveRecordError => e
             logger.warn("create LastModified failed for #{entry.id}")
             logger.warn(e)
-          end
-        end
-        # count only modified entries. newly added entries are accidently
-        # dated as older one.
-        if entry.date != entry.modified and !entry.self_comment_only?
-          if oldest
-            oldest = [oldest, entry.modified_at].min
-          else
-            oldest = entry.modified_at
           end
         end
       end
