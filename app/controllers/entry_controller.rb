@@ -270,7 +270,7 @@ class EntryController < ApplicationController
         break if @ctx.start - @ctx.num < 0
         @ctx.start -= @ctx.num
       else
-        @ctx.start += @ctx.num * F2P::Config.entries_buffer_rate_for_inbox
+        @ctx.start += @ctx.num
       end
       @feed = find_entry_thread(find_opt)
       @threads = @feed.entries
