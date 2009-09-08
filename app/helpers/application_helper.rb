@@ -138,6 +138,7 @@ module ApplicationHelper
     color: #000;
     background-color: #aaf;
   }
+  div.listings .body a.menu-link { border: none; }
   div.listings .thread1,.thread2 {
     border-bottom: 1px solid #aaf;
     padding-top: 0.5ex;
