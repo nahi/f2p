@@ -24,6 +24,7 @@ class SettingController < ApplicationController
     @link_type = param(:link_type) || @setting.link_type
     @google_maps_geocoding_lang = param(:google_maps_geocoding_lang) || @setting.google_maps_geocoding_lang
     @reload_list_in_minutes = param(:reload_list_in_minutes) || @setting.reload_list_in_minutes
+    fetch_feedinfo
   end
 
   def update

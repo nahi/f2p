@@ -343,7 +343,7 @@ class EntryController < ApplicationController
         @address = @placemark.address
       end
     end
-    @feedinfo = User.ff_feedinfo(auth, auth.name)
+    fetch_feedinfo
   end
 
   verify :only => :reshare,
@@ -379,14 +379,14 @@ class EntryController < ApplicationController
       @link = @entry.short_url || @entry.url
       @link_title = %Q[Fwd: "#{@entry.body}"]
     end
-    @feedinfo = User.ff_feedinfo(auth, auth.name)
+    fetch_feedinfo
   end
 
   def search
     @ctx = EntryContext.new(auth)
     @ctx.viewname = 'search entries'
     @ctx.parse(params, @setting)
-    @feedinfo = User.ff_feedinfo(auth, auth.name)
+    fetch_feedinfo
   end
 
   verify :only => :add,
@@ -422,12 +422,12 @@ class EntryController < ApplicationController
     case param(:commit)
     when 'search'
       do_location_search
-      @feedinfo = User.ff_feedinfo(auth, auth.name)
+      fetch_feedinfo
       render :action => 'new'
       return
     when 'more'
       @to_lines += 1
-      @feedinfo = User.ff_feedinfo(auth, auth.name)
+      fetch_feedinfo
       if @reshared_from
         render :action => 'reshare'
       else
@@ -461,7 +461,7 @@ class EntryController < ApplicationController
       (opt[:file] ||= []) << file
     end
     unless opt[:body]
-      @feedinfo = User.ff_feedinfo(auth, auth.name)
+      fetch_feedinfo
       render :action => 'new'
       return
     end
@@ -474,7 +474,7 @@ class EntryController < ApplicationController
         msg += ' Try later.'
       end
       flash[:message] = msg
-      @feedinfo = User.ff_feedinfo(auth, auth.name)
+      fetch_feedinfo
       render :action => 'new'
       return
     end

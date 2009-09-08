@@ -19,7 +19,7 @@ class ProfileController < ApplicationController
 
   def show
     @id = param(:id)
-    @feedinfo = User.ff_feedinfo(auth, @id)
+    fetch_feedinfo(@id)
   end
 
   verify :only => :edit,
@@ -30,7 +30,7 @@ class ProfileController < ApplicationController
 
   def edit
     @id = param(:id)
-    @feedinfo = User.ff_feedinfo(auth, @id)
+    fetch_feedinfo(@id)
     @subscription = create_subscription_summary(@id)
   end
 
@@ -72,9 +72,9 @@ private
     if feedinfo = User.ff_feedinfo(auth, 'home')
       sub[0] = extract_subscription_summary(id, feedinfo)
     end
-    if feedlist = User.ff_feedlist(auth)
+    if @feedlist
       tasks = []
-      feedlist['lists'].each_with_index do |list, idx|
+      @feedlist['lists'].each_with_index do |list, idx|
         tasks << Task.run {
           if feedinfo = User.ff_feedinfo(auth, list.id)
             sub[idx + 1] = extract_subscription_summary(id, feedinfo)

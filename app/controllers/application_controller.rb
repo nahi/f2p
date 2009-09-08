@@ -191,4 +191,19 @@ private
       end
     end
   end
+
+  def fetch_feedinfo(id = nil)
+    return unless auth
+    id ||= auth.name
+    tasks = []
+    tasks << Task.run {
+      @feedinfo = User.ff_feedinfo(auth, id)
+    }
+    tasks << Task.run {
+      @feedlist = User.ff_feedlist(auth)
+    }
+    tasks.each do |task|
+      task.result
+    end
+  end
 end

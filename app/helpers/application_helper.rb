@@ -666,7 +666,7 @@ __EOS__
   def list_links
     return unless @feedlist
     links = []
-    links << link_to(h('Home'), link_list)
+    links << link_to(h('Home'), :controller => 'entry', :action => 'list')
     lists = @feedlist['lists'] || []
     lists.each do |list|
       links << link_to(h(list.name), :controller => :entry, :action => :list, :feed => list.id)
