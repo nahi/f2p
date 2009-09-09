@@ -64,6 +64,7 @@ module FriendFeed
     define_proxy_method :unsubscribe
     define_proxy_method :hide_entry
     define_proxy_method :unhide_entry
+    define_proxy_method :entry_by_short_code
     define_proxy_method :create_short_url
 
     define_proxy_method :get_user_picture_url
@@ -129,6 +130,7 @@ module FriendFeed
     define_proxy_method :unsubscribe
     define_proxy_method :hide_entry
     define_proxy_method :unhide_entry
+    define_proxy_method :entry_by_short_code
     define_proxy_method :create_short_url
 
     define_proxy_method :get_user_picture_url

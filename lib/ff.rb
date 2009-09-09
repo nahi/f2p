@@ -542,6 +542,14 @@ module FriendFeed
       post_and_parse(uri, cred, query)
     end
 
+    def entry_by_short_code(code, opt = {})
+      uri = uri("short/#{code}")
+      return nil unless uri
+      query = opt.dup
+      cred = get_credential!(query)
+      get_and_parse(uri, cred, query)
+    end
+
     def create_short_url(eid, opt = {})
       uri = uri("short")
       return nil unless uri
