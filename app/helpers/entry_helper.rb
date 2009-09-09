@@ -103,12 +103,21 @@ module EntryHelper
 
   def to(entry)
     links = entry.to.map { |to|
+      name = to.name
       if to.group?
         opt = { :room => to.id }
         link = link_list(opt)
-        [to_picture(to), link_to(h(to.name), link), lock_icon(to)].join
-      elsif to.id != entry.from_id
-        [to_picture(to), h(to.name), lock_icon(to)].join
+        [to_picture(to), link_to(h(name), link), lock_icon(to)].join
+      else
+        if to.id == auth.name
+          name = self_label
+        else
+          name = to.name
+        end
+        if entry.from_id != to.id
+          name = 'DM:' + name
+        end
+        [to_picture(to), link_to(h(name), link_user(to.id)), lock_icon(to)].join
       end
     }.compact
     unless links.empty?
@@ -180,6 +189,12 @@ module EntryHelper
       zoom = F2P::Config.google_maps_zoom
       width = F2P::Config.google_maps_width
       height = F2P::Config.google_maps_height
+      unless entry.thumbnails.empty?
+        max = entry.thumbnails.map { |t| t.height || 0 }.max
+        if max > 0
+          width = height = max
+        end
+      end
       if entry.via and entry.via.brightkite?
         if !entry.thumbnails.empty?
           zoom = BRIGHTKITE_MAP_ZOOM
