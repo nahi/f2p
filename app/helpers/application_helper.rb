@@ -356,13 +356,14 @@ __EOS__
     profile_image_tag(image_url, name, name)
   end
 
-  def user(user)
+  def user(user, opt = nil)
     return unless user
+    opt ||= { :controller => 'entry', :action => 'list', :user => u(user.id) }
     name = user.name
     if user.id == auth.name
       name = self_label
     end
-    link_to(h(name), :controller => 'entry', :action => 'list', :user => u(user.id))
+    link_to(h(name), opt)
   end
 
   def via(via, label = 'via')

@@ -237,6 +237,9 @@ module EntryHelper
   def author_link(entry, with_picture = true)
     if entry.from.group?
       from = link_to(h(entry.from.name), link_list(:room => entry.from.id))
+    elsif ctx.room_for
+      # filter by group + user
+      from = user(entry, link_list(:query => '', :room => ctx.room_for, :user => entry.from_id))
     else
       from = user(entry)
     end
@@ -591,9 +594,9 @@ module EntryHelper
     end
   end
 
-  def user(entry_or_comment)
+  def user(entry_or_comment, opt = nil)
     unless entry_or_comment.respond_to?(:service)
-      return super(entry_or_comment.from)
+      return super(entry_or_comment.from, opt)
     end
     entry = entry_or_comment
     if setting.twitter_comment_hack and entry.service.twitter?
@@ -605,11 +608,11 @@ module EntryHelper
             name = self_label
           end
           name += "(#{tw_name})"
-          return link_to(h(name), link_user(id))
+          return link_to(h(name), opt || link_user(id))
         end
       end
     end
-    super(entry.user)
+    super(entry.user, opt)
   end
 
   def comment_icon(comment = nil)
