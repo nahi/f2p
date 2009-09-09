@@ -14,11 +14,9 @@ module EntryHelper
   def viewname_base
     return ctx.viewname if ctx.viewname
     if ctx.eid
-      'entry'
+      'Entry'
     elsif ctx.query
-      'search results'
-    elsif ctx.like == 'liked'
-      "#{feed_name}'s liked entries"
+      'Search results'
     elsif ctx.user
       feed_name
     elsif ctx.feed
@@ -26,11 +24,11 @@ module EntryHelper
     elsif ctx.room
       feed_name
     elsif ctx.link
-      'related entries'
+      'Related entries'
     elsif ctx.label == 'pin'
-      'pinned'
+      'Pin'
     elsif ctx.inbox
-      'inbox'
+      'Inbox'
     else
       feed_name
     end

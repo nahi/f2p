@@ -25,7 +25,7 @@
 <%= content(entry) %>
 <%- if twitter_thread -%>
   by <%= author_link(entry) %>
-<%- elsif root -%>
+<%- elsif root and (entry.via.nil? or !entry.via.twitter?) -%>
   <span class="comment"><%= via(entry) %></span>
 <%- end -%>
 <%= published(entry, true) unless root.nil? -%>

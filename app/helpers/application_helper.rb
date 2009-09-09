@@ -156,11 +156,11 @@ module ApplicationHelper
   }
   div.listings .entry { margin-bottom: 0.8ex; }
   div.listings .related {
-    color: #666;
     margin-top: 1.0ex;
     margin-bottom: 0.8ex;
   }
-  div.listings .related a.twname { color: #666; }
+  div.listings .tweets { color: #666; }
+  div.listings .tweets a.twname { color: #666; }
   div.single {
     border-bottom: 1px solid #aaf;
     margin-bottom: 1em;
