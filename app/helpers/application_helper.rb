@@ -329,14 +329,6 @@ __EOS__
     @auth
   end
 
-  def entry_status(entry)
-    if entry.from_id
-      user_status(entry.from_id)
-    else
-      'private'
-    end
-  end
-
   def imaginary?(id)
     /\A[0-9a-f]{32}\z/ =~ id
   end

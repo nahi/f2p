@@ -209,10 +209,10 @@ class Entry
 
   def similar?(rhs, opt)
     result = false
-    if !self.from.private and !rhs.from.private
-      if self.from_id == rhs.from_id
-        result ||= same_origin?(rhs)
-      end
+    if self.from_id == rhs.from_id
+      result ||= same_origin?(rhs)
+    end
+    if !self.private and !rhs.private
       result ||= same_link?(rhs) || similar_body?(rhs)
     end
     # Twitter thread construction.
@@ -319,6 +319,10 @@ class Entry
     end
   end
 
+  def private
+    from.private || to.any? { |e| e.private }
+  end
+
 private
 
   def wrap_likes(likes)
@@ -351,7 +355,7 @@ private
   end
 
   def same_origin?(rhs)
-    (self.date_at - rhs.date_at).abs < 30.seconds
+    (self.date_at - rhs.date_at).abs < 5.seconds
   end
 
   def similar_body?(rhs)
