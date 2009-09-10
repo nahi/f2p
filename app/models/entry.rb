@@ -209,10 +209,10 @@ class Entry
 
   def similar?(rhs, opt)
     result = false
-    if self.from_id == rhs.from_id
-      result ||= same_origin?(rhs)
-    end
     if !self.from.private and !rhs.from.private
+      if self.from_id == rhs.from_id
+        result ||= same_origin?(rhs)
+      end
       result ||= same_link?(rhs) || similar_body?(rhs)
     end
     # Twitter thread construction.
