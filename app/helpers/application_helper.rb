@@ -48,6 +48,10 @@ module ApplicationHelper
   }
   OAUTH_IMAGE_URL = 'http://friendfeed.com/static/images/sign-in-with-friendfeed.png'
 
+  def ajax?
+    !cell_phone?
+  end
+
   def jpmobile?
     @controller.request.respond_to?(:mobile)
   end
@@ -169,6 +173,7 @@ module ApplicationHelper
     padding-top: 1.5ex;
     padding-bottom: 1ex;
   }
+  div.single .likes a.menu-link { border: none; }
   #{ inline_stylesheet_iphone }
 __EOS__
     if setting and setting.font_size

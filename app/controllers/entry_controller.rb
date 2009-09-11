@@ -588,8 +588,7 @@ class EntryController < ApplicationController
           :redirect_to => {:action => 'inbox'}
 
   def like
-    id = param(:eid)
-    if id
+    if id = param(:eid)
       Entry.add_like(create_opt(:eid => id))
     end
     flash[:updated_id] = id
@@ -604,13 +603,31 @@ class EntryController < ApplicationController
           :redirect_to => {:action => 'inbox'}
 
   def unlike
-    id = param(:eid)
-    if id
+    if id = param(:eid)
       Entry.delete_like(create_opt(:eid => id))
     end
     flash[:updated_id] = id
     flash[:allow_cache] = true
     redirect_to_entry_or_list
+  end
+
+  def like_remote
+    @ctx = EntryContext.new(auth)
+    id = param(:eid)
+    liked = !!param(:liked)
+    if liked
+      Entry.delete_like(create_opt(:eid => id))
+    else
+      Entry.add_like(create_opt(:eid => id))
+    end
+    opt = create_opt(:eid => id)
+    t = find_entry_thread(opt).entries.first
+    if t.nil?
+      entry = nil
+    else
+      entry = t.root
+    end
+    render :partial => 'like_remote', :locals => { :entry => entry }
   end
 
   verify :only => :hide,
@@ -654,6 +671,17 @@ class EntryController < ApplicationController
     end
     flash[:allow_cache] = true
     redirect_to_entry_or_list
+  end
+
+  def pin_remote
+    id = param(:eid)
+    pinned = !!param(:pinned)
+    if pinned
+      unpin_entry(id)
+    else
+      pin_entry(id)
+    end
+    render :partial => 'pin_remote', :locals => { :id => id, :pinned => !pinned }
   end
 
 private

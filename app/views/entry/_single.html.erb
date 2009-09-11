@@ -52,12 +52,11 @@
     <%- end -%>
     <%- if ctx.comment.nil? -%>
       <div class="menu-links">
-        <%= like_link(entry) %>
         <%= moderate_link(entry) %>
         <%= locate_link(entry) %>
+        <%= reshare_link(entry) %>
         <%= hide_link(entry) %>
         <%= delete_link(entry) %>
-        <%= reshare_link(entry) %>
         <%= url_link(entry) %>
       </div>
     <%- end -%>

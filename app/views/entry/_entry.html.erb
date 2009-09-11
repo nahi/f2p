@@ -33,7 +33,6 @@
 <%- if comment_inline?(entry) -%>
   -- <span class="comment"><%= inline_comment(entry.comments.first) %></span>
 <%- end -%>
-  <%= like_link(entry) -%>
   <%= reshare_link(entry) -%>
   <%= friends_likes(entry) -%>
   <%- comments = fold_comments(entry.comments) -%>

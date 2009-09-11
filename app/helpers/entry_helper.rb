@@ -92,6 +92,26 @@ module EntryHelper
   end
 
   def pin_link(entry)
+    if ajax?
+      pin_link_remote(entry.id, entry.view_pinned)
+    else
+      pin_link_plain(entry)
+    end
+  end
+
+  def pin_link_remote(eid, pinned)
+    span_id = 'pin_' + eid
+    if pinned
+      content = inline_icon_tag(:pinned, 'unpin')
+      link = link_action('pin_remote', :eid => eid, :pinned => 1)
+    else
+      content = inline_icon_tag(:pin)
+      link = link_action('pin_remote', :eid => eid)
+    end
+    content_tag('span', link_to_remote(content, :update => span_id, :url => link), :id => span_id)
+  end
+
+  def pin_link_plain(entry)
     if entry.view_pinned
       link_to(inline_icon_tag(:pinned, 'unpin'), link_action('unpin', :eid => entry.id))
     else
@@ -512,12 +532,7 @@ module EntryHelper
     end
     likes = me + friends + rest
     if !likes.empty?
-      if liked?(entry)
-        icon = link_to(icon_tag(:star, 'unlike'), link_action('unlike', :eid => entry.id))
-      else
-        icon = icon_tag(:star)
-      end
-      icon += h(likes.size.to_s)
+      icon = icon_tag(:star) + h(likes.size.to_s)
       max = F2P::Config.max_friend_list_num
       if likes.size > max + 1
         msg = "... #{likes.size - max} more likes"
@@ -525,18 +540,16 @@ module EntryHelper
       else
         members = likes.collect { |like| user(like) }.join(' ')
       end
-      icon + '(' + members + ')'
+      icon + '(' + members + ') ' + like_link(entry)
+    else
+      like_link(entry)
     end
   end
 
   def friends_likes(entry)
     if !entry.likes.empty?
       likes = entry.likes.find_all { |e| e.from and e.from.friend? }
-      if liked?(entry)
-        icon = link_to(inline_icon_tag(:star, 'unlike'), link_action('unlike', :eid => entry.id))
-      else
-        icon = inline_icon_tag(:star)
-      end
+      icon = inline_icon_tag(:star)
       size = entry.likes_size
       if size != likes.size
         icon += link_to(h(size.to_s), link_show(entry.id))
@@ -551,7 +564,9 @@ module EntryHelper
         }.join(' ')
         icon += '(' + members + ')'
       end
-      icon
+      icon + ' ' + like_link(entry)
+    else
+      like_link(entry)
     end
   end
 
@@ -1091,8 +1106,31 @@ module EntryHelper
   end
 
   def like_link(entry)
+    if ctx.list? and ajax?
+      like_link_remote(entry)
+    else
+      like_link_plain(entry)
+    end
+  end
+
+  def like_link_remote(entry)
+    eid = entry.id
+    span_id = 'like_' + eid
+    if entry.commands.include?('like')
+      content = inline_menu_label(:like, 'like')
+      link = link_action('like_remote', :eid => eid, :single => 1)
+    else
+      content = inline_menu_label(:unlike, 'un-like')
+      link = link_action('like_remote', :eid => eid, :single => 1, :liked => 1)
+    end
+    content_tag('span', link_to_remote(content, :update => span_id, :url => link), :id => span_id)
+  end
+
+  def like_link_plain(entry)
     if entry.commands.include?('like')
       menu_link(inline_menu_label(:like, 'like'), link_action('like', :eid => entry.id))
+    else
+      menu_link(inline_menu_label(:unlike, 'un-like'), link_action('unlike', :eid => entry.id))
     end
   end
 
