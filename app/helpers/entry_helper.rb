@@ -1122,11 +1122,17 @@ module EntryHelper
     if entry.commands.include?('like')
       content = inline_menu_label(:like, 'like')
       link = link_action('like_remote', :eid => eid, :single => 1)
+    elsif entry.from.me?
+      content = nil
     else
       content = inline_menu_label(:unlike, 'un-like')
       link = link_action('like_remote', :eid => eid, :single => 1, :liked => 1)
     end
-    link_to_remote(content, :update => span_id, :url => link)
+    if content
+      link_to_remote(content, :update => span_id, :url => link)
+    else
+      ''
+    end
   end
 
   def like_link_plain(entry)
