@@ -564,10 +564,13 @@ module EntryHelper
         }.join(' ')
         icon += '(' + members + ')'
       end
-      icon + ' ' + like_link(entry)
+      icon += ' '
     else
-      like_link(entry)
+      icon = ''
     end
+    span_id = 'like_' + entry.id
+    content = icon + like_link(entry)
+    content_tag('span', content, :id => span_id)
   end
 
   def comments(entry, compact)
@@ -1123,7 +1126,7 @@ module EntryHelper
       content = inline_menu_label(:unlike, 'un-like')
       link = link_action('like_remote', :eid => eid, :single => 1, :liked => 1)
     end
-    content_tag('span', link_to_remote(content, :update => span_id, :url => link), :id => span_id)
+    link_to_remote(content, :update => span_id, :url => link)
   end
 
   def like_link_plain(entry)
