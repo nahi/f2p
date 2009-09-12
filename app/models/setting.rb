@@ -13,6 +13,7 @@ class Setting
   attr_accessor :disable_fof
   attr_accessor :timezone
   attr_accessor :reload_list_in_minutes
+  attr_accessor :use_ajax
 
   def initialize
     super
@@ -30,6 +31,7 @@ class Setting
     @disable_fof = F2P::Config.disable_fof
     @timezone = nil
     @reload_list_in_minutes = F2P::Config.reload_list_in_minutes
+    @use_ajax = F2P::Config.use_ajax
   end
 
   def validate

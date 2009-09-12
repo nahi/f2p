@@ -61,6 +61,7 @@ module F2P
       attr_accessor :disable_fof
       attr_accessor :max_select_num
       attr_accessor :reload_list_in_minutes
+      attr_accessor :use_ajax
     end
   end
 end
@@ -181,4 +182,5 @@ Rails::Initializer.run do |config|
   F2P::Config.disable_fof = false
   F2P::Config.max_select_num = 150
   F2P::Config.reload_list_in_minutes = nil
+  F2P::Config.use_ajax = false
 end

@@ -49,7 +49,7 @@ module ApplicationHelper
   OAUTH_IMAGE_URL = 'http://friendfeed.com/static/images/sign-in-with-friendfeed.png'
 
   def ajax?
-    !cell_phone?
+    setting and setting.use_ajax
   end
 
   def jpmobile?
