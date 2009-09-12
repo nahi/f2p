@@ -320,7 +320,7 @@ class Entry
   end
 
   def private
-    from.private || to.any? { |e| e.private }
+    orphan || from.private || to.any? { |e| e.private }
   end
 
 private
