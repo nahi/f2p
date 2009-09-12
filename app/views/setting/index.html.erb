@@ -16,7 +16,7 @@
     open links in new window: <%= check_box_tag('link_open_new_window', 'checked', @link_open_new_window) %><br />
     open links via mobile proxy(gwt): <%= check_box_tag('link_type_gwt', 'checked', @link_type == 'gwt') %><br />
     <%- unless cell_phone? -%>
-    use Ajax: <%= check_box_tag('use_ajax', @use_ajax) %><br />
+    use Ajax: <%= check_box_tag('use_ajax', 'checked', @use_ajax) %><br />
     <%- end -%>
     reload list in minutes: <%= text_field_tag('reload_list_in_minutes', @reload_list_in_minutes) %><br />
     Google Maps geocoding language: <%= text_field_tag('google_maps_geocoding_lang', @google_maps_geocoding_lang) %><br />
