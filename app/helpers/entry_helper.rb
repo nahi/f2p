@@ -247,8 +247,16 @@ module EntryHelper
   end
 
   def friend_of(entry)
-    if entry.fof_type and entry.fof_type != 'like'
-      h(" (#{entry.fof.name} commented on this)")
+    if entry.fof_type
+      case entry.fof_type
+      when 'like'
+        action = 'liked this'
+      when 'comment'
+        action = 'commented on this'
+      else
+        action = ''
+      end
+      h(" (#{entry.fof.name} #{action})")
     end
   end
 
