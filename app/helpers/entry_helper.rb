@@ -1138,8 +1138,10 @@ module EntryHelper
   def like_link_plain(entry)
     if entry.commands.include?('like')
       menu_link(inline_menu_label(:like, 'like'), link_action('like', :eid => entry.id))
-    else
+    elsif entry.likes.any? { |e| e.from_id == auth.name }
       menu_link(inline_menu_label(:unlike, 'un-like'), link_action('unlike', :eid => entry.id))
+    else
+      ''
     end
   end
 
