@@ -684,6 +684,19 @@ class EntryController < ApplicationController
     render :partial => 'pin_remote', :locals => { :id => id, :pinned => !pinned }
   end
 
+  def comments_remote
+    @ctx = EntryContext.new(auth)
+    id = param(:eid)
+    opt = create_opt(:eid => id)
+    t = find_entry_thread(opt).entries.first
+    if t.nil?
+      entry = nil
+    else
+      entry = t.root
+    end
+    render :partial => 'comments_remote', :locals => { :entry => entry }
+  end
+
 private
 
   def find_opt(ctx = @ctx)

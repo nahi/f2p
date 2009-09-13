@@ -41,21 +41,6 @@
     </div>
   <%- else -%>
     </div>
-    <div class="comment-block">
-      <%- comments.each do |comment| -%>
-        <%- if comment.respond_to?(:fold_entries) -%>
-          <div class="comment comment-fold">
-            <%= fold_comment_link(comment) %>
-          </div>
-        <%- else -%>
-          <div class="comment comment-body">
-            <%= comment_icon(comment) %><%= comment(comment) %> <%= comment_author_link(comment) %> <%= via(comment) %>
-<%= comment_date(comment, true) unless comment.posted_with_entry? -%>
-<%= comment_url_link(comment) -%>
-            <%= comment_link(comment) -%>
-          </div>
-        <%- end -%>
-      <%- end -%>
-    </div>
+    <%= comments(entry.id, comments) %>
   <%- end -%>
 <%- end -%>

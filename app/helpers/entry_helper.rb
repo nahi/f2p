@@ -573,10 +573,23 @@ module EntryHelper
     content_tag('span', content, :id => span_id)
   end
 
-  def comments(entry, compact)
-    unless entry.comments.empty?
-      link_to(inline_icon_tag(:comment) + h(entry.comments_size.to_s), link_show(entry.id))
-    end
+  def comments(eid, comments)
+    div_id = 'c_' + eid
+    str = %Q[<div class="comment-block" id="#{div_id}">\n]
+    str += comments.map { |comment|
+      if comment.respond_to?(:fold_entries)
+        '<div class="comment comment-fold">' +
+          fold_comment_link(comment, div_id) +
+          '</div>'
+      else
+        date = comment_date(comment, true) unless comment.posted_with_entry?
+        str = '<div class="comment comment-body">' +
+          comment_icon(comment) + comment(comment)
+        [str, comment_author_link(comment), via(comment), date, comment_url_link(comment), comment_link(comment)].join(' ') +
+          '</div>'
+      end
+    }.join("\n")
+    str + "</div>\n"
   end
 
   def updated(entry, compact)
@@ -634,11 +647,10 @@ module EntryHelper
   def comment_icon(comment = nil)
     if comment
       by_friend = comment.from.friend?
-      label = "##{comment.index}"
     else
       by_friend = true
-      label = nil
     end
+    label = 'comment'
     by_friend ? inline_icon_tag(:friend_comment, label) : inline_icon_tag(:comment, label)
   end
 
@@ -755,9 +767,13 @@ module EntryHelper
     link_to(msg, list_opt(ctx.link_opt(:start => ctx.start, :num => ctx.num, :fold => 'no')))
   end
 
-  def fold_comment_link(fold)
+  def fold_comment_link(fold, remote_update_id = nil)
     msg = "(#{fold.fold_entries} more comments)"
-    link_to(msg, link_show(fold.entry_id))
+    if ajax? and remote_update_id
+      link_to_remote(msg, :update => remote_update_id, :url => link_action('comments_remote', :eid => fold.entry_id))
+    else
+      link_to(msg, link_show(fold.entry_id))
+    end
   end
 
   # override
