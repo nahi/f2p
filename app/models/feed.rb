@@ -491,7 +491,9 @@ class Feed
           pre = entry
           entry_tag = entry.identity(opt)
           buf.each do |e|
-            if entry_tag == e.identity(opt) and !kinds.include?(e)
+            if entry_tag == e.identity(opt) and !kinds.include?(e) and
+                # do not merge if both have a comment.
+                (entry.comments.empty? or e.comments.empty?)
               if e.via and e.via.twitter?
                 threashold = F2P::Config.twitter_grouping_threashold
               else
