@@ -654,7 +654,7 @@ module EntryHelper
 
   def comment_icon(comment = nil)
     if comment
-      by_friend = comment.from.friend?
+      by_friend = (comment.from and comment.from.friend?)
     else
       by_friend = true
     end
