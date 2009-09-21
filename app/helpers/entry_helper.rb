@@ -241,6 +241,13 @@ module EntryHelper
         when /\bmovapic.com\/pic\/([a-z0-9]+)/
           uri = "http://image.movapic.com/pic/t_#{$1}.jpeg"
           entry.view_medias << uri
+        when /\bf\.hatena\.ne\.jp\/(\w+?)\/(\d+?)$/
+          service = $1
+          full_date = $2
+          tag = service[0, 1]
+          date = full_date[0, 8]
+          uri = "http://img.f.hatena.ne.jp/images/fotolife/#{tag}/#{service}/#{date}/#{full_date}_120.jpg"
+          entry.view_medias << uri
         end
       end
     end
