@@ -272,14 +272,16 @@ class Entry
   def modified
     return @modified if @modified
     @modified = self.date
-    unless likes.empty?
-      if m = likes.map { |e| e.date || '' }.max
-        @modified = [@modified, m].max
+    if self.fof.nil?
+      unless likes.empty?
+        if m = likes.map { |e| e.date || '' }.max
+          @modified = [@modified, m].max
+        end
       end
-    end
-    unless comments.empty?
-      if m = comments.map { |e| e.date || '' }.max
-        @modified = [@modified, m].max
+      unless comments.empty?
+        if m = comments.map { |e| e.date || '' }.max
+          @modified = [@modified, m].max
+        end
       end
     end
     @modified || Time.now.xmlschema
