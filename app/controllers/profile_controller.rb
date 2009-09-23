@@ -42,8 +42,8 @@ class ProfileController < ApplicationController
 
   def update
     id = param(:id)
-    feedinfo = User.ff_feedinfo(auth, id)
-    feedname = feedinfo.name
+    fetch_feedinfo(id)
+    feedname = @feedinfo.name
     log = []
     subscription = create_subscription_summary(id)
     subscription.each do |listid, name, checked|
