@@ -2,7 +2,7 @@
   <%- if @threads.first && entry = @threads.first.root -%>
     <div class="menu-links">
       <%= pin_link(entry) %><%= author_link(entry) %>
-      <%= to(entry) -%>
+      <%= to(entry) -%><%= friend_of(entry) -%>
       <%= published(entry, false) %>
       <%= service_icon(entry) -%>
     </div>
@@ -70,7 +70,7 @@
 <%- if next_entry = next_entry(entry) -%>
   <p>
     Next: <%= link_to_next_entry(next_entry) %><br />
-    &nbsp;&nbsp;from <%= author_link(next_entry, false) %>
+    &nbsp;&nbsp;from <%= author_link(next_entry, false) %><%= friend_of(next_entry) -%>
   </p>
   <p>
     <%- if entry.view_pinned -%>

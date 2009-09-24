@@ -173,7 +173,7 @@ Rails::Initializer.run do |config|
   F2P::Config.link_type = 'gwt'
   F2P::Config.list_view_media_rendering = true
   F2P::Config.max_friend_list_num = 200
-  F2P::Config.max_skip_empty_inbox_pages = 5
+  F2P::Config.max_skip_empty_inbox_pages = 0
   F2P::Config.twitter_comment_hack = false
   F2P::Config.timezone = 'Tokyo'
   F2P::Config.list_view_profile_picture = false

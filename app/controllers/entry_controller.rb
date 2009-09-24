@@ -620,7 +620,7 @@ class EntryController < ApplicationController
     else
       Entry.add_like(create_opt(:eid => id))
     end
-    opt = create_opt(:eid => id)
+    opt = create_opt(:eid => id, :maxcomments => 0)
     t = find_entry_thread(opt).entries.first
     if t.nil?
       entry = nil

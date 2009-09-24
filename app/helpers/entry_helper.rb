@@ -128,7 +128,7 @@ module EntryHelper
         [to_picture(to), link_to(h(name), link), lock_icon(to)].join
       else
         if to.id == auth.name
-          name = self_label
+          name = self_feed_label
         else
           name = to.name
         end
@@ -280,7 +280,7 @@ module EntryHelper
     if with_picture
       ary << author_picture(entry)
     end
-    ary << from << lock_icon(entry.from) << friend_of(entry)
+    ary << from << lock_icon(entry.from)
     ary.join
   end
 
@@ -925,8 +925,8 @@ module EntryHelper
     end
     if ctx.list? and !ctx.is_summary?
       links << menu_link(menu_label('>', '6'), list_opt(ctx.link_opt(:start => start + num, :num => num)), accesskey('6')) { !no_page }
-      if threads = opt[:threads] and opt[:for_top]
-        links << list_range_notation(threads)
+      if opt[:for_top]
+        links << list_range_notation()
       end
     end
     links.join(' ')
@@ -942,17 +942,10 @@ module EntryHelper
     end
   end
 
-  def list_range_notation(threads)
-    if threads.from_modified and threads.to_modified
-      from = ago(threads.from_modified)
-      if ctx.start != 0
-        to = ago(threads.to_modified)
-        if from == to
-          h("(#{to} ago)")
-        else
-          h("(~ #{to} ago)")
-        end
-      end
+  def list_range_notation
+    if ctx.start != 0
+      page = (ctx.start / ctx.num) + 1
+      h("(page #{page})")
     end
   end
 
@@ -1160,7 +1153,9 @@ module EntryHelper
       content = nil
     end
     if content
-      link_to_remote(content, :update => span_id, :url => link)
+      opt = {:update => span_id, :url => link}
+      html_opt = {:class => 'menu-link'}
+      link_to_remote(content, opt, html_opt)
     else
       ''
     end

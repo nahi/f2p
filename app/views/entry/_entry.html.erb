@@ -6,7 +6,7 @@
 <%- if root.nil? -%>
   <div class="header">
 <%= author_link(entry) %> <%= to(entry) %>
-    <%= published(entry, true) -%>
+    <%= published(entry, true) -%><%= friend_of(entry) -%>
     <span class="comment"><%= via(entry) %></span>
     <%= service_icon(entry) -%>
   </div>
@@ -16,7 +16,7 @@
   <div class="body">
     <%= pin_link(entry) -%>
     <%- if !twitter_thread and entry.from_id != root.from_id -%>
-<%= author_link(entry) %>
+<%= author_link(entry) %><%= friend_of(entry) -%>
     <%- end -%>
     <%- if entry.to_ids != root.to_ids -%>
       <%= to(entry) %>
@@ -24,7 +24,7 @@
 <%- end -%>
 <%= content(entry) %>
 <%- if twitter_thread -%>
-  by <%= author_link(entry) %>
+  by <%= author_link(entry) %><%= friend_of(entry) -%>
 <%- elsif root and (entry.via.nil? or !entry.via.twitter?) -%>
   <span class="comment"><%= via(entry) %></span>
 <%- end -%>

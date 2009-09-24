@@ -272,16 +272,19 @@ class Entry
   def modified
     return @modified if @modified
     @modified = self.date
-    if self.fof.nil?
-      unless likes.empty?
-        if m = likes.map { |e| e.date || '' }.max
-          @modified = [@modified, m].max
-        end
+    if self.fof
+      # check all likes for fof entry. if me or friend likes it, bump modified.
+      # CAUTION: it won't work properly if we use maxlikes in the future.
+      picked = likes.find_all { |e| e.from and (e.from.me? or e.from.friend?) }
+      if m = picked.map { |e| e.date || '' }.max
+        @modified = [@modified, m].max
       end
-      unless comments.empty?
-        if m = comments.map { |e| e.date || '' }.max
-          @modified = [@modified, m].max
-        end
+    else
+      if m = likes.map { |e| e.date || '' }.max
+        @modified = [@modified, m].max
+      end
+      if m = comments.map { |e| e.date || '' }.max
+        @modified = [@modified, m].max
       end
     end
     @modified || Time.now.xmlschema

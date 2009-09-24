@@ -97,7 +97,7 @@ module FriendFeed
         @cred = nil
         @oauth_site = nil
         @oauth_config = ::HTTPClient::OAuth::Config.new
-        #@client.debug_dev = LShiftLogger.new(logger)
+        @client.debug_dev = LShiftLogger.new(logger) if $DEBUG
         @logger = logger
         @client.extend(MonitorMixin)
         @last_accessed = Time.now

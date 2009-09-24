@@ -57,6 +57,8 @@
     <div class="thread1">
       <%- if ctx.label == 'pin' -%>
         <p>No pinned entries. Click <%= icon_tag(:pin) %> for pinning the entry in other view.</p>
+      <%- elsif ctx.inbox -%>
+        <p>No entry in this page.</p>
       <%- else -%>
         <p>No feed is good feed.</p>
       <%- end -%>

@@ -12,6 +12,7 @@ module ApplicationHelper
   DATE_THRESHOLD = (24 - 8).hours
   YEAR_THRESHOLD = 1.year - 2.days
   SELF_LABEL = 'You'
+  SELF_FEED_LABEL = 'Your feed'
   GWT_URL_BASE = 'http://www.google.com/gwt/n?u='
   ICON_NAME = {
     'star' => 'star.png',
@@ -234,6 +235,10 @@ __EOS__
 
   def self_label
     SELF_LABEL
+  end
+
+  def self_feed_label
+    SELF_FEED_LABEL
   end
 
   def timezone_from_request_ip
