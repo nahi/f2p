@@ -58,7 +58,10 @@
       <%- if ctx.label == 'pin' -%>
         <p>No pinned entries. Click <%= icon_tag(:pin) %> for pinning the entry in other view.</p>
       <%- elsif ctx.inbox -%>
-        <p>No entry in this page.</p>
+        <p>
+          No unread entry in this page.
+          <%= menu_link(menu_label('show all'), list_opt(:action => :list, :start => ctx.start, :num => ctx.num)) %>.
+        </p>
       <%- else -%>
         <p>No feed is good feed.</p>
       <%- end -%>

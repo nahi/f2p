@@ -16,7 +16,7 @@
   <div class="body">
     <%= pin_link(entry) -%>
     <%- if !twitter_thread and entry.from_id != root.from_id -%>
-<%= author_link(entry) %><%= friend_of(entry) -%>
+<%= author_link(entry) %>
     <%- end -%>
     <%- if entry.to_ids != root.to_ids -%>
       <%= to(entry) %>
@@ -24,7 +24,7 @@
 <%- end -%>
 <%= content(entry) %>
 <%- if twitter_thread -%>
-  by <%= author_link(entry) %><%= friend_of(entry) -%>
+  by <%= author_link(entry) %>
 <%- elsif root and (entry.via.nil? or !entry.via.twitter?) -%>
   <span class="comment"><%= via(entry) %></span>
 <%- end -%>
