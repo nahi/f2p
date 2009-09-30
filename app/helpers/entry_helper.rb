@@ -268,6 +268,7 @@ module EntryHelper
   end
 
   def author_link(entry, with_picture = true)
+    return unless entry.from
     if entry.from.group?
       from = link_to(h(entry.from.name), link_list(:room => entry.from.id))
     elsif ctx.room_for
