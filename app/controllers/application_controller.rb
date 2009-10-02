@@ -16,6 +16,8 @@ class ApplicationController < ActionController::Base
   # from your application log (in this case, all fields with names like "password"). 
   # filter_parameter_logging :password
 
+  before_filter :timezone_required
+
   GEO = GeoCity.new
 
   # use URL rewriting feature if jpmobile plugin exists.
@@ -59,6 +61,8 @@ class ApplicationController < ActionController::Base
     end
   end
 
+private
+
   def timezone_from_request_ip
     if addr = request.remote_ip
       if tz = GEO.ip2tz(addr)
@@ -66,8 +70,6 @@ class ApplicationController < ActionController::Base
       end
     end
   end
-
-private
 
   def jpmobile?
     request.respond_to?(:mobile)
@@ -79,6 +81,13 @@ private
 
   def auth
     @auth
+  end
+
+  def timezone_required
+    if setting = session[:setting]
+      @timezone = setting.timezone
+    end
+    @timezone ||= timezone_from_request_ip || F2P::Config.timezone
   end
 
   def login_required
@@ -132,7 +141,11 @@ private
   def ensure_login
     @user_id ||= session[:user_id]
     @setting = session[:setting] ||= Setting.new
+    @setting.timezone ||= timezone_from_request_ip || F2P::Config.timezone
     @auth = User.find(@user_id) if @user_id
+    if @setting.timezone
+      @timezone = @setting.timezone
+    end
     auth
   end
 

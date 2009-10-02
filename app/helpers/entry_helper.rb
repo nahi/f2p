@@ -913,7 +913,7 @@ module EntryHelper
       if entry = find_show_entry(threads)
         links << menu_link(menu_label('show first', '1'), link_show(entry.id), accesskey('1'))
       else
-        links << menu_label('from the top')
+        links << menu_label('show first')
       end
     end
     if opt[:for_bottom]

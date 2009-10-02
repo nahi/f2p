@@ -241,16 +241,8 @@ __EOS__
     SELF_FEED_LABEL
   end
 
-  def timezone_from_request_ip
-    @controller.timezone_from_request_ip
-  end
-
   def timezone
-    if setting
-      setting.timezone ||= timezone_from_request_ip || F2P::Config.timezone
-    else
-      timezone_from_request_ip || F2P::Config.timezone
-    end
+    @timezone || F2P::Config.timezone
   end
 
   def now

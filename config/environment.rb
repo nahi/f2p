@@ -175,7 +175,7 @@ Rails::Initializer.run do |config|
   F2P::Config.max_friend_list_num = 200
   F2P::Config.max_skip_empty_inbox_pages = 0
   F2P::Config.twitter_comment_hack = false
-  F2P::Config.timezone = 'Tokyo'
+  F2P::Config.timezone = 'Tokyo' # must not nil
   F2P::Config.list_view_profile_picture = false
   F2P::Config.medias_in_thread = 4
   F2P::Config.next_entry_text_folding_size = 40

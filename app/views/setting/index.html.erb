@@ -15,9 +15,7 @@
     show profile picture in list view: <%= check_box_tag('list_view_profile_picture', 'checked', @list_view_profile_picture) %><br />
     open links in new window: <%= check_box_tag('link_open_new_window', 'checked', @link_open_new_window) %><br />
     open links via mobile proxy(gwt): <%= check_box_tag('link_type_gwt', 'checked', @link_type == 'gwt') %><br />
-    <%- unless cell_phone? -%>
-    use Ajax: <%= check_box_tag('use_ajax', 'checked', @use_ajax) %> (CAUTION: clear if pin/unpin does not work)<br />
-    <%- end -%>
+    use Ajax: <%= check_box_tag('use_ajax', 'checked', @use_ajax) %> (CAUTION: uncheck if pin/unpin does not work)<br />
     reload list in minutes: <%= text_field_tag('reload_list_in_minutes', @reload_list_in_minutes) %><br />
     Google Maps geocoding language: <%= text_field_tag('google_maps_geocoding_lang', @google_maps_geocoding_lang) %><br />
     <%= submit_tag 'update' %>
