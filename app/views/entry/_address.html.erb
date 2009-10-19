@@ -4,10 +4,14 @@
   zoom: <%= zoom_select_tag('zoom', setting.google_maps_zoom) %><br />
   <%- if gps_link = gps_link(:action => 'new') -%>
     get GPS data: <%= gps_link %>
-  <%- elsif iphone? -%>
+  <%- else -%>
     <script type='text/javascript'><!--
       function getCurrentPosition() {
-        navigator.geolocation.getCurrentPosition(postPosition);
+        if (navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition(postPosition);
+        } else {
+          alert('Geolocation API is not supported.');
+        }
       }
       function postPosition(pos) {
         var url = "./new?lat=" + pos.coords.latitude + "&long=" + pos.coords.longitude;
