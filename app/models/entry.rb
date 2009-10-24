@@ -272,7 +272,12 @@ class Entry
   def modified
     return @modified if @modified
     @modified = self.date
-    # do not check date of each like.
+    # check date of each like only if it's mine.
+    if self.from and self.from.me?
+      if m = likes.map { |e| e.date || '' }.max
+        @modified = [@modified, m].max
+      end
+    end
     # check date of each comment if it's from friend (not fof) or I like it.
     if !self.fof or likes.any? { |e| e.from and e.from.me? }
       if m = comments.map { |e| e.date || '' }.max
