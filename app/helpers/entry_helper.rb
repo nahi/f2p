@@ -735,7 +735,7 @@ module EntryHelper
     return if ctx.direct_message?
     str = ''
     str += hidden_field_tag('to_lines', '1')
-    if ctx.user_for
+    if ctx.user_for and ctx.user_for != auth.name
       if @feedinfo.commands.include?('dm')
         str += hidden_field_tag('to_0', ctx.user_for) + h(feed_name) + ': '
       else
