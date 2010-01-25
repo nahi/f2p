@@ -3,7 +3,8 @@
 <%- end -%>
 <%- form_tag({:action => 'add'}, {:name => 'post', :multipart => !@with_form.nil?}) do -%>
   <p>
-    Message: <%= text_area_tag('body', @body, :rows => 2) %><br />
+    Message: <%= text_area_tag('body', @body, :rows => 2) %>
+    <%= submit_tag 'post' %><br />
     Link: <%= text_field_tag('link', @link) %><br />
     <%= hidden_field_tag('with_form', @with_form) %>
     <%- if @with_form -%>
@@ -11,7 +12,6 @@
     <%- else -%>
       <%= link_to(h('image/file upload'), :action => 'new', :with_form => '1') %><br />
     <%- end -%>
-    <%= submit_tag 'post' %>
   </p>
   <hr />
   <p>Recipient: (posted to my feed by default)</p>
