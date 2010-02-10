@@ -15,9 +15,7 @@ module ApplicationHelper
   SELF_FEED_LABEL = 'Your feed'
   GWT_URL_BASE = 'http://www.google.com/gwt/n?u='
   ICON_NAME = {
-    'star' => 'star.png',
-    'mini_star' => 'bullet_star.png',
-    #'star' => 'heart.png', # for special 2/14 configuration!
+    'liked' => 'emoticon_smile.png',
     'like' => 'thumb_up.png',
     'comment' => 'comment.png',
     'friend_comment' => 'user_comment.png',
@@ -36,7 +34,7 @@ module ApplicationHelper
     'related' => 'link.png',
     'go' => 'page_white_world.png',
     'media_disabled' => 'image_link.png',
-    'pinned' => 'tick.png',
+    'pinned' => 'bullet_star.png',
     'pin' => 'bullet_arrow_down.png',
     'bottom' => 'arrow_down.png',
     'top' => 'arrow_up.png',
@@ -294,7 +292,7 @@ __EOS__
   end
 
   def pinned_link
-    link_to(h('Pin'), { :controller => :entry, :action => :list, :label => 'pin' }, accesskey('9'))
+    link_to(h('Star'), { :controller => :entry, :action => :list, :label => 'pin' }, accesskey('9'))
   end
 
   def search_link

@@ -26,7 +26,7 @@ module EntryHelper
     elsif ctx.link
       'Related entries'
     elsif ctx.label == 'pin'
-      'Pin'
+      'Star'
     elsif ctx.inbox
       'Inbox'
     else
@@ -63,7 +63,7 @@ module EntryHelper
     if list_ctx and list_ctx.inbox
       label += ' to Inbox'
     elsif list_ctx and list_ctx.label == 'pin'
-      label += ' to Pin list'
+      label += ' to Star'
     elsif @original_feed and @original_feed.name
       label += ' to ' + @original_feed.name
     end
@@ -102,10 +102,10 @@ module EntryHelper
   def pin_link_remote(eid, pinned)
     span_id = 'pin_' + eid
     if pinned
-      content = inline_icon_tag(:pinned, 'unpin')
+      content = inline_icon_tag(:pinned, 'delete')
       link = link_action('pin_remote', :eid => eid, :pinned => 1)
     else
-      content = inline_icon_tag(:pin)
+      content = inline_icon_tag(:pin, 'star')
       link = link_action('pin_remote', :eid => eid)
     end
     content_tag('span', link_to_remote(content, :update => span_id, :url => link), :id => span_id)
@@ -113,9 +113,9 @@ module EntryHelper
 
   def pin_link_plain(entry)
     if entry.view_pinned
-      link_to(inline_icon_tag(:pinned, 'unpin'), link_action('unpin', :eid => entry.id))
+      link_to(inline_icon_tag(:pinned, 'delete'), link_action('unpin', :eid => entry.id))
     else
-      link_to(inline_icon_tag(:pin), link_action('pin', :eid => entry.id))
+      link_to(inline_icon_tag(:pin, 'star'), link_action('pin', :eid => entry.id))
     end
   end
 
@@ -548,7 +548,7 @@ module EntryHelper
     end
     likes = me + friends + rest
     if !likes.empty?
-      icon = icon_tag(:star) + h(likes.size.to_s)
+      icon = icon_tag(:liked) + h(likes.size.to_s)
       max = F2P::Config.max_friend_list_num
       if likes.size > max + 1
         msg = "... #{likes.size - max} more likes"
@@ -565,7 +565,7 @@ module EntryHelper
   def friends_likes(entry)
     if !entry.likes.empty?
       likes = entry.likes.find_all { |e| e.from and e.from.friend? }
-      icon = inline_icon_tag(:star)
+      icon = inline_icon_tag(:liked)
       size = entry.likes_size
       if size != likes.size
         icon += link_to(h(size.to_s), link_show(entry.id))
@@ -794,7 +794,7 @@ module EntryHelper
 
   # override
   def pinned_link
-    pin_label = 'Pin'
+    pin_label = 'Star'
     if @threads and @threads.pins and @threads.pins > 0
       pin_label += "(#{@threads.pins})"
     end
