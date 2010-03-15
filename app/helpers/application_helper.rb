@@ -36,7 +36,7 @@ module ApplicationHelper
     'related' => 'link.png',
     'go' => 'page_white_world.png',
     'media_disabled' => 'image_link.png',
-    'pinned' => 'bullet_star.png',
+    'pinned' => 'star.png',
     'pin' => 'bullet_arrow_down.png',
     'bottom' => 'arrow_down.png',
     'top' => 'arrow_up.png',
@@ -190,11 +190,19 @@ __EOS__
 
   def inline_stylesheet_iphone
     if iphone?
+      if setting and setting.font_size
+        menu_size = setting.font_size + 1
+      else
+        menu_size = 13
+      end
       <<__EOS__
   body {
     -webkit-user-select: none;
     -webkit-text-size-adjust: none;
-    font-family: Helvetica;
+    font-family: Arial,Helvetica,sans-serif;
+  }
+  .menu-links {
+    font-size: #{menu_size}pt;
   }
 __EOS__
     end
