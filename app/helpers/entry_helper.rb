@@ -925,7 +925,8 @@ module EntryHelper
       end
     end
     if ctx.list? and !ctx.is_summary?
-      links << menu_link(menu_label('>', '6'), list_opt(ctx.link_opt(:start => start + num, :num => num)), accesskey('6')) { !no_page }
+      key = accesskey('6') if opt[:for_bottom]
+      links << menu_link(menu_label('>', '6'), list_opt(ctx.link_opt(:start => start + num, :num => num)), key) { !no_page }
       if opt[:for_top]
         links << list_range_notation()
       end

@@ -444,15 +444,16 @@ __EOS__
     end
   end
 
-  def link_to(name, options = {}, html_options = {})
+  def link_to(name, options = {}, html_opt = nil)
     if setting and options.is_a?(String) and !url_for_app?(options)
+      html_opt ||= {}
       if setting.link_open_new_window
-        html_options = html_options.merge(:target => '_blank')
+        html_opt = html_opt.merge(:target => '_blank')
       end
       if setting.link_type == 'gwt'
-        return super(name, GWT_URL_BASE + u(options), html_options)
+        return super(name, GWT_URL_BASE + u(options), html_opt)
       else
-        return super(name, options, html_options)
+        return super(name, options, html_opt)
       end
     end
     super
@@ -510,9 +511,9 @@ __EOS__
     str
   end
 
-  def menu_link(label, opt, html_opt = {}, &block)
+  def menu_link(label, opt, html_opt = nil, &block)
     if block.nil? or block.call
-      link_to(label, opt, html_opt.merge(:class => 'menu-link'))
+      link_to(label, opt, (html_opt || {}).merge(:class => 'menu-link'))
     else
       label
     end
