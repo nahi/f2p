@@ -180,7 +180,9 @@ class Entry
     @short_url = hash['shortUrl']
     @from = From[hash['from']]
     @to = (hash['to'] || EMPTY).map { |e| From[e] }
-    @thumbnails = (hash['thumbnails'] || EMPTY).map { |e| Thumbnail[e] }
+    @thumbnails = (hash['thumbnails'] || EMPTY).map { |e| Thumbnail[e] }.reject { |e|
+      %r(^http://www.pheedo.jp/) =~ e.url || %r(\.html) =~ e.url
+    }
     @files = (hash['files'] || EMPTY).map { |e| Attachment[e] }
     @comments = wrap_comments(hash['comments'] || EMPTY)
     @likes = wrap_likes(hash['likes'] || EMPTY)

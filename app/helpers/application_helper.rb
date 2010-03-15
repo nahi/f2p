@@ -14,6 +14,8 @@ module ApplicationHelper
   SELF_LABEL = 'You'
   SELF_FEED_LABEL = 'Your feed'
   GWT_URL_BASE = 'http://www.google.com/gwt/n?u='
+  IMG_MAX_HEIGHT = 175
+  IMG_MAX_WIDTH = 525
   ICON_NAME = {
     'liked' => 'emoticon_smile.png',
     'like' => 'thumb_up.png',
@@ -370,6 +372,10 @@ __EOS__
 
   def image_size(width, height)
     "#{width}x#{height}"
+  end
+
+  def image_max_style(width = IMG_MAX_WIDTH, height = IMG_MAX_HEIGHT)
+    "max-width:#{width}px;max-height:#{height}px"
   end
 
   def title_date
