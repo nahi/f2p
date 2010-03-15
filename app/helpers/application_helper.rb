@@ -194,6 +194,7 @@ __EOS__
   body {
     -webkit-user-select: none;
     -webkit-text-size-adjust: none;
+    font-family: Helvetica;
   }
 __EOS__
     end
