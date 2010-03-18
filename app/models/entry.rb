@@ -180,9 +180,7 @@ class Entry
     @short_url = hash['shortUrl']
     @from = From[hash['from']]
     @to = (hash['to'] || EMPTY).map { |e| From[e] }
-    @thumbnails = (hash['thumbnails'] || EMPTY).map { |e| Thumbnail[e] }.reject { |e|
-      %r(^http://www.pheedo.jp/) =~ e.url || %r(\.html) =~ e.url
-    }
+    @thumbnails = wrap_thumbnails(hash['thumbnails'] || EMPTY)
     @files = (hash['files'] || EMPTY).map { |e| Attachment[e] }
     @comments = wrap_comments(hash['comments'] || EMPTY)
     @likes = wrap_likes(hash['likes'] || EMPTY)
@@ -345,6 +343,21 @@ private
       c.index = index
       c.entry = self
       c
+    }
+  end
+
+  # set Thumbnail#url to nil when it's not a link to an image.
+  def wrap_thumbnails(thumbnails)
+    thumbnails.map { |e|
+      t = Thumbnail[e]
+      # FriendFeed API sets html URL for #url for Buzz.  Need to handle by myself.
+      if %r(^http://www.pheedo.jp/) =~ t.url ||
+          %r(^http://picasaweb.google.com/) =~ t.url ||
+          %r(\.html) =~ t.url
+        t.link = t.url
+        t.url = nil
+      end
+      t
     }
   end
 

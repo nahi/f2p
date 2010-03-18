@@ -355,7 +355,7 @@ module EntryHelper
       else
         opt[:style] = image_max_style()
       end
-      safe_content = media_tag(entry, tb.url, opt)
+      safe_content = media_tag(entry, tb.url || icon_url(:images), opt)
       if !media_disabled? and link
         link_to(safe_content, link)
       else
