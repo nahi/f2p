@@ -226,6 +226,7 @@ module FriendFeed
 
     def get_request(client, uri, query = {})
       ext = { 'Accept-Encoding' => 'gzip' }
+      query = nil if query.empty?
       res = client.get(uri, query, ext)
       if res.status != 200
         logger.warn("got status #{res.status}: #{res.inspect}")
@@ -277,6 +278,27 @@ module FriendFeed
 
     def initialize(*arg)
       super
+    end
+
+    # just a request
+    def get(uri, opt)
+      cred = get_credential!(opt)
+      case cred.first
+      when :basicauth
+        name, remote_key = cred[1]
+        query = add_appid_for_basicauth(opt)
+        client_sync(uri, name, remote_key) { |client|
+          get_request(client, uri, query)
+        }
+      when :oauth
+        name, oauth = cred[1]
+        client_sync(uri, name, oauth) { |client|
+          client.www_auth.oauth.challenge(File.basename(uri.to_s))
+          get_request(client, uri, opt)
+        }
+      else
+        raise "unsupported scheme: #{cred.first}"
+      end
     end
 
     # wrapper method for V1 compatibility
