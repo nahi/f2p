@@ -1024,7 +1024,7 @@ module EntryHelper
 
   def comment_link(comment)
     if comment.last?
-      link_to(h('>>>'), link_show(comment.entry.id))
+      menu_link(h('>>>'), link_show(comment.entry.id))
     end
   end
 
@@ -1043,7 +1043,7 @@ module EntryHelper
     else
       str = h('>>>')
     end
-    link_to(str, link_show(entry.id))
+    menu_link(str, link_show(entry.id))
   end
 
   def url_link(entry)

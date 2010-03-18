@@ -55,7 +55,7 @@ module ApplicationHelper
   end
 
   def jpmobile?
-    @controller.request.respond_to?(:mobile)
+    @controller.jpmobile?
   end
 
   def cell_phone?
@@ -67,7 +67,7 @@ module ApplicationHelper
   end
 
   def iphone?
-    /(iPhone|iPod)/ =~ @controller.request.user_agent
+    @controller.iphone?
   end
 
   def accesskey(key)
@@ -201,6 +201,13 @@ __EOS__
     -webkit-user-select: none;
     -webkit-text-size-adjust: none;
     font-family: Arial,Helvetica,sans-serif;
+  }
+  input.text {
+    -webkit-text-size-adjust: 200%;
+  }
+  a.menu-link {
+    color: #3333cc;
+    text-decoration: none;
   }
   .menu-links {
     font-size: #{menu_size}pt;

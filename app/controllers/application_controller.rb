@@ -61,6 +61,14 @@ class ApplicationController < ActionController::Base
     end
   end
 
+  def jpmobile?
+    request.respond_to?(:mobile)
+  end
+
+  def iphone?
+    /(iPhone|iPod)/ =~ request.user_agent
+  end
+
 private
 
   def timezone_from_request_ip
@@ -69,10 +77,6 @@ private
         ActiveSupport::TimeZone::MAPPING.key(tz)
       end
     end
-  end
-
-  def jpmobile?
-    request.respond_to?(:mobile)
   end
 
   def http_client
@@ -140,7 +144,7 @@ private
 
   def ensure_login
     @user_id ||= session[:user_id]
-    @setting = session[:setting] ||= Setting.new
+    @setting = session[:setting] ||= new_setting
     @setting.timezone ||= timezone_from_request_ip || F2P::Config.timezone
     @auth = User.find(@user_id) if @user_id
     if @setting.timezone
@@ -155,8 +159,20 @@ private
   end
 
   def set_timezone(tz)
-    @setting = session[:setting] ||= Setting.new
+    @setting = session[:setting] ||= new_setting
     @setting.timezone = tz
+  end
+
+  def new_setting
+    s = Setting.new
+    if iphone?
+      s.entries_in_page = 20
+      s.list_view_profile_picture = true
+      s.link_open_new_window = true
+      s.link_type = nil
+      s.use_ajax = true
+    end
+    s
   end
 
   def logout
