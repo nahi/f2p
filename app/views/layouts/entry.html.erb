@@ -1,7 +1,7 @@
 <html>
   <head>
     <title><%= appname %> entries</title>
-    <%= inline_meta(:reload => true) -%>
+    <%= inline_meta(:reload => ['inbox', 'list'].include?(params[:action])) -%>
     <%= inline_stylesheet -%>
     <%= javascript_include_tag("prototype") if ajax? %>
   </head>
