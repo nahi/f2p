@@ -1,13 +1,34 @@
 require 'ff'
 require 'fileutils'
 require 'time'
+require 'httpclient'
 
 name = ARGV.shift or raise
 remote_key = ARGV.shift or raise
 client = FriendFeed::APIV2Client.new
+$asset_client = HTTPClient.new
 
 DIR = './items'
 FileUtils.mkdir_p(DIR)
+ASSET_DIR = File.join(DIR, 'asset')
+FileUtils.mkdir_p(ASSET_DIR)
+
+def download(url)
+  if /i.friendfeed.com\/(.+)$/ =~ url
+    name = $1
+  elsif /friendfeed-media.com\/(.+)$/ =~ url
+    name = $1
+  else
+    return
+  end
+  file = File.join(ASSET_DIR, name)
+  File.open(file, 'wb') do |f|
+    $asset_client.get(url) do |str|
+      f << str
+    end
+  end
+  print "downloaded #{url}"
+end
 
 puts 'start'
 start = 0
@@ -30,6 +51,16 @@ while true
         File.open(path, 'wb') do |f|
           f << JSON.pretty_generate(entry)
         end
+        if thumbnails = entry["thumbnails"]
+          thumbnails.each do |tb|
+            if url = tb["url"]
+              download(url)
+            end
+            if url = tb["link"]
+              download(url)
+            end
+          end
+        end
       end
     end
   end
@@ -39,5 +70,4 @@ while true
     break
   end
   start += 100
-  sleep 5
 end
