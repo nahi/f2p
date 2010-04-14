@@ -32,6 +32,7 @@ class Fetcher
     asset_dir = File.join(@json_dir, ASSET_DIR_NAME)
     FileUtils.mkdir_p(asset_dir)
     file = File.join(asset_dir, name)
+    return if File.exist?(file)
     5.times do
       begin
         File.open(file, 'wb') do |f|
