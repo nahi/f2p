@@ -10,15 +10,12 @@ class Fetcher
   include ExportSetting
 
   attr_accessor :logger
+  attr_reader :ff_client
 
-  def initialize(feedname, auth_hash, opt = {})
-    @feedname = feedname
-    @auth_hash = auth_hash
+  def initialize
     @ff_client = FriendFeed::APIV2Client.new
     @asset_client = HTTPClient.new
-    @json_dir = File.join(JSON_DIR, @feedname)
     @logger = Logger.new(STDERR)
-    @start = opt[:start] || 0
   end
 
   def download(url)
@@ -50,7 +47,11 @@ class Fetcher
     @logger.warn "download failed: #{url}"
   end
 
-  def run
+  def run(feedname, auth, opt = {})
+    @feedname = feedname
+    @auth = auth
+    @start = opt[:start] || 0
+    @json_dir = File.join(JSON_DIR, @feedname)
     @logger.info 'start'
     start = @start
     counter = 0
@@ -60,7 +61,7 @@ class Fetcher
       json = nil
       5.times do
         begin
-          opt = @auth_hash.merge(
+          opt = @auth.merge(
             :raw => 1,
             :fof => 1,
             :start => start,
@@ -118,9 +119,42 @@ class Fetcher
 end
 
 if $0 == __FILE__
-  feedname = ARGV.shift or raise
+  ENV['RAILS_ENV'] ||= 'production'
+
+  load(File.expand_path('../config/environment.rb', File.dirname(__FILE__)))
+
   name = ARGV.shift or raise
-  remote_key = ARGV.shift or raise
+  feedname = ARGV.shift or raise
   start = (ARGV.shift || '0').to_i
-  Fetcher.new(feedname, {:name => name, :remote_key => remote_key}, :start => start).run
+
+  fetcher = Fetcher.new
+  client = fetcher.ff_client
+  client.oauth_consumer_key = F2P::Config.friendfeed_api_oauth_consumer_key
+  client.oauth_consumer_secret = F2P::Config.friendfeed_api_oauth_consumer_secret
+  client.oauth_site = F2P::Config.friendfeed_api_oauth_site
+  client.oauth_scheme = F2P::Config.friendfeed_api_oauth_scheme
+  client.oauth_signature_method = F2P::Config.friendfeed_api_oauth_signature_method
+
+  user = User.find_by_name(name)
+  raise "No such user: #{name}" unless user
+
+  oauth_token = user.oauth_access_token
+  oauth_token_secret = user.oauth_access_token_secret
+  remote_key = user.remote_key
+
+  if oauth_token and oauth_token_secret
+    auth = {
+      :oauth_token => oauth_token,
+      :oauth_token_secret => oauth_token_secret
+    }
+  elsif remote_key
+    auth = {
+      :name => name,
+      :remote_key => remote_key
+    }
+  else
+    raise "User not authenticated: #{name}"
+  end
+
+  fetcher.run(feedname, auth, :start => start)
 end
