@@ -152,7 +152,7 @@ __EOS__
           end
           (entries[entry["date"].day] ||= []) << entry
         rescue
-          puts "parse error: #{path}"
+          @logger.warn "parse error: #{path}"
           nil
         end
       end
