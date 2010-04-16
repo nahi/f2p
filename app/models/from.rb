@@ -11,10 +11,13 @@ class From
   attr_accessor :private
   attr_accessor :commands
 
-  def initialize(hash)
-    initialize_with_hash(hash, 'id', 'name', 'type', 'commands')
+  attr_accessor :profile_url
+
+  def initialize(hash = nil)
+    initialize_with_hash(hash, 'id', 'name', 'type', 'commands') if hash
+    @private = hash && hash['private'] == true
     @commands ||= EMPTY
-    @private = hash['private'] == true
+    @profile_url = nil
   end
 
   def user?

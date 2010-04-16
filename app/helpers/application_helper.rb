@@ -373,6 +373,9 @@ __EOS__
 
   def user(user, opt = nil)
     return unless user
+    if user.profile_url
+      return link_to(h(user.name), user.profile_url)
+    end
     opt ||= { :controller => 'entry', :action => 'list', :user => u(user.id) }
     name = user.name
     if user.id == auth.name

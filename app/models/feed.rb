@@ -24,7 +24,7 @@ class Feed
       logger.info('[perf] update_last_modified done')
       pins = check_inbox(auth, feed)
       logger.info('[perf] check_inbox done')
-      add_service_icon(feed.entries)
+      add_service_icon(feed.entries) if opt[:feed] != 'tweets'
       logger.info('[perf] add_service_icon done')
       feed.entries = filter_hidden(feed.entries)
       entries = feed.entries
@@ -58,6 +58,10 @@ class Feed
       unless feed.entries.empty?
         threads.from_modified = feed.entries.last.modified
         threads.to_modified = feed.entries.first.modified
+        if opt[:feed] == 'tweets'
+          threads.since_id = feed.entries.first.id.sub(/^t_/, '')
+          threads.max_id = feed.entries.last.id.sub(/^t_/, '')
+        end
       end
       threads.pins = pins
       feed.entries = threads
@@ -157,7 +161,9 @@ class Feed
 
     def fetch_list_entries(auth, opt)
       cache_entries(auth, opt) {
-        if opt[:inbox]
+        if opt[:tweets]
+          Task.run { from_tweets(opt[:tweets]) }.result
+        elsif opt[:inbox]
           wrap(Task.run { get_feed(auth, 'home', opt) }.result)
         elsif opt[:eids]
           wrap(Task.run { get_entries(auth, opt) }.result)
@@ -203,6 +209,7 @@ class Feed
       opt.delete(:merge_entry)
       opt.delete(:merge_service)
       opt.delete(:filter_except)
+      opt.delete(:tweets)
       if allow_cache
         if cache = get_cached_entries(auth)
           if opt == cache.feed_opt
@@ -558,6 +565,41 @@ class Feed
         end
       end
     end
+
+    def from_tweets(tweets)
+      feed = Feed.new(nil)
+      feed.id = 'tweets'
+      feed.name = 'Tweets'
+      feed.type = 'special'
+      feed.entries = tweets.map { |hash|
+        tweet_to_entry(hash)
+      }
+      feed
+    end
+
+    def tweet_to_entry(hash)
+      e = Entry[hash]
+      e.id = 't_' + hash[:id].to_s
+      e.date = hash[:created_at]
+      e.body = hash[:text]
+      e.from = From.new
+      e.from.id = hash[:user][:screen_name]
+      e.from.name = hash[:user][:name]
+      e.from.type = 'user'
+      e.from.private = hash[:user][:protected]
+      e.from.profile_url = "http://twitter.com/#{e.from.id}"
+      e.via = Via.new
+      e.via.name = 'Twitter'
+      e.via.url = "http://twitter.com/#{e.from.id}/status/#{hash[:id].to_s}"
+      if e.geo
+        e.geo.lat, e.geo.long = hash[:geo][:coordinates]
+      end
+      e.profile_image_url = hash[:user][:profile_image_url]
+      e.twitter_username = e.from.id
+      e.twitter_reply_to = hash[:in_reply_to_screen_name]
+      # e.url?
+      e
+    end
   end
 
   attr_accessor :id
@@ -567,9 +609,11 @@ class Feed
 
   attr_accessor :feed_opt
 
-  def initialize(hash)
-    initialize_with_hash(hash, 'id', 'name', 'type')
-    @entries = (hash['entries'] || EMPTY).map { |e| Entry[e] }
+  def initialize(hash = nil)
+    if hash
+      initialize_with_hash(hash, 'id', 'name', 'type')
+      @entries = (hash['entries'] || EMPTY).map { |e| Entry[e] }
+    end
     @feed_opt = nil
   end
 end

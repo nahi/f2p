@@ -79,7 +79,10 @@ module EntryHelper
   def author_picture(entry)
     return if ctx.user_only?
     if setting.list_view_profile_picture
-      if id = entry.origin_id
+      if entry.profile_image_url
+        name = entry.from.name
+        profile_image_tag(entry.profile_image_url, name, name)
+      elsif id = entry.origin_id
         picture(id)
       end
     end
@@ -910,11 +913,15 @@ module EntryHelper
     num = ctx.num || 0
     links = []
     if ctx.list? and !ctx.is_summary?
-      links << menu_link(menu_label('<', '4', true), list_opt(ctx.link_opt(:start => start - num, :num => num, :direction => 'rewind')), accesskey('4')) {
-        !no_page and start - num >= 0
-      }
+      if ctx.tweets?
+        links << menu_link(menu_label('<', '4', true), {:action => 'tweets', :num => num, :since_id => @threads.since_id}, accesskey('4')) { !no_page }
+      else
+        links << menu_link(menu_label('<', '4', true), list_opt(ctx.link_opt(:start => start - num, :num => num, :direction => 'rewind')), accesskey('4')) {
+          !no_page and start - num >= 0
+        }
+      end
     end
-    if ctx.list? and threads = opt[:threads] and opt[:for_top]
+    if ctx.list? and !ctx.tweets? and threads = opt[:threads] and opt[:for_top]
       if entry = find_show_entry(threads)
         links << menu_link(menu_label('show first', '1'), link_show(entry.id), accesskey('1'))
       else
@@ -924,14 +931,18 @@ module EntryHelper
     if opt[:for_bottom]
       if ctx.inbox
         links << archive_link
-        links << all_link
+        links << all_link unless ctx.tweets?
       else
-        links << inbox_link
+        links << inbox_link unless ctx.tweets?
       end
     end
     if ctx.list? and !ctx.is_summary?
       key = accesskey('6') if opt[:for_bottom]
-      links << menu_link(menu_label('>', '6'), list_opt(ctx.link_opt(:start => start + num, :num => num)), key) { !no_page }
+      if ctx.tweets?
+        links << menu_link(menu_label('>', '6'), {:action => 'tweets', :num => num, :max_id => @threads.max_id}, key) { !no_page }
+      else
+        links << menu_link(menu_label('>', '6'), list_opt(ctx.link_opt(:start => start + num, :num => num)), key) { !no_page }
+      end
       if opt[:for_top]
         links << list_range_notation()
       end
@@ -1029,6 +1040,7 @@ module EntryHelper
   end
 
   def post_comment_link(entry, opt = {})
+    return if ctx.tweets?
     if !entry.comments.empty? and !comment_inline?(entry)
       if entry.comments_size == 1
         str = ">>>#{entry.comments_size}"

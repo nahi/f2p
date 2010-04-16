@@ -58,6 +58,35 @@ class LoginController < ApplicationController
     redirect_to :action => 'index'
   end
 
+  def initiate_twitter_oauth_login
+    return if login_required
+    redirect_to twitter_request_token.authorize_url
+  end
+
+  def twitter_oauth_callback
+    if auth = ensure_login
+      oauth_token = params[:oauth_token]
+      oauth_verifier = params[:oauth_verifier]
+      session_token = session[:request_token]
+      if oauth_token == session_token
+        request_token = OAuth::RequestToken.new(create_twitter_oauth_consumer, oauth_token, session[:request_token_secret])
+        access_token = request_token.get_access_token(:oauth_verifier => oauth_verifier)
+        token = access_token.params[:oauth_token]
+        secret = access_token.params[:oauth_token_secret]
+        screen_name = access_token.params[:screen_name]
+        user_id = access_token.params[:user_id]
+        auth.set_token('twitter', user_id, token, secret, screen_name)
+        flash[:twitter_auth] = true
+      end
+    end
+    if back_to = session[:back_to]
+      session[:back_to] = nil
+      redirect_to back_to
+    else
+      redirect_to :action => 'index'
+    end
+  end
+
 private
 
   def request_token
@@ -78,6 +107,29 @@ private
       :scheme            => F2P::Config.friendfeed_api_oauth_scheme,
       :signature_method  => F2P::Config.friendfeed_api_oauth_signature_method,
       :http_method       => F2P::Config.friendfeed_api_oauth_http_method,
+      :proxy             => F2P::Config.http_proxy || ENV['http_proxy']
+    }
+    OAuth::Consumer.new(key, secret, opt)
+  end
+
+  def twitter_request_token
+    request_token = create_twitter_oauth_consumer.get_request_token(:oauth_callback => url_for(:action => 'twitter_oauth_callback'))
+    session[:request_token] = request_token.token
+    session[:request_token_secret] = request_token.secret
+    request_token
+  end
+
+  def create_twitter_oauth_consumer
+    key = F2P::Config.twitter_api_oauth_consumer_key
+    secret = F2P::Config.twitter_api_oauth_consumer_secret
+    opt = {
+      :site              => F2P::Config.twitter_api_oauth_site,
+      :request_token_url => F2P::Config.twitter_api_oauth_request_token_url,
+      :authorize_url     => F2P::Config.twitter_api_oauth_authorize_url,
+      :access_token_url  => F2P::Config.twitter_api_oauth_access_token_url,
+      :scheme            => F2P::Config.twitter_api_oauth_scheme,
+      :signature_method  => F2P::Config.twitter_api_oauth_signature_method,
+      :http_method       => F2P::Config.twitter_api_oauth_http_method,
       :proxy             => F2P::Config.http_proxy || ENV['http_proxy']
     }
     OAuth::Consumer.new(key, secret, opt)

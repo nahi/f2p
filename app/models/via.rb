@@ -10,8 +10,8 @@ class Via
   attr_accessor :service_id
   attr_accessor :service_icon_url
 
-  def initialize(hash)
-    initialize_with_hash(hash, 'name', 'url')
+  def initialize(hash = nil)
+    initialize_with_hash(hash, 'name', 'url') if hash
     @service_id = @service_icon_url = nil
   end
 

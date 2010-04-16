@@ -6,6 +6,8 @@ class EntryThread
   class EntryThreads < Array
     attr_accessor :from_modified
     attr_accessor :to_modified
+    attr_accessor :since_id
+    attr_accessor :max_id
     attr_accessor :pins
   end
 

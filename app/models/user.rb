@@ -4,6 +4,8 @@ require 'encrypt'
 class User < ActiveRecord::Base
   extend Encrypt
 
+  has_many :tokens
+
   TEXT_MAXLEN = 255
   validates_length_of :name, :in => 1..TEXT_MAXLEN
 
@@ -46,7 +48,7 @@ class User < ActiveRecord::Base
         user
       end
     end
-  
+
     def ff_url(name)
       "http://friendfeed.com/#{name}"
     end
@@ -142,4 +144,32 @@ class User < ActiveRecord::Base
     self.oauth_access_token_generated = Time.now
     self.remote_key = '' # TODO: nil not allowed!
   end
+
+  def set_token(service, service_user, token, secret, params)
+    unless t = tokens.find_by_service_and_service_user(service, service_user)
+      t = Token.new
+    end
+    t.service = service
+    t.service_user = service_user
+    t.token = token
+    t.secret = secret
+    t.params = params
+    t.user = self
+    t.updated_at = Time.now
+    t.save!
+    t
+  end
+
+=begin
+  def find_token(service, service_user)
+    cond = [
+      'user_id = ? and service = ? and service_user = ?',
+      self.id,
+      service,
+      service_user
+    ]
+    tokens = Token.find(:all, :conditions => cond, :limit => 1)
+    token[0]
+  end
+=end
 end

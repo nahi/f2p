@@ -149,6 +149,7 @@ class Entry
   attr_accessor :short_id
   attr_accessor :short_url
 
+  attr_accessor :profile_image_url
   attr_accessor :twitter_username
   attr_accessor :twitter_reply_to
   attr_accessor :orphan
@@ -162,6 +163,7 @@ class Entry
   def initialize(hash)
     initialize_with_hash(hash, 'id', 'url', 'date', 'commands')
     @commands ||= EMPTY
+    @profile_image_url = nil
     @twitter_username = nil
     @twitter_reply_to = nil
     @orphan = hash['__f2p_orphan']

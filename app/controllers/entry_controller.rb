@@ -193,6 +193,10 @@ class EntryController < ApplicationController
       /\Asummary\b/ =~ @feed or /\/summary\/\d+\z/ =~ @feed
     end
 
+    def tweets?
+      @feed == 'tweets'
+    end
+
     def link_opt(opt = {})
       opt.merge(:action => default_action, :eid => @eid)
     end
@@ -292,6 +296,45 @@ class EntryController < ApplicationController
     update_checked_modified
     flash[:allow_cache] = true
     redirect_to_list
+  end
+
+  verify :only => :tweets,
+          :method => [:get, :post],
+          :add_flash => {:error => 'verify failed'},
+          :redirect_to => {:action => 'inbox'}
+  def tweets
+    pin_check
+    @ctx = restore_ctx { |ctx|
+      ctx.parse(params, @setting)
+    }
+    @ctx.feed = 'tweets'
+    @ctx.home = false
+    id = params[:id]
+    max_id = params[:max_id]
+    since_id = params[:since_id]
+    if auth.tokens.empty? or auth.tokens.find_all_by_service('twitter').empty?
+      session[:back_to] = {:controller => 'tweet', :action => 'home'}
+      redirect_to :controller => 'login', :action => 'initiate_twitter_oauth_login'
+      return
+    elsif id
+      token = auth.tokens.find_by_service_and_service_user('twitter', id)
+    else
+      token = auth.tokens.find_by_service('twitter')
+    end
+    unless token
+      redirect_to :action => 'inbox'
+      return
+    end
+    opt = {:count => @num}
+    opt[:max_id] = max_id if max_id
+    opt[:since_id] = since_id if since_id
+    with_feedinfo(@ctx) do
+      @feed = find_entry_thread(find_opt.merge(:tweets => Tweet.home(token, opt)))
+      @threads = @feed.entries
+    end
+    return if redirect_to_entry(@threads)
+    initialize_checked_modified
+    render :action => 'list'
   end
 
   verify :only => :show,
