@@ -198,7 +198,7 @@ __EOS__
       if setting and setting.font_size
         menu_size = setting.font_size + 1
       else
-        menu_size = 14
+        menu_size = 13
       end
       <<__EOS__
   body {
