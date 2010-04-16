@@ -70,6 +70,10 @@ module ApplicationHelper
     @controller.iphone?
   end
 
+  def android?
+    @controller.android?
+  end
+
   def accesskey(key)
     @accesskey ||= {}
     key = key.to_s
@@ -79,7 +83,7 @@ module ApplicationHelper
   end
 
   def inline_meta(opt = {})
-    if iphone?
+    if iphone? or android?
       str = content_tag('meta', nil, :name => 'viewport', :content => 'width=device-width; initial-scale=1.0')
     else
       str = content_tag('meta', nil, :name => 'viewport', :content => 'width=device-width, height=device-height')
@@ -190,7 +194,7 @@ __EOS__
   end
 
   def inline_stylesheet_iphone
-    if iphone?
+    if iphone? or android?
       if setting and setting.font_size
         menu_size = setting.font_size + 1
       else

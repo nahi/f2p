@@ -69,6 +69,10 @@ class ApplicationController < ActionController::Base
     /(iPhone|iPod)/ =~ request.user_agent
   end
 
+  def android?
+    /Android/ =~ request.user_agent
+  end
+
 private
 
   def timezone_from_request_ip
@@ -165,7 +169,7 @@ private
 
   def new_setting
     s = Setting.new
-    if iphone?
+    if iphone? or android?
       s.entries_in_page = 20
       s.list_view_profile_picture = true
       s.link_open_new_window = true
