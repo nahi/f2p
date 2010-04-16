@@ -25,7 +25,7 @@ class HtmlGenerator
   %p.index
     %a{:href => './'} ^
     - entries.keys.sort.each do |day|
-      %a{:href => day}= day
+      %a{:href => '#' + day}= day
   %hr
   - entries.keys.sort.each do |day|
     %div.day
