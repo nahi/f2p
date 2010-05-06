@@ -234,7 +234,9 @@ __EOS__
   def top_menu
     links = []
     links << link_to(friendfeed_icon_tag, { :controller => :entry, :action => :inbox }, accesskey('0'))
-    links << link_to(twitter_icon_tag, { :controller => :entry, :action => :tweets })
+    unless cell_phone?
+      links << link_to(twitter_icon_tag, { :controller => :entry, :action => :tweets })
+    end
     pin_label = inline_icon_tag(:pinned, 'Star')
     pin_label += "(#{@threads.pins})" if @threads
     links << link_to(pin_label, { :controller => :entry, :action => :list, :label => 'pin' })
@@ -711,6 +713,9 @@ __EOS__
     links << link_to(h('Home'), base.merge(:feed => :home))
     links << link_to(h('You'), base.merge(:feed => :user))
     links << link_to(h('Mentions'), base.merge(:feed => :mentions))
+    if @service_user
+      links << menu_link(menu_label('sign out'), :controller => 'login', :action => 'unlink_twitter', :id => @service_user)
+    end
     links.join(' ')
   end
 

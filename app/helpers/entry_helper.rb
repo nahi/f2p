@@ -832,15 +832,6 @@ module EntryHelper
   end
 
   # override
-  def logout_link
-    if ctx.tweets?
-      menu_link(menu_label('sign out Twitter'), :controller => 'login', :action => 'unlink_twitter', :id => @service_user)
-    else
-      super
-    end
-  end
-
-  # override
   def pinned_link(pin_label = 'Star')
     if @threads and @threads.pins and @threads.pins > 0
       pin_label += "(#{@threads.pins})"

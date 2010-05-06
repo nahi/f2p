@@ -4,5 +4,7 @@
 <%- end -%>
 <%- if str = saved_search_links -%>
 <p>Searches: <%= str %></p>
+<%- end -%>
+<%- unless cell_phone? -%>
 <p>Tweets: <%= twitter_links %></p>
 <%- end -%>
