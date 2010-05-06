@@ -87,6 +87,14 @@ class LoginController < ApplicationController
     end
   end
 
+  def unlink_twitter
+    id = params[:id]
+    if auth = ensure_login
+      auth.clear_token('twitter', id)
+    end
+    redirect_to :controller => 'entry', :action => 'inbox'
+  end
+
 private
 
   def request_token

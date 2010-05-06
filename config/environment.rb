@@ -35,14 +35,13 @@ module F2P
 
       attr_accessor :twitter_api_oauth_consumer_key
       attr_accessor :twitter_api_oauth_consumer_secret
-      # Rubytter handles these settings for now.
-      #attr_accessor :twitter_api_oauth_site
-      #attr_accessor :twitter_api_oauth_request_token_url
-      #attr_accessor :twitter_api_oauth_authorize_url
-      #attr_accessor :twitter_api_oauth_access_token_url
-      #attr_accessor :twitter_api_oauth_scheme
-      #attr_accessor :twitter_api_oauth_signature_method
-      #attr_accessor :twitter_api_oauth_http_method
+      attr_accessor :twitter_api_oauth_site
+      attr_accessor :twitter_api_oauth_request_token_url
+      attr_accessor :twitter_api_oauth_authorize_url
+      attr_accessor :twitter_api_oauth_access_token_url
+      attr_accessor :twitter_api_oauth_scheme
+      attr_accessor :twitter_api_oauth_signature_method
+      attr_accessor :twitter_api_oauth_http_method
 
       attr_accessor :json_parse_size_limit
 
@@ -167,6 +166,13 @@ Rails::Initializer.run do |config|
 
   F2P::Config.twitter_api_oauth_consumer_key = nil
   F2P::Config.twitter_api_oauth_consumer_secret = nil
+  F2P::Config.twitter_api_oauth_site = 'https://api.twitter.com'
+  F2P::Config.twitter_api_oauth_request_token_url = 'https://api.twitter.com/oauth/request_token'
+  F2P::Config.twitter_api_oauth_authorize_url = 'https://api.twitter.com/oauth/authorize'
+  F2P::Config.twitter_api_oauth_access_token_url = 'https://twitter.com/oauth/access_token'
+  F2P::Config.twitter_api_oauth_scheme = :header
+  F2P::Config.twitter_api_oauth_signature_method = 'HMAC-SHA1'
+  F2P::Config.twitter_api_oauth_http_method = :get
 
   F2P::Config.json_parse_size_limit = 1.5 * 1024 * 1024
 

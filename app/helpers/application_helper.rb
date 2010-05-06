@@ -233,8 +233,11 @@ __EOS__
 
   def top_menu
     links = []
-    links << link_to(h('Inbox'), { :controller => :entry, :action => :inbox }, accesskey('0'))
-    links << pinned_link
+    links << link_to(friendfeed_icon_tag, { :controller => :entry, :action => :inbox }, accesskey('0'))
+    links << link_to(twitter_icon_tag, { :controller => :entry, :action => :tweets })
+    pin_label = inline_icon_tag(:pinned, 'Star')
+    pin_label += "(#{@threads.pins})" if @threads
+    links << link_to(pin_label, { :controller => :entry, :action => :list, :label => 'pin' })
     links << menu_link(menu_label('menu', '8'), '#bottom', accesskey('8'))
     links.join(' ')
   end
@@ -302,6 +305,14 @@ __EOS__
     image_tag(url, :class => 'inline', :alt => h(alt), :title => h(title), :size => '16x16')
   end
 
+  def friendfeed_icon_tag
+    service_icon_tag('http://friendfeed.com/static/images/icons/internal.png', 'FriendFeed', 'FriendFeed')
+  end
+
+  def twitter_icon_tag
+    service_icon_tag('http://friendfeed.com/static/images/icons/twitter.png', 'Twitter', 'Twitter')
+  end
+
   def profile_link(id)
     menu_link(menu_label('profile'), :controller => :profile, :action => :show, :id => id)
   end
@@ -314,8 +325,8 @@ __EOS__
     menu_link(menu_label('show inbox', '0'), { :controller => :entry, :action => :inbox }, accesskey('0'))
   end
 
-  def pinned_link
-    link_to(h('Star'), { :controller => :entry, :action => :list, :label => 'pin' }, accesskey('9'))
+  def pinned_link(pin_label = 'Star')
+    link_to(h(pin_label), { :controller => :entry, :action => :list, :label => 'pin' }, accesskey('9'))
   end
 
   def search_link
@@ -691,7 +702,15 @@ __EOS__
     links << link_to(h('Discussions'), :controller => :entry, :action => :list, :feed => feedid)
     feedid = 'filter/direct'
     links << link_to(h('DM'), :controller => :entry, :action => :list, :feed => feedid)
-    feedid = [auth.name, 'likes'].join('/')
+    links.join(' ')
+  end
+
+  def twitter_links
+    links = []
+    base = {:controller => :entry, :action => :tweets, :id => @service_user}
+    links << link_to(h('Home'), base.merge(:feed => :home))
+    links << link_to(h('You'), base.merge(:feed => :user))
+    links << link_to(h('Mentions'), base.merge(:feed => :mentions))
     links.join(' ')
   end
 

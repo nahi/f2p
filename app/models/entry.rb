@@ -14,12 +14,54 @@ class Entry
   TIME_ZERO = Time.at(0).freeze
 
   class << self
+    def [](hash)
+      if hash
+        if hash['service_source'] == 'twitter' and hash['service_user']
+          from_tweet(hash)
+        else
+          new(hash)
+        end
+      end
+    end
+
+    def from_tweet(hash)
+      e = new(hash)
+      e.id = from_twitter_id(hash[:id].to_s)
+      e.date = hash[:created_at]
+      e.body = hash[:text]
+      e.from = From.new
+      e.from.id = hash[:user][:id].to_s
+      e.from.name = hash[:user][:screen_name]
+      e.from.type = 'user'
+      e.from.private = hash[:user][:protected]
+      e.from.profile_url = "http://twitter.com/#{e.from.name}"
+      e.via = Via.new
+      /<a href="([^"]+)" [^>]*>([^<]+)<\/a>/ =~ hash[:source]
+      e.via.name = $2 || 'Twitter'
+      e.via.url = $1 || 'http://twitter.com/'
+      if e.geo
+        e.geo.lat, e.geo.long = hash[:geo][:coordinates]
+      end
+      e.profile_image_url = hash[:user][:profile_image_url]
+      e.twitter_username = e.from.id
+      e.twitter_reply_to = hash[:in_reply_to_screen_name]
+      e.url = "http://twitter.com/#{e.from.name}/status/#{hash[:id].to_s}"
+      e
+    end
+
     def create(opt)
       auth = opt[:auth]
       to = opt[:to]
       body = opt[:body]
-      if entry = ff_client.post_entry(to, body, opt.merge(auth.new_cred))
-        Entry[entry]
+      case opt[:service_source]
+      when 'twitter'
+        if entry = Tweet.update_status(opt[:token], body, opt)
+          Entry[entry]
+        end
+      else # FriendFeed
+        if entry = ff_client.post_entry(to, body, opt.merge(auth.new_cred))
+          Entry[entry]
+        end
       end
     end
 
@@ -100,11 +142,15 @@ class Entry
     def add_pin(opt)
       auth = opt[:auth]
       id = opt[:eid]
+      source = opt[:source]
       ActiveRecord::Base.transaction do
+        # ignore different source for the same id.
         unless Pin.find_by_user_id_and_eid(auth.id, id)
           pin = Pin.new
+          pin.source = source
           pin.user = auth
           pin.eid = id
+          pin.entry = opt[:entry]
           pin.save!
         end
       end
@@ -118,6 +164,21 @@ class Entry
       end
     end
 
+    def if_twitter_id(id, &block)
+      if m = id.match(/\At_/)
+        post = m.post_match
+        if block_given?
+          yield post
+        else
+          post
+        end
+      end
+    end
+
+    def from_twitter_id(id)
+      't_' + id
+    end
+
   private
 
     def logger
@@ -128,6 +189,9 @@ class Entry
       ApplicationController.ff_client
     end
   end
+
+  attr_accessor :service_source
+  attr_accessor :service_user
 
   attr_accessor :id
   attr_accessor :body
@@ -161,7 +225,7 @@ class Entry
   attr_accessor :view_map
 
   def initialize(hash)
-    initialize_with_hash(hash, 'id', 'url', 'date', 'commands')
+    initialize_with_hash(hash, 'id', 'url', 'date', 'commands', 'service_source', 'service_user')
     @commands ||= EMPTY
     @profile_image_url = nil
     @twitter_username = nil
@@ -325,6 +389,16 @@ class Entry
 
   def private
     orphan || from.private || to.any? { |e| e.private }
+  end
+
+  def twitter_id
+    Entry.if_twitter_id(self.id) { |tid|
+      tid
+    }
+  end
+
+  def tweet?
+    service_source == 'twitter'
   end
 
 private

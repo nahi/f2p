@@ -59,8 +59,8 @@ class Feed
         threads.from_modified = feed.entries.last.modified
         threads.to_modified = feed.entries.first.modified
         if opt[:feed] == 'tweets'
-          threads.since_id = feed.entries.first.id.sub(/^t_/, '')
-          threads.max_id = feed.entries.last.id.sub(/^t_/, '')
+          threads.since_id = feed.entries.first.twitter_id
+          threads.max_id = feed.entries.last.twitter_id
         end
       end
       threads.pins = pins
@@ -162,7 +162,7 @@ class Feed
     def fetch_list_entries(auth, opt)
       cache_entries(auth, opt) {
         if opt[:tweets]
-          Task.run { from_tweets(opt[:tweets]) }.result
+          Task.run { from_tweets(opt) }.result
         elsif opt[:inbox]
           wrap(Task.run { get_feed(auth, 'home', opt) }.result)
         elsif opt[:eids]
@@ -321,18 +321,23 @@ class Feed
         :offset => start,
         :limit => num
       )
-      pinned_id = pinned.map { |e| e.eid }
-      return {} if pinned_id.empty?
-      hash = get_entries(auth, opt.merge(:eids => pinned_id))
-      return {} if hash.nil? or hash['entries'].nil?
-      map = hash['entries'].inject({}) { |r, e| r[e['id']] = e; r }
-      hash['entries'] = pinned_id.map { |eid|
-        if map.key?(eid)
-          map[eid]
+      entries = pinned.find_all { |e| e.source != 'twitter' }
+      unless entries.empty?
+        hash = get_entries(auth, opt.merge(:eids => entries.map { |e| e.eid }))
+        map = (hash['entries'] || []).inject({}) { |r, e| r[e['id']] = e; r }
+      else
+        hash = {}
+        map = {}
+      end
+      hash['entries'] = pinned.map { |e|
+        if e.source == 'twitter'
+          YAML.load(e.entry)
+        elsif map.key?(e.eid)
+          map[e.eid]
         else
-          pin = pinned.find { |e| e.eid == eid }
+          pin = pinned.find { |f| f.eid == e.eid }
           date = pin ? pin.created_at.xmlschema : nil
-          {'id' => eid, 'date' => date, '__f2p_orphan' => true}
+          {'id' => e.eid, 'date' => date, '__f2p_orphan' => true, 'from' => {}}
         end
       }
       hash
@@ -566,39 +571,15 @@ class Feed
       end
     end
 
-    def from_tweets(tweets)
+    def from_tweets(opt)
+      tweets = opt[:tweets]
+      service_user = opt[:service_user]
       feed = Feed.new(nil)
-      feed.id = 'tweets'
-      feed.name = 'Tweets'
+      feed.id = opt[:feedname]
+      feed.name = opt[:feedname]
       feed.type = 'special'
-      feed.entries = tweets.map { |hash|
-        tweet_to_entry(hash)
-      }
+      feed.entries = tweets.map { |hash| Entry[hash] }
       feed
-    end
-
-    def tweet_to_entry(hash)
-      e = Entry[hash]
-      e.id = 't_' + hash[:id].to_s
-      e.date = hash[:created_at]
-      e.body = hash[:text]
-      e.from = From.new
-      e.from.id = hash[:user][:screen_name]
-      e.from.name = hash[:user][:name]
-      e.from.type = 'user'
-      e.from.private = hash[:user][:protected]
-      e.from.profile_url = "http://twitter.com/#{e.from.id}"
-      e.via = Via.new
-      e.via.name = 'Twitter'
-      e.via.url = "http://twitter.com/#{e.from.id}/status/#{hash[:id].to_s}"
-      if e.geo
-        e.geo.lat, e.geo.long = hash[:geo][:coordinates]
-      end
-      e.profile_image_url = hash[:user][:profile_image_url]
-      e.twitter_username = e.from.id
-      e.twitter_reply_to = hash[:in_reply_to_screen_name]
-      # e.url?
-      e
     end
   end
 

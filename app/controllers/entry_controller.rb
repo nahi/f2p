@@ -31,6 +31,11 @@ class EntryController < ApplicationController
     attr_accessor :home
     attr_accessor :moderate
 
+    attr_accessor :tweets
+    attr_accessor :in_reply_to_service_user
+    attr_accessor :in_reply_to_screen_name
+    attr_accessor :in_reply_to_status_id
+
     attr_accessor :viewname
 
     def initialize(auth)
@@ -42,6 +47,8 @@ class EntryController < ApplicationController
       @home = true
       @moderate = nil
       @param = nil
+      @tweets = false
+      @in_reply_to_service_user = @in_reply_to_screen_name = @in_reply_to_status_id = nil
     end
 
     def parse(param, setting)
@@ -69,6 +76,9 @@ class EntryController < ApplicationController
       @with_comments = intparam(:with_comments)
       @with_like = (param(:with_like) == 'checked')
       @with_comment = (param(:with_comment) == 'checked')
+      @in_reply_to_service_user = param(:in_reply_to_service_user)
+      @in_reply_to_screen_name = param(:in_reply_to_screen_name)
+      @in_reply_to_status_id = param(:in_reply_to_status_id)
       @fold = param(:fold) != 'no'
       @inbox = false
       @home = !(@eid or @eids or @inbox or @query or @like or @comment or @user or @friends or @feed or @room or @link or @label)
@@ -173,6 +183,7 @@ class EntryController < ApplicationController
     end
 
     def user_for
+      return nil if tweets?
       user = @user || @friends
       user != 'me' ? user : nil
     end
@@ -194,7 +205,7 @@ class EntryController < ApplicationController
     end
 
     def tweets?
-      @feed == 'tweets'
+      @tweets
     end
 
     def link_opt(opt = {})
@@ -216,6 +227,8 @@ class EntryController < ApplicationController
         'show'
       elsif @inbox
         'inbox'
+      elsif tweets?
+        'tweets'
       else
         'list'
       end
@@ -236,6 +249,10 @@ class EntryController < ApplicationController
     @ctx = restore_ctx { |ctx|
       ctx.parse(params, @setting)
     }
+    if @ctx.in_reply_to_service_user
+      @service_source = 'twitter'
+      @service_user = @ctx.in_reply_to_service_user
+    end
     with_feedinfo(@ctx) do
       @feed = find_entry_thread(find_opt)
       @threads = @feed.entries
@@ -307,13 +324,13 @@ class EntryController < ApplicationController
     @ctx = restore_ctx { |ctx|
       ctx.parse(params, @setting)
     }
-    @ctx.feed = 'tweets'
+    @ctx.tweets = true
     @ctx.home = false
     id = params[:id]
     max_id = params[:max_id]
     since_id = params[:since_id]
     if auth.tokens.empty? or auth.tokens.find_all_by_service('twitter').empty?
-      session[:back_to] = {:controller => 'tweet', :action => 'home'}
+      session[:back_to] = {:controller => 'entry', :action => 'tweets'}
       redirect_to :controller => 'login', :action => 'initiate_twitter_oauth_login'
       return
     elsif id
@@ -325,11 +342,33 @@ class EntryController < ApplicationController
       redirect_to :action => 'inbox'
       return
     end
+    @service_source = token.service
+    @service_user = token.service_user
     opt = {:count => @num}
     opt[:max_id] = max_id if max_id
     opt[:since_id] = since_id if since_id
     with_feedinfo(@ctx) do
-      @feed = find_entry_thread(find_opt.merge(:tweets => Tweet.home(token, opt)))
+      case @ctx.feed
+      when 'user'
+        user = @ctx.user || token.params # screen_name
+        tweets = Tweet.user_timeline(token, user, opt)
+        feedname = '@' + user
+      when 'mentions'
+        tweets = Tweet.mentions(token, opt)
+        feedname = @ctx.feed
+      when 'direct'
+        tweets = Tweet.direct_messages(token, opt)
+        feedname = @ctx.feed
+      else # home
+        tweets = Tweet.home_timeline(token, opt)
+        feedname = 'home'
+      end
+      feed_opt = find_opt.merge(
+        :tweets => tweets,
+        :feedname => "Tweets(#{feedname})",
+        :service_user => token.service_user
+      )
+      @feed = find_entry_thread(feed_opt)
       @threads = @feed.entries
     end
     return if redirect_to_entry(@threads)
@@ -462,6 +501,9 @@ class EntryController < ApplicationController
     @address = param(:address)
     @setting.google_maps_zoom = intparam(:zoom) if intparam(:zoom)
     @placemark = nil
+    in_reply_to_service_user = param(:in_reply_to_service_user)
+    in_reply_to_screen_name = param(:in_reply_to_screen_name)
+    in_reply_to_status_id = param(:in_reply_to_status_id)
     case param(:commit)
     when 'search'
       do_location_search
@@ -508,6 +550,21 @@ class EntryController < ApplicationController
       render :action => 'new'
       return
     end
+    case param(:service_source)
+    when 'twitter'
+      unless token = auth.tokens.find_by_service_and_service_user('twitter', param(:service_user))
+        flash[:message] = 'Token not found'
+        fetch_feedinfo
+        render :action => 'tweets'
+        return
+      end
+      opt[:service_source] = 'twitter'
+      opt[:token] = token
+      p [in_reply_to_status_id, opt[:body].index("@#{in_reply_to_screen_name}")]
+      if in_reply_to_status_id and opt[:body].index("@#{in_reply_to_screen_name}") == 0
+        opt[:in_reply_to_status_id] = in_reply_to_status_id
+      end
+    end
     entry = Entry.create(opt)
     unless entry
       msg = 'Posting failure.'
@@ -525,8 +582,12 @@ class EntryController < ApplicationController
     if session[:ctx]
       session[:ctx].reset_for_new
     end
-    flash[:added_id] = entry.id
-    redirect_to_list
+    if param(:service_source) == 'twitter'
+      redirect_to :controller => 'entry', :action => 'tweets'
+    else
+      flash[:added_id] = entry.id
+      redirect_to_list
+    end
   end
 
   verify :only => :update,
@@ -763,7 +824,16 @@ private
 
   def pin_entry(id)
     if id
-      Entry.add_pin(create_opt(:eid => id))
+      entry = nil
+      source = nil
+      Entry.if_twitter_id(id) do |tid|
+        tid, service_user = tid.split('_', 2)
+        id = Entry.from_twitter_id(tid)
+        token = auth.tokens.find_by_service_and_service_user('twitter', service_user)
+        entry = Tweet.show(token, tid)
+        source = 'twitter'
+      end
+      Entry.add_pin(create_opt(:eid => id, :entry => entry, :source => source))
       commit_checked_modified(id)
     end
   end
@@ -861,11 +931,19 @@ private
   def with_feedinfo(ctx)
     tasks = []
     tasks << Task.run {
-      @feedlist = User.ff_feedlist(auth)
+      begin
+        @feedlist = User.ff_feedlist(auth)
+      rescue
+        logger.warn($!)
+      end
     }
-    if @ctx.list? and @ctx.label.nil? and !@ctx.inbox
+    if @ctx.list? and @ctx.label.nil? and !@ctx.inbox and !@ctx.tweets?
       tasks << Task.run {
-        @feedinfo = User.ff_feedinfo(auth, @ctx.feedid, Feedinfo.opt_exclude(:subscriptions, :subscribers, :services))
+        begin
+          @feedinfo = User.ff_feedinfo(auth, @ctx.feedid, Feedinfo.opt_exclude(:subscriptions, :subscribers, :services))
+        rescue
+          logger.warn($!)
+        end
       }
     end
     yield

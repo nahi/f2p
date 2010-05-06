@@ -160,6 +160,12 @@ class User < ActiveRecord::Base
     t
   end
 
+  def clear_token(service, service_user)
+    if t = tokens.find_by_service_and_service_user(service, service_user)
+      t.delete
+    end
+  end
+
 =begin
   def find_token(service, service_user)
     cond = [

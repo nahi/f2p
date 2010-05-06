@@ -96,7 +96,11 @@ module EntryHelper
 
   def pin_link(entry)
     if ajax?
-      pin_link_remote(entry.id, entry.view_pinned)
+      eid = entry.id
+      if entry.tweet?
+        eid = eid + '_' + entry.service_user
+      end
+      pin_link_remote(eid, entry.view_pinned)
     else
       pin_link_plain(entry)
     end
@@ -115,10 +119,14 @@ module EntryHelper
   end
 
   def pin_link_plain(entry)
+    eid = entry.id
+    if entry.tweet?
+      eid = eid + '_' + entry.service_user
+    end
     if entry.view_pinned
-      link_to(inline_icon_tag(:pinned, 'delete'), link_action('unpin', :eid => entry.id))
+      link_to(inline_icon_tag(:pinned, 'delete'), link_action('unpin', :eid => eid))
     else
-      link_to(inline_icon_tag(:pin, 'star'), link_action('pin', :eid => entry.id))
+      link_to(inline_icon_tag(:pin, 'star'), link_action('pin', :eid => eid))
     end
   end
 
@@ -166,8 +174,10 @@ module EntryHelper
 
   def content(entry)
     content = common_content(entry)
-    if entry.via and entry.via.twitter?
+    if entry.tweet?
       content = twitter_content(content)
+    elsif entry.via and entry.via.twitter?
+      content = ff_twitter_content(content)
     end
     scan_media_from_link(entry)
     unless entry.view_medias.empty?
@@ -277,6 +287,8 @@ module EntryHelper
     elsif ctx.room_for
       # filter by group + user
       from = user(entry, link_list(:query => '', :room => ctx.room_for, :user => entry.from_id))
+    elsif entry.tweet?
+      from = link_to(h(entry.from.name), link_action('tweets', :feed => 'user', :user => entry.from.name))
     else
       from = user(entry)
     end
@@ -456,6 +468,12 @@ module EntryHelper
 
   def twitter_content(common)
     common.gsub(/@([a-zA-Z0-9_]+)/) {
+      '@' + link_to($1, link_action('tweets', :feed => 'user', :user => $1), :class => 'twname')
+    }
+  end
+
+  def ff_twitter_content(common)
+    common.gsub(/@([a-zA-Z0-9_]+)/) {
       '@' + link_to($1, "http://twitter.com/#{$1}", :class => 'twname')
     }
   end
@@ -537,7 +555,10 @@ module EntryHelper
   end
 
   def via(entry_or_comment)
-    label = entry_or_comment.respond_to?(:comments) ? 'from' : 'via'
+    label = 'from'
+    if !entry_or_comment.respond_to?(:comments) or entry_or_comment.tweet?
+      label = 'via'
+    end
     super(entry_or_comment.via, label)
   end
 
@@ -686,7 +707,7 @@ module EntryHelper
       str += link_to(h(msg), link_show(comment.entry.id))
     end
     if comment.entry.via and comment.entry.via.twitter?
-      str = twitter_content(str)
+      str = ff_twitter_content(str)
     end
     str
   end
@@ -741,22 +762,32 @@ module EntryHelper
 
   def post_entry_form
     return if ctx.direct_message?
-    str = ''
-    str += hidden_field_tag('to_lines', '1')
+    ary = []
+    ary << hidden_field_tag('to_lines', '1')
     if ctx.user_for and ctx.user_for != auth.name
       if @feedinfo.commands.include?('dm')
-        str += hidden_field_tag('to_0', ctx.user_for) + h(feed_name) + ': '
+        ary << hidden_field_tag('to_0', ctx.user_for) + h(feed_name) + ': '
       else
         return
       end
     end
-    if ctx.room_for and @feedinfo.commands.include?('post')
-      str += hidden_field_tag('to_0', ctx.room_for) + h(feed_name) + ': '
+    ary << hidden_field_tag('service_source', @service_source) if @service_source
+    ary << hidden_field_tag('service_user', @service_user) if @service_user
+    if ctx.in_reply_to_screen_name
+      ary << hidden_field_tag('in_reply_to_status_id', ctx.in_reply_to_status_id)
+      ary << hidden_field_tag('in_reply_to_screen_name', ctx.in_reply_to_screen_name)
+      body = '@' + ctx.in_reply_to_screen_name + ' '
     end
-    str +
-      text_field_tag('body', nil, :placeholder => 'post') +
-      submit_tag('post') +
-      write_new_link
+    if ctx.room_for and @feedinfo.commands.include?('post')
+      ary << hidden_field_tag('to_0', ctx.room_for) + h(feed_name) + ': '
+    end
+    if @service_source == 'twitter'
+      ary << twitter_icon_tag
+    end
+    ary << text_field_tag('body', body, :placeholder => 'post')
+    ary << submit_tag('post')
+    ary << write_new_link unless ctx.tweets?
+    ary.join
   end
 
   def post_comment_form(entry)
@@ -801,8 +832,16 @@ module EntryHelper
   end
 
   # override
-  def pinned_link
-    pin_label = 'Star'
+  def logout_link
+    if ctx.tweets?
+      menu_link(menu_label('sign out Twitter'), :controller => 'login', :action => 'unlink_twitter', :id => @service_user)
+    else
+      super
+    end
+  end
+
+  # override
+  def pinned_link(pin_label = 'Star')
     if @threads and @threads.pins and @threads.pins > 0
       pin_label += "(#{@threads.pins})"
     end
@@ -1040,8 +1079,16 @@ module EntryHelper
   end
 
   def post_comment_link(entry, opt = {})
-    return if ctx.tweets?
-    if !entry.comments.empty? and !comment_inline?(entry)
+    if entry.tweet?
+      return if entry.service_user == entry.from_id
+      str = h('reply')
+      tid = Entry.if_twitter_id(entry.id)
+      link = list_opt(
+        :in_reply_to_service_user => entry.service_user,
+        :in_reply_to_screen_name => entry.from.name,
+        :in_reply_to_status_id => tid
+      )
+    elsif !entry.comments.empty? and !comment_inline?(entry)
       if entry.comments_size == 1
         str = ">>>#{entry.comments_size}"
       else
@@ -1051,11 +1098,12 @@ module EntryHelper
       if emphasize_as_unread?(entry)
         str = emphasize_as_unread(str)
       end
-    #elsif entry.commands.include?('comment')
+      link = link_show(entry.id)
     else
       str = h('>>>')
+      link = link_show(entry.id)
     end
-    menu_link(str, link_show(entry.id))
+    menu_link(str, link)
   end
 
   def url_link(entry)

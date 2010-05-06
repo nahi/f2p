@@ -6,7 +6,7 @@
     <%= javascript_include_tag("prototype") if ajax? %>
   </head>
   <body>
-    <p class="header"><%= top_marker %><%= link_to(h(appname), :controller => :entry, :action => :inbox) %> <a name="top"><%= h(viewname) %></a> at <%= title_date %> <%= top_menu %></p>
+    <p class="header"><%= top_marker %><a name="top"><%= h(viewname) %></a> <%= top_menu %></p>
     <%= yield %>
   </body>
 </html>
