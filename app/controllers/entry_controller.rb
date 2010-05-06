@@ -841,6 +841,10 @@ private
 
   def unpin_entry(id, commit = true)
     if id
+      Entry.if_twitter_id(id) do |tid|
+        tid, service_user = tid.split('_', 2)
+        id = Entry.from_twitter_id(tid)
+      end
       Entry.delete_pin(create_opt(:eid => id))
       commit_checked_modified(id) if commit
     end
