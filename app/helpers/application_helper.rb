@@ -111,6 +111,7 @@ module ApplicationHelper
     text-decoration: none;
     color: black;
   }
+  a.hlink { text-decoration: none; }
   p {
     margin-top: 1ex;
     margin-bottom: 1ex;
@@ -234,9 +235,7 @@ __EOS__
   def top_menu
     links = []
     links << link_to(friendfeed_icon_tag, { :controller => :entry, :action => :inbox }, accesskey('0'))
-    unless cell_phone?
-      links << link_to(twitter_icon_tag, { :controller => :entry, :action => :tweets })
-    end
+    links << link_to(twitter_icon_tag, { :controller => :entry, :action => :tweets })
     pin_label = inline_icon_tag(:pinned, 'Star')
     pin_label += "(#{@threads.pins})" if @threads
     links << link_to(pin_label, { :controller => :entry, :action => :list, :label => 'pin' })

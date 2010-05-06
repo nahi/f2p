@@ -301,6 +301,7 @@ module EntryHelper
   end
 
   def service_icon(entry)
+    return if entry.tweet?
     if via = entry.via
       if via.service_icon_url
         link_to(service_icon_tag(via.service_icon_url, via.name, via.name),
@@ -650,12 +651,11 @@ module EntryHelper
     if emphasize_as_unread?(entry)
       str = emphasize_as_unread(str)
     end
-    str
-    #if compact
-    #  link_to(str, link_show(entry.id))
-    #else
-    #  str
-    #end
+    if entry.tweet?
+      link_to(str, entry.url, :class => 'hlink')
+    else
+      str
+    end
   end
 
   def modified_if(entry, compact)
@@ -1236,7 +1236,7 @@ module EntryHelper
   end
 
   def reshare_link(entry)
-    if ctx.single? or entry.view_pinned
+    if ctx.single? or (entry.view_pinned and !entry.tweet?)
       menu_link(inline_menu_label(:reshare, 'reshare'), link_action('reshare', :reshared_from => entry.id))
     end
   end

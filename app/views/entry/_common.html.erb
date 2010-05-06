@@ -5,6 +5,6 @@
 <%- if str = saved_search_links -%>
 <p>Searches: <%= str %></p>
 <%- end -%>
-<%- unless cell_phone? -%>
+<%- if @service_source == 'twitter' -%>
 <p>Tweets: <%= twitter_links %></p>
 <%- end -%>
