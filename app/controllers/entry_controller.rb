@@ -325,6 +325,7 @@ class EntryController < ApplicationController
       ctx.parse(params, @setting)
     }
     @ctx.tweets = true
+    @ctx.feed ||= 'home'
     @ctx.home = false
     id = params[:id]
     max_id = params[:max_id]
@@ -344,7 +345,7 @@ class EntryController < ApplicationController
     end
     @service_source = token.service
     @service_user = token.service_user
-    opt = {:count => @num}
+    opt = {:count => @ctx.num}
     opt[:max_id] = max_id if max_id
     opt[:since_id] = since_id if since_id
     with_feedinfo(@ctx) do

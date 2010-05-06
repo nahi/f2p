@@ -58,10 +58,8 @@ class Feed
       unless feed.entries.empty?
         threads.from_modified = feed.entries.last.modified
         threads.to_modified = feed.entries.first.modified
-        if opt[:feed] == 'tweets'
-          threads.since_id = feed.entries.first.twitter_id
-          threads.max_id = feed.entries.last.twitter_id
-        end
+        threads.since_id = feed.entries.first.twitter_id
+        threads.max_id = feed.entries.last.twitter_id
       end
       threads.pins = pins
       feed.entries = threads

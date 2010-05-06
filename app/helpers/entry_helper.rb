@@ -944,7 +944,7 @@ module EntryHelper
     links = []
     if ctx.list? and !ctx.is_summary?
       if ctx.tweets?
-        links << menu_link(menu_label('<', '4', true), {:action => 'tweets', :num => num, :since_id => @threads.since_id}, accesskey('4')) { !no_page }
+        links << menu_link(menu_label('<', '4', true), {:action => 'tweets', :feed => ctx.feed, :num => num, :since_id => @threads.since_id}, accesskey('4')) { !no_page }
       else
         links << menu_link(menu_label('<', '4', true), list_opt(ctx.link_opt(:start => start - num, :num => num, :direction => 'rewind')), accesskey('4')) {
           !no_page and start - num >= 0
@@ -969,7 +969,7 @@ module EntryHelper
     if ctx.list? and !ctx.is_summary?
       key = accesskey('6') if opt[:for_bottom]
       if ctx.tweets?
-        links << menu_link(menu_label('>', '6'), {:action => 'tweets', :num => num, :max_id => @threads.max_id}, key) { !no_page }
+        links << menu_link(menu_label('>', '6'), {:action => 'tweets', :feed => ctx.feed, :num => num, :max_id => @threads.max_id}, key) { !no_page }
       else
         links << menu_link(menu_label('>', '6'), list_opt(ctx.link_opt(:start => start + num, :num => num)), key) { !no_page }
       end
