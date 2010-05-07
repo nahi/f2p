@@ -46,8 +46,12 @@ class Entry
       e.profile_image_url = user[:profile_image_url]
       e.twitter_username = e.from.id
       e.twitter_reply_to_status_id = hash[:in_reply_to_status_id]
+      if hash[:retweeted_status]
+        e.twitter_retweet_of = hash[:retweeted_status][:user][:screen_name]
+        e.twitter_retweet_of_status_id = hash[:retweeted_status][:id]
+      end
       e.twitter_reply_to = hash[:in_reply_to_screen_name]
-      e.url = "http://twitter.com/#{e.from.name}/status/#{hash[:id].to_s}"
+      e.url = twitter_url(e.from.name, hash[:id])
       e
     end
 
@@ -185,6 +189,10 @@ class Entry
       't_' + id
     end
 
+    def twitter_url(screen_name, status_id)
+      "http://twitter.com/#{screen_name}/status/#{status_id}"
+    end
+
   private
 
     def logger
@@ -223,6 +231,9 @@ class Entry
   attr_accessor :twitter_username
   attr_accessor :twitter_reply_to
   attr_accessor :twitter_reply_to_status_id
+  attr_accessor :twitter_retweet_of
+  attr_accessor :twitter_retweet_of_status_id
+
   attr_accessor :orphan
   attr_accessor :view_pinned
   attr_accessor :view_unread
@@ -238,6 +249,8 @@ class Entry
     @twitter_username = nil
     @twitter_reply_to = nil
     @twitter_reply_to_status_id = nil
+    @twitter_retweet_of = nil
+    @twitter_retweet_of_status_id = nil
     @orphan = hash['__f2p_orphan']
     @view_pinned = nil
     @view_unread = nil
@@ -411,7 +424,13 @@ class Entry
 
   def twitter_in_reply_to_url
     if twitter_reply_to_status_id
-      "http://twitter.com/#{from.name}/status/#{twitter_reply_to_status_id}"
+      Entry.twitter_url(twitter_reply_to, twitter_reply_to_status_id)
+    end
+  end
+
+  def twitter_retweet_of_url
+    if twitter_retweet_of
+      Entry.twitter_url(twitter_retweet_of, twitter_retweet_of_status_id)
     end
   end
 
