@@ -44,6 +44,7 @@ class Entry
       end
       e.profile_image_url = hash[:user][:profile_image_url]
       e.twitter_username = e.from.id
+      e.twitter_reply_to_status_id = hash[:in_reply_to_status_id]
       e.twitter_reply_to = hash[:in_reply_to_screen_name]
       e.url = "http://twitter.com/#{e.from.name}/status/#{hash[:id].to_s}"
       e
@@ -216,6 +217,7 @@ class Entry
   attr_accessor :profile_image_url
   attr_accessor :twitter_username
   attr_accessor :twitter_reply_to
+  attr_accessor :twitter_reply_to_status_id
   attr_accessor :orphan
   attr_accessor :view_pinned
   attr_accessor :view_unread
@@ -230,6 +232,7 @@ class Entry
     @profile_image_url = nil
     @twitter_username = nil
     @twitter_reply_to = nil
+    @twitter_reply_to_status_id = nil
     @orphan = hash['__f2p_orphan']
     @view_pinned = nil
     @view_unread = nil
@@ -399,6 +402,12 @@ class Entry
 
   def tweet?
     service_source == 'twitter'
+  end
+
+  def twitter_in_reply_to_url
+    if twitter_reply_to_status_id
+      "http://twitter.com/#{from.name}/status/#{twitter_reply_to_status_id}"
+    end
   end
 
 private

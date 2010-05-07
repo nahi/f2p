@@ -296,8 +296,18 @@ module EntryHelper
     if with_picture
       ary << author_picture(entry)
     end
-    ary << from << lock_icon(entry.from)
+    ary << from
+    if link = twitter_reply_to(entry)
+      ary << link
+    end
+    ary << lock_icon(entry.from)
     ary.join
+  end
+
+  def twitter_reply_to(entry)
+    if url = entry.twitter_in_reply_to_url
+      link_to(h(' in reply to ' + entry.twitter_reply_to.to_s), url, :class => 'hlink')
+    end
   end
 
   def service_icon(entry)
@@ -469,7 +479,8 @@ module EntryHelper
 
   def twitter_content(common)
     common.gsub(/@([a-zA-Z0-9_]+)/) {
-      '@' + link_to($1, link_action('tweets', :feed => 'user', :user => $1), :class => 'twname')
+      link = link_action('tweets', :feed => 'user', :user => $1)
+      '@' + link_to($1, link, :class => 'twname')
     }
   end
 
@@ -783,6 +794,8 @@ module EntryHelper
     end
     if @service_source == 'twitter'
       ary << twitter_icon_tag
+    else
+      ary << friendfeed_icon_tag
     end
     ary << text_field_tag('body', body, :placeholder => 'post')
     ary << submit_tag('post')
