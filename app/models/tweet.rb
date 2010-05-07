@@ -44,24 +44,27 @@ class Tweet
       res.map { |e| wrap(su, e) }
     end
 
-    def show(token, id)
+    def show(token, id, args = {})
       res = with_perf('[perf] start tweet fetch') {
         protect(nil) {
-          client(token).show(id)
+          client(token).show(id, args)
         }
       }
       wrap(token.service_user, res)
     end
 
     # raises exception
-    def update_status(token, status, opt = {})
-      params = {}
-      params[:status] = status
-      if opt[:in_reply_to_status_id]
-        params[:in_reply_to_status_id] = opt[:in_reply_to_status_id]
-      end
+    def update_status(token, status, args = {})
       res = with_perf('[perf] start tweet post') {
-        client(token).update_status(params)
+        client(token).update_status(args.merge(:status => status))
+      }
+      wrap(token.service_user, res)
+    end
+
+    # raises exception
+    def retweet(token, id, args = {})
+      res = with_perf('[perf] start retweet post') {
+        client(token).retweet(id, args)
       }
       wrap(token.service_user, res)
     end

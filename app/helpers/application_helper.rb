@@ -712,6 +712,7 @@ __EOS__
     links << link_to(h('Home'), base.merge(:feed => :home))
     links << link_to(h('You'), base.merge(:feed => :user))
     links << link_to(h('Mentions'), base.merge(:feed => :mentions))
+    links << link_to(h('DM'), base.merge(:feed => :direct))
     if @service_user
       links << menu_link(menu_label('sign out'), :controller => 'login', :action => 'unlink_twitter', :id => @service_user)
     end

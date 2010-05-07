@@ -26,14 +26,15 @@ class Entry
 
     def from_tweet(hash)
       e = new(hash)
+      user = hash[:user] || hash[:sender]
       e.id = from_twitter_id(hash[:id].to_s)
       e.date = hash[:created_at]
       e.body = hash[:text]
       e.from = From.new
-      e.from.id = hash[:user][:id].to_s
-      e.from.name = hash[:user][:screen_name]
+      e.from.id = user[:id].to_s
+      e.from.name = user[:screen_name]
       e.from.type = 'user'
-      e.from.private = hash[:user][:protected]
+      e.from.private = user[:protected]
       e.from.profile_url = "http://twitter.com/#{e.from.name}"
       e.via = Via.new
       /<a href="([^"]+)" [^>]*>([^<]+)<\/a>/ =~ hash[:source]
@@ -42,7 +43,7 @@ class Entry
       if e.geo
         e.geo.lat, e.geo.long = hash[:geo][:coordinates]
       end
-      e.profile_image_url = hash[:user][:profile_image_url]
+      e.profile_image_url = user[:profile_image_url]
       e.twitter_username = e.from.id
       e.twitter_reply_to_status_id = hash[:in_reply_to_status_id]
       e.twitter_reply_to = hash[:in_reply_to_screen_name]
@@ -56,7 +57,11 @@ class Entry
       body = opt[:body]
       case opt[:service_source]
       when 'twitter'
-        if entry = Tweet.update_status(opt[:token], body, opt)
+        params = {}
+        if opt[:in_reply_to_status_id]
+          params[:in_reply_to_status_id] = opt[:in_reply_to_status_id]
+        end
+        if entry = Tweet.update_status(opt[:token], body, params)
           Entry[entry]
         end
       else # FriendFeed
