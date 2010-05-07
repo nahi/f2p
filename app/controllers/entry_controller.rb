@@ -328,8 +328,8 @@ class EntryController < ApplicationController
     @ctx.feed ||= 'home'
     @ctx.home = false
     id = params[:id]
-    max_id = params[:max_id]
-    since_id = params[:since_id]
+    @max_id = params[:max_id]
+    @since_id = params[:since_id]
     if auth.tokens.empty? or auth.tokens.find_all_by_service('twitter').empty?
       session[:back_to] = {:controller => 'entry', :action => 'tweets'}
       redirect_to :controller => 'login', :action => 'initiate_twitter_oauth_login'
@@ -346,8 +346,8 @@ class EntryController < ApplicationController
     @service_source = token.service
     @service_user = token.service_user
     opt = {:count => @ctx.num}
-    opt[:max_id] = max_id if max_id
-    opt[:since_id] = since_id if since_id
+    opt[:max_id] = @max_id if @max_id
+    opt[:since_id] = @since_id if @since_id
     with_feedinfo(@ctx) do
       case @ctx.feed
       when 'user'
@@ -595,6 +595,40 @@ class EntryController < ApplicationController
       flash[:added_id] = entry.id
       redirect_to_list
     end
+  end
+
+  verify :only => :retweet,
+          :method => [:post],
+          :add_flash => {:error => 'verify failed'},
+          :redirect_to => {:action => 'inbox'}
+  def retweet
+    @ctx = EntryContext.new(auth)
+    if ctx = session[:ctx]
+      @ctx.inbox = ctx.inbox
+    end
+    if id = param(:id)
+      unless token = auth.tokens.find_by_service_and_service_user('twitter', param(:service_user))
+        flash[:message] = 'Token not found'
+        fetch_feedinfo
+        render :action => 'tweets'
+        return
+      end
+      begin
+        entry = Tweet.retweet(token, id)
+      rescue JSON::ParserError => e
+        msg = 'Unexpected response from the server: ' + e.class.name
+      rescue Exception => e
+        msg = e.message
+      end
+      unless entry
+        msg = 'Retweet failure. ' + msg.to_s
+        flash[:message] = msg
+      end
+    end
+    if session[:ctx]
+      session[:ctx].reset_for_new
+    end
+    redirect_to :controller => 'entry', :action => 'tweets'
   end
 
   verify :only => :update,
