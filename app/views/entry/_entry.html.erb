@@ -26,7 +26,7 @@
 <%- if twitter_thread -%>
   by <%= author_link(entry, false) %>
 <%- elsif root and (entry.via.nil? or !entry.via.twitter?) -%>
-  <span class="comment"><%= via(entry) %><%= twitter_reply_to(entry)%></span>
+  <span class="comment"><%= via(entry) %><%= twitter_reply_to(entry)%><%= twitter_retweeted_of(entry)%></span>
 <%- end -%>
 <%= published(entry, true) unless root.nil? -%>
   <%= service_icon(entry) if root and entry.service_id != root.service_id -%>
