@@ -1072,7 +1072,7 @@ module EntryHelper
   def post_comment_link(entry, opt = {})
     if entry.tweet?
       return if entry.service_user == entry.from_id
-      str = h('reply')
+      str = inline_menu_label(:reply, 'reply')
       tid = Entry.if_twitter_id(entry.id)
       link = list_opt(
         :in_reply_to_service_user => entry.service_user,

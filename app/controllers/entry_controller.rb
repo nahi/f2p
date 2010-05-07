@@ -561,23 +561,29 @@ class EntryController < ApplicationController
       end
       opt[:service_source] = 'twitter'
       opt[:token] = token
-      p [in_reply_to_status_id, opt[:body].index("@#{in_reply_to_screen_name}")]
       if in_reply_to_status_id and opt[:body].index("@#{in_reply_to_screen_name}") == 0
         opt[:in_reply_to_status_id] = in_reply_to_status_id
       end
     end
-    entry = Entry.create(opt)
+    msg = nil
+    begin
+      entry = Entry.create(opt)
+    rescue JSON::ParserError => e
+      msg = 'Unexpected response from the server: ' + e.class.name
+    rescue Exception => e
+      msg = e.message
+    end
     unless entry
-      msg = 'Posting failure.'
+      msg = 'Posting failure. ' + msg.to_s
       if opt[:file]
         msg += ' Unsupported media type?'
-      else
-        msg += ' Try later.'
       end
       flash[:message] = msg
-      fetch_feedinfo
-      render :action => 'new'
-      return
+      unless param(:service_source)
+        fetch_feedinfo
+        render :action => 'new'
+        return
+      end
     end
     unpin_entry(@reshared_from, false)
     if session[:ctx]

@@ -6,7 +6,9 @@ class Tweet
   class << self
     def home_timeline(token, args = {})
       res = with_perf('[perf] start home_timeline fetch') {
-        client(token).home_timeline(args)
+        protect([]) {
+          client(token).home_timeline(args)
+        }
       }
       su = token.service_user
       res.map { |e| wrap(su, e) }
@@ -14,7 +16,9 @@ class Tweet
 
     def user_timeline(token, user, args = {})
       res = with_perf('[perf] start user_timeline fetch') {
-        client(token).user_timeline(user, args)
+        protect([]) {
+          client(token).user_timeline(user, args)
+        }
       }
       su = token.service_user
       res.map { |e| wrap(su, e) }
@@ -22,7 +26,9 @@ class Tweet
 
     def mentions(token, args = {})
       res = with_perf('[perf] start mentions fetch') {
-        client(token).mentions(args)
+        protect([]) {
+          client(token).mentions(args)
+        }
       }
       su = token.service_user
       res.map { |e| wrap(su, e) }
@@ -30,7 +36,9 @@ class Tweet
 
     def direct_messages(token, args = {})
       res = with_perf('[perf] start direct_messages fetch') {
-        client(token).direct_messages(args)
+        protect([]) {
+          client(token).direct_messages(args)
+        }
       }
       su = token.service_user
       res.map { |e| wrap(su, e) }
@@ -38,11 +46,14 @@ class Tweet
 
     def show(token, id)
       res = with_perf('[perf] start tweet fetch') {
-        client(token).show(id)
+        protect(nil) {
+          client(token).show(id)
+        }
       }
       wrap(token.service_user, res)
     end
 
+    # raises exception
     def update_status(token, status, opt = {})
       params = {}
       params[:status] = status
@@ -61,18 +72,29 @@ class Tweet
       ActiveRecord::Base.logger
     end
 
+    def protect(default = nil)
+      begin
+        yield
+      rescue
+        default
+      end
+    end
+
     def with_perf(msg)
       logger.info(msg)
       begin
         start = Time.now
-        res = yield
+        yield
+      rescue
+        logger.warn($!)
+        raise
       ensure
         logger.info("elapsed: #{((Time.now - start) * 1000).to_i}ms")
       end
-      res
     end
 
     def wrap(service_user, hash)
+      return nil unless hash
       hash['service_source'] = 'twitter'
       hash['service_user'] = service_user
       hash
