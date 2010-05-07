@@ -176,6 +176,9 @@ module EntryHelper
     content = common_content(entry)
     if entry.tweet?
       content = twitter_content(content)
+      if ctx.tweets? and !entry.view_unread
+        content = content_tag('span', content, :class => 'archived')
+      end
     elsif entry.via and entry.via.twitter?
       content = ff_twitter_content(content)
     end
@@ -1001,7 +1004,7 @@ module EntryHelper
       end
     end
     if opt[:for_bottom]
-      if ctx.inbox
+      if ctx.inbox or ctx.tweets?
         links << archive_link
         links << all_link unless ctx.tweets?
       else

@@ -122,6 +122,7 @@ module ApplicationHelper
   .latest2 { color: #C00; }
   .latest3 { color: #900; }
   .older { color: #008; }
+  .archived { color: #669; }
   .comment { color: #666; }
   .comment a.twname { color: #666; }
   .inbox { font-weight: bold; }
@@ -520,7 +521,7 @@ __EOS__
   end
 
   def need_unread_mgmt?
-    ctx.inbox or ctx.home
+    ctx.inbox or ctx.home or ctx.tweets?
   end
 
   # TODO: should move to controller

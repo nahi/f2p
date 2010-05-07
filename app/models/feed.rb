@@ -24,7 +24,7 @@ class Feed
       logger.info('[perf] update_last_modified done')
       pins = check_inbox(auth, feed)
       logger.info('[perf] check_inbox done')
-      add_service_icon(feed.entries) if opt[:feed] != 'tweets'
+      add_service_icon(feed.entries) unless opt[:tweets]
       logger.info('[perf] add_service_icon done')
       feed.entries = filter_hidden(feed.entries)
       entries = feed.entries
