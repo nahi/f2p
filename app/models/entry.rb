@@ -40,8 +40,9 @@ class Entry
       /<a href="([^"]+)" [^>]*>([^<]+)<\/a>/ =~ hash[:source]
       e.via.name = $2 || 'Twitter'
       e.via.url = $1 || 'http://twitter.com/'
-      if e.geo
-        e.geo.lat, e.geo.long = hash[:geo][:coordinates]
+      if hash[:geo] and hash[:geo][:coordinates]
+        lat, long = hash[:geo][:coordinates]
+        e.geo = Geo['lat' => lat, 'long' => long]
       end
       e.profile_image_url = user[:profile_image_url]
       e.twitter_username = e.from.id
