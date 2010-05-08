@@ -348,30 +348,28 @@ class EntryController < ApplicationController
     opt = {:count => @ctx.num}
     opt[:max_id] = @max_id if @max_id
     opt[:since_id] = @since_id if @since_id
-    with_feedinfo(@ctx) do
-      case @ctx.feed
-      when 'user'
-        user = @ctx.user || token.params # screen_name
-        tweets = Tweet.user_timeline(token, user, opt)
-        feedname = '@' + user
-      when 'mentions'
-        tweets = Tweet.mentions(token, opt)
-        feedname = @ctx.feed
-      when 'direct'
-        tweets = Tweet.direct_messages(token, opt)
-        feedname = @ctx.feed
-      else # home
-        tweets = Tweet.home_timeline(token, opt)
-        feedname = 'home'
-      end
-      feed_opt = find_opt.merge(
-        :tweets => tweets,
-        :feedname => "Tweets(#{feedname})",
-        :service_user => token.service_user
-      )
-      @feed = find_entry_thread(feed_opt)
-      @threads = @feed.entries
+    case @ctx.feed
+    when 'user'
+      user = @ctx.user || token.params # screen_name
+      tweets = Tweet.user_timeline(token, user, opt)
+      feedname = '@' + user
+    when 'mentions'
+      tweets = Tweet.mentions(token, opt)
+      feedname = @ctx.feed
+    when 'direct'
+      tweets = Tweet.direct_messages(token, opt)
+      feedname = @ctx.feed
+    else # home
+      tweets = Tweet.home_timeline(token, opt)
+      feedname = 'home'
     end
+    feed_opt = find_opt.merge(
+      :tweets => tweets,
+      :feedname => "Tweets(#{feedname})",
+      :service_user => token.service_user
+    )
+    @feed = find_entry_thread(feed_opt)
+    @threads = @feed.entries
     return if redirect_to_entry(@threads)
     initialize_checked_modified
     render :action => 'list'

@@ -1,4 +1,6 @@
+<%- unless @service_source == 'twitter' -%>
 <p>Filters: <%= special_feed_links %></p>
+<%- end -%>
 <%- if str = list_links -%>
 <p>Lists: <%= str %></p>
 <%- end -%>
