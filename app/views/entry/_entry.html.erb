@@ -28,7 +28,9 @@
 <%- elsif root and (entry.via.nil? or !entry.via.twitter?) -%>
   <span class="comment"><%= via(entry) %><%= twitter_reply_to(entry)%><%= twitter_retweet_of(entry)%></span>
 <%- end -%>
-<%= published(entry, true) unless root.nil? -%>
+<%- unless root.nil? -%>
+<%= published(entry, true) -%><%= twitter_retweet_of(entry)%>
+<%- end -%>
   <%= service_icon(entry) if root and entry.service_id != root.service_id -%>
 <%- if comment_inline?(entry) -%>
   -- <span class="comment"><%= inline_comment(entry.comments.first) %></span>

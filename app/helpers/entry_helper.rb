@@ -332,7 +332,7 @@ module EntryHelper
 
   def twitter_reply_to(entry)
     if url = entry.twitter_in_reply_to_url
-      link_to(h(' in reply to ' + entry.twitter_reply_to), url, :class => 'hlink')
+      link_to(h(' reply to ' + entry.twitter_reply_to), url, :class => 'hlink')
     end
   end
 

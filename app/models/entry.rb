@@ -46,12 +46,14 @@ class Entry
       end
       e.profile_image_url = user[:profile_image_url]
       e.twitter_username = e.from.id
-      e.twitter_reply_to_status_id = hash[:in_reply_to_status_id]
-      if hash[:retweeted_status]
-        e.twitter_retweet_of = hash[:retweeted_status][:user][:screen_name]
-        e.twitter_retweet_of_status_id = hash[:retweeted_status][:id]
+      if hash[:in_reply_to_status_id]
+        e.twitter_reply_to_status_id = hash[:in_reply_to_status_id].to_s
+        e.twitter_reply_to = hash[:in_reply_to_screen_name]
       end
-      e.twitter_reply_to = hash[:in_reply_to_screen_name]
+      if hash[:retweeted_status]
+        e.twitter_retweet_of_status_id = hash[:retweeted_status][:id].to_s
+        e.twitter_retweet_of = hash[:retweeted_status][:user][:screen_name]
+      end
       e.url = twitter_url(e.from.name, hash[:id])
       e
     end

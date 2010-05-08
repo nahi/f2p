@@ -493,33 +493,41 @@ class Feed
         entry = buf.shift
         result << (t = EntryThread.new)
         group = [entry]
-        opt = {}
-        kinds = similar_entries(buf, entry, opt)
-        group += kinds
-        buf -= kinds
-        if kinds.empty?
-          pre = entry
-          entry_tag = entry.identity(opt)
-          buf.each do |e|
-            if entry_tag == e.identity(opt) and !kinds.include?(e) and
-                # do not merge if both have a comment.
-                (entry.comments.empty? or e.comments.empty?)
-              if e.via and e.via.twitter?
-                threashold = F2P::Config.twitter_grouping_threashold
-              else
-                threashold = F2P::Config.service_grouping_threashold
-              end
-              if (e.date_at - pre.date_at).abs < threashold
-                kinds << (pre = e)
-                # too agressive?
-                #similar_entries(buf, e).each do |e2|
-                #  kinds << e2 unless kinds.include?(e2)
-                #end
-              end
-            end
-          end
+        if tweets = find_twitter_thread(buf, entry)
+          group += tweets
+          buf -= tweets
+          t.twitter_thread = true
+        else
+          opt = {}
+          kinds = similar_entries(buf, entry, opt)
           group += kinds
           buf -= kinds
+          if kinds.empty?
+            pre = entry
+            entry_tag = entry.identity(opt)
+            buf.each do |e|
+              # skip reply tweet for threading
+              next if e.tweet? and e.twitter_reply_to_status_id
+              if entry_tag == e.identity(opt) and !kinds.include?(e) and
+                  # do not merge if both have a comment.
+                  (entry.comments.empty? or e.comments.empty?)
+                if e.via and e.via.twitter?
+                  threashold = F2P::Config.twitter_grouping_threashold
+                else
+                  threashold = F2P::Config.service_grouping_threashold
+                end
+                if (e.date_at - pre.date_at).abs < threashold
+                  kinds << (pre = e)
+                  # too agressive?
+                  #similar_entries(buf, e).each do |e2|
+                  #  kinds << e2 unless kinds.include?(e2)
+                  #end
+                end
+              end
+            end
+            group += kinds
+            buf -= kinds
+          end
         end
         sorted = sort_by_published(group)
         t.add(*sorted)
@@ -537,6 +545,46 @@ class Feed
       entries.sort_by { |e|
         -e.date_at.to_i
       }
+    end
+
+    def find_root_tweet(from, tweets)
+      while id = from.twitter_reply_to_status_id
+        if found = tweets.find { |e|
+            e.tweet? and id == Entry.if_twitter_id(e.id)
+          }
+          from = found
+        else
+          break
+        end
+      end
+      return from
+    end
+
+    def find_reply_tweets(root, tweets)
+      id = Entry.if_twitter_id(root.id)
+      tweets.find_all { |e|
+        e.tweet? and e.twitter_reply_to_status_id == id
+      }
+    end
+
+    def find_twitter_thread(collection, entry)
+      return nil unless entry.tweet?
+      # forward search: entry -> root
+      root = find_root_tweet(entry, collection)
+      return nil if root == entry
+      # backward search: root -> replies
+      result = rest = [root]
+      while true
+        added = rest.map { |e|
+          find_reply_tweets(e, collection)
+        }.flatten
+        if added.empty?
+          return result.uniq
+        else
+          result += added
+          rest = added
+        end
+      end
     end
 
     def similar_entries(collection, entry, opt)
