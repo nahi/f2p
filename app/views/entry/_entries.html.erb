@@ -39,7 +39,7 @@
       <%- remember_checked(thread.root) -%>
       <%- unless thread.related_entries.empty? -%>
         <% thread.related_entries.each do |entry| -%>
-          <div class="related<%= ' tweets' if thread.twitter_thread %>">
+          <div class="related<%= ' tweets' if thread.twitter_thread and !entry.tweet? %>">
             <%- if fold_item?(entry) -%>
               <%= fold_link(entry) %>
             <%- else -%>
