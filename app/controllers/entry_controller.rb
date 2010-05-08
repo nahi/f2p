@@ -561,6 +561,7 @@ class EntryController < ApplicationController
       opt[:token] = token
       if in_reply_to_status_id and opt[:body].index("@#{in_reply_to_screen_name}") == 0
         opt[:in_reply_to_status_id] = in_reply_to_status_id
+        @reshared_from = Entry.from_twitter_id(in_reply_to_status_id)
       end
     end
     msg = nil
