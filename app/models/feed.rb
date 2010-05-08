@@ -49,7 +49,7 @@ class Feed
         threads = filter_pinned_entries(threads, opt)
       end
       threads = EntryThread::EntryThreads[*threads]
-      flatten = threads.map { |t| t.entries }.flatten
+      flatten = threads.map { |t| t.entries }.flatten.find_all { |e| !e.tweet? }
       prev = nil
       flatten.reverse_each do |e|
         e.view_nextid = prev
