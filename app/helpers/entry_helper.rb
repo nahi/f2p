@@ -1187,7 +1187,11 @@ module EntryHelper
   end
 
   def undo_add_link(id)
-    link_to(h('Added.  UNDO?'), link_action('delete', :eid => id), :confirm => 'Undo?')
+    if /\At_/ =~ id
+      h('Tweet added.')
+    else
+      link_to(h('Added.  UNDO?'), link_action('delete', :eid => id), :confirm => 'Undo?')
+    end
   end
 
   def undo_add_comment_link(id, comment)

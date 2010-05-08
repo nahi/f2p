@@ -480,6 +480,7 @@ class EntryController < ApplicationController
     @ctx.viewname = 'post new entry' # setting for address search result
     if ctx = session[:ctx]
       @ctx.inbox = ctx.inbox
+      @ctx.tweets = ctx.tweets
     end
     @to_lines = intparam(:to_lines) || 0
     @to = []
@@ -588,12 +589,8 @@ class EntryController < ApplicationController
     if session[:ctx]
       session[:ctx].reset_for_new
     end
-    if param(:service_source) == 'twitter'
-      redirect_to :controller => 'entry', :action => 'tweets'
-    else
-      flash[:added_id] = entry.id
-      redirect_to_list
-    end
+    flash[:added_id] = entry.id
+    redirect_to_list
   end
 
   verify :only => :retweet,
