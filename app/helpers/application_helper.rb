@@ -142,9 +142,15 @@ module ApplicationHelper
     padding-top: 0.6ex;
     padding-bottom: 0.6ex;
   }
-  a.menu-link {
+  div.single a.menu-link {
     border: outset 1px;
     text-decoration: none;
+    color: #999;
+  }
+  div.listings a.menu-link {
+    border: outset 1px;
+    text-decoration: none;
+    color: #999;
   }
   .menu-links a.menu-link {
     color: #000;
