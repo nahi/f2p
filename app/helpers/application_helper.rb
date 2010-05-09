@@ -122,7 +122,7 @@ module ApplicationHelper
   .latest2 { color: #C00; }
   .latest3 { color: #900; }
   .older { color: #008; }
-  .archived { color: #336; }
+  .archived { color: #558; }
   .comment { color: #666; }
   .comment a.twname { color: #666; }
   .inbox { font-weight: bold; }
