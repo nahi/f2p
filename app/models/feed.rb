@@ -20,7 +20,8 @@ class Feed
       logger.info('[perf] start entries fetch')
       feed = fetch_entries(auth, opt)
       if opt[:tweets]
-        pins = pinned_map(auth).keys.size
+        pins = check_inbox(auth, feed, false)
+        logger.info('[perf] check_inbox done')
       else
         logger.info('[perf] start internal data handling')
         update_last_modified(feed)
@@ -276,17 +277,19 @@ class Feed
       end
     end
 
-    def check_inbox(auth, feed)
+    def check_inbox(auth, feed, update_unread = true)
       eids = feed.entries.map { |e| e.id }
-      checked_map = checked_map(auth, eids)
+      checked_map = checked_map(auth, eids) if update_unread
       pinned_map = pinned_map(auth)
       feed.entries.each do |entry|
         entry.view_pinned = pinned_map.key?(entry.id)
-        if checked = checked_map[entry.id]
-          entry.checked_at = checked
-          entry.view_unread = checked < entry.modified_at
-        else
-          entry.view_unread = true
+        if update_unread
+          if checked = checked_map[entry.id]
+            entry.checked_at = checked
+            entry.view_unread = checked < entry.modified_at
+          else
+            entry.view_unread = true
+          end
         end
       end
       pinned_map.keys.size
