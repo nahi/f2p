@@ -587,7 +587,11 @@ module EntryHelper
       m = $~
       ary << h(m.pre_match)
       if m.pre_match.empty? or /\s\z/ =~ m.pre_match
-        link = link_to(h(m[0]), search_opt(:action => :list, :query => m[0]))
+        if ctx.tweets?
+          link = link_to(h(m[0]), :action => :tweets, :query => m[0])
+        else
+          link = link_to(h(m[0]), search_opt(:action => :list, :query => m[0]))
+        end
         ary << content_tag('span', link, :class => 'hashtag')
       else
         ary << h(m[0])
@@ -1005,12 +1009,12 @@ module EntryHelper
         links << menu_label('show first')
       end
     end
-    if opt[:for_bottom]
-      if ctx.inbox or ctx.tweets?
+    if opt[:for_bottom] and !ctx.tweets?
+      if ctx.inbox
         links << archive_link
-        links << all_link unless ctx.tweets?
-      else
-        links << inbox_link unless ctx.tweets?
+        links << all_link
+      elsif
+        links << inbox_link
       end
     end
     if ctx.list? and !ctx.is_summary?

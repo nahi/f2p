@@ -368,6 +368,7 @@ class EntryController < ApplicationController
       else
         tweets = Tweet.home_timeline(token, opt)
         feedname = 'home'
+        last_checked = session[:twitter_last_checked] || Time.at(0)
       end
     end
     feed_opt = find_opt.merge(
@@ -377,7 +378,14 @@ class EntryController < ApplicationController
     )
     @feed = find_entry_thread(feed_opt)
     @threads = @feed.entries
-    return if redirect_to_entry(@threads)
+    if last_checked
+      @threads.each do |t|
+        t.entries.each do |e|
+          e.view_unread = last_checked < e.modified_at
+        end
+      end
+      session[:twitter_last_checked] = Time.now
+    end
     initialize_checked_modified
     render :action => 'list'
   end

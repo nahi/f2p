@@ -19,13 +19,17 @@ class Feed
       opt.delete(:auth)
       logger.info('[perf] start entries fetch')
       feed = fetch_entries(auth, opt)
-      logger.info('[perf] start internal data handling')
-      update_last_modified(feed)
-      logger.info('[perf] update_last_modified done')
-      pins = check_inbox(auth, feed)
-      logger.info('[perf] check_inbox done')
-      add_service_icon(feed.entries) unless opt[:tweets]
-      logger.info('[perf] add_service_icon done')
+      if opt[:tweets]
+        pins = pinned_map(auth).keys.size
+      else
+        logger.info('[perf] start internal data handling')
+        update_last_modified(feed)
+        logger.info('[perf] update_last_modified done')
+        pins = check_inbox(auth, feed)
+        logger.info('[perf] check_inbox done')
+        add_service_icon(feed.entries)
+        logger.info('[perf] add_service_icon done')
+      end
       feed.entries = filter_hidden(feed.entries)
       entries = feed.entries
       if opt[:eids]
@@ -605,7 +609,7 @@ class Feed
       end
     end
 
-    # TODO: uglish.
+    # ugly but needed for V2 API.
     def add_service_icon(entries)
       entries.each do |e|
         if e.via and e.via.name and !e.via.service_id
@@ -624,7 +628,11 @@ class Feed
       feed.id = opt[:feedname]
       feed.name = opt[:feedname]
       feed.type = 'special'
-      feed.entries = tweets.map { |hash| Entry[hash] }
+      feed.entries = tweets.map { |hash|
+        e = Entry[hash]
+        e.view_unread = true
+        e
+      }
       feed
     end
   end
