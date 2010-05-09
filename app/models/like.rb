@@ -11,9 +11,11 @@ class Like
 
   attr_accessor :entry
 
-  def initialize(hash)
-    initialize_with_hash(hash, 'date', 'placeholder', 'num')
-    @from = From[hash['from']]
+  def initialize(hash = nil)
+    if hash
+      initialize_with_hash(hash, 'date', 'placeholder', 'num')
+      @from = From[hash['from']]
+    end
     @entry = nil
   end
 

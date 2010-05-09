@@ -176,7 +176,7 @@ module EntryHelper
     content = common_content(entry)
     if entry.tweet?
       content = twitter_content(content)
-      if ctx.tweets? and !entry.view_unread and !entry.view_pinned
+      if ctx.tweets? and !entry.view_unread
         content = content_tag('span', content, :class => 'archived')
       end
     elsif entry.via and entry.via.twitter?
@@ -639,19 +639,21 @@ module EntryHelper
     if !entry.likes.empty?
       likes = entry.likes.find_all { |e| e.from and e.from.friend? }
       icon = inline_icon_tag(:liked)
-      size = entry.likes_size
-      if size != likes.size
-        icon += link_to(h(size.to_s), link_show(entry.id))
-      end
-      if !likes.empty?
-        members = likes.collect { |like|
-          if need_unread_mgmt? and like.emphasize?
-            emphasize_as_unread(user(like))
-          else
-            user(like)
-          end
-        }.join(' ')
-        icon += '(' + members + ')'
+      unless entry.tweet?
+        size = entry.likes_size
+        if size != likes.size
+          icon += link_to(h(size.to_s), link_show(entry.id))
+        end
+        if !likes.empty?
+          members = likes.collect { |like|
+            if need_unread_mgmt? and like.emphasize?
+              emphasize_as_unread(user(like))
+            else
+              user(like)
+            end
+          }.join(' ')
+          icon += '(' + members + ')'
+        end
       end
       icon += ' '
     else
@@ -1249,13 +1251,16 @@ module EntryHelper
 
   def like_link_remote(entry)
     eid = entry.id
+    label = entry.tweet? ? 'fav' : 'like'
+    link_opt = {:eid => eid, :single => 1}
+    link_opt[:service_user] = entry.service_user if entry.tweet?
     span_id = 'like_' + eid
     if entry.commands.include?('like')
-      content = inline_menu_label(:like, 'like')
-      link = link_action('like_remote', :eid => eid, :single => 1)
-    elsif entry.likes.any? { |e| e.from_id == auth.name }
-      content = inline_menu_label(:unlike, 'un-like')
-      link = link_action('like_remote', :eid => eid, :single => 1, :liked => 1)
+      content = inline_menu_label(:like, label)
+      link = link_action('like_remote', link_opt)
+    elsif entry.tweet? or entry.likes.any? { |e| e.from_id == auth.name }
+      content = inline_menu_label(:unlike, 'un-' + label)
+      link = link_action('like_remote', link_opt.merge(:liked => 1))
     else
       content = nil
     end
@@ -1269,10 +1274,13 @@ module EntryHelper
   end
 
   def like_link_plain(entry)
+    label = entry.tweet? ? 'fav' : 'like'
+    link_opt = {:eid => entry.id}
+    link_opt[:service_user] = entry.service_user if entry.tweet?
     if entry.commands.include?('like')
-      menu_link(inline_menu_label(:like, 'like'), link_action('like', :eid => entry.id))
-    elsif entry.likes.any? { |e| e.from_id == auth.name }
-      menu_link(inline_menu_label(:unlike, 'un-like'), link_action('unlike', :eid => entry.id))
+      menu_link(inline_menu_label(:like, label), link_action('like', link_opt))
+    elsif entry.tweet? or entry.likes.any? { |e| e.from_id == auth.name }
+      menu_link(inline_menu_label(:unlike, 'un-' + label), link_action('unlike', link_opt))
     else
       ''
     end

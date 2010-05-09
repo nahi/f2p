@@ -55,6 +55,17 @@ class Entry
         e.twitter_retweet_of = hash[:retweeted_status][:user][:screen_name]
       end
       e.url = twitter_url(e.from.name, hash[:id])
+      e.commands = []
+      e.likes = []
+      if hash[:favorited]
+        like = Like.new
+        like.date = e.date
+        like.from = From.new
+        like.from.name = 'You'
+        e.likes << like
+      else
+        e.commands << 'like'
+      end
       e
     end
 
@@ -129,13 +140,27 @@ class Entry
     def add_like(opt)
       auth = opt[:auth]
       id = opt[:eid]
-      ff_client.like(id, auth.new_cred)
+      if opt[:service_user]
+        hash = Tweet.favorite(opt[:token], Entry.if_twitter_id(id))
+        hash[:favorited] = true
+        Entry.from_tweet(hash)
+      else
+        hash = ff_client.like(id, auth.new_cred)
+        Entry[hash]
+      end
     end
 
     def delete_like(opt)
       auth = opt[:auth]
       id = opt[:eid]
-      ff_client.delete_like(id, auth.new_cred)
+      if opt[:service_user]
+        hash = Tweet.remove_favorite(opt[:token], Entry.if_twitter_id(id))
+        hash[:favorited] = false
+        Entry.from_tweet(hash)
+      else
+        hash = ff_client.delete_like(id, auth.new_cred)
+        Entry[hash]
+      end
     end
 
     def hide(opt)

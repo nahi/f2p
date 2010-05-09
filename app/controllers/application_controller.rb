@@ -154,7 +154,10 @@ private
     if @setting.timezone
       @timezone = @setting.timezone
     end
-    auth
+    if @auth
+      logger.info('Processing for user ' + @auth.name)
+    end
+    @auth
   end
 
   def set_user(user)

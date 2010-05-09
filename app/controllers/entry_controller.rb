@@ -334,10 +334,8 @@ class EntryController < ApplicationController
       session[:back_to] = {:controller => 'entry', :action => 'tweets'}
       redirect_to :controller => 'login', :action => 'initiate_twitter_oauth_login'
       return
-    elsif id
-      token = auth.tokens.find_by_service_and_service_user('twitter', id)
     else
-      token = auth.tokens.find_by_service('twitter')
+      token = twitter_token(id)
     end
     unless token
       redirect_to :action => 'inbox'
@@ -358,6 +356,9 @@ class EntryController < ApplicationController
       feedname = @ctx.feed
     when 'direct'
       tweets = Tweet.direct_messages(token, opt)
+      feedname = @ctx.feed
+    when 'favorites'
+      tweets = Tweet.favorites(token, opt)
       feedname = @ctx.feed
     else # home
       tweets = Tweet.home_timeline(token, opt)
@@ -552,7 +553,7 @@ class EntryController < ApplicationController
     end
     case param(:service_source)
     when 'twitter'
-      unless token = auth.tokens.find_by_service_and_service_user('twitter', param(:service_user))
+      unless token = twitter_token(param(:service_user))
         flash[:message] = 'Token not found'
         fetch_feedinfo
         render :action => 'tweets'
@@ -603,7 +604,7 @@ class EntryController < ApplicationController
       @ctx.inbox = ctx.inbox
     end
     if id = param(:id)
-      unless token = auth.tokens.find_by_service_and_service_user('twitter', param(:service_user))
+      unless token = twitter_token(param(:service_user))
         flash[:message] = 'Token not found'
         fetch_feedinfo
         render :action => 'tweets'
@@ -730,10 +731,22 @@ class EntryController < ApplicationController
 
   def like
     if id = param(:eid)
-      Entry.add_like(create_opt(:eid => id))
+      opt = create_opt(:eid => id)
+      if service_user = param(:service_user)
+        token = twitter_token(service_user)
+        opt[:token] = token
+        opt[:service_user] = service_user
+      end
+      begin
+        Entry.add_like(opt)
+      rescue
+        logger.warn($!)
+      end
     end
-    flash[:updated_id] = id
-    flash[:allow_cache] = true
+    unless param(:service_user)
+      flash[:updated_id] = id
+      flash[:allow_cache] = true
+    end
     redirect_to_entry_or_list
   end
 
@@ -745,28 +758,51 @@ class EntryController < ApplicationController
 
   def unlike
     if id = param(:eid)
-      Entry.delete_like(create_opt(:eid => id))
+      opt = create_opt(:eid => id)
+      if service_user = param(:service_user)
+        token = twitter_token(service_user)
+        opt[:token] = token
+        opt[:service_user] = service_user
+      end
+      begin
+        Entry.delete_like(opt)
+      rescue
+        logger.warn($!)
+      end
     end
-    flash[:updated_id] = id
-    flash[:allow_cache] = true
+    unless param(:service_user)
+      flash[:updated_id] = id
+      flash[:allow_cache] = true
+    end
     redirect_to_entry_or_list
   end
 
   def like_remote
     @ctx = EntryContext.new(auth)
     id = param(:eid)
-    liked = !!param(:liked)
-    if liked
-      Entry.delete_like(create_opt(:eid => id))
-    else
-      Entry.add_like(create_opt(:eid => id))
+    opt = create_opt(:eid => id)
+    if service_user = param(:service_user)
+      token = twitter_token(service_user)
+      opt[:token] = token
+      opt[:service_user] = service_user
     end
-    opt = create_opt(:eid => id, :maxcomments => 0)
-    t = find_entry_thread(opt).entries.first
-    if t.nil?
-      entry = nil
-    else
-      entry = t.root
+    begin
+      if !!param(:liked)
+        entry = Entry.delete_like(opt)
+      else
+        entry = Entry.add_like(opt)
+      end
+    rescue
+      logger.warn($!)
+    end
+    unless param(:service_user)
+      opt = create_opt(:eid => id, :maxcomments => 0)
+      t = find_entry_thread(opt).entries.first
+      if t.nil?
+        entry = nil
+      else
+        entry = t.root
+      end
     end
     render :partial => 'like_remote', :locals => { :entry => entry }
   end
@@ -866,12 +902,12 @@ private
       Entry.if_twitter_id(id) do |tid|
         tid, service_user = tid.split('_', 2)
         id = Entry.from_twitter_id(tid)
-        token = auth.tokens.find_by_service_and_service_user('twitter', service_user)
+        token = twitter_token(service_user)
         entry = Tweet.show(token, tid)
         source = 'twitter'
       end
       Entry.add_pin(create_opt(:eid => id, :entry => entry, :source => source))
-      commit_checked_modified(id)
+      commit_checked_modified(id) if source.nil?
     end
   end
 
@@ -1031,5 +1067,13 @@ private
     end
     flash[:show_reload_detection] = @ctx.eid
     render :action => 'list'
+  end
+
+  def twitter_token(service_user)
+    if service_user
+      auth.tokens.find_by_service_and_service_user('twitter', service_user)
+    else
+      auth.tokens.find_by_service('twitter')
+    end
   end
 end

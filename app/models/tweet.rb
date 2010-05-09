@@ -44,6 +44,16 @@ class Tweet
       res.map { |e| wrap(su, e) }
     end
 
+    def favorites(token, args = {})
+      res = with_perf('[perf] start favorites fetch') {
+        protect([]) {
+          client(token).favorites(token.service_user, args)
+        }
+      }
+      su = token.service_user
+      res.map { |e| wrap(su, e) }
+    end
+
     def show(token, id, args = {})
       res = with_perf('[perf] start tweet fetch') {
         protect(nil) {
@@ -65,6 +75,20 @@ class Tweet
     def retweet(token, id, args = {})
       res = with_perf('[perf] start retweet post') {
         client(token).retweet(id, args)
+      }
+      wrap(token.service_user, res)
+    end
+
+    def favorite(token, id, args = {})
+      res = with_perf('[perf] start favorite post') {
+        client(token).favorite(id, args)
+      }
+      wrap(token.service_user, res)
+    end
+
+    def remove_favorite(token, id, args = {})
+      res = with_perf('[perf] start removing favorite post') {
+        client(token).remove_favorite(id, args)
       }
       wrap(token.service_user, res)
     end
