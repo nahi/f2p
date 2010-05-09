@@ -152,7 +152,11 @@ module ApplicationHelper
     text-decoration: none;
     color: #999;
   }
-  .menu-links a.menu-link {
+  div.single .menu-links a.menu-link {
+    color: #000;
+    background-color: #aaf;
+  }
+  div.listings .menu-links a.menu-link {
     color: #000;
     background-color: #aaf;
   }
