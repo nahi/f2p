@@ -343,6 +343,7 @@ class EntryController < ApplicationController
     end
     @service_source = token.service
     @service_user = token.service_user
+    @saved_searches = twitter_saved_searches(token)
     opt = {:count => @ctx.num}
     opt[:max_id] = @max_id if @max_id
     opt[:since_id] = @since_id if @since_id
@@ -361,8 +362,13 @@ class EntryController < ApplicationController
       tweets = Tweet.favorites(token, opt)
       feedname = @ctx.feed
     else # home
-      tweets = Tweet.home_timeline(token, opt)
-      feedname = 'home'
+      if @ctx.query
+        tweets = Tweet.search(token, @ctx.query, opt)
+        feedname = @ctx.query
+      else
+        tweets = Tweet.home_timeline(token, opt)
+        feedname = 'home'
+      end
     end
     feed_opt = find_opt.merge(
       :tweets => tweets,
@@ -1075,5 +1081,18 @@ private
     else
       auth.tokens.find_by_service('twitter')
     end
+  end
+
+  def twitter_saved_searches(token)
+    ss = session[:twitter_saved_search] ||= {}
+    if updated_at = ss[:updated_at]
+      if ss[:entries] and (Time.now.to_i - updated_at < F2P::Config.twitter_api_cache)
+        return ss[:entries]
+      end
+    end
+    # Hash[] needed for session Marshalling to avoid singleton. JSON issue?
+    ss[:entries] = Tweet.saved_searches(token).map { |e| Hash[e] }
+    ss[:updated_at] = Time.now.to_i
+    ss[:entries]
   end
 end

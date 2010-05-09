@@ -1,4 +1,4 @@
-<%- if ctx.query and !ctx.link -%>
+<%- if !ctx.tweets? and ctx.query and !ctx.link -%>
   <%- form_tag({:action => 'list'}) do -%>
     <p><%= search_form %></p>
     <p><%= search_drilldown_links %></p>

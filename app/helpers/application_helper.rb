@@ -721,6 +721,9 @@ __EOS__
     links << link_to(h('Mentions'), base.merge(:feed => :mentions))
     links << link_to(h('Favorites'), base.merge(:feed => :favorites))
     links << link_to(h('DM'), base.merge(:feed => :direct))
+    @saved_searches.each do |ss|
+      links << link_to(h(ss[:name]), base.merge(:query => ss[:query]))
+    end
     if @service_user
       links << menu_link(menu_label('sign out'), :controller => 'login', :action => 'unlink_twitter', :id => @service_user)
     end

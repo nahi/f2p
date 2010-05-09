@@ -54,6 +54,16 @@ class Tweet
       res.map { |e| wrap(su, e) }
     end
 
+    def search(token, query, args = {})
+      res = with_perf('[perf] start favorites fetch') {
+        protect([]) {
+          client(token).search(query, args)
+        }
+      }
+      su = token.service_user
+      res.map { |e| wrap(su, e) }
+    end
+
     def show(token, id, args = {})
       res = with_perf('[perf] start tweet fetch') {
         protect(nil) {
@@ -91,6 +101,16 @@ class Tweet
         client(token).remove_favorite(id, args)
       }
       wrap(token.service_user, res)
+    end
+
+    def saved_searches(token, args = {})
+      res = with_perf('[perf] start fetching saved searches') {
+        protect([]) {
+          client(token).saved_searches(args)
+        }
+      }
+      su = token.service_user
+      res.map { |e| wrap(su, e) }
     end
 
   private

@@ -72,6 +72,7 @@ module F2P
       attr_accessor :max_select_num
       attr_accessor :reload_list_in_minutes
       attr_accessor :use_ajax
+      attr_accessor :twitter_api_cache
     end
   end
 end
@@ -204,4 +205,5 @@ Rails::Initializer.run do |config|
   F2P::Config.max_select_num = 150
   F2P::Config.reload_list_in_minutes = nil
   F2P::Config.use_ajax = false
+  F2P::Config.twitter_api_cache = 60*60 # 1.hour
 end
