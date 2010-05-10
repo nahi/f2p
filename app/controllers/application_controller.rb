@@ -73,6 +73,12 @@ class ApplicationController < ActionController::Base
     /Android/ =~ request.user_agent
   end
 
+  def remember_checked_modified(eid, modified)
+    if store = session[:checked]
+      store[eid] = modified
+    end
+  end
+
 private
 
   def timezone_from_request_ip
@@ -216,12 +222,6 @@ private
 
   def initialize_checked_modified
     session[:checked] = {}
-  end
-
-  def remember_checked_modified(eid, modified)
-    if store = session[:checked]
-      store[eid] = modified
-    end
   end
 
   def commit_checked_modified(eid)

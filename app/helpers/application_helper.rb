@@ -536,7 +536,7 @@ __EOS__
 
   def remember_checked(entry)
     if need_unread_mgmt?
-      @controller.remember_checked(entry.id, entry.modified)
+      @controller.remember_checked_modified(entry.id, entry.modified)
     end
   end
 
