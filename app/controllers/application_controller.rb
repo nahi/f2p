@@ -218,7 +218,7 @@ private
     session[:checked] = {}
   end
 
-  def remember_checked(eid, modified)
+  def remember_checked_modified(eid, modified)
     if store = session[:checked]
       store[eid] = modified
     end

@@ -921,7 +921,7 @@ private
         source = 'twitter'
         # Tweets are not under unread mgmt now.
         modified = Time.parse(entry[:created_at]).gmtime.xmlschema
-        remember_checked(id, modified)
+        remember_checked_modified(id, modified)
       end
       Entry.add_pin(create_opt(:eid => id, :entry => entry, :source => source))
       commit_checked_modified(id)

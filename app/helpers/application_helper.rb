@@ -534,8 +534,8 @@ __EOS__
     ctx.inbox or ctx.home
   end
 
-  def remember_checked(entry, force = false)
-    if force or need_unread_mgmt?
+  def remember_checked(entry)
+    if need_unread_mgmt?
       @controller.remember_checked(entry.id, entry.modified)
     end
   end
