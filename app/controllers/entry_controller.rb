@@ -379,12 +379,14 @@ class EntryController < ApplicationController
     @feed = find_entry_thread(feed_opt)
     @threads = @feed.entries
     if last_checked
+      max = last_checked
       @threads.each do |t|
         t.entries.each do |e|
           e.view_unread = last_checked < e.modified_at
+          max = [max, e.modified_at].max
         end
       end
-      session[:twitter_last_checked] = Time.now
+      session[:twitter_last_checked] = max
     end
     initialize_checked_modified
     render :action => 'list'
