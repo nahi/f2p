@@ -29,7 +29,7 @@
   <span class="comment"><%= via(entry) %><%= twitter_reply_to(entry)%><%= twitter_retweet_of(entry)%></span>
 <%- end -%>
 <%- unless root.nil? -%>
-<%= published(entry, true) -%><%= twitter_retweet_of(entry)%>
+<%= published(entry, true) -%>
 <%- end -%>
   <%= service_icon(entry) if root and entry.service_id != root.service_id -%>
 <%- if comment_inline?(entry) -%>
