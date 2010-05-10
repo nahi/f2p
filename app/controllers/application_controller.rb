@@ -218,6 +218,12 @@ private
     session[:checked] = {}
   end
 
+  def remember_checked(eid, modified)
+    if store = session[:checked]
+      store[eid] = modified
+    end
+  end
+
   def commit_checked_modified(eid)
     if store = session[:checked]
       if e = store.find { |k, v| k == eid }

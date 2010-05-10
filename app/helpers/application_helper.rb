@@ -534,11 +534,9 @@ __EOS__
     ctx.inbox or ctx.home
   end
 
-  # TODO: should move to controller
-  def remember_checked(entry)
-    if need_unread_mgmt?
-      store = @controller.request.session[:checked]
-      store[entry.id] = entry.modified
+  def remember_checked(entry, force = false)
+    if force or need_unread_mgmt?
+      @controller.remember_checked(entry.id, entry.modified)
     end
   end
 
@@ -725,8 +723,10 @@ __EOS__
     links << link_to(h('Mentions'), base.merge(:feed => :mentions))
     links << link_to(h('Favorites'), base.merge(:feed => :favorites))
     links << link_to(h('DM'), base.merge(:feed => :direct))
-    @saved_searches.each do |ss|
-      links << link_to(h(ss[:name]), base.merge(:query => ss[:query]))
+    if @saved_searches
+      @saved_searches.each do |ss|
+        links << link_to(h(ss[:name]), base.merge(:query => ss[:query]))
+      end
     end
     if @service_user
       links << menu_link(menu_label('sign out'), :controller => 'login', :action => 'unlink_twitter', :id => @service_user)
