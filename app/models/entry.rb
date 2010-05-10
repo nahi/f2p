@@ -143,7 +143,12 @@ class Entry
       if opt[:service_user]
         hash = Tweet.favorite(opt[:token], Entry.if_twitter_id(id))
         hash[:favorited] = true
-        Entry.from_tweet(hash)
+        entry = Entry.from_tweet(hash)
+        if pin = Pin.find_by_user_id_and_eid(auth.id, entry.id)
+          pin.entry = hash
+          pin.save!
+        end
+        entry
       else
         hash = ff_client.like(id, auth.new_cred)
         Entry[hash]
@@ -156,7 +161,12 @@ class Entry
       if opt[:service_user]
         hash = Tweet.remove_favorite(opt[:token], Entry.if_twitter_id(id))
         hash[:favorited] = false
-        Entry.from_tweet(hash)
+        entry = Entry.from_tweet(hash)
+        if pin = Pin.find_by_user_id_and_eid(auth.id, entry.id)
+          pin.entry = hash
+          pin.save!
+        end
+        entry
       else
         hash = ff_client.delete_like(id, auth.new_cred)
         Entry[hash]
