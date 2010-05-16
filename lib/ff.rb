@@ -219,6 +219,8 @@ module FriendFeed
         logger.error(e)
       rescue HTTPClient::TimeoutError => e
         logger.error(e)
+      rescue StandardError => e
+        logger.error(e)
       end
       logger.info("elapsed: #{((Time.now - start) * 1000).to_i}ms")
       result
