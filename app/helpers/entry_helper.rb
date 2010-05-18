@@ -173,14 +173,19 @@ module EntryHelper
   end
 
   def content(entry)
-    content = common_content(entry)
     if entry.tweet?
-      content = twitter_content(content)
+      content = twitter_content(entry.body)
+      if with_geo = geo_content(entry)
+        content += "<br />\n" + with_geo + "<br />\n"
+      end
       if ctx.tweets? and !entry.view_unread
         content = content_tag('span', content, :class => 'archived')
       end
     elsif entry.via and entry.via.twitter?
+      content = common_content(entry)
       content = ff_twitter_content(content)
+    else
+      content = common_content(entry)
     end
     scan_media_from_link(entry)
     unless entry.view_medias.empty?
@@ -213,13 +218,22 @@ module EntryHelper
         str
       }.join(', ')
     end
-    with_media = with_geo = nil
+    with_media = nil
     if !entry.thumbnails.empty?
       # entries from Hatena contains 'enclosure' but no title and link for now.
       with_media = content_with_media(entry)
     end
+    with_geo = geo_content(entry)
+    ext = [with_media, with_geo].join(' ')
+    unless ext.strip.empty?
+      content += "<br />\n" + ext + "<br />\n"
+    end
+    content
+  end
+
+  def geo_content(entry)
     if entry.geo and !entry.view_map
-      point = GoogleMaps::Point.new(body, entry.geo.lat, entry.geo.long)
+      point = GoogleMaps::Point.new(entry.body, entry.geo.lat, entry.geo.long)
       zoom = F2P::Config.google_maps_zoom
       width = F2P::Config.google_maps_width
       height = F2P::Config.google_maps_height
@@ -236,13 +250,8 @@ module EntryHelper
           height = BRIGHTKITE_MAP_HEIGHT
         end
       end
-      with_geo = google_maps_link(point, entry, zoom, width, height)
+      google_maps_link(point, entry, zoom, width, height)
     end
-    ext = [with_media, with_geo].join(' ')
-    unless ext.strip.empty?
-      content += "<br />\n" + ext + "<br />\n"
-    end
-    content
   end
 
   def link_entry?(entry)
