@@ -68,7 +68,6 @@ class SettingController < ApplicationController
       @setting.link_type = 'gwt'
     end
     @setting.google_maps_geocoding_lang = param(:google_maps_geocoding_lang)
-    @setting.google_maps_zoom ||= F2P::Config.google_maps_zoom
     if str = param(:reload_list_in_minutes)
       @setting.reload_list_in_minutes = str.to_i
     else

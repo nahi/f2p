@@ -1,7 +1,6 @@
 <p>
   Address: <%= text_field_tag('title', @title) %> <%= submit_tag 'search' %><br />
   geocoding language: '<%= h(setting.google_maps_geocoding_lang || 'ja') %>'<br />
-  zoom: <%= zoom_select_tag('zoom', setting.google_maps_zoom) %><br />
   <%- if gps_link = gps_link(:action => 'new') -%>
     get GPS data: <%= gps_link %>
   <%- else -%>
@@ -35,7 +34,7 @@
   <%- else -%>
     <dl>
       <dt>Preview: <%= h(@placemark.address) %></dt>
-      <dd><%= google_maps_link(@placemark, nil, setting.google_maps_zoom) %></dd>
+      <dd><%= google_maps_link(@placemark, nil) %></dd>
     </dl>
   <%- end -%>
 <%- end -%>

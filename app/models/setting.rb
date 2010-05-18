@@ -48,9 +48,6 @@ class Setting
     unless (20..1000) === @text_folding_size
       errors << 'text folding size must be in 20..1000'
     end
-    unless (0..19) === @google_maps_zoom
-      errors << 'zoom must be in 0..19'
-    end
     if @reload_list_in_minutes and !((1..60) === @reload_list_in_minutes)
       errors << 'reload list in minutes must be in 1..60'
     end

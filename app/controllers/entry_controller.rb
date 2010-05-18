@@ -424,8 +424,6 @@ class EntryController < ApplicationController
     @lat = param(:lat)
     @long = param(:long)
     @address = param(:address)
-    @setting.google_maps_zoom = intparam(:zoom) if intparam(:zoom)
-    @setting.google_maps_zoom ||= F2P::Config.google_maps_zoom
     if jpmobile? and request.mobile
       if pos = request.mobile.position
         @lat = pos.lat.to_s
@@ -516,7 +514,6 @@ class EntryController < ApplicationController
     @lat = param(:lat)
     @long = param(:long)
     @address = param(:address)
-    @setting.google_maps_zoom = intparam(:zoom) if intparam(:zoom)
     @placemark = nil
     in_reply_to_service_user = param(:in_reply_to_service_user)
     in_reply_to_screen_name = param(:in_reply_to_screen_name)
@@ -656,7 +653,6 @@ class EntryController < ApplicationController
     @lat = param(:lat)
     @long = param(:long)
     @address = param(:address)
-    @setting.google_maps_zoom = intparam(:zoom) if intparam(:zoom)
     @placemark = nil
     if param(:commit) == 'search'
       @ctx = EntryContext.new(auth)
