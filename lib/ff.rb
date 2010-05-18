@@ -699,7 +699,7 @@ module FriendFeed
     end
 
     def parse_response(res)
-      if res.status == 200
+      if res and res.status == 200
         if @json_parse_size_limit and res.content.size > @json_parse_size_limit
           logger.warn("too big JSON stream: #{res.content.size}")
           nil
