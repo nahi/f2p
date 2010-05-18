@@ -310,7 +310,7 @@ module FriendFeed
       res = client_sync(uri, name, remote_key) { |client|
         get_request(client, uri)
       }
-      res.status == 200
+      res and res.status == 200
     end
 
     # validate OAuth credential
@@ -325,7 +325,7 @@ module FriendFeed
       res = client_sync(uri, name, oauth) { |client|
         get_request(client, uri)
       }
-      res.status == 200
+      res and res.status == 200
     end
 
     # Reading data from FriendFeed
