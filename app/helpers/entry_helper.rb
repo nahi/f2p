@@ -174,18 +174,12 @@ module EntryHelper
 
   def content(entry)
     if entry.tweet?
-      content = twitter_content(entry.body)
-      if with_geo = geo_content(entry)
-        content += "<br />\n" + with_geo + "<br />\n"
-      end
+      content = twitter_content(entry)
       if ctx.tweets? and !entry.view_unread
         content = content_tag('span', content, :class => 'archived')
       end
-    elsif entry.via and entry.via.twitter?
-      content = common_content(entry)
-      content = ff_twitter_content(content)
     else
-      content = common_content(entry)
+      content = friendfeed_content(entry)
     end
     scan_media_from_link(entry)
     unless entry.view_medias.empty?
@@ -196,11 +190,14 @@ module EntryHelper
     content
   end
 
-  def common_content(entry)
+  def friendfeed_content(entry)
     body = entry.body
     return '' unless body
     fold, content, links = escape_text(body, ctx.fold ? setting.text_folding_size : nil)
     entry.view_links = links
+    if entry.via and entry.via.twitter?
+      content = ff_filter_twitter_username(content)
+    end
     if fold
       msg = '(more)'
       content += link_to(h(msg), link_show(entry.id))
@@ -218,11 +215,23 @@ module EntryHelper
         str
       }.join(', ')
     end
-    with_media = nil
-    if !entry.thumbnails.empty?
-      # entries from Hatena contains 'enclosure' but no title and link for now.
-      with_media = content_with_media(entry)
+    # entries from Hatena contains 'enclosure' but no title and link for now.
+    with_media = media_content(entry)
+    with_geo = geo_content(entry)
+    ext = [with_media, with_geo].join(' ')
+    unless ext.strip.empty?
+      content += "<br />\n" + ext + "<br />\n"
     end
+    content
+  end
+
+  def twitter_content(entry)
+    body = entry.body
+    return '' unless body
+    fold, content, links = escape_text(body)
+    entry.view_links = links
+    content = filter_twitter_username(content)
+    with_media = media_content(entry)
     with_geo = geo_content(entry)
     ext = [with_media, with_geo].join(' ')
     unless ext.strip.empty?
@@ -406,8 +415,9 @@ module EntryHelper
     end
   end
 
-  def content_with_media(entry)
+  def media_content(entry)
     medias = entry.thumbnails
+    return nil if medias.nil? or medias.empty?
     if ctx.single?
       display = medias
     else
@@ -518,14 +528,14 @@ module EntryHelper
     link_to(content, link_list(:eids => ids))
   end
 
-  def twitter_content(common)
+  def filter_twitter_username(common)
     common.gsub(/@([a-zA-Z0-9_]+)/) {
       link = link_action('tweets', :feed => 'user', :user => $1)
       '@' + link_to($1, link, :class => 'twname')
     }
   end
 
-  def ff_twitter_content(common)
+  def ff_filter_twitter_username(common)
     common.gsub(/@([a-zA-Z0-9_]+)/) {
       '@' + link_to($1, "http://twitter.com/#{$1}", :class => 'twname')
     }
@@ -765,7 +775,7 @@ module EntryHelper
       str += link_to(h(msg), link_show(comment.entry.id))
     end
     if comment.entry.via and comment.entry.via.twitter?
-      str = ff_twitter_content(str)
+      str = ff_filter_twitter_username(str)
     end
     str
   end

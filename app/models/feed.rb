@@ -41,7 +41,7 @@ class Feed
       end
       # build entry thread
       if opt[:merge_entry]
-        threads = sort_by_service(entries, opt)
+        threads = sort_by_service(entries.compact, opt)
       else
         threads = entries.map { |e|
           EntryThread.new(e)
@@ -575,6 +575,7 @@ class Feed
     end
 
     def find_twitter_thread(collection, entry)
+      return nil unless entry
       return nil unless entry.tweet?
       # forward search: entry -> root
       root = find_root_tweet(entry, collection)
