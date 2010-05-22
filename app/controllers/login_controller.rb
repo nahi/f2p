@@ -95,6 +95,49 @@ class LoginController < ApplicationController
     redirect_to :controller => 'entry', :action => 'inbox'
   end
 
+  def initiate_buzz_oauth_login
+    return if login_required
+    token = buzz_request_token()
+    redirect_to F2P::Config.buzz_api_oauth_authorize_url + "?oauth_token=#{token}&domain=#{F2P::Config.buzz_api_oauth_consumer_key}&scope=#{F2P::Config.buzz_api_oauth_scope}&btmpl=mobile"
+  end
+
+  def buzz_oauth_callback
+    if auth = ensure_login
+      oauth_token = params[:oauth_token]
+      oauth_verifier = params[:oauth_verifier]
+      session_token = session[:request_token]
+      if oauth_token == session_token
+        res = create_buzz_oauth_consumer.get_access_token(F2P::Config.buzz_api_oauth_access_token_url, oauth_token, session[:request_token_secret], oauth_verifier)
+        if res.status == 200
+          token = res.oauth_params["oauth_token"]
+          secret = res.oauth_params["oauth_token_secret"]
+          t = Token.new
+          t.token = token
+          t.secret = secret
+          profile = Buzz.profile(t)
+          user_id = profile["data"]["id"]
+          screen_name = profile["data"]["displayName"]
+          auth.set_token('buzz', user_id, token, secret, screen_name)
+          flash[:buzz_auth] = true
+        end
+      end
+    end
+    if back_to = session[:back_to]
+      session[:back_to] = nil
+      redirect_to back_to
+    else
+      redirect_to :action => 'index'
+    end
+  end
+
+  def unlink_buzz
+    id = params[:id]
+    if auth = ensure_login
+      auth.clear_token('buzz', id)
+    end
+    redirect_to :controller => 'entry', :action => 'inbox'
+  end
+
 private
 
   def request_token
@@ -141,6 +184,28 @@ private
       :proxy             => F2P::Config.http_proxy || ENV['http_proxy']
     }
     OAuth::Consumer.new(key, secret, opt)
+  end
+
+  def buzz_request_token
+    res = create_buzz_oauth_consumer.get_request_token(
+      F2P::Config.buzz_api_oauth_request_token_url,
+      url_for(:action => 'buzz_oauth_callback'),
+      :scope => F2P::Config.buzz_api_oauth_scope
+    )
+    token = res.oauth_params['oauth_token']
+    secret = res.oauth_params['oauth_token_secret']
+    session[:request_token] = token
+    session[:request_token_secret] = secret
+    token
+  end
+
+  def create_buzz_oauth_consumer
+    client = OAuthClient.new
+    client.oauth_config.consumer_key = F2P::Config.buzz_api_oauth_consumer_key
+    client.oauth_config.consumer_secret = F2P::Config.buzz_api_oauth_consumer_secret
+    client.oauth_config.signature_method = F2P::Config.buzz_api_oauth_signature_method
+    client.oauth_config.http_method = F2P::Config.buzz_api_oauth_http_method
+    client
   end
 
   def login_successful(user)

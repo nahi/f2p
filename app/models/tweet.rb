@@ -149,11 +149,16 @@ class Tweet
 
     def client(token)
       OAuthRubytter.new(
-        :token => token.token,
-        :secret => token.secret,
-        :consumer => {
-          :key => F2P::Config.twitter_api_oauth_consumer_key,
-          :secret => F2P::Config.twitter_api_oauth_consumer_secret
+        {
+          :token => token.token,
+          :secret => token.secret,
+          :consumer => {
+            :key => F2P::Config.twitter_api_oauth_consumer_key,
+            :secret => F2P::Config.twitter_api_oauth_consumer_secret
+          }
+        },
+        {
+          #:wiredump => '/tmp/rubytter.log'
         }
       )
     end

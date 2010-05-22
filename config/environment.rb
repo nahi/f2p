@@ -43,6 +43,17 @@ module F2P
       attr_accessor :twitter_api_oauth_signature_method
       attr_accessor :twitter_api_oauth_http_method
 
+      attr_accessor :buzz_api_oauth_consumer_key
+      attr_accessor :buzz_api_oauth_consumer_secret
+      attr_accessor :buzz_api_oauth_site
+      attr_accessor :buzz_api_oauth_request_token_url
+      attr_accessor :buzz_api_oauth_authorize_url
+      attr_accessor :buzz_api_oauth_access_token_url
+      attr_accessor :buzz_api_oauth_scheme
+      attr_accessor :buzz_api_oauth_signature_method
+      attr_accessor :buzz_api_oauth_http_method
+      attr_accessor :buzz_api_oauth_scope
+
       attr_accessor :json_parse_size_limit
 
       attr_accessor :google_maps_maptype
@@ -175,6 +186,17 @@ Rails::Initializer.run do |config|
   F2P::Config.twitter_api_oauth_scheme = :header
   F2P::Config.twitter_api_oauth_signature_method = 'HMAC-SHA1'
   F2P::Config.twitter_api_oauth_http_method = :get
+
+  F2P::Config.buzz_api_oauth_consumer_key = nil
+  F2P::Config.buzz_api_oauth_consumer_secret = nil
+  F2P::Config.buzz_api_oauth_site = 'https://www.googleapis.com'
+  F2P::Config.buzz_api_oauth_request_token_url = 'https://www.google.com/accounts/OAuthGetRequestToken'
+  F2P::Config.buzz_api_oauth_authorize_url = 'https://www.google.com/buzz/api/auth/OAuthAuthorizeToken'
+  F2P::Config.buzz_api_oauth_access_token_url = 'https://www.google.com/accounts/OAuthGetAccessToken'
+  F2P::Config.buzz_api_oauth_scheme = :header
+  F2P::Config.buzz_api_oauth_signature_method = 'HMAC-SHA1'
+  F2P::Config.buzz_api_oauth_http_method = :get
+  F2P::Config.buzz_api_oauth_scope = 'https://www.googleapis.com/auth/buzz'
 
   F2P::Config.json_parse_size_limit = 1.5 * 1024 * 1024
 

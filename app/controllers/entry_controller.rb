@@ -593,11 +593,13 @@ class EntryController < ApplicationController
         msg += ' Unsupported media type?'
       end
       flash[:message] = msg
-      unless param(:service_source)
+      if param(:service_source)
+        redirect_to_list
+      else
         fetch_feedinfo
         render :action => 'new'
-        return
       end
+      return
     end
     unpin_entry(@reshared_from, false)
     if session[:ctx]
