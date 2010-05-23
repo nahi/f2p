@@ -98,7 +98,7 @@ module EntryHelper
     if ajax?
       eid = entry.id
       if entry.tweet?
-        eid = eid + '_' + entry.service_user
+        eid = [eid, entry.service_source, entry.service_user].join('_')
       end
       pin_link_remote(eid, entry.view_pinned)
     else
@@ -120,8 +120,8 @@ module EntryHelper
 
   def pin_link_plain(entry)
     eid = entry.id
-    if entry.tweet?
-      eid = eid + '_' + entry.service_user
+    if entry.service_source
+      eid = [eid, entry.service_source, entry.service_user].join('_')
     end
     if entry.view_pinned
       link_to(inline_icon_tag(:pinned, 'delete'), link_action('unpin', :eid => eid))
@@ -1143,7 +1143,7 @@ module EntryHelper
     if entry.tweet?
       return if entry.service_user == entry.from_id
       str = inline_menu_label(:reply, 'reply')
-      tid = Entry.if_twitter_id(entry.id)
+      tid = Entry.if_service_id(entry.id)
       link = list_opt(
         :in_reply_to_service_user => entry.service_user,
         :in_reply_to_screen_name => entry.from.name,
@@ -1276,7 +1276,10 @@ module EntryHelper
     eid = entry.id
     label = entry.tweet? ? 'fav' : 'like'
     link_opt = {:eid => eid, :single => 1}
-    link_opt[:service_user] = entry.service_user if entry.tweet?
+    if entry.tweet?
+      link_opt[:service_source] = 'twitter'
+      link_opt[:service_user] = entry.service_user
+    end
     span_id = 'like_' + eid
     if entry.commands.include?('like')
       content = inline_menu_label(:like, label)
@@ -1299,7 +1302,10 @@ module EntryHelper
   def like_link_plain(entry)
     label = entry.tweet? ? 'fav' : 'like'
     link_opt = {:eid => entry.id}
-    link_opt[:service_user] = entry.service_user if entry.tweet?
+    if entry.tweet?
+      link_opt[:service_source] = 'twitter'
+      link_opt[:service_user] = entry.service_user
+    end
     if entry.commands.include?('like')
       menu_link(inline_menu_label(:like, label), link_action('like', link_opt))
     elsif entry.tweet? or entry.likes.any? { |e| e.from_id == auth.name }

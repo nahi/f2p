@@ -131,6 +131,14 @@ class User < ActiveRecord::Base
     end
   end
 
+  def token(service, service_user = nil)
+    if service_user
+      tokens.find_by_service_and_service_user(service, service_user)
+    else
+      tokens.find_by_service(service)
+    end
+  end
+
   def store_remote_key(remote_key)
     self.remote_key = remote_key
     self.oauth_access_token = nil
@@ -165,17 +173,4 @@ class User < ActiveRecord::Base
       t.delete
     end
   end
-
-=begin
-  def find_token(service, service_user)
-    cond = [
-      'user_id = ? and service = ? and service_user = ?',
-      self.id,
-      service,
-      service_user
-    ]
-    tokens = Token.find(:all, :conditions => cond, :limit => 1)
-    token[0]
-  end
-=end
 end

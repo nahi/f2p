@@ -330,12 +330,12 @@ class EntryController < ApplicationController
     id = params[:id]
     @max_id = params[:max_id]
     @since_id = params[:since_id]
-    if auth.tokens.empty? or auth.tokens.find_all_by_service('twitter').empty?
+    if auth.token('twitter').nil?
       session[:back_to] = {:controller => 'entry', :action => 'tweets'}
       redirect_to :controller => 'login', :action => 'initiate_twitter_oauth_login'
       return
     else
-      token = twitter_token(id)
+      token = auth.token('twitter', id)
     end
     unless token
       redirect_to :action => 'inbox'
@@ -566,7 +566,7 @@ class EntryController < ApplicationController
     end
     case param(:service_source)
     when 'twitter'
-      unless token = twitter_token(param(:service_user))
+      unless token = auth.token(param(:service_source), param(:service_user))
         flash[:message] = 'Token not found'
         fetch_feedinfo
         render :action => 'tweets'
@@ -576,7 +576,7 @@ class EntryController < ApplicationController
       opt[:token] = token
       if in_reply_to_status_id and opt[:body].index("@#{in_reply_to_screen_name}") == 0
         opt[:in_reply_to_status_id] = in_reply_to_status_id
-        @reshared_from = Entry.from_twitter_id(in_reply_to_status_id)
+        @reshared_from = Entry.from_service_id('twitter', in_reply_to_status_id)
       end
     end
     msg = nil
@@ -619,7 +619,7 @@ class EntryController < ApplicationController
       @ctx.inbox = ctx.inbox
     end
     if id = param(:id)
-      unless token = twitter_token(param(:service_user))
+      unless token = auth.token('twitter', param(:service_user))
         flash[:message] = 'Token not found'
         fetch_feedinfo
         render :action => 'tweets'
@@ -746,9 +746,11 @@ class EntryController < ApplicationController
   def like
     if id = param(:eid)
       opt = create_opt(:eid => id)
-      if service_user = param(:service_user)
-        token = twitter_token(service_user)
+      if service_source = param(:service_source)
+        service_user = param(:service_user)
+        token = auth.token(service_source, service_user)
         opt[:token] = token
+        opt[:service_source] = service_source
         opt[:service_user] = service_user
       end
       begin
@@ -757,7 +759,7 @@ class EntryController < ApplicationController
         logger.warn($!)
       end
     end
-    unless param(:service_user)
+    unless param(:service_source)
       flash[:updated_id] = id
       flash[:allow_cache] = true
     end
@@ -773,9 +775,11 @@ class EntryController < ApplicationController
   def unlike
     if id = param(:eid)
       opt = create_opt(:eid => id)
-      if service_user = param(:service_user)
-        token = twitter_token(service_user)
+      if service_source = param(:service_source)
+        service_user = param(:service_user)
+        token = auth.token(service_source, service_user)
         opt[:token] = token
+        opt[:service_source] = service_source
         opt[:service_user] = service_user
       end
       begin
@@ -795,9 +799,11 @@ class EntryController < ApplicationController
     @ctx = EntryContext.new(auth)
     id = param(:eid)
     opt = create_opt(:eid => id)
-    if service_user = param(:service_user)
-      token = twitter_token(service_user)
+    if service_source = param(:service_source)
+      service_user = param(:service_user)
+      token = auth.token(service_source, service_user)
       opt[:token] = token
+      opt[:service_source] = service_source
       opt[:service_user] = service_user
     end
     begin
@@ -913,10 +919,10 @@ private
     if id
       entry = nil
       source = nil
-      Entry.if_twitter_id(id) do |tid|
-        tid, service_user = tid.split('_', 2)
-        id = Entry.from_twitter_id(tid)
-        token = twitter_token(service_user)
+      Entry.if_service_id(id) do |tid|
+        tid, service_source, service_user = tid.split('_', 3)
+        id = Entry.from_service_id(service_source, tid)
+        token = auth.token('twitter', service_user)
         entry = Tweet.show(token, tid)
         source = 'twitter'
         # Tweets are not under unread mgmt now.
@@ -930,9 +936,9 @@ private
 
   def unpin_entry(id, commit = true)
     if id
-      Entry.if_twitter_id(id) do |tid|
-        tid, service_user = tid.split('_', 2)
-        id = Entry.from_twitter_id(tid)
+      Entry.if_service_id(id) do |tid|
+        tid, service_source, service_user = tid.split('_', 3)
+        id = Entry.from_service_id(service_source, tid)
       end
       Entry.delete_pin(create_opt(:eid => id))
       commit_checked_modified(id) if commit
@@ -1084,14 +1090,6 @@ private
     end
     flash[:show_reload_detection] = @ctx.eid
     render :action => 'list'
-  end
-
-  def twitter_token(service_user)
-    if service_user
-      auth.tokens.find_by_service_and_service_user('twitter', service_user)
-    else
-      auth.tokens.find_by_service('twitter')
-    end
   end
 
   def twitter_saved_searches(token)

@@ -557,7 +557,7 @@ class Feed
     def find_root_tweet(from, tweets)
       while id = from.twitter_reply_to_status_id
         if found = tweets.find { |e|
-            e.tweet? and id == Entry.if_twitter_id(e.id)
+            e.tweet? and id == Entry.if_service_id(e.id)
           }
           from = found
         else
@@ -568,7 +568,7 @@ class Feed
     end
 
     def find_reply_tweets(root, tweets)
-      id = Entry.if_twitter_id(root.id)
+      id = Entry.if_service_id(root.id)
       tweets.find_all { |e|
         e.tweet? and e.twitter_reply_to_status_id == id
       }

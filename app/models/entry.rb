@@ -27,7 +27,7 @@ class Entry
     def from_tweet(hash)
       e = new(hash)
       user = hash[:user] || hash[:sender]
-      e.id = from_twitter_id(hash[:id].to_s)
+      e.id = from_service_id('twitter', hash[:id].to_s)
       e.date = hash[:created_at]
       e.body = hash[:text]
       e.from = From.new
@@ -140,8 +140,9 @@ class Entry
     def add_like(opt)
       auth = opt[:auth]
       id = opt[:eid]
-      if opt[:service_user]
-        hash = Tweet.favorite(opt[:token], Entry.if_twitter_id(id))
+      case opt[:service_source]
+      when 'twitter'
+        hash = Tweet.favorite(opt[:token], Entry.if_service_id(id))
         hash[:favorited] = true
         entry = Entry.from_tweet(hash)
         if pin = Pin.find_by_user_id_and_eid(auth.id, entry.id)
@@ -158,8 +159,9 @@ class Entry
     def delete_like(opt)
       auth = opt[:auth]
       id = opt[:eid]
-      if opt[:service_user]
-        hash = Tweet.remove_favorite(opt[:token], Entry.if_twitter_id(id))
+      case opt[:service_source]
+      when 'twitter'
+        hash = Tweet.remove_favorite(opt[:token], Entry.if_service_id(id))
         hash[:favorited] = false
         entry = Entry.from_tweet(hash)
         if pin = Pin.find_by_user_id_and_eid(auth.id, entry.id)
@@ -212,8 +214,8 @@ class Entry
       end
     end
 
-    def if_twitter_id(id, &block)
-      if m = id.match(/\At_/)
+    def if_service_id(id, &block)
+      if m = id.match(/\A._/)
         post = m.post_match
         if block_given?
           yield post
@@ -223,8 +225,14 @@ class Entry
       end
     end
 
-    def from_twitter_id(id)
-      't_' + id
+    def from_service_id(service_source, id)
+      return id if service_source.nil?
+      case service_source
+      when 'twitter'
+        't_' + id
+      when 'buzz'
+        'b_' + id
+      end
     end
 
     def twitter_url(screen_name, status_id)
@@ -451,7 +459,7 @@ class Entry
   end
 
   def twitter_id
-    Entry.if_twitter_id(self.id) { |tid|
+    Entry.if_service_id(self.id) { |tid|
       tid
     }
   end
