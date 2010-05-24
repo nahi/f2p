@@ -4,7 +4,7 @@
 <%= oauth_message %>
 
 <p>
-You can sign in to f2p by registering your remote key to dev.ctor.org.
+You can sign in to 'm.ctor.org' by registering your FriendFeed remote key.
 <%- form_tag :action => 'authenticate' do -%>
   <%- if flash[:error] -%>
     <p class="message"><%= flash[:error] %></p>
@@ -18,15 +18,15 @@ You can sign in to f2p by registering your remote key to dev.ctor.org.
 <%- end -%>
 <hr />
 <p>
-'f2p' is a web-based <a href="http://friendfeed.com/">FriendFeed</a> application for mobile users by NaHi.
-It's based on <a href="http://friendfeed.com/api/">FriendFeed API</a> but
-it's not formally affiliated with <a href="http://friendfeed.com">FriendFeed</a>.
+'m.ctor.org' is a web-based <a href="http://friendfeed.com/">FriendFeed</a>, <a href="http://twitter.com/">Twitter</a> and <a href="http://buzz.google.com/">Google buzz</a> application for mobile users by NaHi.
+It's based on <a href="http://friendfeed.com/api/">FriendFeed API</a>, <a href="http://apiwiki.twitter.com/">Twitter API</a> and <a href="http://code.google.com/apis/buzz/docs/">Google buzz API</a> but
+it's not formally affiliated with the original services.
 See <%= link_to(h('help page'), :controller => 'help', :action => 'index') %> to see what you can do.
 </p>
 <ul>
   <li>NO WARRANTY; This service is provided on an "AS IS" basis without warranty of any kind.</li>
-  <li>Your feed ID (e.g. e/9ac57155b878-4438a0abc214d27b747d), pin state and its modification time are stored in DB, too.  Other feed content is NOT stored in DB.</li>
-  <li>Let me know about any trouble on this service at <%= link_url('http://friendfeed.com/f2p') %>.</li>
+  <li>Your feed/status/activity IDs are stored in DB. And the content of 'Star'ed feed/status/activity are stored in DB, too. Stored data won't be shared with third-parties.</li>
+  <li>Let me know about any trouble on this service at <%= link_url('http://friendfeed.com/f2p') %> or <%= link_url('http://www.google.com/profiles/nakahiro') %>.</li>
 </ul>
 <hr />
 <p>Special thanks:</p>
@@ -35,4 +35,4 @@ See <%= link_to(h('help page'), :controller => 'help', :action => 'index') %> to
   <li>This product includes GeoLite data created by MaxMind, available from <a href="http://www.maxmind.com/">http://www.maxmind.com/</a>.</li>
 </ul>
 <hr />
-<p>NAKAMURA, Hiroshi a.k.a. NaHi - <%= link_url('http://friendfeed.com/nahi') %></p>
+<p>Hiroshi Nakamura a.k.a. NaHi - <%= link_url('http://www.google.com/profiles/nakahiro') %></p>

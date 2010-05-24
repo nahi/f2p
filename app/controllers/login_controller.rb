@@ -36,18 +36,17 @@ class LoginController < ApplicationController
   end
 
   def initiate_twitter_oauth_login
-    return if login_required
     token = twitter_request_token()
     redirect_to F2P::Config.twitter_api_oauth_authorize_url + "?oauth_token=#{token}"
   end
 
   def initiate_buzz_oauth_login
-    return if login_required
     token = buzz_request_token()
     redirect_to F2P::Config.buzz_api_oauth_authorize_url + "?oauth_token=#{token}&domain=#{F2P::Config.buzz_api_oauth_consumer_key}&scope=#{F2P::Config.buzz_api_oauth_scope}&btmpl=mobile"
   end
 
   def oauth_callback
+    auth = ensure_login
     oauth_token = params[:oauth_token]
     session_token = session[:request_token]
     if oauth_token == session_token
@@ -55,29 +54,39 @@ class LoginController < ApplicationController
       if res.status == 200
         token = res.oauth_params["oauth_token"]
         secret = res.oauth_params["oauth_token_secret"]
-        if user = User.oauth_validate(token, secret)
+        if auth
+          auth.store_access_token(token, secret)
+          auth.save!
+        elsif user = User.oauth_validate(token, secret)
           login_successful(user)
           return
         end
       end
     end
-    redirect_to :action => 'index'
+    if back_to = session[:back_to]
+      session[:back_to] = nil
+      redirect_to back_to
+    else
+      redirect_to :controller => 'entry', :action => 'inbox'
+    end
   end
 
   def twitter_oauth_callback
-    if auth = ensure_login
-      oauth_token = params[:oauth_token]
-      oauth_verifier = params[:oauth_verifier]
-      session_token = session[:request_token]
-      if oauth_token == session_token
-        res = create_twitter_oauth_consumer.get_access_token(F2P::Config.twitter_api_oauth_access_token_url, oauth_token, session[:request_token_secret], oauth_verifier)
-        if res.status == 200
-          token = res.oauth_params["oauth_token"]
-          secret = res.oauth_params["oauth_token_secret"]
-          user_id = res.oauth_params["user_id"]
-          screen_name = res.oauth_params["screen_name"]
+    auth = ensure_login
+    oauth_token = params[:oauth_token]
+    oauth_verifier = params[:oauth_verifier]
+    session_token = session[:request_token]
+    if oauth_token == session_token
+      res = create_twitter_oauth_consumer.get_access_token(F2P::Config.twitter_api_oauth_access_token_url, oauth_token, session[:request_token_secret], oauth_verifier)
+      if res.status == 200
+        token = res.oauth_params["oauth_token"]
+        secret = res.oauth_params["oauth_token_secret"]
+        user_id = res.oauth_params["user_id"]
+        screen_name = res.oauth_params["screen_name"]
+        if auth
           auth.set_token('twitter', user_id, token, secret, screen_name)
-          flash[:buzz_auth] = true
+        elsif user = User.token_validate('twitter', user_id, token, secret, screen_name)
+          set_user(user)
         end
       end
     end
@@ -85,28 +94,30 @@ class LoginController < ApplicationController
       session[:back_to] = nil
       redirect_to back_to
     else
-      redirect_to :action => 'index'
+      redirect_to :controller => 'entry', :action => 'tweets'
     end
   end
 
   def buzz_oauth_callback
-    if auth = ensure_login
-      oauth_token = params[:oauth_token]
-      oauth_verifier = params[:oauth_verifier]
-      session_token = session[:request_token]
-      if oauth_token == session_token
-        res = create_buzz_oauth_consumer.get_access_token(F2P::Config.buzz_api_oauth_access_token_url, oauth_token, session[:request_token_secret], oauth_verifier)
-        if res.status == 200
-          token = res.oauth_params["oauth_token"]
-          secret = res.oauth_params["oauth_token_secret"]
-          t = Token.new
-          t.token = token
-          t.secret = secret
-          profile = Buzz.profile(t)
-          user_id = profile["data"]["id"]
-          screen_name = profile["data"]["displayName"]
+    auth = ensure_login
+    oauth_token = params[:oauth_token]
+    oauth_verifier = params[:oauth_verifier]
+    session_token = session[:request_token]
+    if oauth_token == session_token
+      res = create_buzz_oauth_consumer.get_access_token(F2P::Config.buzz_api_oauth_access_token_url, oauth_token, session[:request_token_secret], oauth_verifier)
+      if res.status == 200
+        token = res.oauth_params["oauth_token"]
+        secret = res.oauth_params["oauth_token_secret"]
+        t = Token.new
+        t.token = token
+        t.secret = secret
+        profile = Buzz.profile(t)
+        user_id = profile["data"]["id"]
+        screen_name = profile["data"]["displayName"]
+        if auth
           auth.set_token('buzz', user_id, token, secret, screen_name)
-          flash[:buzz_auth] = true
+        elsif user = User.token_validate('buzz', user_id, token, secret, screen_name)
+          set_user(user)
         end
       end
     end
@@ -114,8 +125,15 @@ class LoginController < ApplicationController
       session[:back_to] = nil
       redirect_to back_to
     else
-      redirect_to :action => 'index'
+      redirect_to :controller => 'entry', :action => 'buzz'
     end
+  end
+
+  def unlink_friendfeed
+    if auth = ensure_login
+      auth.clear_token('friendfeed')
+    end
+    redirect_to :controller => 'setting'
   end
 
   def unlink_twitter
@@ -123,7 +141,7 @@ class LoginController < ApplicationController
     if auth = ensure_login
       auth.clear_token('twitter', id)
     end
-    redirect_to :controller => 'entry', :action => 'inbox'
+    redirect_to :controller => 'setting'
   end
 
   def unlink_buzz
@@ -131,7 +149,7 @@ class LoginController < ApplicationController
     if auth = ensure_login
       auth.clear_token('buzz', id)
     end
-    redirect_to :controller => 'entry', :action => 'inbox'
+    redirect_to :controller => 'setting'
   end
 
 private

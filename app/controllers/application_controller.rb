@@ -156,7 +156,9 @@ private
     @user_id ||= session[:user_id]
     @setting = session[:setting] ||= new_setting
     @setting.timezone ||= timezone_from_request_ip || F2P::Config.timezone
-    @auth = User.find(@user_id) if @user_id
+    if @user_id
+      @auth = User.find(@user_id) rescue nil
+    end
     if @setting.timezone
       @timezone = @setting.timezone
     end

@@ -49,6 +49,24 @@ class User < ActiveRecord::Base
       end
     end
 
+    def token_validate(service, service_user, token, secret, params)
+      # TODO: assuming FriendFeed won't generate such user name.
+      name = ['@', service, service_user].join('_')
+      ActiveRecord::Base.transaction do
+        if user = User.find_by_name(name)
+          # use it
+        elsif t = Token.find_by_service_and_service_user(service, service_user)
+          user = t.user
+        else
+          user = User.new
+          user.name = name
+          user.remote_key = '' # it's non-null from historical reason.
+        end
+        user.set_token(service, service_user, token, secret, params)
+        user
+      end
+    end
+
     def ff_url(name)
       "http://friendfeed.com/#{name}"
     end
@@ -112,6 +130,10 @@ class User < ActiveRecord::Base
     end
   end
 
+  def authenticated_in_ff?
+    oauth? or !self.remote_key.empty?
+  end
+
   def oauth?
     !!self.oauth_access_token
   end
@@ -168,9 +190,15 @@ class User < ActiveRecord::Base
     t
   end
 
-  def clear_token(service, service_user)
-    if t = tokens.find_by_service_and_service_user(service, service_user)
+  def clear_token(service, service_user = nil)
+    if service == 'friendfeed'
+      self.oauth_access_token = nil
+      self.oauth_access_token_secret = nil
+      self.remote_key = '' # TODO: nil not allowed!
+      self.save!
+    elsif t = tokens.find_by_service_and_service_user(service, service_user)
       t.delete
+      self.save!
     end
   end
 end

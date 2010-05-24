@@ -56,6 +56,11 @@ class EntryController < ApplicationController
       ctx.home = false
       ctx.fold = param(:fold) != 'no'
     }
+    unless auth.authenticated_in_ff?
+      session[:back_to] = {:controller => 'entry', :action => 'inbox'}
+      redirect_to :controller => 'login', :action => 'initiate_oauth_login'
+      return
+    end
     retry_times = F2P::Config.max_skip_empty_inbox_pages
     with_feedinfo(@ctx) do
       @feed = find_entry_thread(find_opt)

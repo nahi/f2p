@@ -8,7 +8,7 @@ require 'geo_city'
 module ApplicationHelper
   include XSD::XSDDateTimeImpl
 
-  APPNAME = 'f2p'
+  APPNAME = 'm.ctor.org'
   DATE_THRESHOLD = (24 - 8).hours
   YEAR_THRESHOLD = 1.year - 2.days
   SELF_LABEL = 'You'
@@ -720,6 +720,7 @@ __EOS__
     links << link_to(h('Discussions'), :controller => :entry, :action => :list, :feed => feedid)
     feedid = 'filter/direct'
     links << link_to(h('DM'), :controller => :entry, :action => :list, :feed => feedid)
+    links << menu_link(menu_label('sign out'), :controller => 'login', :action => 'unlink_friendfeed')
     links.join(' ')
   end
 

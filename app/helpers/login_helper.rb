@@ -3,14 +3,18 @@ module LoginHelper
     if F2P::Config.friendfeed_api_oauth_consumer_key
     <<__EOM__
 <p>
-Click the banner for granting access to FriendFeed by f2p.
-You don't have to register your credential to f2p site.
-(You're redirected to FriendFeed Web site. It's easy to follow 1 or 2 steps.)<br />
-#{oauth_image_tag}<br />
-(NOTE: When it doesn't work for your cell phones please use remote key described below.)
+Click one of the link from followings to start using 'm.ctor.org'. You can add other services afterward.
 </p>
+<ul>
+<li>#{ link_to(h('FriendFeed'), :controller => :login, :action => :initiate_oauth_login) }</li>
+<li>#{ link_to(h('Twitter'), :controller => :login, :action => :initiate_twitter_oauth_login) }</li>
+<li>#{ link_to(h('Google buzz'), :controller => :login, :action => :initiate_buzz_oauth_login) }</li>
+</ul>
 <p>
-You can remove the grant anytime from #{link_to('http://friendfeed.com/settings/applications', 'http://friendfeed.com/settings/applications')}.
+Above links are for granting access to FriendFeed, Twitter or Google buzz by 'm.ctor.org'.
+You don't have to register your credential to 'm.ctor.org' site.
+(You're redirected to FriendFeed Web site. It's easy to follow 1 or 2 steps.)<br />
+(NOTE: When it doesn't work for your cell phones please use remote key described below.)
 </p>
 
 <p align="center">
