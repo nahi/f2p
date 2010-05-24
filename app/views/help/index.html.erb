@@ -1,6 +1,13 @@
 <hr />
 
 <div class="listings">
+<p>Service</p>
+<ul>
+  <li><%= friendfeed_icon_tag %> ... show FriendFeed entries.</li>
+  <li><%= twitter_icon_tag %> ... show Twitter timeline.</li>
+  <li><%= buzz_icon_tag %> ... show Google buzz activities.</li>
+</ul>
+
 <p>Menu</p>
 <ul>
   <li>[menu] ... show following menu at the bottom of the page</li>
@@ -52,12 +59,17 @@
 <hr />
 
 <p>
-'f2p' is a web-based FriendFeed application for mobile users by NaHi.
-It's based on <a href="http://friendfeed.com/api/">FriendFeed API</a> but
-it's not formally affiliated with <a href="http://friendfeed.com">FriendFeed</a>.
-Let me know about any trouble on this service at <%= link_url('http://friendfeed.com/f2p') %>.
+'m.ctor.org' is a web-based <a href="http://friendfeed.com/">FriendFeed</a>, <a href="http://twitter.com/">Twitter</a> and <a href="http://buzz.google.com/">Google buzz</a> application for mobile users by NaHi.
+It's based on <a href="http://friendfeed.com/api/">FriendFeed API</a>, <a href="http://apiwiki.twitter.com/">Twitter API</a> and <a href="http://code.google.com/apis/buzz/docs/">Google buzz API</a> but
+it's not formally affiliated with the original services.
+See <%= link_to(h('help page'), :controller => 'help', :action => 'index') %> to see what you can do.
 </p>
-
+<ul>
+  <li>NO WARRANTY; This service is provided on an "AS IS" basis without warranty of any kind.</li>
+  <li>You need to agree that this service can stop without giving any prior warning.</li>
+  <li>Your feed/status/activity IDs are stored in DB. And the content of 'Star'ed feed/status/activity are stored in DB, too. Stored data won't be shared with third-parties.</li>
+  <li>Let me know about any trouble on this service at <%= link_url('http://friendfeed.com/f2p') %> or <%= link_url('http://www.google.com/profiles/nakahiro') %>.</li>
+</ul>
 <hr />
 <p>Special thanks:</p>
 <ul>
@@ -66,4 +78,4 @@ Let me know about any trouble on this service at <%= link_url('http://friendfeed
 </ul>
 
 <hr />
-<p>NAKAMURA, Hiroshi a.k.a. NaHi - <%= link_url('http://friendfeed.com/nahi') %></p>
+<p>Hiroshi Nakamura a.k.a. NaHi - <%= link_url('http://www.google.com/profiles/nakahiro') %></p>
