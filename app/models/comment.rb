@@ -5,6 +5,16 @@ class Comment
   include HashUtils
   EMPTY = [].freeze
 
+  def self.from_buzz(hash)
+    c = Comment.new
+    c.id = hash['id']
+    c.date = hash['published']
+    c.body = hash['content']
+    c.from = Entry.buzz_from(hash['actor']) if hash['actor']
+    c.service_source = 'buzz'
+    c
+  end
+
   attr_accessor :id
   attr_accessor :date
   attr_accessor :body
@@ -18,6 +28,7 @@ class Comment
   attr_accessor :index
   attr_accessor :entry
   attr_accessor :view_links
+  attr_accessor :service_source
 
   def initialize(hash = nil)
     initialize_with_hash(hash, 'id', 'date', 'commands', 'clipped', 'placeholder', 'num') if hash
@@ -28,6 +39,7 @@ class Comment
     @index = nil
     @entry = nil
     @view_links = nil
+    @service_source = nil
     @date ||= ''
   end
 
@@ -40,18 +52,24 @@ class Comment
   end
 
   def last?
-    self.entry.comments.last == self
+    self.entry and self.entry.comments.last == self
   end
 
   def posted_with_entry?
-    self.entry.from_id == self.from_id and (entry.date_at - self.date_at).abs < 30.seconds
+    if self.entry
+      self.entry.from_id == self.from_id and (entry.date_at - self.date_at).abs < 30.seconds
+    end
   end
 
   def emphasize?
-    entry.view_unread and entry.checked_at < date_at
+    entry and entry.view_unread and entry.checked_at < date_at
   end
 
   def date_at
     @date_at ||= (date ? Time.parse(date) : Time.now)
+  end
+
+  def buzz?
+    @service_source == 'buzz' or (entry and entry.buzz?)
   end
 end

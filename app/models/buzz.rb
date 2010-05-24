@@ -40,9 +40,9 @@ class Buzz
     end
 
     def create_note(token, content, args = {})
-      data = {:data => {:object => {:content => content}}}
-      res = with_perf("[perf] start creating a comment") {
-        post(token, comments_path(feed), args, data)
+      data = {:data => {:object => {:type => :note, :content => content}}}
+      res = with_perf("[perf] start creating a note") {
+        post(token, activity_path('@me/@self'), args, data)
       }
       parse_element(token, res) if res
     end
@@ -77,10 +77,10 @@ class Buzz
       }
     end
 
-    def create_comment(token, feed, content)
-      data = {:data => {:object => {:type => :note, :content => content}}}
+    def create_comment(token, feed, content, args = {})
+      data = {:data => {:object => {:content => content}}}
       res = with_perf("[perf] start creating a comment") {
-        post(token, activity_path('@me/@self'), args, data)
+        post(token, comments_path(feed), args, data)
       }
       parse_element(token, res) if res
     end
@@ -203,7 +203,7 @@ class Buzz
       config.http_method = F2P::Config.buzz_api_oauth_http_method
       client.www_auth.oauth.set_config(site, config)
       client.www_auth.oauth.challenge(site)
-      client.debug_dev = STDERR if $DEBUG
+      client.debug_dev = STDERR
       client
     end
   end

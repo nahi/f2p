@@ -106,6 +106,9 @@ class Entry
       end
       e.profile_image_url = profile_image_url
       e.commands = hash['verbs']
+      if e.from.id == e.service_user
+        e.commands << 'delete'
+      end
       # TODO: AFAIK, we cannot know whether comment is disabled of not.
       e.commands << 'comment'
       already_liked = false
@@ -131,19 +134,9 @@ class Entry
           e.likes.unshift(l)
         end
       end
-      if comments = hash['object']['comments']
-        e.comments = comments.map { |comment|
-          c = Comment.new
-          c.id = comment['id']
-          c.date = comment['published']
-          c.body = comment['content']
-          c.from = buzz_from(comment['actor'])
-          c.entry = e
-          e.comments << c
-          c
-        }
-      else
-        e.comments = []
+      e.comments = buzz_comments(hash['object']['comments'])
+      e.comments.each do |c|
+        c.entry = e
       end
       if replies = hash['links']['replies']
         replies = replies.first
@@ -163,6 +156,13 @@ class Entry
         end
       end
       e
+    end
+
+    def buzz_comments(comments)
+      return [] unless comments
+      comments.map { |comment|
+        Comment.from_buzz(comment)
+      }
     end
 
     def buzz_from(hash)
@@ -187,7 +187,11 @@ class Entry
           params[:in_reply_to_status_id] = opt[:in_reply_to_status_id]
         end
         if entry = Tweet.update_status(opt[:token], body, params)
-          Entry[entry]
+          Entry.from_tweet(entry)
+        end
+      when 'buzz'
+        if entry = Buzz.create_note(opt[:token], body)
+          Entry.from_buzz(entry)
         end
       else # FriendFeed
         if entry = ff_client.post_entry(to, body, opt.merge(auth.new_cred))
@@ -205,13 +209,18 @@ class Entry
     end
 
     def delete(opt)
-      auth = opt[:auth]
       id = opt[:eid]
-      undelete = !!opt[:undelete]
-      if undelete
-        ff_client.undelete_entry(id, auth.new_cred)
-      else
-        ff_client.delete_entry(id, auth.new_cred)
+      case opt[:service_source]
+      when 'buzz'
+        Buzz.delete_activity(opt[:token], Entry.if_service_id(id))
+      else # FriendFeed
+        auth = opt[:auth]
+        undelete = !!opt[:undelete]
+        if undelete
+          ff_client.undelete_entry(id, auth.new_cred)
+        else
+          ff_client.delete_entry(id, auth.new_cred)
+        end
       end
     end
 
@@ -219,8 +228,16 @@ class Entry
       auth = opt[:auth]
       id = opt[:eid]
       body = opt[:body]
-      if comment = ff_client.post_comment(id, body, auth.new_cred)
-        Comment[comment]
+      case opt[:service_source]
+      when 'buzz'
+        token = opt[:token]
+        if comment = Buzz.create_comment(token, Entry.if_service_id(id), body)
+          Comment.from_buzz(comment)
+        end
+      else # FriendFeed
+        if comment = ff_client.post_comment(id, body, auth.new_cred)
+          Comment[comment]
+        end
       end
     end
 
@@ -390,6 +407,15 @@ class Entry
         end
         link = extract_buzz_link_href(obj['links'])
         thumbnails, files = parse_buzz_attachment(obj)
+      end
+      if link = hash['crosspostSource']
+        if /^http:/ =~ link
+          f = Attachment.new
+          f.type = 'article'
+          f.name = link
+          f.url = link
+          files << f
+        end
       end
       return body, link, thumbnails, files
     end

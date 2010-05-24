@@ -801,7 +801,7 @@ module EntryHelper
   end
 
   def comment(comment)
-    return comment.body if comment.entry.buzz?
+    return comment.body if comment.buzz?
     fold, str, links = escape_text(comment.body, ctx.fold ? setting.text_folding_size : nil)
     comment.view_links = links
     if fold
@@ -908,8 +908,12 @@ module EntryHelper
           default = "@#{default} "
         end
       end
-      text_field_tag('body', default, :placeholder => 'comment') +
-        submit_tag('post')
+      ary = []
+      ary << hidden_field_tag('service_source', @service_source) if @service_source
+      ary << hidden_field_tag('service_user', @service_user) if @service_user
+      ary << text_field_tag('body', default, :placeholder => 'comment')
+      ary << submit_tag('post')
+      ary.join
     else
       h('(comment disabled)')
     end
@@ -1220,7 +1224,12 @@ module EntryHelper
 
   def delete_link(entry)
     if entry.commands.include?('delete')
-      menu_link(inline_menu_label(:delete, 'delete'), link_action('delete', :eid => entry.id), :confirm => 'Delete?')
+      link_opt = {:eid => entry.id}
+      if entry.service_source
+        link_opt[:service_source] = entry.service_source
+        link_opt[:service_user] = entry.service_user
+      end
+      menu_link(inline_menu_label(:delete, 'delete'), link_action('delete', link_opt), :confirm => 'Delete?')
     end
   end
 

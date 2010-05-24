@@ -228,18 +228,19 @@ class EntryController < ApplicationController
     @ctx.eid = param(:eid)
     buzz = nil
     Entry.if_service_id(@ctx.eid) do |bid|
-      @ctx.eid = bid
       unless token = auth.token('buzz')
         session[:back_to] = {:controller => 'entry', :action => 'buzz'}
         redirect_to :controller => 'login', :action => 'initiate_buzz_oauth_login'
         return
       end
-      task1 = Task.run { Buzz.show(token, @ctx.eid) }
-      task2 = Task.run { Buzz.comments(token, @ctx.eid) }
-      task3 = Task.run { Buzz.liked(token, @ctx.eid) }
+      task1 = Task.run { Buzz.show(token, bid) }
+      task2 = Task.run { Buzz.comments(token, bid) }
+      task3 = Task.run { Buzz.liked(token, bid) }
       buzz = task1.result
       buzz['object']['comments'] = task2.result['items']
       buzz['object']['liked'] = task3.result['entry']
+      @service_source = token.service
+      @service_user = token.service_user
     end
     @ctx.comment = param(:comment)
     @ctx.moderate = param(:moderate)
@@ -408,19 +409,27 @@ class EntryController < ApplicationController
       render :action => 'new'
       return
     end
-    case param(:service_source)
-    when 'twitter'
-      unless token = auth.token(param(:service_source), param(:service_user))
-        flash[:message] = 'Token not found'
-        fetch_feedinfo
-        render :action => 'tweets'
-        return
-      end
-      opt[:service_source] = 'twitter'
+    if param(:service_source)
+      token = auth.token(param(:service_source), param(:service_user))
+      opt[:service_source] = param(:service_source)
       opt[:token] = token
-      if in_reply_to_status_id and opt[:body].index("@#{in_reply_to_screen_name}") == 0
-        opt[:in_reply_to_status_id] = in_reply_to_status_id
-        @reshared_from = Entry.from_service_id('twitter', in_reply_to_status_id)
+      case param(:service_source)
+      when 'twitter'
+        unless token
+          flash[:message] = 'Token not found'
+          render :action => 'tweets'
+          return
+        end
+        if in_reply_to_status_id and opt[:body].index("@#{in_reply_to_screen_name}") == 0
+          opt[:in_reply_to_status_id] = in_reply_to_status_id
+          @reshared_from = Entry.from_service_id('twitter', in_reply_to_status_id)
+        end
+      when 'buzz'
+        unless token
+          flash[:message] = 'Token not found'
+          render :action => 'buzz'
+          return
+        end
       end
     end
     msg = nil
@@ -531,9 +540,21 @@ class EntryController < ApplicationController
   def delete
     id = param(:eid)
     comment = param(:comment)
-    do_delete(id, comment, false)
-    flash[:deleted_id] = id
-    flash[:deleted_comment] = comment
+    if param(:service_source) == 'buzz'
+      opt = {:eid => id}
+      unless token = auth.token(param(:service_source), param(:service_user))
+        flash[:message] = 'Token not found'
+        render :action => 'buzz'
+        return
+      end
+      opt[:service_source] = param(:service_source)
+      opt[:token] = token
+      Entry.delete(opt)
+    else
+      do_delete(id, comment, false)
+      flash[:deleted_id] = id
+      flash[:deleted_comment] = comment
+    end
     # redirect to list view (not single thread view) when an entry deleted.
     if !comment and (ctx = @ctx || session[:ctx])
       ctx.eid = nil
@@ -565,13 +586,25 @@ class EntryController < ApplicationController
     id = param(:eid)
     comment = param(:comment)
     body = param(:body)
+    opt = {:body => body}
+    if param(:service_source) == 'buzz'
+      unless token = auth.token(param(:service_source), param(:service_user))
+        flash[:message] = 'Token not found'
+        render :action => 'buzz'
+        return
+      end
+      opt[:service_source] = param(:service_source)
+      opt[:token] = token
+    end
     if comment
-      if c = Entry.edit_comment(create_opt(:comment => comment, :body => body))
+      opt[:comment] = comment
+      if c = Entry.edit_comment(create_opt(opt))
         flash[:updated_id] = id
         flash[:updated_comment] = c.id
       end
     else
-      if c = Entry.add_comment(create_opt(:eid => id, :body => body))
+      opt[:eid] = id
+      if c = Entry.add_comment(create_opt(opt))
         unpin_entry(id)
         flash[:added_id] = id
         flash[:added_comment] = c.id
@@ -736,14 +769,23 @@ class EntryController < ApplicationController
   def comments_remote
     @ctx = EntryContext.new(auth)
     id = param(:eid)
-    opt = create_opt(:eid => id)
-    t = find_entry_thread(opt).entries.first
+    Entry.if_service_id(id) do |bid|
+      token = auth.token('buzz')
+      buzz = Buzz.comments(token, bid)
+      comments = Entry.buzz_comments(buzz['items'])
+      render :partial => 'comments_remote', :locals => { :eid => id, :comments => comments }
+      return
+    end
+    t = find_entry_thread(create_opt(:eid => id)).entries.first
     if t.nil?
-      entry = nil
+      eid = nil
+      comments = nil
     else
       entry = t.root
+      eid = entry.id
+      comments = entry.comments
     end
-    render :partial => 'comments_remote', :locals => { :entry => entry }
+    render :partial => 'comments_remote', :locals => { :eid => eid, :comments => comments }
   end
 
 private
