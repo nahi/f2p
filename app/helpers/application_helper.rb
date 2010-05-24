@@ -162,12 +162,11 @@ module ApplicationHelper
   }
   div.listings .body a.menu-link { border: none; }
   div.listings .thread1,.thread2 {
-    border-bottom: 1px solid #aaf;
+    border-top: 1px solid #aaf;
     padding-top: 0.5ex;
     padding-bottom: 0.8ex;
   }
   div.listings .page-links-bottom {
-    border-top: 0px;
     margin-bottom: 1em;
   }
   div.listings hr.separator { display: none; }
@@ -247,6 +246,7 @@ __EOS__
     links = []
     links << link_to(friendfeed_icon_tag, { :controller => :entry, :action => :inbox }, accesskey('0'))
     links << link_to(twitter_icon_tag, { :controller => :entry, :action => :tweets })
+    links << link_to(buzz_icon_tag, { :controller => :entry, :action => :buzz })
     pin_label = inline_icon_tag(:pinned, 'Star')
     pin_label += "(#{@threads.pins})" if @threads
     links << link_to(pin_label, { :controller => :entry, :action => :list, :label => 'pin' })
@@ -325,6 +325,10 @@ __EOS__
     service_icon_tag('http://friendfeed.com/static/images/icons/twitter.png', 'Twitter', 'Twitter')
   end
 
+  def buzz_icon_tag
+    service_icon_tag('http://buzzusers.com/images/buzzicon.png', 'Twitter', 'Buzz')
+  end
+
   def profile_link(id)
     menu_link(menu_label('profile'), :controller => :profile, :action => :show, :id => id)
   end
@@ -396,10 +400,14 @@ __EOS__
 
   def user(user, opt = nil)
     return unless user
-    if user.profile_url
+    case user.service_source
+    when 'twitter'
       return link_to(h(user.name), user.profile_url)
+    when 'buzz'
+      opt ||= { :controller => 'entry', :action => 'buzz', :feed => 'user', :user => u(user.id) }
+    else
+      opt ||= { :controller => 'entry', :action => 'list', :user => u(user.id) }
     end
-    opt ||= { :controller => 'entry', :action => 'list', :user => u(user.id) }
     name = user.name
     if user.id == auth.name
       name = self_label
@@ -730,6 +738,17 @@ __EOS__
     end
     if @service_user
       links << menu_link(menu_label('sign out'), :controller => 'login', :action => 'unlink_twitter', :id => @service_user)
+    end
+    links.join(' ')
+  end
+
+  def buzz_links
+    links = []
+    base = {:controller => :entry, :action => :buzz, :id => @service_user}
+    links << link_to(h('Home'), base.merge(:feed => :home))
+    links << link_to(h('You'), base.merge(:feed => :user))
+    if @service_user
+      links << menu_link(menu_label('sign out'), :controller => 'login', :action => 'unlink_buzz', :id => @service_user)
     end
     links.join(' ')
   end

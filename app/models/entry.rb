@@ -16,8 +16,11 @@ class Entry
   class << self
     def [](hash)
       if hash
-        if hash['service_source'] == 'twitter' and hash['service_user']
+        case hash['service_source']
+        when 'twitter'
           from_tweet(hash)
+        when 'buzz'
+          from_buzz(hash)
         else
           new(hash)
         end
@@ -36,6 +39,7 @@ class Entry
       e.from.type = 'user'
       e.from.private = user[:protected]
       e.from.profile_url = "http://twitter.com/#{e.from.name}"
+      e.from.service_source = e.service_source
       e.via = Via.new
       /<a href="([^"]+)" [^>]*>([^<]+)<\/a>/ =~ hash[:source]
       e.via.name = $2 || 'Twitter'
@@ -67,6 +71,109 @@ class Entry
         e.commands << 'like'
       end
       e
+    end
+
+    def from_buzz(hash)
+      e = new(hash)
+      user_id = hash['actor']['id']
+      e.id = from_service_id('buzz', [user_id, '@self', hash['id']].join('/'))
+      e.date = hash['updated']
+      body, link, thumbnails, files = parse_buzz_object(hash)
+      e.body = body
+      if /www.google.com\/buzz/ =~ link
+        e.url = link
+      else
+        e.link = link
+      end
+      e.thumbnails = thumbnails
+      e.files = files
+      e.from = buzz_from(hash['actor'])
+      e.via = Via.new
+      e.via.name = hash['source']['title']
+      if e.via.name == 'Twitter'
+        e.twitter_username = (hash['crosspostSource'] || '').match(%r{twitter.com/([^/]+)})[1]
+        if /@([a-zA-Z0-9_]+)/ =~ hash['title']
+          e.twitter_reply_to = ''
+        end
+      end
+      if hash['geocode']
+        lat, long = hash['geocode'].split
+        e.geo = Geo['lat' => lat, 'long' => long]
+      end
+      profile_image_url = hash['actor']['thumbnailUrl']
+      if profile_image_url.empty?
+        profile_image_url = 'http://mail.google.com/mail/images/blue_ghost.jpg'
+      end
+      e.profile_image_url = profile_image_url
+      e.commands = hash['verbs']
+      # TODO: AFAIK, we cannot know whether comment is disabled of not.
+      e.commands << 'comment'
+      already_liked = false
+      if liked = hash['object']['liked']
+        e.likes = liked.map { |like|
+          l = Like.new
+          l.date = e.date
+          l.from = buzz_from(like)
+          already_liked = true if l.from.id == e.service_user
+          l
+        }
+      else
+        e.likes = []
+      end
+      e.commands << 'like' unless already_liked
+      if liked = hash['links']['liked']
+        liked = liked.first
+        if liked['count'] != e.likes.size
+          l = Like.new
+          l.from = From.new
+          l.placeholder = true 
+          l.num = liked['count'] - e.likes.size
+          e.likes.unshift(l)
+        end
+      end
+      if comments = hash['object']['comments']
+        e.comments = comments.map { |comment|
+          c = Comment.new
+          c.id = comment['id']
+          c.date = comment['published']
+          c.body = comment['content']
+          c.from = buzz_from(comment['actor'])
+          c.entry = e
+          e.comments << c
+          c
+        }
+      else
+        e.comments = []
+      end
+      if replies = hash['links']['replies']
+        replies = replies.first
+        if replies['count'] != e.comments.size
+          c = Comment.new
+          c.placeholder = true
+          c.num = replies['count'] - e.comments.size
+          c.entry = e
+          e.comments.unshift(c)
+        end
+      end
+      if categories = hash['categories']
+        categories.each do |c|
+          if c['term'] == 'mute' and c['label'] == 'Muted'
+            e.hidden = true
+          end
+        end
+      end
+      e
+    end
+
+    def buzz_from(hash)
+      f = From.new
+      f.id = hash['id']
+      f.name = hash['name'] || hash['displayName']
+      f.type = 'user'
+      f.private = false # ???
+      f.profile_url = hash['profileUrl']
+      f.service_source = 'buzz'
+      f
     end
 
     def create(opt)
@@ -150,6 +257,17 @@ class Entry
           pin.save!
         end
         entry
+      when 'buzz'
+        Buzz.like(opt[:token], Entry.if_service_id(id))
+        hash = Buzz.show(opt[:token], Entry.if_service_id(id))
+        entry = Entry.from_buzz(hash)
+        # TODO: since Buzz.show does not returns likes detail...
+        entry.commands.delete('like')
+        if pin = Pin.find_by_user_id_and_eid(auth.id, entry.id)
+          pin.entry = hash
+          pin.save!
+        end
+        entry
       else
         hash = ff_client.like(id, auth.new_cred)
         Entry[hash]
@@ -169,6 +287,15 @@ class Entry
           pin.save!
         end
         entry
+      when 'buzz'
+        Buzz.unlike(opt[:token], Entry.if_service_id(id))
+        hash = Buzz.show(opt[:token], Entry.if_service_id(id))
+        entry = Entry.from_buzz(hash)
+        if pin = Pin.find_by_user_id_and_eid(auth.id, entry.id)
+          pin.entry = hash
+          pin.save!
+        end
+        entry
       else
         hash = ff_client.delete_like(id, auth.new_cred)
         Entry[hash]
@@ -178,7 +305,11 @@ class Entry
     def hide(opt)
       auth = opt[:auth]
       id = opt[:eid]
-      ff_client.hide_entry(id, auth.new_cred)
+      if opt[:service_source] == 'buzz'
+        Buzz.mute(opt[:token], Entry.if_service_id(id))
+      else
+        ff_client.hide_entry(id, auth.new_cred)
+      end
     end
 
     def create_short_url(opt)
@@ -248,6 +379,70 @@ class Entry
     def ff_client
       ApplicationController.ff_client
     end
+
+    def parse_buzz_object(hash)
+      body = hash['title']
+      link = thumbnails = files = nil
+      if obj = hash['object']
+        case obj['type']
+        when 'note'
+          body = obj['content']
+        end
+        link = extract_buzz_link_href(obj['links'])
+        thumbnails, files = parse_buzz_attachment(obj)
+      end
+      return body, link, thumbnails, files
+    end
+
+    def parse_buzz_attachment(obj)
+      thumbnails = []
+      files = []
+      if attachments = obj['attachments']
+        attachments.each do |e|
+          t = f = nil
+          case e['type']
+          when 'photo'
+            t = Thumbnail.new
+            if links = e['links']
+              t = Thumbnail.new
+              t.link = extract_buzz_link_href(e['links'])
+              preview = links['preview']
+              preview = preview.first if preview
+              t.url = preview['href'] if preview
+            end
+            t.title = e['title']
+          when 'article'
+            f = Attachment.new
+            f.type = 'article'
+            f.name = e['content']
+            f.url = extract_buzz_link_href(e['links'])
+          end
+          if t.nil? and link = extract_buzz_link(e['links'])
+            if /^image/ =~ link['type']
+              t = Thumbnail.new
+              t.url = link['href']
+              t.title = e['title']
+            end
+          end
+          thumbnails << t if t
+          files << f if f
+        end
+      end
+      return thumbnails, files
+    end
+
+    def extract_buzz_link_href(links)
+      if link = extract_buzz_link(links)
+        link['href']
+      end
+    end
+
+    def extract_buzz_link(links)
+      if links
+        alt = links['alternate']
+        alt.first if alt
+      end
+    end
   end
 
   attr_accessor :service_source
@@ -272,6 +467,7 @@ class Entry
   attr_accessor :commands
   attr_accessor :short_id
   attr_accessor :short_url
+  attr_accessor :hidden
 
   attr_accessor :profile_image_url
   attr_accessor :twitter_username
@@ -464,8 +660,16 @@ class Entry
     }
   end
 
+  def ff?
+    service_source.nil?
+  end
+
   def tweet?
     service_source == 'twitter'
+  end
+
+  def buzz?
+    service_source == 'buzz'
   end
 
   def twitter_in_reply_to_url

@@ -19,7 +19,7 @@ class Feed
       opt.delete(:auth)
       logger.info('[perf] start entries fetch')
       feed = fetch_entries(auth, opt)
-      if opt[:tweets]
+      if opt[:tweets] or opt[:buzz]
         pins = check_inbox(auth, feed, false)
         logger.info('[perf] check_inbox done')
       else
@@ -63,8 +63,7 @@ class Feed
       unless feed.entries.empty?
         threads.from_modified = feed.entries.last.modified
         threads.to_modified = feed.entries.first.modified
-        threads.since_id = feed.entries.first.twitter_id
-        threads.max_id = feed.entries.last.twitter_id
+        threads.max_id = feed.entries.last.id
       end
       threads.pins = pins
       feed.entries = threads
@@ -129,13 +128,13 @@ class Feed
     def fetch_entries(auth, opt)
       if opt[:eid]
         feed = fetch_single_entry_as_array(auth, opt)
-        if entry = feed.entries.first
+        if !opt[:buzz] and entry = feed.entries.first
           update_cache_entry(auth, entry)
         end
         feed
       else
         feed = fetch_list_entries(auth, opt)
-        if !opt[:tweets] and (updated_id = opt[:updated_id])
+        if !opt[:tweets] and !opt[:buzz] and (updated_id = opt[:updated_id])
           entry = wrap(Task.run { get_feed(auth, updated_id, opt) }.result).entries.first
           if entry
             update_cache_entry(auth, entry)
@@ -151,6 +150,9 @@ class Feed
     end
 
     def fetch_single_entry_as_array(auth, opt)
+      if opt[:buzz]
+        return from_service([opt[:buzz]], opt)
+      end
       if opt[:allow_cache]
         if cache = get_cached_entries(auth)
           if found = cache.entries.find { |e| e.id == opt[:eid] && e.id != opt[:updated_id] }
@@ -163,10 +165,13 @@ class Feed
     end
 
     def fetch_list_entries(auth, opt)
+      if opt[:tweets]
+        return from_service(opt[:tweets], opt)
+      elsif opt[:buzz]
+        return from_service(opt[:buzz], opt)
+      end
       cache_entries(auth, opt) {
-        if opt[:tweets]
-          Task.run { from_tweets(opt) }.result
-        elsif opt[:inbox]
+        if opt[:inbox]
           wrap(Task.run { get_feed(auth, 'home', opt) }.result)
         elsif opt[:eids]
           wrap(Task.run { get_entries(auth, opt) }.result)
@@ -213,6 +218,7 @@ class Feed
       opt.delete(:merge_service)
       opt.delete(:filter_except)
       opt.delete(:tweets)
+      opt.delete(:buzz)
       if allow_cache
         if cache = get_cached_entries(auth)
           if opt == cache.feed_opt
@@ -335,7 +341,7 @@ class Feed
         map = {}
       end
       hash['entries'] = pinned.map { |e|
-        if e.source == 'twitter'
+        if ['twitter', 'buzz'].include?(e.source)
           YAML.load(e.entry)
         elsif map.key?(e.eid)
           map[e.eid]
@@ -625,14 +631,13 @@ class Feed
       end
     end
 
-    def from_tweets(opt)
-      tweets = opt[:tweets]
+    def from_service(entries, opt)
       service_user = opt[:service_user]
       feed = Feed.new(nil)
       feed.id = opt[:feedname]
       feed.name = opt[:feedname]
       feed.type = 'special'
-      feed.entries = tweets.map { |hash|
+      feed.entries = entries.map { |hash|
         e = Entry[hash]
         e.view_unread = true
         e

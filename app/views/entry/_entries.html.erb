@@ -1,4 +1,4 @@
-<%- if !ctx.tweets? and ctx.query and !ctx.link -%>
+<%- if ctx.ff? and ctx.query and !ctx.link -%>
   <%- form_tag({:action => 'list'}) do -%>
     <p><%= search_form %></p>
     <p><%= search_drilldown_links %></p>
@@ -8,20 +8,21 @@
   <%- form_tag({:action => 'add'}) do -%>
     <p><%= post_entry_form %></p>
   <%- end -%>
-  <%- if ctx.profile_for -%>
-    <p><%= picture_link(ctx.profile_for) %> <%= feed_name_with_icon %> <%= h(subscribe_status) %> <%= profile_link(ctx.profile_for) %></p>
-  <%- end -%>
-  <%- if feed = ctx.list_for || ctx.user_for || ctx.room_for -%>
-    <p>Best of: <%= best_of_links(feed) %></p>
-  <%- elsif ctx.is_summary? -%>
-    <p>Best of: <%= best_of_links(ctx.feed) %></p>
-  <%- end -%>
-  <%- if ctx.link -%>
-    <p>entries related to: <%= link_to(h(ctx.link), u(ctx.link)) %></p>
+  <%- if ctx.ff? -%>
+    <%- if ctx.profile_for -%>
+      <p><%= picture_link(ctx.profile_for) %> <%= feed_name_with_icon %> <%= h(subscribe_status) %> <%= profile_link(ctx.profile_for) %></p>
+    <%- end -%>
+    <%- if feed = ctx.list_for || ctx.user_for || ctx.room_for -%>
+      <p>Best of: <%= best_of_links(feed) %></p>
+    <%- elsif ctx.is_summary? -%>
+      <p>Best of: <%= best_of_links(ctx.feed) %></p>
+    <%- end -%>
+    <%- if ctx.link -%>
+      <p>entries related to: <%= link_to(h(ctx.link), u(ctx.link)) %></p>
+    <%- end -%>
   <%- end -%>
 <%- end -%>
 <div class="listings">
-  <div class="menu-links"><%= page_links(:for_top => true, :threads => @threads) %></div>
   <%- if link = geo_markers_link(@threads) -%>
     <div class="entry">
       <p>

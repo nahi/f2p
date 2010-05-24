@@ -19,12 +19,12 @@ class Comment
   attr_accessor :entry
   attr_accessor :view_links
 
-  def initialize(hash)
-    initialize_with_hash(hash, 'id', 'date', 'commands', 'clipped', 'placeholder', 'num')
-    @body = hash['rawBody']
+  def initialize(hash = nil)
+    initialize_with_hash(hash, 'id', 'date', 'commands', 'clipped', 'placeholder', 'num') if hash
+    @body = hash && hash['rawBody']
     @commands ||= EMPTY
-    @from = From[hash['from']]
-    @via = Via[hash['via']]
+    @from = hash && From[hash['from']]
+    @via = hash && Via[hash['via']]
     @index = nil
     @entry = nil
     @view_links = nil

@@ -77,7 +77,7 @@ module EntryHelper
   end
 
   def author_picture(entry)
-    return if ctx.user_only?
+    return if ctx.ff? and ctx.user_only?
     if setting.list_view_profile_picture
       if entry.profile_image_url
         name = entry.from.name
@@ -97,7 +97,7 @@ module EntryHelper
   def pin_link(entry)
     if ajax?
       eid = entry.id
-      if entry.tweet?
+      if entry.service_source
         eid = [eid, entry.service_source, entry.service_user].join('_')
       end
       pin_link_remote(eid, entry.view_pinned)
@@ -178,6 +178,11 @@ module EntryHelper
       if ctx.tweets? and !entry.view_unread
         content = content_tag('span', content, :class => 'archived')
       end
+    elsif entry.buzz?
+      content = buzz_content(entry)
+      if ctx.buzz? and !entry.view_unread
+        content = content_tag('span', content, :class => 'archived')
+      end
     else
       content = friendfeed_content(entry)
     end
@@ -206,14 +211,8 @@ module EntryHelper
       link = entry.link
       content += ' - ' + link_to(h(summary_uri(link)), link)
     end
-    if !entry.files.empty?
-      content += entry.files.map { |file|
-        label = file.type
-        icon = image_tag(file.icon, :alt => h(label), :title => h(label), :size => '16x16')
-        str = "<br />\n" + link_to(icon + h(file.name), file.url)
-        str += h(" (#{file.size} bytes)") if file.size
-        str
-      }.join(', ')
+    if with_attachment = attachment_content(entry)
+      content += with_attachment
     end
     # entries from Hatena contains 'enclosure' but no title and link for now.
     with_media = media_content(entry)
@@ -231,6 +230,20 @@ module EntryHelper
     fold, content, links = escape_text(body)
     entry.view_links = links
     content = filter_twitter_username(content)
+    with_media = media_content(entry)
+    with_geo = geo_content(entry)
+    ext = [with_media, with_geo].join(' ')
+    unless ext.strip.empty?
+      content += "<br />\n" + ext + "<br />\n"
+    end
+    content
+  end
+
+  def buzz_content(entry)
+    content = entry.body # already safe; can we trust it?
+    if with_attachment = attachment_content(entry)
+      content += "<br />\n" + with_attachment
+    end
     with_media = media_content(entry)
     with_geo = geo_content(entry)
     ext = [with_media, with_geo].join(' ')
@@ -361,7 +374,7 @@ module EntryHelper
   end
 
   def service_icon(entry)
-    return if entry.tweet?
+    return unless entry.ff?
     if via = entry.via
       if via.service_icon_url
         link_to(service_icon_tag(via.service_icon_url, via.name, via.name),
@@ -377,7 +390,9 @@ module EntryHelper
   end
 
   def emphasize_as_unread?(entry_or_comment)
-    need_unread_mgmt? and entry_or_comment.emphasize?
+    (need_unread_mgmt? or
+     (ctx.feed == 'home' and (ctx.tweets? or ctx.buzz?))) and
+     entry_or_comment.emphasize?
   end
 
   def original_link(entry)
@@ -412,6 +427,24 @@ module EntryHelper
       uri.host
     else
       str
+    end
+  end
+
+  def attachment_content(entry)
+    if !entry.files.empty?
+      entry.files.map { |file|
+        case file.type
+        when 'article'
+          str = "<br />" + link_to(inline_icon_tag(:url), file.url) +
+            content_tag('span', file.name, :class => 'archived')
+        else
+          label = file.type
+          icon = image_tag(file.icon, :alt => h(label), :title => h(label), :size => '16x16')
+          str = "<br />\n" + link_to(icon + h(file.name), file.url)
+          str += h(" (#{file.size} bytes)") if file.size
+        end
+        str
+      }.join(', ')
     end
   end
 
@@ -719,7 +752,7 @@ module EntryHelper
     if emphasize_as_unread?(entry)
       str = emphasize_as_unread(str)
     end
-    if entry.tweet?
+    if entry.url and (entry.tweet? or entry.buzz?)
       link_to(str, entry.url, :class => 'hlink')
     else
       str
@@ -768,6 +801,7 @@ module EntryHelper
   end
 
   def comment(comment)
+    return comment.body if comment.entry.buzz?
     fold, str, links = escape_text(comment.body, ctx.fold ? setting.text_folding_size : nil)
     comment.view_links = links
     if fold
@@ -833,7 +867,7 @@ module EntryHelper
     ary = []
     ary << hidden_field_tag('to_lines', '1')
     if ctx.user_for and ctx.user_for != auth.name
-      if @feedinfo.commands.include?('dm')
+      if @feedinfo and @feedinfo.commands.include?('dm')
         ary << hidden_field_tag('to_0', ctx.user_for) + h(feed_name) + ': '
       else
         return
@@ -849,20 +883,26 @@ module EntryHelper
     if ctx.room_for and @feedinfo.commands.include?('post')
       ary << hidden_field_tag('to_0', ctx.room_for) + h(feed_name) + ': '
     end
-    if @service_source == 'twitter'
+    case @service_source
+    when 'twitter'
       ary << twitter_icon_tag
+    when 'buzz'
+      ary << buzz_icon_tag
     else
       ary << friendfeed_icon_tag
     end
     ary << text_field_tag('body', body, :placeholder => 'post')
     ary << submit_tag('post')
-    ary << write_new_link unless ctx.tweets?
+    # TODO: we can support rich buzz posting in the future.
+    if !ctx.tweets? and !ctx.buzz?
+      ary << write_new_link
+    end
     ary.join
   end
 
   def post_comment_form(entry)
     if entry.commands.include?('comment')
-      if entry.via and setting.twitter_comment_hack and entry.via.twitter?
+      if entry.ff? and entry.via and setting.twitter_comment_hack and entry.via.twitter?
         default = entry.twitter_username
         unless default.empty?
           default = "@#{default} "
@@ -1008,43 +1048,20 @@ module EntryHelper
   end
 
   def page_links(opt = {})
-    no_page = ctx.start.nil?
     start = ctx.start || 0
     num = ctx.num || 0
     links = []
     if ctx.list? and !ctx.is_summary?
+      key = accesskey('6')
       if ctx.tweets?
-        links << menu_link(menu_label('<', '4', true), {:action => 'tweets', :feed => ctx.feed, :user => ctx.user, :query => ctx.query, :num => num, :since_id => @threads.since_id}, accesskey('4')) { @since_id or @max_id }
-      else
-        links << menu_link(menu_label('<', '4', true), list_opt(ctx.link_opt(:start => start - num, :num => num, :direction => 'rewind')), accesskey('4')) {
-          !no_page and start - num >= 0
-        }
-      end
-    end
-    if ctx.list? and !ctx.tweets? and threads = opt[:threads] and opt[:for_top]
-      if entry = find_show_entry(threads)
-        links << menu_link(menu_label('show first', '1'), link_show(entry.id), accesskey('1'))
-      else
-        links << menu_label('show first')
-      end
-    end
-    if opt[:for_bottom] and !ctx.tweets?
-      if ctx.inbox
-        links << archive_link
-        links << all_link
-      elsif
-        links << inbox_link
-      end
-    end
-    if ctx.list? and !ctx.is_summary?
-      key = accesskey('6') if opt[:for_bottom]
-      if ctx.tweets?
-        links << menu_link(menu_label('>', '6'), {:action => 'tweets', :feed => ctx.feed, :user => ctx.user, :query => ctx.query, :num => num, :max_id => @threads.max_id}, key) { !no_page }
-      else
-        links << menu_link(menu_label('>', '6'), list_opt(ctx.link_opt(:start => start + num, :num => num)), key) { !no_page }
-      end
-      if opt[:for_top]
-        links << list_range_notation()
+        links << menu_link(menu_label('show more...', '6'), {:action => 'tweets', :feed => ctx.feed, :user => ctx.user, :query => ctx.query, :num => num, :max_id => @threads.max_id}, key)
+      elsif ctx.buzz?
+        links << menu_link(menu_label('show more...', '6'), {:action => 'buzz', :feed => ctx.feed, :user => ctx.user, :num => num, :max_id => @buzz_c_tag}, key)
+      elsif ctx.ff?
+        links << menu_link(menu_label('show more...', '6'), list_opt(ctx.link_opt(:start => start + num, :num => num)), key)
+        if ctx.inbox
+          links << archive_link
+        end
       end
     end
     links.join(' ')
@@ -1107,7 +1124,7 @@ module EntryHelper
   end
 
   def archive_link
-    menu_link(menu_label('archive all', '5'), link_action('archive'), accesskey('5'))
+    menu_link(menu_label('mark as read', '5'), link_action('archive'), accesskey('5'))
   end
 
   def best_of_links(listid)
@@ -1276,15 +1293,15 @@ module EntryHelper
     eid = entry.id
     label = entry.tweet? ? 'fav' : 'like'
     link_opt = {:eid => eid, :single => 1}
-    if entry.tweet?
-      link_opt[:service_source] = 'twitter'
+    unless entry.ff?
+      link_opt[:service_source] = entry.service_source
       link_opt[:service_user] = entry.service_user
     end
     span_id = 'like_' + eid
     if entry.commands.include?('like')
       content = inline_menu_label(:like, label)
       link = link_action('like_remote', link_opt)
-    elsif entry.tweet? or entry.likes.any? { |e| e.from_id == auth.name }
+    elsif !entry.ff? or entry.likes.any? { |e| e.from_id == auth.name }
       content = inline_menu_label(:unlike, 'un-' + label)
       link = link_action('like_remote', link_opt.merge(:liked => 1))
     else
@@ -1300,15 +1317,16 @@ module EntryHelper
   end
 
   def like_link_plain(entry)
+    eid = entry.id
     label = entry.tweet? ? 'fav' : 'like'
-    link_opt = {:eid => entry.id}
-    if entry.tweet?
-      link_opt[:service_source] = 'twitter'
+    link_opt = {:eid => eid}
+    unless entry.ff?
+      link_opt[:service_source] = entry.service_source
       link_opt[:service_user] = entry.service_user
     end
     if entry.commands.include?('like')
       menu_link(inline_menu_label(:like, label), link_action('like', link_opt))
-    elsif entry.tweet? or entry.likes.any? { |e| e.from_id == auth.name }
+    elsif !entry.ff? or entry.likes.any? { |e| e.from_id == auth.name }
       menu_link(inline_menu_label(:unlike, 'un-' + label), link_action('unlike', link_opt))
     else
       ''
@@ -1316,13 +1334,19 @@ module EntryHelper
   end
 
   def hide_link(entry)
-    #if entry.commands.include?('hide')
-      menu_link(inline_menu_label(:hide, 'hide'), link_action('hide', :eid => entry.id), :confirm => 'Hide?')
-    #end
+    if entry.ff?
+      link_opt = {:eid => entry.id}
+      menu_link(inline_menu_label(:hide, 'hide'), link_action('hide', link_opt), :confirm => 'Hide?')
+    elsif entry.buzz?
+      link_opt = {:eid => entry.id}
+      link_opt[:service_source] = entry.service_source
+      link_opt[:service_user] = entry.service_user
+      menu_link(inline_menu_label(:hide, 'mute'), link_action('hide', link_opt), :confirm => 'Mute?')
+    end
   end
 
   def reshare_link(entry)
-    if ctx.single? or (entry.view_pinned and !entry.tweet?)
+    if entry.ff? and (ctx.single? or entry.view_pinned)
       menu_link(inline_menu_label(:reshare, 'reshare'), link_action('reshare', :reshared_from => entry.id))
     end
   end

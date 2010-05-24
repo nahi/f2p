@@ -11,6 +11,7 @@ class From
   attr_accessor :private
   attr_accessor :commands
 
+  attr_accessor :service_source
   attr_accessor :profile_url
 
   def initialize(hash = nil)

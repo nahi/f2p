@@ -9,8 +9,10 @@ class Thumbnail
   attr_accessor :height
   attr_accessor :link
   attr_accessor :player
+  attr_accessor :title
 
-  def initialize(hash)
-    initialize_with_hash(hash, 'url', 'width', 'height', 'link', 'player')
+  def initialize(hash = nil)
+    initialize_with_hash(hash, 'url', 'width', 'height', 'link', 'player') if hash
+    @title = nil
   end
 end

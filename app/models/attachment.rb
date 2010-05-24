@@ -10,7 +10,7 @@ class Attachment
   attr_accessor :size
   attr_accessor :icon
 
-  def initialize(hash)
-    initialize_with_hash(hash, 'url', 'type', 'name', 'size', 'icon')
+  def initialize(hash = nil)
+    initialize_with_hash(hash, 'url', 'type', 'name', 'size', 'icon') if hash
   end
 end

@@ -79,7 +79,7 @@
       <%= link_to(h('Add Star and Go Next'), link_show(next_entry.id, :pin => entry.id)) %><br />
     <%- end -%>
   </p>
-<%- elsif entry -%>
+<%- elsif entry and entry.ff? -%>
   <%- if opt = link_opt_for_next_page -%>
     <p>
       Next: <%= link_to(h('go top of the next page'), opt) %>

@@ -1,4 +1,4 @@
-<%- unless @service_source == 'twitter' -%>
+<%- if @service_source.nil? -%>
 <p>Filters: <%= special_feed_links %></p>
 <%- end -%>
 <%- if str = list_links -%>
@@ -9,4 +9,7 @@
 <%- end -%>
 <%- if @service_source == 'twitter' -%>
 <p>Tweets: <%= twitter_links %></p>
+<%- end -%>
+<%- if @service_source == 'buzz' -%>
+<p>Buzz: <%= buzz_links %></p>
 <%- end -%>
