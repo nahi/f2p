@@ -1,0 +1,10 @@
+*.pid
+*.sqlite3
+*.diff
+*.dat
+schema.rb
+coverage
+log
+tmp
+testing
+trouble
