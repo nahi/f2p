@@ -360,7 +360,7 @@ module EntryHelper
     if link = twitter_reply_to(entry)
       ary << link
     end
-    if link = twitter_retweet_of(entry)
+    if link = twitter_retweeted_by(entry)
       ary << link
     end
     ary << lock_icon(entry.from)
@@ -373,9 +373,9 @@ module EntryHelper
     end
   end
 
-  def twitter_retweet_of(entry)
-    if url = entry.twitter_retweet_of_url
-      link_to(h(' retweet of ' + entry.twitter_retweet_of), url, :class => 'hlink')
+  def twitter_retweeted_by(entry)
+    if url = entry.twitter_retweeted_by_url
+      link_to(h(' retweeted by ' + entry.twitter_retweeted_by), url, :class => 'hlink')
     end
   end
 

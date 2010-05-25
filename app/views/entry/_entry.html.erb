@@ -26,7 +26,7 @@
 <%- if twitter_thread -%>
   by <%= author_link(entry, false) %>
 <%- elsif root and (entry.via.nil? or !entry.via.twitter?) -%>
-  <span class="comment"><%= via(entry) %><%= twitter_reply_to(entry)%><%= twitter_retweet_of(entry)%></span>
+  <span class="comment"><%= via(entry) %><%= twitter_reply_to(entry)%><%= twitter_retweeted_by(entry)%></span>
 <%- end -%>
 <%- unless root.nil? -%>
 <%= published(entry, true) -%>

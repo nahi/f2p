@@ -28,6 +28,12 @@ class Entry
     end
 
     def from_tweet(hash)
+      if hash[:retweeted_status]
+        base = hash
+        hash = hash[:retweeted_status]
+        hash['service_source'] = base['service_source']
+        hash['service_user'] = base['service_user']
+      end
       e = new(hash)
       user = hash[:user] || hash[:sender]
       e.id = from_service_id('twitter', hash[:id].to_s)
@@ -54,9 +60,9 @@ class Entry
         e.twitter_reply_to_status_id = hash[:in_reply_to_status_id].to_s
         e.twitter_reply_to = hash[:in_reply_to_screen_name]
       end
-      if hash[:retweeted_status]
-        e.twitter_retweet_of_status_id = hash[:retweeted_status][:id].to_s
-        e.twitter_retweet_of = hash[:retweeted_status][:user][:screen_name]
+      if base
+        e.twitter_retweeted_by_status_id = base[:id].to_s
+        e.twitter_retweeted_by = base[:user][:screen_name]
       end
       e.url = twitter_url(e.from.name, hash[:id])
       e.commands = []
@@ -502,8 +508,8 @@ class Entry
   attr_accessor :twitter_username
   attr_accessor :twitter_reply_to
   attr_accessor :twitter_reply_to_status_id
-  attr_accessor :twitter_retweet_of
-  attr_accessor :twitter_retweet_of_status_id
+  attr_accessor :twitter_retweeted_by
+  attr_accessor :twitter_retweeted_by_status_id
 
   attr_accessor :orphan
   attr_accessor :view_pinned
@@ -520,8 +526,8 @@ class Entry
     @twitter_username = nil
     @twitter_reply_to = nil
     @twitter_reply_to_status_id = nil
-    @twitter_retweet_of = nil
-    @twitter_retweet_of_status_id = nil
+    @twitter_retweeted_by = nil
+    @twitter_retweeted_by_status_id = nil
     @orphan = hash['__f2p_orphan']
     @view_pinned = nil
     @view_unread = nil
@@ -707,9 +713,9 @@ class Entry
     end
   end
 
-  def twitter_retweet_of_url
-    if twitter_retweet_of
-      Entry.twitter_url(twitter_retweet_of, twitter_retweet_of_status_id)
+  def twitter_retweeted_by_url
+    if twitter_retweeted_by
+      Entry.twitter_url(twitter_retweeted_by, twitter_retweeted_by_status_id)
     end
   end
 
