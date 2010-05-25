@@ -118,7 +118,7 @@ class EntryController < ApplicationController
     @service_user = token.service_user
     @saved_searches = twitter_saved_searches(token)
     opt = {:count => @ctx.num}
-    opt[:max_id] = Entry.if_service_id(@ctx.max_id) if @max_id
+    opt[:max_id] = Entry.if_service_id(@ctx.max_id) if @ctx.max_id
     case @ctx.feed
     when 'user'
       user = @ctx.user || token.params # screen_name
