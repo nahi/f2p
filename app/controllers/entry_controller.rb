@@ -143,7 +143,7 @@ class EntryController < ApplicationController
         last_checked = session[:twitter_last_checked] || Time.at(0)
         next_last_checked = session[:twitter_next_last_checked] || Time.at(0)
         if @ctx.max_id.nil?
-          session[:twitter_last_checked] = next_last_checked
+          last_checked = session[:twitter_last_checked] = next_last_checked
         end
       end
     end
@@ -203,7 +203,7 @@ class EntryController < ApplicationController
       last_checked = session[:buzz_last_checked] || Time.at(0)
       next_last_checked = session[:buzz_next_last_checked] || Time.at(0)
       if @ctx.max_id.nil?
-        session[:buzz_last_checked] = next_last_checked
+        last_checked = session[:buzz_last_checked] = next_last_checked
       end
     end
     if nxt = buzz['links']['next']
