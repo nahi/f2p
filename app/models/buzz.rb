@@ -77,7 +77,7 @@ class Buzz
     end
 
     def create_comment(token, feed, content, args = {})
-      data = {:data => {:object => {:content => content}}}
+      data = {:data => {:content => content}}
       res = with_perf("[perf] start creating a comment") {
         post(token, comments_path(feed), args, data)
       }
