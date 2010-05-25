@@ -240,8 +240,7 @@ module EntryHelper
   end
 
   def buzz_content(entry)
-    content = entry.body # already safe; can we trust it?
-    content = content.gsub(%r(<br\s*/><br\s*/>), '<br />')
+    content = content_reduce_br(entry.body) # already safe; can we trust it?
     if with_attachment = attachment_content(entry)
       content += with_attachment
     end
@@ -252,6 +251,10 @@ module EntryHelper
       content += "<br />\n" + ext + "<br />\n"
     end
     content
+  end
+
+  def content_reduce_br(content)
+    content.gsub(%r|<br\s*/>\s*(?:<br\s*/>\s*)+|m, '<br />')
   end
 
   def geo_content(entry)
@@ -802,7 +805,7 @@ module EntryHelper
   end
 
   def comment(comment)
-    return comment.body if comment.buzz?
+    return content_reduce_br(comment.body) if comment.buzz?
     fold, str, links = escape_text(comment.body, ctx.fold ? setting.text_folding_size : nil)
     comment.view_links = links
     if fold
