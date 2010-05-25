@@ -332,7 +332,7 @@ class Feed
         :offset => start,
         :limit => num
       )
-      entries = pinned.find_all { |e| e.source != 'twitter' }
+      entries = pinned.find_all { |e| !['twitter', 'buzz'].include?(e.source) }
       unless entries.empty?
         hash = get_entries(auth, opt.merge(:eids => entries.map { |e| e.eid }))
         map = (hash['entries'] || []).inject({}) { |r, e| r[e['id']] = e; r }

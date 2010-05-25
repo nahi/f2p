@@ -19,7 +19,6 @@ class Buzz
       }
       if res
         parsed = JSON.parse(res.content)
-        File.open('/tmp/buzz', 'w') { |f| f << JSON.pretty_generate(parsed) }
         data = parsed['data']
         su = token.service_user
         data['items'] = data['items'].map { |e| wrap(su, e) }
@@ -95,7 +94,7 @@ class Buzz
 
     def post(token, path, args, data)
       protect {
-        json = JSON.generate(data)
+        json = data.to_json
         client(token).request(:post, path, args.merge(:alt => :json), json, 'Content-Type' => 'application/json')
       }
     end
@@ -152,7 +151,6 @@ class Buzz
     def parse_element(token, res)
       if res
         parsed = JSON.parse(res.content)
-        File.open('/tmp/buzz', 'w') { |f| f << JSON.pretty_generate(parsed) }
         data = parsed['data']
         su = token.service_user
         wrap(su, data)
@@ -167,6 +165,7 @@ class Buzz
       begin
         yield
       rescue
+        logger.error($!)
         default
       end
     end
@@ -203,7 +202,6 @@ class Buzz
       config.http_method = F2P::Config.buzz_api_oauth_http_method
       client.www_auth.oauth.set_config(site, config)
       client.www_auth.oauth.challenge(site)
-      client.debug_dev = STDERR
       client
     end
   end
