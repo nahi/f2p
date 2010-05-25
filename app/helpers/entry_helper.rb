@@ -1367,6 +1367,17 @@ module EntryHelper
     end
   end
 
+  def retweet_link(entry)
+    if entry.commands.include?('retweet')
+      link_opt = {:id => entry.id}
+      unless entry.ff?
+        link_opt[:service_source] = entry.service_source
+        link_opt[:service_user] = entry.service_user
+      end
+      menu_link(inline_menu_label(:reshare, 'RT'), link_action('retweet', link_opt))
+    end
+  end
+
   def liked?(entry)
     entry.likes.find { |like| like.from_id == auth.name }
   end

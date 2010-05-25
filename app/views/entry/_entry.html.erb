@@ -35,11 +35,12 @@
 <%- if comment_inline?(entry) -%>
   -- <span class="comment"><%= inline_comment(entry.comments.first) %></span>
 <%- end -%>
-  <%= reshare_link(entry) -%>
   <%= friends_likes(entry) -%>
+  <%= reshare_link(entry) -%>
   <%- comments = fold_comments(entry.comments) -%>
   <%- if comments.empty? or comment_inline?(entry) or (comments.size == 1 and fold_item?(comments.first))-%>
   <%= post_comment_link(entry) %>
+  <%= retweet_link(entry) -%>
     </div>
   <%- else -%>
     </div>

@@ -9,6 +9,8 @@
   <p class="message"><%= undo_add_comment_link(flash[:added_id], flash[:added_comment]) %></p>
 <%- elsif flash[:added_id] -%>
   <p class="message"><%= undo_add_link(flash[:added_id]) %></p>
+<%- elsif flash[:retweeted_id] -%>
+  <p class="message">Retweeted.</p>
 <%- end -%>
 <%- if flash[:message] -%>
   <p class="message"><%=h flash[:message] %></p>

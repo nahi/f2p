@@ -438,6 +438,7 @@ class EntryController < ApplicationController
       end
     end
     msg = nil
+    unpin_entry(@reshared_from, false)
     begin
       entry = Entry.create(opt)
     rescue JSON::ParserError => e
@@ -468,7 +469,7 @@ class EntryController < ApplicationController
   end
 
   verify :only => :retweet,
-          :method => [:post],
+          :method => [:get, :post],
           :add_flash => {:error => 'verify failed'},
           :redirect_to => {:action => 'inbox'}
   def retweet
@@ -484,7 +485,7 @@ class EntryController < ApplicationController
         return
       end
       begin
-        entry = Tweet.retweet(token, id)
+        entry = Tweet.retweet(token, Entry.if_service_id(id))
       rescue JSON::ParserError => e
         msg = 'Unexpected response from the server: ' + e.class.name
       rescue Exception => e
@@ -498,6 +499,7 @@ class EntryController < ApplicationController
     if session[:ctx]
       session[:ctx].reset_for_new
     end
+    flash[:retweeted_id] = entry.id
     redirect_to :controller => 'entry', :action => 'tweets'
   end
 
@@ -845,7 +847,9 @@ private
     if id
       Entry.if_service_id(id) do |tid|
         tid, service_source, service_user = tid.split('_', 3)
-        id = Entry.from_service_id(service_source, tid)
+        if service_source
+          id = Entry.from_service_id(service_source, tid)
+        end
       end
       Entry.delete_pin(create_opt(:eid => id))
       commit_checked_modified(id) if commit

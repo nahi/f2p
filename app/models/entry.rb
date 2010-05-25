@@ -70,6 +70,7 @@ class Entry
       else
         e.commands << 'like'
       end
+      e.commands << 'retweet' if e.from.id != e.service_user
       e
     end
 
