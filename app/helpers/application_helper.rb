@@ -148,7 +148,6 @@ module ApplicationHelper
     color: #999;
   }
   div.listings a.menu-link {
-    border: outset 1px;
     text-decoration: none;
     color: #999;
   }
@@ -157,10 +156,10 @@ module ApplicationHelper
     background-color: #aaf;
   }
   div.listings .menu-links a.menu-link {
+    border: outset 1px;
     color: #000;
     background-color: #aaf;
   }
-  div.listings .body a.menu-link { border: none; }
   div.listings .thread1,.thread2 {
     border-top: 1px solid #aaf;
     padding-top: 0.5ex;
