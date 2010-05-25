@@ -241,8 +241,9 @@ module EntryHelper
 
   def buzz_content(entry)
     content = entry.body # already safe; can we trust it?
+    content = content.gsub(%r(<br\s*/><br\s*/>), '<br />')
     if with_attachment = attachment_content(entry)
-      content += "<br />\n" + with_attachment
+      content += with_attachment
     end
     with_media = media_content(entry)
     with_geo = geo_content(entry)
