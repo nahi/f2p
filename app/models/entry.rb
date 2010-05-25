@@ -89,7 +89,8 @@ class Entry
       e.files = files
       e.from = buzz_from(hash['actor'])
       e.via = Via.new
-      e.via.name = hash['source']['title']
+      e.via.name = hash['source'] && hash['source']['title']
+      e.via.name ||= ''
       if e.via.name == 'Twitter'
         e.twitter_username = (hash['crosspostSource'] || '').match(%r{twitter.com/([^/]+)})[1]
         if /@([a-zA-Z0-9_]+)/ =~ hash['title']
