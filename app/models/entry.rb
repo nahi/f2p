@@ -442,8 +442,8 @@ class Entry
           when 'article'
             f = Attachment.new
             f.type = 'article'
-            f.name = e['content']
             f.url = extract_buzz_link_href(e['links'])
+            f.name = e['content'] || f.url
           end
           if t.nil? and link = extract_buzz_link(e['links'])
             if /^image/ =~ link['type']
