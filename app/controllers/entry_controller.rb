@@ -141,6 +141,10 @@ class EntryController < ApplicationController
         tweets = Tweet.home_timeline(token, opt)
         feedname = 'home'
         last_checked = session[:twitter_last_checked] || Time.at(0)
+        next_last_checked = session[:twitter_next_last_checked] || Time.at(0)
+        if @ctx.max_id.nil?
+          session[:twitter_last_checked] = next_last_checked
+        end
       end
     end
     feed_opt = find_opt.merge(
@@ -150,15 +154,15 @@ class EntryController < ApplicationController
     )
     @feed = find_entry_thread(feed_opt)
     @threads = @feed.entries
-    if last_checked
-      max = last_checked
+    if next_last_checked
+      max = next_last_checked
       @threads.each do |t|
         t.entries.each do |e|
           e.view_unread = last_checked < e.modified_at
           max = [max, e.modified_at].max
         end
       end
-      session[:twitter_last_checked] = max
+      session[:twitter_next_last_checked] = max
     end
     initialize_checked_modified
     render :action => 'list'
@@ -197,6 +201,10 @@ class EntryController < ApplicationController
       buzz = Buzz.activities(token, '@me/@consumption', opt)
       feedname = 'home'
       last_checked = session[:buzz_last_checked] || Time.at(0)
+      next_last_checked = session[:buzz_next_last_checked] || Time.at(0)
+      if @ctx.max_id.nil?
+        session[:buzz_last_checked] = next_last_checked
+      end
     end
     if nxt = buzz['links']['next']
       @buzz_c_tag = nxt.first['href'].match(/c=([^&]*)/)[1]
@@ -208,15 +216,15 @@ class EntryController < ApplicationController
     )
     @feed = find_entry_thread(feed_opt)
     @threads = @feed.entries
-    if last_checked
-      max = last_checked
+    if next_last_checked
+      max = next_last_checked
       @threads.each do |t|
         t.entries.each do |e|
           e.view_unread = last_checked < e.modified_at
           max = [max, e.modified_at].max
         end
       end
-      session[:buzz_last_checked] = max
+      session[:buzz_next_last_checked] = max
     end
     initialize_checked_modified
     render :action => 'list'
