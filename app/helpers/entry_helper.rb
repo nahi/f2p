@@ -240,7 +240,7 @@ module EntryHelper
   end
 
   def buzz_content(entry)
-    content = content_reduce_br(entry.body) # already safe; can we trust it?
+    content = filter_buzz_content(entry.body) # already safe; can we trust it?
     if with_attachment = attachment_content(entry)
       content += with_attachment
     end
@@ -253,8 +253,10 @@ module EntryHelper
     content
   end
 
-  def content_reduce_br(content)
-    content.gsub(%r|<br\s*/>\s*(?:<br\s*/>\s*)+|m, '<br />')
+  def filter_buzz_content(content)
+    content.
+      gsub(%r|<br\s*/>\s*(?:<br\s*/>\s*)+|m, '<br />'). # compact <br/>
+      gsub(%r|</?b>|, '') # remove <b>
   end
 
   def geo_content(entry)
@@ -441,6 +443,7 @@ module EntryHelper
         when 'article'
           str = "<br />" + link_to(inline_icon_tag(:url), file.url) +
             content_tag('span', file.name, :class => 'archived')
+          str = "<br />" + link_to(inline_icon_tag(:url) + file.name, file.url)
         else
           label = file.type
           icon = image_tag(file.icon, :alt => h(label), :title => h(label), :size => '16x16')
@@ -805,7 +808,7 @@ module EntryHelper
   end
 
   def comment(comment)
-    return content_reduce_br(comment.body) if comment.buzz?
+    return filter_buzz_content(comment.body) if comment.buzz?
     fold, str, links = escape_text(comment.body, ctx.fold ? setting.text_folding_size : nil)
     comment.view_links = links
     if fold
