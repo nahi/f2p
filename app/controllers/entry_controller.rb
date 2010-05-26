@@ -66,7 +66,7 @@ class EntryController < ApplicationController
     end
     last_checked = session[:friendfeed_last_checked] || Time.at(0)
     next_last_checked = session[:friendfeed_next_last_checked] || Time.at(0)
-    if @ctx.max_id.nil?
+    if @ctx.start == 0
       last_checked = session[:friendfeed_last_checked] = next_last_checked
     end
     if next_last_checked
