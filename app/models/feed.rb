@@ -24,8 +24,6 @@ class Feed
       entries = feed.entries
       if opt[:eids]
         entries = sort_by_ids(entries, opt[:eids])
-      elsif opt[:label] == 'pin'
-        entries = sort_by_modified(entries)
       elsif opt[:link]
         # You comes first
         entries = entries.partition { |e| e.from_id == auth.name }.flatten
@@ -219,6 +217,7 @@ class Feed
       pinned = Pin.find(
         :all,
         :conditions => [ 'user_id = ?', auth.id ],
+        :order => 'created_at desc',
         :offset => start,
         :limit => num
       )
