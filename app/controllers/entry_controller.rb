@@ -487,7 +487,9 @@ class EntryController < ApplicationController
       rescue Exception => e
         msg = e.message
       end
-      unless entry
+      if entry
+        flash[:retweeted_id] = entry.id
+      else
         msg = 'Retweet failure. ' + msg.to_s
         flash[:message] = msg
       end
@@ -496,8 +498,7 @@ class EntryController < ApplicationController
     if session[:ctx]
       session[:ctx].reset_for_new
     end
-    flash[:retweeted_id] = entry.id
-    redirect_to :controller => 'entry', :action => 'tweets'
+    redirect_to_list
   end
 
   verify :only => :update,
