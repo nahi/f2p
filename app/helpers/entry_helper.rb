@@ -185,6 +185,9 @@ module EntryHelper
       end
     else
       content = friendfeed_content(entry)
+      if ctx.inbox and !entry.view_unread
+        content = content_tag('span', content, :class => 'archived')
+      end
     end
     scan_media_from_link(entry)
     unless entry.view_medias.empty?
@@ -396,9 +399,7 @@ module EntryHelper
   end
 
   def emphasize_as_unread?(entry_or_comment)
-    (need_unread_mgmt? or
-     (ctx.feed == 'home' and (ctx.tweets? or ctx.buzz?))) and
-     entry_or_comment.emphasize?
+    need_unread_mgmt? and entry_or_comment.emphasize?
   end
 
   def original_link(entry)
@@ -1070,9 +1071,6 @@ module EntryHelper
         links << menu_link(menu_label('show more...', '6'), {:action => 'buzz', :feed => ctx.feed, :user => ctx.user, :num => num, :max_id => @buzz_c_tag}, key)
       elsif ctx.ff?
         links << menu_link(menu_label('show more...', '6'), list_opt(ctx.link_opt(:start => start + num, :num => num)), key)
-        if ctx.inbox
-          links << archive_link
-        end
       end
     end
     links.join(' ')
@@ -1132,10 +1130,6 @@ module EntryHelper
         )
       end
     end
-  end
-
-  def archive_link
-    menu_link(menu_label('mark as read', '5'), link_action('archive'), accesskey('5'))
   end
 
   def best_of_links(listid)

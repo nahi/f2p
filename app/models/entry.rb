@@ -72,6 +72,7 @@ class Entry
         like.date = e.date
         like.from = From.new
         like.from.name = 'You'
+        like.entry = e
         e.likes << like
       else
         e.commands << 'like'
@@ -126,6 +127,7 @@ class Entry
           l = Like.new
           l.date = e.date
           l.from = buzz_from(like)
+          l.entry = e
           already_liked = true if l.from.id == e.service_user
           l
         }
@@ -140,6 +142,7 @@ class Entry
           l.from = From.new
           l.placeholder = true 
           l.num = liked['count'] - e.likes.size
+          l.entry = e
           e.likes.unshift(l)
         end
       end

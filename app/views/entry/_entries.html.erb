@@ -37,7 +37,6 @@
       <div class="entry">
         <%= render :partial => 'entry', :locals => {:entry => thread.root, :root => nil, :twitter_thread => thread.twitter_thread} %>
       </div>
-      <%- remember_checked(thread.root) -%>
       <%- unless thread.related_entries.empty? -%>
         <% thread.related_entries.each do |entry| -%>
           <div class="related<%= ' tweets' if thread.twitter_thread and !entry.tweet? %>">
@@ -45,7 +44,6 @@
               <%= fold_link(entry) %>
             <%- else -%>
             <%= render :partial => 'entry', :locals => {:entry => entry, :root => thread.root, :twitter_thread => thread.twitter_thread} %>
-              <%- remember_checked(entry) -%>
             <%- end -%>
           </div>
         <%- end -%>

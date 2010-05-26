@@ -24,7 +24,7 @@ class Like
   end
 
   def emphasize?
-    entry.view_unread and entry.checked_at < date_at
+    entry and entry.view_unread and entry.checked_at < date_at
   end
 
   def date_at

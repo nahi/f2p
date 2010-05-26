@@ -73,12 +73,6 @@ class ApplicationController < ActionController::Base
     /Android/ =~ request.user_agent
   end
 
-  def remember_checked_modified(eid, modified)
-    if store = session[:checked]
-      store[eid] = modified
-    end
-  end
-
 private
 
   def timezone_from_request_ip
@@ -204,14 +198,6 @@ private
     self.class.intparam(params, key)
   end
 
-  def update_checked_modified
-    store = session[:checked]
-    if auth and store
-      Feed.update_checked_modified(auth, store)
-      session[:checked] = {}
-    end
-  end
-
   def redirect_to_entry_list(clear_eid = false)
     if ctx = @ctx || session[:ctx]
       ctx.eid = nil if clear_eid
@@ -219,20 +205,6 @@ private
       redirect_to ctx.link_opt(:controller => 'entry')
     else
       redirect_to :controller => 'entry', :action => 'inbox'
-    end
-  end
-
-  def initialize_checked_modified
-    session[:checked] = {}
-  end
-
-  def commit_checked_modified(eid)
-    if store = session[:checked]
-      if e = store.find { |k, v| k == eid }
-        only = Hash[*e]
-        Feed.update_checked_modified(auth, only)
-        store.delete(eid)
-      end
     end
   end
 

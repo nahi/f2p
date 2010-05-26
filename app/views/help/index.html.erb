@@ -3,9 +3,24 @@
 <div class="listings">
 <p>Service</p>
 <ul>
-  <li><%= friendfeed_icon_tag %> ... show FriendFeed entries.</li>
-  <li><%= twitter_icon_tag %> ... show Twitter timeline.</li>
-  <li><%= buzz_icon_tag %> ... show Google buzz activities.</li>
+  <li><%= friendfeed_icon_tag %> ... show FriendFeed entries</li>
+  <li><%= twitter_icon_tag %> ... show Twitter timeline</li>
+  <li><%= buzz_icon_tag %> ... show Google buzz activities</li>
+</ul>
+
+<p>Entries List Operation</p>
+<ul>
+  <li>[load more...] ... go next page</li>
+</ul>
+
+<p>Entry Operation</p>
+<ul>
+  <li><%= icon_tag(:pin) %> ... add Star to the entry; Starred entries keep on showing in Inbox</li>
+  <li><%= icon_tag(:pinned) %> ... Delete Star</li>
+  <li><%= icon_tag(:liked) %> ... show who 'like'd it</li>
+  <li>[like] ... add 'like' to the entry</li>
+  <li>[un-like] ... delete 'like' to the entry</li>
+  <li>&gt;&gt;&gt; ... add comment</li>
 </ul>
 
 <p>Menu</p>
@@ -28,23 +43,6 @@
   <li>DM ... show your Direct messages</li>
   <li>Lists ... your Lists</li>
   <li>Searches ... your Saved searches</li>
-</ul>
-
-<p>Entries List Operation</p>
-<ul>
-  <li>[load more...] ... go next page</li>
-  <li>[mark as read] ... (Inbox only) archive all listed entries except Starred entries</li>
-  <li>[show all] ... (Inbox only) show all entries including archived entries</li>
-</ul>
-
-<p>Entry Operation</p>
-<ul>
-  <li><%= icon_tag(:pin) %> ... add Star to the entry; Starred entries keep on showing in Inbox</li>
-  <li><%= icon_tag(:pinned) %> ... Delete Star</li>
-  <li><%= icon_tag(:liked) %> ... show who 'like'd it</li>
-  <li>[like] ... add 'like' to the entry</li>
-  <li>[un-like] ... delete 'like' to the entry</li>
-  <li>&gt;&gt;&gt; ... add comment</li>
 </ul>
 
 <p>Profile Operation (Go (user)-&gt;[profile]</p>

@@ -17,19 +17,10 @@ class Feed
       opt[:start] ||= 0
       opt[:num] ||= 100
       opt.delete(:auth)
-      logger.info('[perf] start entries fetch')
       feed = fetch_entries(auth, opt)
-      if opt[:tweets] or opt[:buzz]
-        pins = check_inbox(auth, feed, false)
-        logger.info('[perf] check_inbox done')
-      else
-        logger.info('[perf] start internal data handling')
-        update_last_modified(feed)
-        logger.info('[perf] update_last_modified done')
-        pins = check_inbox(auth, feed)
-        logger.info('[perf] check_inbox done')
+      pins = check_inbox(auth, feed, false)
+      if !opt[:tweets] and !opt[:buzz]
         add_service_icon(feed.entries)
-        logger.info('[perf] add_service_icon done')
       end
       feed.entries = filter_hidden(feed.entries)
       entries = feed.entries
@@ -47,10 +38,7 @@ class Feed
           EntryThread.new(e)
         }
       end
-      # update threads for inbox
-      if opt[:inbox]
-        threads = filter_unread_entries(threads, opt)
-      elsif opt[:label] == 'pin'
+      if opt[:label] == 'pin'
         threads = filter_pinned_entries(threads, opt)
       end
       threads = EntryThread::EntryThreads[*threads]
@@ -68,55 +56,6 @@ class Feed
       threads.pins = pins
       feed.entries = threads
       feed
-    end
-
-    def update_checked_modified(auth, hash)
-      cond = [
-        'user_id = ? and last_modifieds.eid in (?)',
-        auth.id,
-        hash.keys
-      ]
-      checked = CheckedModified.find(:all, :conditions => cond, :include => 'last_modified')
-      # do update/create without transaction.  we can use transaction and retry
-      # invoking this method (whole transaction) but it's too expensive.
-      hash.each do |eid, last_modified|
-        next unless last_modified
-        modified_at = Time.parse(last_modified)
-        if c = checked.find { |e| e.last_modified.eid == eid }
-          if c.checked < modified_at
-            c.checked = modified_at
-            begin
-              c.save!
-            rescue ActiveRecord::ActiveRecordError => e
-              logger.warn("update CheckedModified failed for #{eid}")
-              logger.warn(e)
-            end
-          end
-        else
-          m = LastModified.find_by_eid(eid)
-          unless m
-            m = LastModified.new
-            m.eid = eid
-            m.date = modified_at
-            begin
-              m.save!
-            rescue ActiveRecord::ActiveRecordError => e
-              logger.warn("create LastModified failed for #{eid}")
-              logger.warn(e)
-            end
-          end
-          c = CheckedModified.new
-          c.user = auth
-          c.last_modified = m
-          c.checked = modified_at
-          begin
-            c.save!
-          rescue ActiveRecord::ActiveRecordError => e
-            logger.warn("create CheckedModified failed for #{eid}")
-            logger.warn(e)
-          end
-        end
-      end
     end
 
   private
@@ -249,69 +188,22 @@ class Feed
       ff_client.set_cached_entries(auth.name, cache)
     end
 
-    def update_last_modified(feed)
-      found = LastModified.find_all_by_eid(feed.entries.map { |e| e.id })
-      found_map = found.inject({}) { |r, e|
-        r[e.eid] = e
-        r
-      }
-      # do update/create without transaction.  we can use transaction and retry
-      # invoking this method (whole transaction) but it's too expensive.
-      feed.entries.each do |entry|
-        if m = found_map[entry.id]
-          d = entry.modified_at
-          if m.date < d
-            m.date = d
-            begin
-              m.save!
-            rescue ActiveRecord::ActiveRecordError => e
-              logger.warn("update LastModified failed for #{entry.id}")
-              logger.warn(e)
-            end
-          end
-        else
-          m = LastModified.new
-          m.eid = entry.id
-          m.date = entry.modified_at
-          begin
-            m.save!
-          rescue ActiveRecord::ActiveRecordError => e
-            logger.warn("create LastModified failed for #{entry.id}")
-            logger.warn(e)
-          end
-        end
-      end
-    end
-
     def check_inbox(auth, feed, update_unread = true)
-      eids = feed.entries.map { |e| e.id }
-      checked_map = checked_map(auth, eids) if update_unread
+      #eids = feed.entries.map { |e| e.id }
+      #checked_map = checked_map(auth, eids) if update_unread
       pinned_map = pinned_map(auth)
       feed.entries.each do |entry|
         entry.view_pinned = pinned_map.key?(entry.id)
-        if update_unread
-          if checked = checked_map[entry.id]
-            entry.checked_at = checked
-            entry.view_unread = checked < entry.modified_at
-          else
-            entry.view_unread = true
-          end
-        end
+        #if update_unread
+        #  if checked = checked_map[entry.id]
+        #    entry.checked_at = checked
+        #    entry.view_unread = checked < entry.modified_at
+        #  else
+        #    entry.view_unread = true
+        #  end
+        #end
       end
       pinned_map.keys.size
-    end
-
-    def checked_map(auth, eids)
-      cond = [
-        'user_id = ? and last_modifieds.eid in (?)',
-        auth.id,
-        eids
-      ]
-      CheckedModified.find(:all, :conditions => cond, :include => 'last_modified').inject({}) { |r, e|
-        #r[e.last_modified.eid] = e.checked < e.last_modified.date
-        r[e.last_modified.eid] = e.checked
-        r
-      }
     end
 
     def pinned_map(auth)
@@ -403,22 +295,6 @@ class Feed
       eids = opt[:eids]
       query = filter_opt(opt)
       ff_client.entries(eids, query.merge(auth.new_cred)) || {}
-    end
-
-    # pick up only unread entries
-    def filter_unread_entries(threads, opt)
-      threads.map { |th|
-        entries = th.entries.find_all { |e|
-          e.view_unread or e.view_pinned or e.id == opt[:filter_except]
-        }
-        unless entries.empty?
-          t = EntryThread.new
-          t.add(*entries)
-          t.root = entries.first
-          t.twitter_thread = th.twitter_thread
-          t
-        end
-      }.compact
     end
 
     def filter_pinned_entries(threads, opt)

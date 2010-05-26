@@ -34,7 +34,6 @@ class EntryController < ApplicationController
       @threads = @feed.entries
     end
     return if redirect_to_entry(@threads)
-    initialize_checked_modified
   end
 
   def index
@@ -61,39 +60,31 @@ class EntryController < ApplicationController
       redirect_to :controller => 'login', :action => 'initiate_oauth_login'
       return
     end
-    retry_times = F2P::Config.max_skip_empty_inbox_pages
     with_feedinfo(@ctx) do
       @feed = find_entry_thread(find_opt)
       @threads = @feed.entries
     end
-    retry_times.times do
-      break unless @threads.empty?
-      if param(:direction) == 'rewind'
-        break if @ctx.start - @ctx.num < 0
-        @ctx.start -= @ctx.num
-      else
-        @ctx.start += @ctx.num
+    last_checked = session[:friendfeed_last_checked] || Time.at(0)
+    next_last_checked = session[:friendfeed_next_last_checked] || Time.at(0)
+    if @ctx.max_id.nil?
+      last_checked = session[:friendfeed_last_checked] = next_last_checked
+    end
+    if next_last_checked
+      max = next_last_checked
+      @threads.each do |t|
+        t.entries.each do |e|
+          e.view_unread = last_checked < e.modified_at
+          max = [max, e.modified_at].max
+        end
       end
-      @feed = find_entry_thread(find_opt)
-      @threads = @feed.entries
+      session[:friendfeed_next_last_checked] = max
     end
     return if redirect_to_entry(@threads)
-    initialize_checked_modified
     render :action => 'list'
   end
 
   def updated
     redirect_to :action => 'inbox'
-  end
-
-  verify :only => :archive,
-          :method => [:get, :post],
-          :add_flash => {:error => 'verify failed'},
-          :redirect_to => {:action => 'inbox'}
-  def archive
-    update_checked_modified
-    flash[:allow_cache] = true
-    redirect_to_list
   end
 
   verify :only => :tweets,
@@ -164,7 +155,6 @@ class EntryController < ApplicationController
       end
       session[:twitter_next_last_checked] = max
     end
-    initialize_checked_modified
     render :action => 'list'
   end
 
@@ -226,7 +216,6 @@ class EntryController < ApplicationController
       end
       session[:buzz_next_last_checked] = max
     end
-    initialize_checked_modified
     render :action => 'list'
   end
 
@@ -446,7 +435,7 @@ class EntryController < ApplicationController
       end
     end
     msg = nil
-    unpin_entry(@reshared_from, false)
+    unpin_entry(@reshared_from)
     begin
       entry = Entry.create(opt)
     rescue JSON::ParserError => e
@@ -468,7 +457,6 @@ class EntryController < ApplicationController
       end
       return
     end
-    unpin_entry(@reshared_from, false)
     if session[:ctx]
       session[:ctx].reset_for_new
     end
@@ -503,6 +491,7 @@ class EntryController < ApplicationController
         msg = 'Retweet failure. ' + msg.to_s
         flash[:message] = msg
       end
+      unpin_entry(id)
     end
     if session[:ctx]
       session[:ctx].reset_for_new
@@ -842,16 +831,13 @@ private
             modified = Time.parse(entry['updated']).gmtime.xmlschema
           end
           source = service_source
-          # Tweets are not under unread mgmt now.
-          remember_checked_modified(id, modified)
         end
       end
       Entry.add_pin(create_opt(:eid => id, :entry => entry, :source => source))
-      commit_checked_modified(id)
     end
   end
 
-  def unpin_entry(id, commit = true)
+  def unpin_entry(id)
     if id
       Entry.if_service_id(id) do |tid|
         tid, service_source, service_user = tid.split('_', 3)
@@ -860,7 +846,6 @@ private
         end
       end
       Entry.delete_pin(create_opt(:eid => id))
-      commit_checked_modified(id) if commit
     end
   end
 

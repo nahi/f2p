@@ -538,23 +538,7 @@ __EOS__
   end
 
   def need_unread_mgmt?
-    ctx.inbox or ctx.home
-  end
-
-  def remember_checked(entry)
-    if need_unread_mgmt?
-      @controller.remember_checked_modified(entry.id, entry.modified)
-    end
-  end
-
-  # TODO: should move to controller
-  def commit_checked_modified(entry)
-    if entry.view_unread
-      if store = @controller.request.session[:checked]
-        store.delete(entry.id)
-      end
-      Feed.update_checked_modified(auth, entry.id => entry.modified)
-    end
+    ctx.inbox or (ctx.feed == 'home' and (ctx.tweets? or ctx.buzz?))
   end
 
   def links_if_exists(label, enum, max = nil, &block)
