@@ -386,8 +386,10 @@ module EntryHelper
     return unless entry.ff?
     if via = entry.via
       if via.service_icon_url
-        link_to(service_icon_tag(via.service_icon_url, via.name, via.name),
-                search_opt(:action => :list, :query => '', :service => via.service_id))
+        if ctx.ff?
+          link_to(service_icon_tag(via.service_icon_url, via.name, via.name),
+                  search_opt(:action => :list, :query => '', :service => via.service_id))
+        end
       end
     end
   end

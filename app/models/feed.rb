@@ -19,13 +19,13 @@ class Feed
       opt.delete(:auth)
       feed = fetch_entries(auth, opt)
       pins = check_inbox(auth, feed, false)
-      if !opt[:tweets] and !opt[:buzz]
-        add_service_icon(feed.entries)
-      end
+      add_service_icon(feed.entries)
       feed.entries = filter_hidden(feed.entries)
       entries = feed.entries
       if opt[:eids]
         entries = sort_by_ids(entries, opt[:eids])
+      elsif opt[:label] == 'pin'
+        entries = sort_by_modified(entries)
       elsif opt[:link]
         # You comes first
         entries = entries.partition { |e| e.from_id == auth.name }.flatten
@@ -219,8 +219,6 @@ class Feed
       pinned = Pin.find(
         :all,
         :conditions => [ 'user_id = ?', auth.id ],
-        :joins => 'LEFT OUTER JOIN last_modifieds ON pins.eid = last_modifieds.eid',
-        :order => 'last_modifieds.date desc',
         :offset => start,
         :limit => num
       )
