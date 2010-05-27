@@ -584,13 +584,14 @@ module EntryHelper
     }
   end
 
+  URI_REGEXP = URI.regexp(['http', 'https'])
   def escape_text(content, fold_size = nil)
     str = ''
     fold_size ||= content.length
     org_size = 0
     m = nil
     links = []
-    while content.match(URI.regexp(['http', 'https']))
+    while content.match(URI_REGEXP)
       m = $~
       added, part = fold_concat(m.pre_match, fold_size - org_size)
       str += markup_sentence(part)

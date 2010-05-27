@@ -82,6 +82,7 @@ class Entry
       e
     end
 
+    URI_REGEXP = URI.regexp(['http', 'https'])
     def from_buzz(hash)
       e = new(hash)
       user_id = hash['actor']['id']
@@ -94,6 +95,12 @@ class Entry
       end
       e.thumbnails = thumbnails
       e.files = files
+      title = hash['title']
+      while title.match(URI_REGEXP)
+        m = $~
+        (e.view_links ||= []) << m[0]
+        title = m.post_match
+      end
       e.url = extract_buzz_link_href(hash['links'])
       e.from = buzz_from(hash['actor'])
       if hash['source']
@@ -626,12 +633,6 @@ class Entry
 
   def unread?
     checked_at < date_at
-  end
-
-  def pick?
-    (self.from.me?) or
-      likes.any? { |e| e.from.me? } or
-      comments.any? { |e| e.from.me? }
   end
 
   def modified
