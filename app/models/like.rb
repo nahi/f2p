@@ -23,8 +23,8 @@ class Like
     from ? from.id : nil
   end
 
-  def emphasize?
-    entry and entry.view_unread and entry.checked_at < date_at
+  def unread?
+    entry and entry.checked_at < date_at
   end
 
   def date_at

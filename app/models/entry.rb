@@ -63,6 +63,7 @@ class Entry
       if base
         e.twitter_retweeted_by_status_id = base[:id].to_s
         e.twitter_retweeted_by = base[:user][:screen_name]
+        e.date = base[:created_at]
       end
       e.url = twitter_url(e.from.name, hash[:id])
       e.commands = []
@@ -88,13 +89,12 @@ class Entry
       e.date = hash['updated']
       body, link, thumbnails, files = parse_buzz_object(hash)
       e.body = body
-      if /www.google.com\/buzz/ =~ link
-        e.url = link
-      else
+      if /www.google.com\/buzz/ !~ link
         e.link = link
       end
       e.thumbnails = thumbnails
       e.files = files
+      e.url = extract_buzz_link_href(hash['links'])
       e.from = buzz_from(hash['actor'])
       if hash['source']
         e.via = Via.new
@@ -420,12 +420,12 @@ class Entry
         link = extract_buzz_link_href(obj['links'])
         thumbnails, files = parse_buzz_attachment(obj)
       end
-      if link = hash['crosspostSource']
-        if /^http:/ =~ link
+      if source = hash['crosspostSource']
+        if /^http:/ =~ source
           f = Attachment.new
           f.type = 'article'
-          f.name = link
-          f.url = link
+          f.name = source
+          f.url = source
           files << f
         end
       end
@@ -469,15 +469,15 @@ class Entry
       return thumbnails, files
     end
 
-    def extract_buzz_link_href(links)
-      if link = extract_buzz_link(links)
+    def extract_buzz_link_href(links, type = 'alternate')
+      if link = extract_buzz_link(links, type)
         link['href']
       end
     end
 
-    def extract_buzz_link(links)
+    def extract_buzz_link(links, type = 'alternate')
       if links
-        alt = links['alternate']
+        alt = links[type]
         alt.first if alt
       end
     end
@@ -516,7 +516,6 @@ class Entry
 
   attr_accessor :orphan
   attr_accessor :view_pinned
-  attr_accessor :view_unread
   attr_accessor :view_nextid
   attr_accessor :view_links
   attr_accessor :view_medias
@@ -533,7 +532,6 @@ class Entry
     @twitter_retweeted_by_status_id = nil
     @orphan = hash['__f2p_orphan']
     @view_pinned = nil
-    @view_unread = nil
     @view_nextid = nil
     @view_links = nil
     @view_medias = []
@@ -626,8 +624,8 @@ class Entry
     @modified_at ||= Time.parse(modified)
   end
 
-  def emphasize?
-    view_unread and checked_at < date_at
+  def unread?
+    checked_at < date_at
   end
 
   def pick?

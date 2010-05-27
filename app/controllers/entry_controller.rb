@@ -73,7 +73,7 @@ class EntryController < ApplicationController
       max = next_last_checked
       @threads.each do |t|
         t.entries.each do |e|
-          e.view_unread = last_checked < e.modified_at
+          e.checked_at = last_checked
           max = [max, e.modified_at].max
         end
       end
@@ -149,7 +149,7 @@ class EntryController < ApplicationController
       max = next_last_checked
       @threads.each do |t|
         t.entries.each do |e|
-          e.view_unread = last_checked < e.modified_at
+          e.checked_at = last_checked
           max = [max, e.modified_at].max
         end
       end
@@ -210,7 +210,7 @@ class EntryController < ApplicationController
       max = next_last_checked
       @threads.each do |t|
         t.entries.each do |e|
-          e.view_unread = last_checked < e.modified_at
+          e.checked_at = last_checked
           max = [max, e.modified_at].max
         end
       end

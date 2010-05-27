@@ -59,7 +59,6 @@
       <%- elsif ctx.inbox -%>
         <p>
           No unread entry in this page.
-          <%= menu_link(menu_label('show all'), list_opt(:action => :list, :start => ctx.start, :num => ctx.num)) %>.
         </p>
       <%- else -%>
         <p>No feed is good feed.</p>

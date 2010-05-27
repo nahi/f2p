@@ -10,7 +10,6 @@ class Tweet
           client(token).home_timeline(args)
         }
       }
-      File.open('/tmp/twitter', 'w') { |f| f << res.to_json }
       su = token.service_user
       res.map { |e| wrap(su, e) }
     end

@@ -175,17 +175,17 @@ module EntryHelper
   def content(entry)
     if entry.tweet?
       content = twitter_content(entry)
-      if ctx.tweets? and !entry.view_unread
+      if ctx.tweets? and !entry.unread?
         content = content_tag('span', content, :class => 'archived')
       end
     elsif entry.buzz?
       content = buzz_content(entry)
-      if ctx.buzz? and !entry.view_unread
+      if ctx.buzz? and !entry.unread?
         content = content_tag('span', content, :class => 'archived')
       end
     else
       content = friendfeed_content(entry)
-      if ctx.inbox and !entry.view_unread
+      if ctx.inbox and !entry.unread?
         content = content_tag('span', content, :class => 'archived')
       end
     end
@@ -401,7 +401,7 @@ module EntryHelper
   end
 
   def emphasize_as_unread?(entry_or_comment)
-    need_unread_mgmt? and entry_or_comment.emphasize?
+    need_unread_mgmt? and entry_or_comment.unread?
   end
 
   def original_link(entry)
@@ -712,7 +712,7 @@ module EntryHelper
         end
         if !likes.empty?
           members = likes.collect { |like|
-            if need_unread_mgmt? and like.emphasize?
+            if need_unread_mgmt? and like.unread?
               emphasize_as_unread(user(like))
             else
               user(like)
@@ -762,7 +762,7 @@ module EntryHelper
     if emphasize_as_unread?(entry)
       str = emphasize_as_unread(str)
     end
-    if entry.url and (entry.tweet? or entry.buzz?)
+    if entry.url
       link_to(str, entry.url, :class => 'hlink')
     else
       str
@@ -1076,10 +1076,6 @@ module EntryHelper
       end
     end
     links.join(' ')
-  end
-
-  def all_link
-    menu_link(menu_label('show all', '7'), list_opt(:action => :list, :start => ctx.start, :num => ctx.num), accesskey('7'))
   end
 
   def find_show_entry(threads)
