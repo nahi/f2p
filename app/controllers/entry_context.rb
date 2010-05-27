@@ -198,6 +198,10 @@ class EntryContext
     /\Asummary\b/ =~ @feed or /\/summary\/\d+\z/ =~ @feed
   end
 
+  def pin?
+    @label == 'pin'
+  end
+
   def ff?
     @service_source.nil?
   end

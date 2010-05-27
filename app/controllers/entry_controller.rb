@@ -30,8 +30,12 @@ class EntryController < ApplicationController
       @service_user = @ctx.in_reply_to_service_user
     end
     with_feedinfo(@ctx) do
-      @feed = find_entry_thread(find_opt)
+      opt = find_opt()
+      @feed = find_entry_thread(opt)
       @threads = @feed.entries
+      if @ctx.pin?
+        @cont = opt[:start].to_i
+      end
     end
     return if redirect_to_entry(@threads)
   end

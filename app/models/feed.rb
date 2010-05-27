@@ -40,6 +40,7 @@ class Feed
         threads = filter_pinned_entries(threads, opt)
       end
       threads = EntryThread::EntryThreads[*threads]
+      # Tweet does not have single view
       flatten = threads.map { |t| t.entries }.flatten.find_all { |e| !e.tweet? }
       prev = nil
       flatten.reverse_each do |e|
@@ -201,16 +202,22 @@ class Feed
       }
     end
 
+    # opt[:start] is used as in/out parameter
     def pinned_entries(auth, opt)
       start = opt[:start]
+      if start == 0
+        start = Time.now.gmtime
+      else
+        start = Time.at(start).gmtime
+      end
       num = opt[:num]
       pinned = Pin.find(
         :all,
-        :conditions => [ 'user_id = ?', auth.id ],
+        :conditions => [ 'user_id = ? AND created_at < ?', auth.id,  start],
         :order => 'created_at desc',
-        :offset => start,
         :limit => num
       )
+      opt[:start] = pinned.last.created_at unless pinned.empty?
       entries = pinned.find_all { |e| !['twitter', 'buzz'].include?(e.source) }
       unless entries.empty?
         hash = get_entries(auth, opt.merge(:eids => entries.map { |e| e.eid }))

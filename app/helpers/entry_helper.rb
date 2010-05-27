@@ -25,7 +25,7 @@ module EntryHelper
       feed_name
     elsif ctx.link
       'Related entries'
-    elsif ctx.label == 'pin'
+    elsif ctx.pin?
       'Star'
     elsif ctx.inbox
       'Inbox'
@@ -62,7 +62,7 @@ module EntryHelper
     list_ctx = session[:ctx]
     if list_ctx and list_ctx.inbox
       label += ' to Inbox'
-    elsif list_ctx and list_ctx.label == 'pin'
+    elsif list_ctx and list_ctx.pin?
       label += ' to Star'
     elsif @original_feed and @original_feed.name
       label += ' to ' + @original_feed.name
@@ -1071,6 +1071,8 @@ module EntryHelper
         links << menu_link(menu_label('show more...', '6'), {:action => 'tweets', :feed => ctx.feed, :user => ctx.user, :query => ctx.query, :num => num, :max_id => @threads.max_id}, key)
       elsif ctx.buzz?
         links << menu_link(menu_label('show more...', '6'), {:action => 'buzz', :feed => ctx.feed, :user => ctx.user, :num => num, :max_id => @buzz_c_tag}, key)
+      elsif ctx.pin?
+        links << menu_link(menu_label('show more...', '6'), list_opt(ctx.link_opt(:start => @cont, :num => num)), key)
       elsif ctx.ff?
         links << menu_link(menu_label('show more...', '6'), list_opt(ctx.link_opt(:start => start + num, :num => num)), key)
       end

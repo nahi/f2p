@@ -54,12 +54,10 @@
   <%- if @threads.size == 0 -%>
     <hr class="separator" />
     <div class="thread1">
-      <%- if ctx.label == 'pin' -%>
+      <%- if ctx.pin? -%>
         <p>No Starred entries. Click <%= icon_tag(:pin) %> for Star in other view.</p>
       <%- elsif ctx.inbox -%>
-        <p>
-          No unread entry in this page.
-        </p>
+        <p>No unread entry in this page.</p>
       <%- else -%>
         <p>No feed is good feed.</p>
       <%- end -%>
