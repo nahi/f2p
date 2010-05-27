@@ -26,6 +26,16 @@ class Buzz
       end
     end
 
+    def show_all(token, feed)
+      task1 = Task.run { show(token, feed) }
+      task2 = Task.run { comments(token, feed) }
+      task3 = Task.run { liked(token, feed) }
+      buzz = task1.result
+      buzz['object']['comments'] = task2.result['items']
+      buzz['object']['liked'] = task3.result['entry']
+      buzz
+    end
+
     def show(token, feed, args = {})
       get_element(token, activity_path(feed), args)
     end

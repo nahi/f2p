@@ -239,12 +239,11 @@ class EntryController < ApplicationController
         redirect_to :controller => 'login', :action => 'initiate_buzz_oauth_login'
         return
       end
-      task1 = Task.run { Buzz.show(token, bid) }
-      task2 = Task.run { Buzz.comments(token, bid) }
-      task3 = Task.run { Buzz.liked(token, bid) }
-      buzz = task1.result
-      buzz['object']['comments'] = task2.result['items']
-      buzz['object']['liked'] = task3.result['entry']
+      buzz = Buzz.show_all(token, bid)
+      if pin = Pin.find_by_user_id_and_eid(auth.id, @ctx.eid)
+        pin.entry = buzz
+        pin.save!
+      end
       @service_source = token.service
       @service_user = token.service_user
     end
@@ -832,7 +831,7 @@ private
             entry = Tweet.show(token, tid)
             modified = Time.parse(entry[:created_at]).gmtime.xmlschema
           when 'buzz'
-            entry = Buzz.show(token, tid)
+            entry = Buzz.show_all(token, tid)
             modified = Time.parse(entry['updated']).gmtime.xmlschema
           end
           source = service_source
