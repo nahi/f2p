@@ -743,7 +743,7 @@ module EntryHelper
         date = comment_date(comment, true) unless comment.posted_with_entry?
         str = '<div class="comment comment-body">' +
           comment_icon(comment) + comment(comment)
-        [str, comment_author_link(comment), via(comment), date, comment_url_link(comment), comment_link(comment)].join(' ') +
+        [str, comment_author_link(comment), via(comment), date, comment_link(comment)].join(' ') +
           '</div>'
       end
     }.join("\n")
@@ -831,6 +831,17 @@ module EntryHelper
     else
       comment(comment) + ' ' + comment_date(comment, true)
     end
+  end
+
+  def search_action
+    if ctx.ff?
+      action = 'list'
+    elsif ctx.tweets?
+      action = 'tweets'
+    elsif ctx.buzz?
+      action = 'buzz'
+    end
+    { :controller => :entry, :action => action }
   end
 
   def search_form(opt = {})
@@ -969,8 +980,27 @@ module EntryHelper
   end
 
   # override
+  def common_menu(*arg)
+    [
+      profile_link(auth.name),
+      search_link,
+      settings_link,
+      logout_link,
+      help_link,
+      to_top_menu
+    ].compact.join(' ')
+  end
+
+  def profile_link(id)
+    if ctx.ff?
+      menu_link(menu_label('profile'), :controller => :profile, :action => :show, :id => id)
+    end
+  end
+
   def search_link
-    menu_link(menu_label('search'), search_opt(link_action('search')))
+    if ctx.ff?
+      menu_link(menu_label('search'), search_opt(link_action('search')))
+    end
   end
 
   def zoom_select_tag(varname, default)
@@ -1190,38 +1220,12 @@ module EntryHelper
     menu_link(str, link)
   end
 
-  def url_link(entry)
-    return unless ctx.single?
-    link = entry.link
-    link ||= entry.view_links ? entry.view_links.first : nil
-    if link
-      url_link_to(link)
-    end
-  end
-
   def comment_date(comment, compact = true)
     str = date(comment.date, compact)
     if emphasize_as_unread?(comment)
       str = emphasize_as_unread(str)
     end
-    #if compact and comment.last?
-    #  link_to(str, link_show(comment.entry.id))
-    #else
-    #  str
-    #end
     str
-  end
-
-  def comment_url_link(comment)
-    if ctx.single? and comment.view_links
-      url_link_to(comment.view_links.first)
-    end
-  end
-
-  def url_link_to(link, query = nil)
-    if link and ctx.link != link
-      menu_link(inline_menu_label(:url, 'search link'), link_list(:link => link, :query => query))
-    end
   end
 
   def delete_link(entry)

@@ -203,7 +203,7 @@ class EntryContext
   end
 
   def ff?
-    @service_source.nil?
+    @service_source.nil? and !pin?
   end
 
   def tweets?

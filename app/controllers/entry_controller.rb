@@ -29,12 +29,16 @@ class EntryController < ApplicationController
       @service_source = 'twitter'
       @service_user = @ctx.in_reply_to_service_user
     end
-    with_feedinfo(@ctx) do
+    if @ctx.pin?
       opt = find_opt()
       @feed = find_entry_thread(opt)
       @threads = @feed.entries
-      if @ctx.pin?
-        @cont = opt[:start].to_i
+      @cont = opt[:start].to_i
+    else
+      with_feedinfo(@ctx) do
+        opt = find_opt()
+        @feed = find_entry_thread(opt)
+        @threads = @feed.entries
       end
     end
     return if redirect_to_entry(@threads)
@@ -192,12 +196,18 @@ class EntryController < ApplicationController
       buzz = Buzz.activities(token, "#{user}/@self", opt)
       feedname = 'user'
     else # home
-      buzz = Buzz.activities(token, '@me/@consumption', opt)
-      feedname = 'home'
-      last_checked = session[:buzz_last_checked] || Time.at(0)
-      next_last_checked = session[:buzz_next_last_checked] || Time.at(0)
-      if @ctx.max_id.nil?
-        last_checked = session[:buzz_last_checked] = next_last_checked
+      if @ctx.query
+        opt[:q] = @ctx.query
+        buzz = Buzz.activities(token, 'search', opt)
+        feedname = @ctx.query
+      else
+        buzz = Buzz.activities(token, '@me/@consumption', opt)
+        feedname = 'home'
+        last_checked = session[:buzz_last_checked] || Time.at(0)
+        next_last_checked = session[:buzz_next_last_checked] || Time.at(0)
+        if @ctx.max_id.nil?
+          last_checked = session[:buzz_last_checked] = next_last_checked
+        end
       end
     end
     if nxt = buzz['links']['next']

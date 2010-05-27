@@ -255,13 +255,11 @@ __EOS__
 
   def common_menu(*arg)
     [
-      profile_link(auth.name),
-      search_link,
       settings_link,
       logout_link,
       help_link,
       to_top_menu
-    ].join(' ')
+    ].compact.join(' ')
   end
 
   def to_top_menu
@@ -328,10 +326,6 @@ __EOS__
     service_icon_tag('http://buzzusers.com/images/buzzicon.png', 'Twitter', 'Buzz')
   end
 
-  def profile_link(id)
-    menu_link(menu_label('profile'), :controller => :profile, :action => :show, :id => id)
-  end
-
   def profile_image_tag(url, alt, title)
     image_tag(url, :class => h('profile'), :alt => h(alt), :title => h(title), :size => '25x25')
   end
@@ -342,10 +336,6 @@ __EOS__
 
   def pinned_link(pin_label = 'Star')
     link_to(h(pin_label), { :controller => :entry, :action => :list, :label => 'pin' }, accesskey('9'))
-  end
-
-  def search_link
-    menu_link(menu_label('search'), :controller => 'entry', :action => 'search')
   end
 
   def settings_link

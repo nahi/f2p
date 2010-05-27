@@ -11,12 +11,6 @@ class ProfileController < ApplicationController
     redirect_to :action => :show
   end
 
-  verify :only => :inbox,
-          :method => [:get],
-          :params => [:id],
-          :add_flash => {:error => 'verify failed'},
-          :redirect_to => {:controller => 'entry', :action => 'inbox'}
-
   def show
     @id = param(:id)
     fetch_feedinfo(@id)
@@ -63,6 +57,10 @@ class ProfileController < ApplicationController
     end
     flash[:message] = log.join(' ')
     redirect_to :action => 'edit', :id => id
+  end
+
+  def twitter
+    @id = param(:id)
   end
 
 private

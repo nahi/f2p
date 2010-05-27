@@ -1,4 +1,4 @@
-<%- if @service_source.nil? -%>
+<%- if @ctx.ff? -%>
 <p>Filters: <%= special_feed_links %></p>
 <%- end -%>
 <%- if str = list_links -%>
@@ -12,4 +12,9 @@
 <%- end -%>
 <%- if @service_source == 'buzz' -%>
 <p>Buzz: <%= buzz_links %></p>
+<%- end -%>
+<%- unless @ctx.pin? -%>
+  <%- form_tag(search_action) do -%>
+    <p><%= search_form %></p>
+  <%- end -%>
 <%- end -%>

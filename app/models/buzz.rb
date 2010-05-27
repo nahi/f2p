@@ -20,6 +20,7 @@ class Buzz
       if res
         parsed = JSON.parse(res.content)
         data = parsed['data']
+        data['items'] ||= []
         su = token.service_user
         data['items'] = data['items'].map { |e| wrap(su, e) }
         data

@@ -25,7 +25,6 @@ class SettingController < ApplicationController
     @google_maps_geocoding_lang = param(:google_maps_geocoding_lang) || @setting.google_maps_geocoding_lang
     @reload_list_in_minutes = param(:reload_list_in_minutes) || @setting.reload_list_in_minutes
     @use_ajax = @setting.use_ajax
-    fetch_feedinfo
   end
 
   def update
