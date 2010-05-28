@@ -66,7 +66,7 @@ class ApplicationController < ActionController::Base
   end
 
   def iphone?
-    /(iPhone|iPod)/ =~ request.user_agent
+    /(iPhone|iPod|iPad)/ =~ request.user_agent
   end
 
   def android?
