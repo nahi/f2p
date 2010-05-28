@@ -887,6 +887,7 @@ module EntryHelper
   def post_entry_form
     return if ctx.direct_message?
     ary = []
+    body = ''
     ary << hidden_field_tag('to_lines', '1')
     if ctx.user_for and ctx.user_for != auth.name
       if @feedinfo and @feedinfo.commands.include?('dm')
@@ -908,6 +909,9 @@ module EntryHelper
     case @service_source
     when 'twitter'
       ary << twitter_icon_tag
+      if ctx.query and ctx.query[0] == ?#
+        body += ' ' + ctx.query
+      end
     when 'buzz'
       ary << buzz_icon_tag
     else
