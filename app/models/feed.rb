@@ -24,6 +24,8 @@ class Feed
       entries = feed.entries
       if opt[:eids]
         entries = sort_by_ids(entries, opt[:eids])
+      elsif opt[:label] == 'pin'
+        entries = sort_by_modified(entries)
       elsif opt[:link]
         # You comes first
         entries = entries.partition { |e| e.from_id == auth.name }.flatten
