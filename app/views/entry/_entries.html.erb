@@ -4,7 +4,7 @@
     <p><%= search_drilldown_links %></p>
     <p>permalink: <%= link_to(h(url_for(search_opt(:only_path => false))), search_opt) %></p>
   <%- end -%>
-<%- else -%>
+<%- elsif !(ctx.pin? and !ctx.in_reply_to_screen_name) -%>
   <%- form_tag({:action => 'add'}) do -%>
     <p><%= post_entry_form %></p>
   <%- end -%>
