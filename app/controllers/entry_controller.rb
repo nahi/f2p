@@ -485,6 +485,7 @@ class EntryController < ApplicationController
     @ctx = EntryContext.new(auth)
     if ctx = session[:ctx]
       @ctx.inbox = ctx.inbox
+      @ctx.service_source = ctx.service_source
     end
     if id = param(:id)
       unless token = auth.token('twitter', param(:service_user))
