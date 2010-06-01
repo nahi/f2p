@@ -140,13 +140,32 @@ class Feed
         elsif opt[:list]
           wrap(Task.run { get_feed(auth, opt[:list], opt) }.result)
         elsif opt[:label] == 'pin'
-          wrap(Task.run { pinned_entries(auth, opt) }.result)
+          feed = wrap(Task.run { pinned_entries(auth, opt) }.result)
+          if num = opt[:maxcomments]
+            feed.entries.each do |e|
+              trim_comments(e, num)
+            end
+          end
+          feed
         elsif opt[:room]
           wrap(Task.run { get_feed(auth, opt[:room], opt) }.result)
         else
           wrap(Task.run { get_feed(auth, 'home', opt) }.result)
         end
       }
+    end
+
+    def trim_comments(entry, num)
+      comments = entry.comments
+      if comments.size > num
+        head_size = (num > 1) ? 1 : 0
+        tail_size = num - head_size
+        placeholder = Comment.new
+        placeholder.placeholder = true
+        placeholder.num = comments.size - (head_size + tail_size)
+        placeholder.entry = entry
+        comments.replace(comments[0, head_size] + [placeholder] + comments[-tail_size, tail_size])
+      end
     end
 
     def cache_entries(auth, opt, &block)
@@ -228,6 +247,7 @@ class Feed
         hash = {}
         map = {}
       end
+      maxcomments = opt[:maxcomments]
       hash['entries'] = pinned.map { |e|
         if ['twitter', 'buzz'].include?(e.source)
           YAML.load(e.entry)

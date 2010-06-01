@@ -189,9 +189,11 @@ class Entry
       f.id = hash['id']
       f.name = hash['name'] || hash['displayName']
       f.type = 'user'
-      f.private = false # ???
       f.profile_url = hash['profileUrl']
       f.service_source = 'buzz'
+      # ad hoc conversion. We cannot these from activities stream.
+      f.private = false
+      f.commands = ['subscribe']
       f
     end
 
