@@ -204,7 +204,7 @@ module EntryHelper
     fold, content, links = escape_text(body, ctx.fold ? setting.text_folding_size : nil)
     entry.view_links = links
     if entry.via and entry.via.twitter?
-      content = ff_filter_twitter_username(content)
+      content = link_filter_twitter_username(content)
     end
     if fold
       msg = '(more)'
@@ -243,9 +243,17 @@ module EntryHelper
   end
 
   def buzz_content(entry)
-    content = filter_buzz_content(entry.body) # already safe; can we trust it?
+    body = entry.raw_body
+    return '' unless body
+    fold, content, links = escape_text(body)
+    entry.view_links = links
+    content = link_filter_twitter_username(content)
     if with_attachment = attachment_content(entry)
       content += with_attachment
+    end
+    if link_entry?(entry)
+      link = entry.link
+      content += ' - ' + link_to(h(summary_uri(link)), link)
     end
     with_media = media_content(entry)
     with_geo = geo_content(entry)
@@ -256,7 +264,7 @@ module EntryHelper
     content
   end
 
-  def filter_buzz_content(content)
+  def filter_buzz_comment(content)
     content.
       gsub(%r|<br\s*/>\s*(?:<br\s*/>\s*)+|m, '<br />'). # compact <br/>
       gsub(%r|</?b>|, '') # remove <b>
@@ -578,7 +586,7 @@ module EntryHelper
     }
   end
 
-  def ff_filter_twitter_username(common)
+  def link_filter_twitter_username(common)
     common.gsub(/@([a-zA-Z0-9_]+)/) {
       '@' + link_to($1, "http://twitter.com/#{$1}", :class => 'twname')
     }
@@ -812,7 +820,8 @@ module EntryHelper
   end
 
   def comment(comment)
-    return filter_buzz_content(comment.body) if comment.buzz?
+    # TODO: already marked up in buzz...
+    return filter_buzz_comment(comment.body) if comment.buzz?
     fold, str, links = escape_text(comment.body, ctx.fold ? setting.text_folding_size : nil)
     comment.view_links = links
     if fold
@@ -820,7 +829,7 @@ module EntryHelper
       str += link_to(h(msg), link_show(comment.entry.id))
     end
     if comment.entry.via and comment.entry.via.twitter?
-      str = ff_filter_twitter_username(str)
+      str = link_filter_twitter_username(str)
     end
     str
   end

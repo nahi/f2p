@@ -6,6 +6,7 @@ require 'geo'
 require 'like'
 require 'thumbnail'
 require 'via'
+require 'cgi'
 
 
 class Entry
@@ -88,25 +89,34 @@ class Entry
       user_id = hash['actor']['id']
       e.id = from_service_id('buzz', [user_id, '@self', hash['id']].join('/'))
       e.date = hash['updated']
-      body, link, thumbnails, files = parse_buzz_object(hash)
+      body, raw_body, link, thumbnails, files = parse_buzz_object(hash)
       e.body = body
+      e.raw_body = raw_body
       if /www.google.com\/buzz/ !~ link
         e.link = link
       end
       e.thumbnails = thumbnails
-      e.files = files
-      title = hash['title']
+      # Tumblr feed treats a link as an attachment.
+      if files.size == 1 and files.first.type == 'article' and e.link.nil?
+        e.link = files.first.url
+        e.files = []
+      else
+        e.files = files
+      end
+      title = e.body #hash['title']
       while title.match(URI_REGEXP)
         m = $~
         (e.view_links ||= []) << m[0]
         title = m.post_match
       end
+      e.link ||= e.view_links.first if e.view_links
       e.url = extract_buzz_link_href(hash['links'])
       e.from = buzz_from(hash['actor'])
       if hash['source']
         e.via = Via.new
         e.via.name = hash['source']['title']
         if e.via.name == 'Twitter'
+          e.body = e.raw_body = normalize_tweet_content_in_buzz(e.body)
           e.twitter_username = (hash['crosspostSource'] || '').match(%r{twitter.com/([^/]+)})[1]
           if /@([a-zA-Z0-9_]+)/ =~ hash['title']
             e.twitter_reply_to = ''
@@ -175,6 +185,14 @@ class Entry
         end
       end
       e
+    end
+
+    def normalize_content_in_buzz(body)
+      CGI.unescapeHTML(body).gsub(/<[^>]+>/, '')
+    end
+
+    def normalize_tweet_content_in_buzz(body)
+      normalize_content_in_buzz(body).sub(/[^:]+: /, '')
     end
 
     def buzz_comments(comments)
@@ -419,26 +437,33 @@ class Entry
     end
 
     def parse_buzz_object(hash)
-      body = hash['title']
+      body = raw_body = hash['title']
       link = thumbnails = files = nil
       if obj = hash['object']
         case obj['type']
         when 'note'
-          body = obj['content']
+          if obj['content']
+            body = obj['content']
+            raw_body = normalize_content_in_buzz(body)
+          end
         end
         link = extract_buzz_link_href(obj['links'])
         thumbnails, files = parse_buzz_attachment(obj)
       end
       if source = hash['crosspostSource']
         if /^http:/ =~ source
-          f = Attachment.new
-          f.type = 'article'
-          f.name = source
-          f.url = source
-          files << f
+          if link.nil?
+            link = source
+          else
+            f = Attachment.new
+            f.type = 'article'
+            f.name = source
+            f.url = source
+            files << f
+          end
         end
       end
-      return body, link, thumbnails, files
+      return body, raw_body, link, thumbnails, files
     end
 
     def parse_buzz_attachment(obj)
@@ -459,10 +484,17 @@ class Entry
             end
             t.title = e['title']
           when 'article'
-            f = Attachment.new
-            f.type = 'article'
-            f.url = extract_buzz_link_href(e['links'])
-            f.name = e['content'] || f.url
+            ref = extract_buzz_link(e['links'])
+            if /^image/ =~ ref['type']
+              t = Thumbnail.new
+              t.url = ref['href']
+              t.title = e['content'] || t.url
+            else
+              f = Attachment.new
+              f.type = 'article'
+              f.url = ref['href']
+              f.name = e['content'] || f.url
+            end
           end
           if t.nil? and link = extract_buzz_link(e['links'])
             if /^image/ =~ link['type']
@@ -497,6 +529,7 @@ class Entry
 
   attr_accessor :id
   attr_accessor :body
+  attr_accessor :raw_body
   attr_accessor :url
   attr_accessor :link
   attr_accessor :date
@@ -546,6 +579,7 @@ class Entry
     @view_medias = []
     @view_map = false
     @body = hash['rawBody']
+    @raw_body = @body
     @link = hash['rawLink']
     if %r(\Ahttp://friendfeed.com/e/) =~ @link
       @link = nil
