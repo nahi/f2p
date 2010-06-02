@@ -123,15 +123,13 @@ module ApplicationHelper
   .latest3 { color: #900; }
   .older { color: #008; }
   .archived { color: #558; }
-  .comment { color: #666; }
-  .comment a.twname { color: #666; }
   .inbox { font-weight: bold; }
   .hashtag a { color: #000; }
   .comment-body,.likes {
     text-indent: -16px;
     margin-left: 16px;
   }
-  .comment-block { margin-top: 0.2ex; }
+  .comment-block { margin-top: 0.2ex; margin-left: 1ex; }
   .comment-body { margin-top: 0.6ex; }
   .comment-fold { margin-left: 16px; }
   .comment-fold a { color: #666; }

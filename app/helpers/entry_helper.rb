@@ -744,12 +744,12 @@ module EntryHelper
     str = %Q[<div class="comment-block" id="#{div_id}">\n]
     str += comments.map { |comment|
       if comment.respond_to?(:fold_entries)
-        '<div class="comment comment-fold">' +
+        '<div class="comment-fold">' +
           fold_comment_link(comment, div_id) +
           '</div>'
       else
         date = comment_date(comment, true) unless comment.posted_with_entry?
-        str = '<div class="comment comment-body">' +
+        str = '<div class="comment-body">' +
           comment_icon(comment) + comment(comment)
         [str, comment_author_link(comment), via(comment), date, comment_link(comment)].join(' ') +
           '</div>'
@@ -821,15 +821,21 @@ module EntryHelper
 
   def comment(comment)
     # TODO: already marked up in buzz...
-    return filter_buzz_comment(comment.body) if comment.buzz?
-    fold, str, links = escape_text(comment.body, ctx.fold ? setting.text_folding_size : nil)
-    comment.view_links = links
-    if fold
-      msg = '(more)'
-      str += link_to(h(msg), link_show(comment.entry.id))
+    if comment.buzz?
+      str = filter_buzz_comment(comment.body)
+    else
+      fold, str, links = escape_text(comment.body, ctx.fold ? setting.text_folding_size : nil)
+      comment.view_links = links
+      if fold
+        msg = '(more)'
+        str += link_to(h(msg), link_show(comment.entry.id))
+      end
+      if comment.entry.via and comment.entry.via.twitter?
+        str = link_filter_twitter_username(str)
+      end
     end
-    if comment.entry.via and comment.entry.via.twitter?
-      str = link_filter_twitter_username(str)
+    unless !emphasize_as_unread?(comment)
+      str = content_tag('span', str, :class => 'archived')
     end
     str
   end

@@ -840,10 +840,8 @@ private
           case service_source
           when 'twitter'
             entry = Tweet.show(token, tid)
-            modified = Time.parse(entry[:created_at]).gmtime.xmlschema
           when 'buzz'
             entry = Buzz.show_all(token, tid)
-            modified = Time.parse(entry['updated']).gmtime.xmlschema
           end
           source = service_source
         end
