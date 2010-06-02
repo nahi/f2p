@@ -83,7 +83,6 @@ class Entry
       e
     end
 
-    URI_REGEXP = URI.regexp(['http', 'https'])
     def from_buzz(hash)
       e = new(hash)
       user_id = hash['actor']['id']
@@ -103,13 +102,8 @@ class Entry
       else
         e.files = files
       end
-      title = e.body #hash['title']
-      while title.match(URI_REGEXP)
-        m = $~
-        (e.view_links ||= []) << m[0]
-        title = m.post_match
-      end
-      e.link ||= e.view_links.first if e.view_links
+      e.view_links = scan_link_from_html_content(e.body)
+      e.link ||= e.view_links.shift
       e.url = extract_buzz_link_href(hash['links'])
       e.from = buzz_from(hash['actor'])
       if hash['source']
@@ -193,6 +187,28 @@ class Entry
 
     def normalize_tweet_content_in_buzz(body)
       normalize_content_in_buzz(body).sub(/[^:]+: /, '')
+    end
+
+    HTML_URI_REGEXP = /href=(?:'([^']+)'|"([^"]+)")/i
+    URI_REGEXP = URI.regexp(['http', 'https'])
+    def scan_link_from_html_content(base)
+      links = []
+      str = base
+      # find href='...' first
+      while str.match(HTML_URI_REGEXP)
+        m = $~
+        links << $1 || $2
+        str = m.post_match
+      end
+      return links unless links.empty?
+      # then, pick up links by scanning
+      str = base
+      while str.match(URI_REGEXP)
+        m = $~
+        links << m[0]
+        str = m.post_match
+      end
+      links
     end
 
     def buzz_comments(comments)
