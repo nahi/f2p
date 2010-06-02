@@ -834,7 +834,7 @@ module EntryHelper
         str = link_filter_twitter_username(str)
       end
     end
-    unless !emphasize_as_unread?(comment)
+    unless emphasize_as_unread?(comment)
       str = content_tag('span', str, :class => 'archived')
     end
     str
