@@ -36,7 +36,7 @@
     <hr class="separator" />
     <div class="<%= cycle('thread1', 'thread2') %>">
       <div class="entry">
-        <%= render :partial => 'entry', :locals => {:entry => thread.root, :root => nil, :twitter_thread => thread.twitter_thread} %>
+        <%= render :partial => 'entry_root', :locals => {:entry => thread.root, :twitter_thread => thread.twitter_thread} %>
       </div>
       <%- unless thread.related_entries.empty? -%>
         <% thread.related_entries.each do |entry| -%>
