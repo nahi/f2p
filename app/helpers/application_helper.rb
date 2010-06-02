@@ -99,6 +99,7 @@ module ApplicationHelper
   def inline_stylesheet
     return if i_mode?
     content = <<__EOS__
+  img.service  { vertical-align: text-top; padding: 0 0.1ex 0 0.1ex; }
   img.inline  { vertical-align: text-top; }
   img.profile { border: 1px solid #ccc; padding: 0px; }
   img.media   {
@@ -309,7 +310,7 @@ __EOS__
     if i_mode? and %r{([^/]*)\.png\b} =~ url
       url = icon_url($1 + '.gif')
     end
-    image_tag(url, :class => 'inline', :alt => h(alt), :title => h(title), :size => '16x16')
+    image_tag(url, :class => 'service', :alt => h(alt), :title => h(title), :size => '16x16')
   end
 
   def friendfeed_icon_tag
