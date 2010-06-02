@@ -176,17 +176,17 @@ module EntryHelper
     if entry.tweet?
       content = twitter_content(entry)
       if ctx.tweets? and !entry.unread?
-        content = content_tag('span', content, :class => 'archived')
+        content = span(content, 'archived')
       end
     elsif entry.buzz?
       content = buzz_content(entry)
       if ctx.buzz? and !entry.unread?
-        content = content_tag('span', content, :class => 'archived')
+        content = span(content, 'archived')
       end
     else
       content = friendfeed_content(entry)
       if ctx.inbox and !entry.unread?
-        content = content_tag('span', content, :class => 'archived')
+        content = span(content, 'archived')
       end
     end
     scan_media_from_link(entry)
@@ -450,8 +450,7 @@ module EntryHelper
       entry.files.map { |file|
         case file.type
         when 'article'
-          str = "<br />" + link_to(inline_icon_tag(:url), file.url) +
-            content_tag('span', file.name, :class => 'archived')
+          str = "<br />" + link_to(inline_icon_tag(:url), file.url) + span(file.name, 'archived')
           str = "<br />" + link_to(inline_icon_tag(:url) + file.name, file.url)
         else
           label = file.type
@@ -661,7 +660,7 @@ module EntryHelper
         else
           link = link_to(h(m[0]), search_opt(:action => :list, :query => m[0]))
         end
-        ary << content_tag('span', link, :class => 'hashtag')
+        ary << span(link, 'hashtag')
       else
         ary << h(m[0])
       end
@@ -761,7 +760,7 @@ module EntryHelper
   end
 
   def emphasize_as_unread(str)
-    content_tag('span', str, :class => 'inbox')
+    span(str, 'inbox')
   end
 
   def published(entry, compact = false)
@@ -833,7 +832,7 @@ module EntryHelper
       end
     end
     if need_unread_mgmt? and !comment.unread?
-      str = content_tag('span', str, :class => 'archived')
+      str = span(str, 'archived')
     end
     str
   end

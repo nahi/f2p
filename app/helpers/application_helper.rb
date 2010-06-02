@@ -99,7 +99,11 @@ module ApplicationHelper
   def inline_stylesheet
     return if i_mode?
     content = <<__EOS__
-  img.service  { vertical-align: text-top; padding: 0 0.1ex 0 0.1ex; }
+  a.tab {
+    margin-left: 0.5ex;
+    margin-right: 0.5ex;
+    border: 2px outset #ccc;
+  }
   img.inline  { vertical-align: text-top; }
   img.profile { border: 1px solid #ccc; padding: 0px; }
   img.media   {
@@ -242,14 +246,18 @@ __EOS__
 
   def top_menu
     links = []
-    links << link_to(friendfeed_icon_tag, { :controller => :entry, :action => :inbox }, accesskey('0'))
-    links << link_to(twitter_icon_tag, { :controller => :entry, :action => :tweets })
-    links << link_to(buzz_icon_tag, { :controller => :entry, :action => :buzz })
+    links << link_to(friendfeed_icon_tag, { :controller => :entry, :action => :inbox }, accesskey('0').merge(:class => :tab))
+    links << link_to(twitter_icon_tag, { :controller => :entry, :action => :tweets }, {:class => :tab})
+    links << link_to(buzz_icon_tag, { :controller => :entry, :action => :buzz }, {:class => :tab})
     pin_label = inline_icon_tag(:pinned, 'Star')
     pin_label += "(#{@threads.pins})" if @threads
     links << link_to(pin_label, { :controller => :entry, :action => :list, :label => 'pin' })
     links << menu_link(menu_label('menu', '8'), '#bottom', accesskey('8'))
     links.join(' ')
+  end
+
+  def span(body, klass)
+    content_tag('span', body, :class => klass)
   end
 
   def common_menu(*arg)
@@ -310,7 +318,7 @@ __EOS__
     if i_mode? and %r{([^/]*)\.png\b} =~ url
       url = icon_url($1 + '.gif')
     end
-    image_tag(url, :class => 'service', :alt => h(alt), :title => h(title), :size => '16x16')
+    image_tag(url, :class => 'inline', :alt => h(alt), :title => h(title), :size => '16x16')
   end
 
   def friendfeed_icon_tag
@@ -462,7 +470,7 @@ __EOS__
     else
       klass = 'older'
     end
-    content_tag('span', h(body), :class => klass)
+    span(h(body), klass)
   end
 
   def ago(time)
