@@ -74,7 +74,7 @@ class EntryController < ApplicationController
     end
     last_checked = session[:friendfeed_last_checked] || Time.at(0)
     next_last_checked = session[:friendfeed_next_last_checked] || Time.at(0)
-    if @ctx.start == 0
+    if @ctx.start == 0 and updated_id_in_flash.nil?
       last_checked = session[:friendfeed_last_checked] = next_last_checked
     end
     if next_last_checked
@@ -141,7 +141,7 @@ class EntryController < ApplicationController
         feedname = 'home'
         last_checked = session[:twitter_last_checked] || Time.at(0)
         next_last_checked = session[:twitter_next_last_checked] || Time.at(0)
-        if @ctx.max_id.nil?
+        if @ctx.max_id.nil? and updated_id_in_flash.nil?
           last_checked = session[:twitter_last_checked] = next_last_checked
         end
       end
@@ -205,7 +205,7 @@ class EntryController < ApplicationController
         feedname = 'home'
         last_checked = session[:buzz_last_checked] || Time.at(0)
         next_last_checked = session[:buzz_next_last_checked] || Time.at(0)
-        if @ctx.max_id.nil?
+        if @ctx.max_id.nil? and updated_id_in_flash.nil?
           last_checked = session[:buzz_last_checked] = next_last_checked
         end
       end
