@@ -294,7 +294,9 @@ module EntryHelper
   end
 
   def link_entry?(entry)
-    entry.link and !(entry.via and entry.via.twitter?)
+    entry.link and
+      !(entry.via and entry.via.twitter?) and
+      !entry.view_links.include?(entry.link)
   end
 
   def scan_media_from_link(entry)
@@ -406,10 +408,6 @@ module EntryHelper
     unless comment.posted_with_entry?
       h('by ') + user(comment)
     end
-  end
-
-  def emphasize_as_unread?(entry_or_comment)
-    need_unread_mgmt? and entry_or_comment.unread?
   end
 
   def original_link(entry)
@@ -768,7 +766,7 @@ module EntryHelper
 
   def published(entry, compact = false)
     str = date(entry.date_at, compact)
-    if emphasize_as_unread?(entry)
+    if need_unread_mgmt? and entry.unread?
       str = emphasize_as_unread(str)
     end
     if entry.url
@@ -834,7 +832,7 @@ module EntryHelper
         str = link_filter_twitter_username(str)
       end
     end
-    unless emphasize_as_unread?(comment)
+    if need_unread_mgmt? and !comment.unread?
       str = content_tag('span', str, :class => 'archived')
     end
     str
@@ -1228,7 +1226,7 @@ module EntryHelper
         str = ">>>#{entry.comments_size}"
       end
       str = latest(entry.modified_at, str)
-      if emphasize_as_unread?(entry)
+      if need_unread_mgmt? and entry.unread?
         str = emphasize_as_unread(str)
       end
       link = link_show(entry.id)
@@ -1241,7 +1239,7 @@ module EntryHelper
 
   def comment_date(comment, compact = true)
     str = date(comment.date, compact)
-    if emphasize_as_unread?(comment)
+    if need_unread_mgmt? and comment.unread?
       str = emphasize_as_unread(str)
     end
     str
