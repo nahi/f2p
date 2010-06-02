@@ -786,12 +786,16 @@ class EntryController < ApplicationController
   end
 
   def comments_remote
-    @ctx = EntryContext.new(auth)
+    @ctx = session[:ctx] || EntryContext.new(auth)
     id = param(:eid)
     Entry.if_service_id(id) do |bid|
       token = auth.token('buzz')
       buzz = Buzz.comments(token, bid)
       comments = Entry.buzz_comments(buzz['items'])
+      last_checked = session[:buzz_last_checked]
+      comments.each do |c|
+        c.checked_at = last_checked
+      end
       render :partial => 'comments_remote', :locals => { :eid => id, :comments => comments }
       return
     end

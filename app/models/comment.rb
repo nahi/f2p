@@ -29,6 +29,7 @@ class Comment
   attr_accessor :entry
   attr_accessor :view_links
   attr_accessor :service_source
+  attr_writer :checked_at
 
   def initialize(hash = nil)
     initialize_with_hash(hash, 'id', 'date', 'commands', 'clipped', 'placeholder', 'num') if hash
@@ -40,6 +41,7 @@ class Comment
     @entry = nil
     @view_links = nil
     @service_source = nil
+    @checked_at = nil
     @date ||= ''
   end
 
@@ -61,8 +63,12 @@ class Comment
     end
   end
 
+  def checked_at
+    @checked_at || (entry ? entry.checked_at : Entry::TIME_ZERO)
+  end
+
   def unread?
-    entry and entry.checked_at < date_at
+    checked_at < date_at
   end
 
   def date_at
