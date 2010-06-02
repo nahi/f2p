@@ -197,7 +197,7 @@ class Entry
       # find href='...' first
       while str.match(HTML_URI_REGEXP)
         m = $~
-        links << $1 || $2
+        links << (m[1] || m[2])
         str = m.post_match
       end
       return links unless links.empty?
