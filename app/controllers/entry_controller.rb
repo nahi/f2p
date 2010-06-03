@@ -807,6 +807,10 @@ class EntryController < ApplicationController
       entry = t.root
       eid = entry.id
       comments = entry.comments
+      last_checked = session[:friendfeed_last_checked]
+      comments.each do |c|
+        c.checked_at = last_checked
+      end
     end
     render :partial => 'comments_remote', :locals => { :eid => eid, :comments => comments }
   end
