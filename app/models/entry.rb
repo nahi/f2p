@@ -108,7 +108,7 @@ class Entry
       e.from = buzz_from(hash['actor'])
       if hash['source']
         e.via = Via.new
-        e.via.name = hash['source']['title']
+        e.via.name = normalize_content_in_buzz(hash['source']['title'])
         if e.via.name == 'Twitter'
           e.body = e.raw_body = normalize_tweet_content_in_buzz(e.body)
           e.twitter_username = (hash['crosspostSource'] || '').match(%r{twitter.com/([^/]+)})[1]
@@ -182,7 +182,9 @@ class Entry
     end
 
     def normalize_content_in_buzz(body)
-      CGI.unescapeHTML(body).gsub(/<[^>]+>/, '')
+      if body
+        CGI.unescapeHTML(body).gsub(/<[^>]+>/, '')
+      end
     end
 
     def normalize_tweet_content_in_buzz(body)
