@@ -40,13 +40,8 @@ class Entry
       e.id = from_service_id('twitter', hash[:id].to_s)
       e.date = hash[:created_at]
       e.body = hash[:text]
-      e.from = From.new
-      e.from.id = user[:id].to_s
-      e.from.name = user[:screen_name]
-      e.from.type = 'user'
-      e.from.private = user[:protected]
-      e.from.profile_url = "http://twitter.com/#{e.from.name}"
-      e.from.service_source = e.service_source
+      e.from = tweet_from(user)
+      e.to = [tweet_from(hash[:recipient])] if hash[:recipient]
       e.via = Via.new
       /<a href="([^"]+)" [^>]*>([^<]+)<\/a>/ =~ hash[:source]
       e.via.name = $2 || 'Twitter'
@@ -55,7 +50,6 @@ class Entry
         lat, long = hash[:geo][:coordinates]
         e.geo = Geo['lat' => lat, 'long' => long]
       end
-      e.profile_image_url = user[:profile_image_url]
       e.twitter_username = e.from.id
       if hash[:in_reply_to_status_id]
         e.twitter_reply_to_status_id = hash[:in_reply_to_status_id].to_s
@@ -64,7 +58,8 @@ class Entry
       if base
         e.twitter_retweeted_by_status_id = base[:id].to_s
         e.twitter_retweeted_by = base[:user][:screen_name]
-        e.date = base[:created_at]
+        # just use retweeted date.
+        # e.date = base[:created_at]
       end
       e.url = twitter_url(e.from.name, hash[:id])
       e.commands = []
@@ -121,11 +116,6 @@ class Entry
         lat, long = hash['geocode'].split
         e.geo = Geo['lat' => lat, 'long' => long]
       end
-      profile_image_url = hash['actor']['thumbnailUrl']
-      if profile_image_url.empty?
-        profile_image_url = 'http://mail.google.com/mail/images/blue_ghost.jpg'
-      end
-      e.profile_image_url = profile_image_url
       e.commands = hash['verbs']
       if e.from.id == e.service_user
         e.commands << 'delete'
@@ -213,6 +203,18 @@ class Entry
       links
     end
 
+    def tweet_from(hash)
+      f = From.new
+      f.id = hash[:id].to_s
+      f.name = hash[:screen_name]
+      f.type = 'user'
+      f.private = hash[:protected]
+      f.profile_url = "http://twitter.com/#{f.name}"
+      f.profile_image_url = hash[:profile_image_url]
+      f.service_source = 'twitter'
+      f
+    end
+
     def buzz_comments(comments)
       return [] unless comments
       comments.map { |comment|
@@ -230,6 +232,12 @@ class Entry
       # ad hoc conversion. We cannot these from activities stream.
       f.private = false
       f.commands = ['subscribe']
+      profile_image_url = hash['thumbnailUrl']
+      if profile_image_url.empty?
+        f.profile_image_url = 'http://mail.google.com/mail/images/blue_ghost.jpg'
+      else
+        f.profile_image_url = profile_image_url
+      end
       f
     end
 
@@ -243,9 +251,12 @@ class Entry
         if opt[:in_reply_to_status_id]
           params[:in_reply_to_status_id] = opt[:in_reply_to_status_id]
         end
-        if entry = Tweet.update_status(opt[:token], body, params)
-          Entry.from_tweet(entry)
+        if opt[:to].empty?
+          entry = Tweet.update_status(opt[:token], body, params)
+        else # DM
+          entry = Tweet.send_direct_message(opt[:token], opt[:to].first, body, params)
         end
+        Entry.from_tweet(entry) if entry
       when 'buzz'
         if entry = Buzz.create_note(opt[:token], body)
           Entry.from_buzz(entry)
@@ -567,7 +578,6 @@ class Entry
   attr_accessor :short_url
   attr_accessor :hidden
 
-  attr_accessor :profile_image_url
   attr_accessor :twitter_username
   attr_accessor :twitter_reply_to
   attr_accessor :twitter_reply_to_status_id
@@ -584,7 +594,6 @@ class Entry
   def initialize(hash)
     initialize_with_hash(hash, 'id', 'url', 'date', 'commands', 'service_source', 'service_user')
     @commands ||= EMPTY
-    @profile_image_url = nil
     @twitter_username = nil
     @twitter_reply_to = nil
     @twitter_reply_to_status_id = nil

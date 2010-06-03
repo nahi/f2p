@@ -13,12 +13,14 @@ class From
 
   attr_accessor :service_source
   attr_accessor :profile_url
+  attr_accessor :profile_image_url
 
   def initialize(hash = nil)
     initialize_with_hash(hash, 'id', 'name', 'type', 'commands') if hash
     @private = hash && hash['private'] == true
     @commands ||= EMPTY
     @profile_url = nil
+    @profile_image_url = nil
   end
 
   def user?

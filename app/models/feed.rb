@@ -84,6 +84,8 @@ class Feed
               feed.entries = [entry] + feed.entries
             end
           end
+        elsif opt[:tweets] and opt[:feed] == 'direct'
+          feed.entries = sort_by_modified(feed.entries)[0, opt[:num]]
         end
         feed
       end

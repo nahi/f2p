@@ -177,7 +177,6 @@ class EntryContext
   end
 
   def user_for
-    return nil if tweets?
     user = @user || @friends
     user != 'me' ? user : nil
   end

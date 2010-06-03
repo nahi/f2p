@@ -34,6 +34,16 @@ class Tweet
       res.map { |e| wrap(su, e) }
     end
 
+    def sent_direct_messages(token, args = {})
+      res = with_perf('[perf] start direct_messages/sent fetch') {
+        protect([]) {
+          client(token).sent_direct_messages(args)
+        }
+      }
+      su = token.service_user
+      res.map { |e| wrap(su, e) }
+    end
+
     def direct_messages(token, args = {})
       res = with_perf('[perf] start direct_messages fetch') {
         protect([]) {
@@ -77,6 +87,13 @@ class Tweet
     def update_status(token, status, args = {})
       res = with_perf('[perf] start tweet post') {
         client(token).update_status(args.merge(:status => status))
+      }
+      wrap(token.service_user, res)
+    end
+
+    def send_direct_message(token, user, text, args = {})
+      res = with_perf('[perf] start DM post') {
+        client(token).send_direct_message(args.merge(:user => user, :text => text))
       }
       wrap(token.service_user, res)
     end

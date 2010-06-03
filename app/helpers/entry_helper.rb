@@ -79,9 +79,9 @@ module EntryHelper
   def author_picture(entry)
     return if ctx.ff? and ctx.user_only?
     if setting.list_view_profile_picture
-      if entry.profile_image_url
+      if entry.from.profile_image_url
         name = entry.from.name
-        profile_image_tag(entry.profile_image_url, name, name)
+        profile_image_tag(entry.from.profile_image_url, name, name)
       elsif id = entry.origin_id
         picture(id)
       end
@@ -90,7 +90,11 @@ module EntryHelper
 
   def to_picture(to)
     if ctx.single? or setting.list_view_profile_picture
-      picture(to.id)
+      if to.profile_image_url
+        profile_image_tag(to.profile_image_url, to.name, to.name)
+      else
+        picture(to.id)
+      end
     end
   end
 
@@ -138,15 +142,23 @@ module EntryHelper
         link = link_list(opt)
         [to_picture(to), link_to(h(name), link), lock_icon(to)].join
       else
-        if to.id == auth.name
-          name = self_feed_label
+        ary = []
+        ary << to_picture(to)
+        if entry.tweet?
+          ary << twitter_user_link(to)
         else
-          name = to.name
+          if to.id == auth.name
+            name = self_feed_label
+          else
+            name = to.name
+          end
+          if entry.from_id != to.id
+            name = 'DM:' + name
+          end
+          ary << link_to(h(name), link_user(to.id))
         end
-        if entry.from_id != to.id
-          name = 'DM:' + name
-        end
-        [to_picture(to), link_to(h(name), link_user(to.id)), lock_icon(to)].join
+        ary << lock_icon(to)
+        ary.join
       end
     }.compact
     unless links.empty?
@@ -353,6 +365,10 @@ module EntryHelper
     end
   end
 
+  def twitter_user_link(user)
+    link_to(h(user.name), link_action('tweets', :feed => 'user', :user => user.name))
+  end
+
   def author_link(entry, with_picture = true)
     return unless entry.from
     if entry.from.group?
@@ -361,7 +377,7 @@ module EntryHelper
       # filter by group + user
       from = user(entry, link_list(:query => '', :room => ctx.room_for, :user => entry.from_id))
     elsif entry.tweet?
-      from = link_to(h(entry.from.name), link_action('tweets', :feed => 'user', :user => entry.from.name))
+      from = twitter_user_link(entry.from)
     else
       from = user(entry)
     end
@@ -897,16 +913,18 @@ module EntryHelper
   end
 
   def post_entry_form
-    return if ctx.direct_message?
+    return if ctx.direct_message? and !@dm_to
     ary = []
     body = ''
     ary << hidden_field_tag('to_lines', '1')
     if ctx.user_for and ctx.user_for != auth.name
       if @feedinfo and @feedinfo.commands.include?('dm')
         ary << hidden_field_tag('to_0', ctx.user_for) + h(feed_name) + ': '
-      else
-        return
+      elsif ctx.tweets? and ctx.user_for != @service_user_screen_name
+        ary << hidden_field_tag('to_0', ctx.user_for) + h(ctx.user_for) + ': '
       end
+    elsif @dm_to
+      ary << hidden_field_tag('to_0', @dm_to) + h(@dm_to) + ': '
     end
     ary << hidden_field_tag('service_source', @service_source) if @service_source
     ary << hidden_field_tag('service_user', @service_user) if @service_user
@@ -1211,13 +1229,20 @@ module EntryHelper
   def post_comment_link(entry, opt = {})
     if entry.tweet?
       return if entry.service_user == entry.from_id
-      str = inline_menu_label(:reply, 'reply')
       tid = Entry.if_service_id(entry.id)
-      link = list_opt(
-        :in_reply_to_service_user => entry.service_user,
-        :in_reply_to_screen_name => entry.from.name,
-        :in_reply_to_status_id => tid
-      )
+      if ctx.feed == 'direct'
+        str = inline_menu_label(:dm, 'DM')
+        link = list_opt(
+          :dm_to => entry.from.name
+        )
+      else
+        str = inline_menu_label(:reply, 'reply')
+        link = list_opt(
+          :in_reply_to_service_user => entry.service_user,
+          :in_reply_to_screen_name => entry.from.name,
+          :in_reply_to_status_id => tid
+        )
+      end
     elsif !entry.comments.empty? and !comment_inline?(entry)
       if entry.comments_size == 1
         str = ">>>#{entry.comments_size}"

@@ -99,7 +99,7 @@ module ApplicationHelper
   def inline_stylesheet
     return if i_mode?
     content = <<__EOS__
-  a.tab { margin-right: 1ex; }
+  a.tab { margin-right: 0.5ex; }
   img.inline  { vertical-align: text-top; }
   img.profile { border: 1px solid #ccc; padding: 0px; }
   img.media   {

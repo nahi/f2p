@@ -115,19 +115,22 @@ class EntryController < ApplicationController
     end
     @service_source = token.service
     @service_user = token.service_user
+    @service_user_screen_name = token.params
+    @dm_to = param(:dm_to)
     @saved_searches = twitter_saved_searches(token)
     opt = {:count => @ctx.num}
     opt[:max_id] = Entry.if_service_id(@ctx.max_id) if @ctx.max_id
     case @ctx.feed
     when 'user'
-      user = @ctx.user || token.params # screen_name
+      user = @ctx.user || @@service_user_screen_name
       tweets = Tweet.user_timeline(token, user, opt)
       feedname = '@' + user
     when 'mentions'
       tweets = Tweet.mentions(token, opt)
       feedname = @ctx.feed
     when 'direct'
-      tweets = Tweet.direct_messages(token, opt)
+      t1 = Task.run { Tweet.direct_messages(token, opt) }
+      tweets = Tweet.sent_direct_messages(token, opt) + t1.result
       feedname = @ctx.feed
     when 'favorites'
       tweets = Tweet.favorites(token, opt)
@@ -149,7 +152,8 @@ class EntryController < ApplicationController
     feed_opt = find_opt.merge(
       :tweets => tweets,
       :feedname => "Tweets(#{feedname})",
-      :service_user => token.service_user
+      :service_user => token.service_user,
+      :feed => @ctx.feed
     )
     @feed = find_entry_thread(feed_opt)
     @threads = @feed.entries
