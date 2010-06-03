@@ -98,6 +98,14 @@ module EntryHelper
     end
   end
 
+  def profile_picture(user)
+    if user.profile_image_url
+      profile_image_tag(user.profile_image_url, user.name, user.name)
+    else
+      picture(user.id)
+    end
+  end
+
   def pin_link(entry)
     if ajax?
       eid = entry.id
@@ -145,7 +153,7 @@ module EntryHelper
         ary = []
         ary << to_picture(to)
         if entry.tweet?
-          ary << twitter_user_link(to)
+          ary << service_user_link('tweets', to)
         else
           if to.id == auth.name
             name = self_feed_label
@@ -365,8 +373,8 @@ module EntryHelper
     end
   end
 
-  def twitter_user_link(user)
-    link_to(h(user.name), link_action('tweets', :feed => 'user', :user => user.name))
+  def service_user_link(action, user)
+    link_to(h(user.name), link_action(action, :feed => 'user', :user => user.id))
   end
 
   def author_link(entry, with_picture = true)
@@ -377,7 +385,7 @@ module EntryHelper
       # filter by group + user
       from = user(entry, link_list(:query => '', :room => ctx.room_for, :user => entry.from_id))
     elsif entry.tweet?
-      from = twitter_user_link(entry.from)
+      from = service_user_link('tweets', entry.from)
     else
       from = user(entry)
     end
@@ -386,13 +394,13 @@ module EntryHelper
       ary << author_picture(entry)
     end
     ary << from
+    ary << lock_icon(entry.from)
     if link = twitter_reply_to(entry)
       ary << link
     end
     if link = twitter_retweeted_by(entry)
       ary << link
     end
-    ary << lock_icon(entry.from)
     ary.join
   end
 
@@ -1023,6 +1031,20 @@ module EntryHelper
       help_link,
       to_top_menu
     ].compact.join(' ')
+  end
+
+  def profile_text(profile)
+    ary = []
+    ary << link_to(profile_picture(profile), profile.profile_url)
+    if ctx.tweets?
+      ary << service_user_link('tweets', profile)
+    elsif ctx.buzz?
+      ary << service_user_link('buzz', profile)
+    end
+    ary << lock_icon(profile)
+    ary << ' '
+    ary << profile.display_name
+    ary.join
   end
 
   def profile_link(id)

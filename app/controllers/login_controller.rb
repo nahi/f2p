@@ -112,12 +112,14 @@ class LoginController < ApplicationController
         t.token = token
         t.secret = secret
         profile = Buzz.profile(t)
-        user_id = profile["data"]["id"]
-        screen_name = profile["data"]["displayName"]
-        if auth
-          auth.set_token('buzz', user_id, token, secret, screen_name)
-        elsif user = User.token_validate('buzz', user_id, token, secret, screen_name)
-          set_user(user)
+        if profile.id and profile.display_name
+          user_id = profile.id
+          screen_name = profile.display_name
+          if auth
+            auth.set_token('buzz', user_id, token, secret, screen_name)
+          elsif user = User.token_validate('buzz', user_id, token, secret, screen_name)
+            set_user(user)
+          end
         end
       end
     end

@@ -233,7 +233,7 @@ class Entry
       f.private = false
       f.commands = ['subscribe']
       profile_image_url = hash['thumbnailUrl']
-      if profile_image_url.empty?
+      if profile_image_url.blank?
         f.profile_image_url = 'http://mail.google.com/mail/images/blue_ghost.jpg'
       else
         f.profile_image_url = profile_image_url

@@ -123,7 +123,9 @@ class EntryController < ApplicationController
     case @ctx.feed
     when 'user'
       user = @ctx.user || @@service_user_screen_name
+      t = Task.run { @profile = Tweet.profile(token, user) }
       tweets = Tweet.user_timeline(token, user, opt)
+      t.result
       feedname = '@' + user
     when 'mentions'
       tweets = Tweet.mentions(token, opt)
@@ -197,7 +199,9 @@ class EntryController < ApplicationController
     case @ctx.feed
     when 'user'
       user = @ctx.user || '@me'
+      t = Task.run { @profile = Buzz.profile(token, user) }
       buzz = Buzz.activities(token, "#{user}/@self", opt)
+      t.result
       feedname = 'user'
     else # home
       if @ctx.query

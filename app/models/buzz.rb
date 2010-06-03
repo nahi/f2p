@@ -3,12 +3,27 @@ class Buzz
 
   class << self
     def profile(token, who = '@me', args = {})
+      profile = Profile.new
       res = with_perf('[perf] start profile fetch') {
         protect {
           client(token).get(profile_path(who), args.merge(:alt => :json))
         }
       }
-      JSON.parse(res.content) if res
+      if res
+        hash = JSON.parse(res.content)['data']
+        profile.id = hash['id']
+        profile.name = profile.display_name = hash['displayName']
+        profile.profile_url = hash['profileUrl']
+        profile.profile_image_url = hash['thumbnailUrl']
+        profile.location = nil
+        profile.description = hash['aboutMe'] unless hash['aboutMe'].blank?
+        profile.private = false # ???
+        # TODO
+        profile.followings_count = nil
+        profile.followers_count = nil
+        profile.entries_count = nil
+      end
+      profile
     end
 
     def activities(token, feed = '@me/@consumption', args = {})
@@ -199,6 +214,14 @@ class Buzz
       hash['service_source'] = 'buzz'
       hash['service_user'] = service_user
       hash
+    end
+
+    def find_type(hashes, type)
+      hashes.each do |hash|
+        if hash['type'] == type
+          return hash['value']
+        end
+      end
     end
 
     def client(token)

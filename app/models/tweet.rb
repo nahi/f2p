@@ -1,4 +1,5 @@
 require 'rubytter'
+require 'cgi'
 
 
 class Tweet
@@ -128,6 +129,29 @@ class Tweet
       }
       su = token.service_user
       res.map { |e| wrap(su, e) }
+    end
+
+    def profile(token, user, args = {})
+      profile = Profile.new
+      res = with_perf('[perf] start fetching profile') {
+        protect(nil) {
+          client(token).user(user, args)
+        }
+      }
+      if res
+        profile.id = res[:id].to_s
+        profile.name = res[:screen_name]
+        profile.display_name = res[:name]
+        profile.profile_url = "http://twitter.com/#{res[:screen_name]}"
+        profile.profile_image_url = res[:profile_image_url]
+        profile.location = res[:location] unless res[:location].blank?
+        profile.description = CGI.escapeHTML(res[:description]) unless res[:description].blank?
+        profile.private = res[:protected]
+        profile.followings_count = res[:friends_count]
+        profile.followers_count = res[:followers_count]
+        profile.entries_count = res[:statuses_count]
+      end
+      profile
     end
 
   private

@@ -8,11 +8,9 @@
   <%- form_tag({:action => 'add'}) do -%>
     <p><%= post_entry_form %></p>
   <%- end -%>
+  <%= render :partial => 'profile', :locals => {:profile => @profile} if ctx.profile_for %>
   <%- if ctx.ff? -%>
-    <%- if ctx.profile_for -%>
-      <p><%= picture_link(ctx.profile_for) %> <%= feed_name_with_icon %> <%= h(subscribe_status) %> <%= profile_link(ctx.profile_for) %></p>
-    <%- end -%>
-    <%- if ctx.ff? and (feed = ctx.list_for || ctx.user_for || ctx.room_for) -%>
+    <%- if feed = ctx.list_for || ctx.user_for || ctx.room_for -%>
       <p>Best of: <%= best_of_links(feed) %></p>
     <%- elsif ctx.is_summary? -%>
       <p>Best of: <%= best_of_links(ctx.feed) %></p>

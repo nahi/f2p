@@ -101,7 +101,11 @@ module ApplicationHelper
     content = <<__EOS__
   a.tab { margin-right: 0.5ex; }
   img.inline  { vertical-align: text-top; }
-  img.profile { border: 1px solid #ccc; padding: 0px; }
+  img.profile {
+    border: 1px solid #ccc;
+    padding: 0px;
+    vertical-align: text-bottom;
+  }
   img.media   {
     border: 1px solid #ccc;
     padding: 1px;
