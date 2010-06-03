@@ -122,11 +122,11 @@ class EntryController < ApplicationController
     opt[:max_id] = Entry.if_service_id(@ctx.max_id) if @ctx.max_id
     case @ctx.feed
     when 'user'
-      user = @ctx.user || @@service_user_screen_name
+      user = @ctx.user || @service_user_screen_name
       t = Task.run { @profile = Tweet.profile(token, user) }
       tweets = Tweet.user_timeline(token, user, opt)
       t.result
-      feedname = '@' + user
+      feedname = '@' + @profile.name
     when 'mentions'
       tweets = Tweet.mentions(token, opt)
       feedname = @ctx.feed
@@ -202,7 +202,7 @@ class EntryController < ApplicationController
       t = Task.run { @profile = Buzz.profile(token, user) }
       buzz = Buzz.activities(token, "#{user}/@self", opt)
       t.result
-      feedname = 'user'
+      feedname = @profile.name
     else # home
       if @ctx.query
         opt[:q] = @ctx.query

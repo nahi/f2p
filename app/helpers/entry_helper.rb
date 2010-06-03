@@ -1037,9 +1037,9 @@ module EntryHelper
     ary = []
     ary << link_to(profile_picture(profile), profile.profile_url)
     if ctx.tweets?
-      ary << service_user_link('tweets', profile)
+      ary << link_to(h(profile.name), link_action('tweets', :feed => 'user', :user => profile.name))
     elsif ctx.buzz?
-      ary << service_user_link('buzz', profile)
+      ary << link_to(h(profile.name), link_action('buzz', :feed => 'user', :user => profile.id))
     end
     ary << lock_icon(profile)
     ary << ' '
