@@ -928,8 +928,8 @@ module EntryHelper
     if ctx.user_for and ctx.user_for != auth.name
       if @feedinfo and @feedinfo.commands.include?('dm')
         ary << hidden_field_tag('to_0', ctx.user_for) + h(feed_name) + ': '
-      elsif ctx.tweets? and ctx.user_for != @service_user_screen_name
-        ary << hidden_field_tag('to_0', ctx.user_for) + h(ctx.user_for) + ': '
+      elsif ctx.tweets? and !ctx.in_reply_to_screen_name and @profile and @profile.name != @service_user_screen_name
+        ary << hidden_field_tag('to_0', @profile.name) + h(@profile.name) + ': '
       end
     elsif @dm_to
       ary << hidden_field_tag('to_0', @dm_to) + h(@dm_to) + ': '
