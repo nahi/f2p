@@ -12,7 +12,7 @@ Click one of the link from followings to start using 'm.ctor.org'. You can add o
 <li>#{ link_to(h('Facebook'), :controller => :login, :action => :initiate_facebook_oauth_login) } [experimental]</li>
 </ul>
 <p>
-Above links are for granting access to FriendFeed, Twitter or Google buzz by 'm.ctor.org'.
+Above links are for granting access to FriendFeed, Twitter, Google buzz or Facebook by 'm.ctor.org'.
 You don't have to register your credential to 'm.ctor.org' site.
 (NOTE: When it doesn't work for your cell phones please use remote key described below.)
 </p>
