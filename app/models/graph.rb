@@ -1,7 +1,5 @@
 class Graph
   GRAPH_API_BASE = 'https://graph.facebook.com'
-  @@client = HTTPClient.new(F2P::Config.http_proxy || ENV['http_proxy'])
-  @@client.debug_dev = STDERR
 
   class << self
     include API
@@ -136,7 +134,7 @@ class Graph
     def get(token, path, query)
       res = with_perf("[perf] start #{path} fetch") {
         protect {
-          @@client.get(path, query.merge(:access_token => token.secret))
+          client.get(path, query.merge(:access_token => token.secret))
         }
       }
       parse(token, res)
@@ -144,13 +142,13 @@ class Graph
 
     def post(token, path, body = '')
       protect {
-        @@client.request(:post, path, {:access_token => token.secret }, body)
+        client.request(:post, path, {:access_token => token.secret }, body)
       }
     end
 
     def delete(token, path)
       protect {
-        @@client.request(:delete, path, {:access_token => token.secret }, '')
+        client.request(:delete, path, {:access_token => token.secret }, '')
       }
     end
 
@@ -181,6 +179,10 @@ class Graph
       hash['service_source'] = 'graph'
       hash['service_user'] = service_user
       hash
+    end
+
+    def client
+      HTTPClient.new(F2P::Config.http_proxy || ENV['http_proxy'])
     end
   end
 end
