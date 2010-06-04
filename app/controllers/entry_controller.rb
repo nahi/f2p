@@ -1164,6 +1164,11 @@ private
     components = sid.split('_')
     service_user = components.pop
     service_source = components.pop
-    return components.join('_'), service_source, service_user
+    if components.empty?
+      # Graph API uses id format: 'nnnnn_nnnn' so here may be 'g_nnnn_nnnn'
+      return sid, nil, nil
+    else
+      return components.join('_'), service_source, service_user
+    end
   end
 end
