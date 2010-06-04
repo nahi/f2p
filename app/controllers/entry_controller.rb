@@ -546,8 +546,10 @@ class EntryController < ApplicationController
     begin
       entry = Entry.create(opt)
     rescue JSON::ParserError => e
+      logger.warn(e)
       msg = 'Unexpected response from the server: ' + e.class.name
     rescue Exception => e
+      logger.warn(e)
       msg = e.message
     end
     unless entry
@@ -591,8 +593,10 @@ class EntryController < ApplicationController
       begin
         entry = Tweet.retweet(token, Entry.if_service_id(id))
       rescue JSON::ParserError => e
+        logger.warn(e)
         msg = 'Unexpected response from the server: ' + e.class.name
       rescue Exception => e
+        logger.warn(e)
         msg = e.message
       end
       if entry

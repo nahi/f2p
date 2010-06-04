@@ -101,10 +101,9 @@ class Graph
     end
 
     def create_comment(token, id, content)
-      res = with_perf("[perf] start creating a comment") {
+      with_perf("[perf] start creating a comment") {
         post(token, comments_path(id), :message => content)
       }
-      parse(token, res)
     end
 
     def delete_comment(token, id)
@@ -132,18 +131,17 @@ class Graph
     end
 
     def get(token, path, query)
-      res = with_perf("[perf] start #{path} fetch") {
-        protect {
-          client.get(path, query.merge(:access_token => token.secret))
-        }
+      res = protect {
+        client.get(path, query.merge(:access_token => token.secret))
       }
       parse(token, res)
     end
 
     def post(token, path, body = '')
-      protect {
+      res = protect {
         client.request(:post, path, {:access_token => token.secret }, body)
       }
+      parse(token, res)
     end
 
     def delete(token, path)
@@ -182,7 +180,9 @@ class Graph
     end
 
     def client
-      HTTPClient.new(F2P::Config.http_proxy || ENV['http_proxy'])
+      drv = HTTPClient.new(F2P::Config.http_proxy || ENV['http_proxy'])
+      drv.debug_dev = STDERR
+      drv
     end
   end
 end

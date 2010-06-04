@@ -371,6 +371,7 @@ class Entry
     end
 
     def graph_from(hash)
+      return nil unless hash
       f = From.new
       f.id = hash['id']
       f.name = hash['name']
