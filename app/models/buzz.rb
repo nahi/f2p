@@ -2,6 +2,8 @@ class Buzz
   BUZZ_API_BASE = 'https://www.googleapis.com/buzz/v1'
 
   class << self
+    include API
+
     def profile(token, who = '@me', args = {})
       profile = Profile.new
       res = with_perf('[perf] start profile fetch') {
@@ -161,10 +163,6 @@ class Buzz
       activity_path(path('@me/@muted', feed.split('/').last))
     end
 
-    def path(*args)
-      args.compact.join('/')
-    end
-
     def get_element(token, path, opt)
       res = with_perf("[perf] start #{path} fetch") {
         protect {
@@ -180,32 +178,6 @@ class Buzz
         data = parsed['data']
         su = token.service_user
         wrap(su, data)
-      end
-    end
-
-    def logger
-      ActiveRecord::Base.logger
-    end
-
-    def protect(default = nil)
-      begin
-        yield
-      rescue
-        logger.error($!)
-        default
-      end
-    end
-
-    def with_perf(msg)
-      logger.info(msg)
-      begin
-        start = Time.now
-        yield
-      rescue
-        logger.warn($!)
-        raise
-      ensure
-        logger.info("elapsed: #{((Time.now - start) * 1000).to_i}ms")
       end
     end
 

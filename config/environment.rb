@@ -54,6 +54,12 @@ module F2P
       attr_accessor :buzz_api_oauth_http_method
       attr_accessor :buzz_api_oauth_scope
 
+      attr_accessor :facebook_api_oauth_consumer_key
+      attr_accessor :facebook_api_oauth_consumer_secret
+      attr_accessor :facebook_api_oauth_authorize_url
+      attr_accessor :facebook_api_oauth_access_token_url
+      attr_accessor :facebook_api_oauth_scope
+
       attr_accessor :json_parse_size_limit
 
       attr_accessor :google_maps_maptype
@@ -197,6 +203,13 @@ Rails::Initializer.run do |config|
   F2P::Config.buzz_api_oauth_signature_method = 'HMAC-SHA1'
   F2P::Config.buzz_api_oauth_http_method = :get
   F2P::Config.buzz_api_oauth_scope = 'https://www.googleapis.com/auth/buzz'
+
+  F2P::Config.facebook_api_oauth_consumer_key = nil
+  F2P::Config.facebook_api_oauth_consumer_secret = nil
+  F2P::Config.facebook_api_oauth_authorize_url = 'https://graph.facebook.com/oauth/authorize'
+  F2P::Config.facebook_api_oauth_access_token_url = 'https://graph.facebook.com/oauth/access_token'
+  # We need 'offline_access' for getting non expiry access token.
+  F2P::Config.facebook_api_oauth_scope = 'publish_stream,read_stream,user_about_me,user_activities,user_events,user_groups,user_likes,user_notes,user_photos,user_videos,offline_access'
 
   F2P::Config.json_parse_size_limit = 1.5 * 1024 * 1024
 

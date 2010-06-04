@@ -22,6 +22,8 @@ class Entry
           from_tweet(hash)
         when 'buzz'
           from_buzz(hash)
+        when 'graph'
+          from_graph(hash)
         else
           new(hash)
         end
@@ -35,7 +37,9 @@ class Entry
         hash['service_source'] = base['service_source']
         hash['service_user'] = base['service_user']
       end
-      e = new(hash)
+      e = new()
+      e.service_source = hash['service_source']
+      e.service_user = hash['service_user']
       user = hash[:user] || hash[:sender]
       e.id = from_service_id('twitter', hash[:id].to_s)
       e.date = hash[:created_at]
@@ -59,7 +63,7 @@ class Entry
         e.twitter_retweeted_by_status_id = base[:id].to_s
         e.twitter_retweeted_by = base[:user][:screen_name]
         # just use retweeted date.
-        # e.date = base[:created_at]
+        e.date = base[:created_at]
       end
       e.url = twitter_url(e.from.name, hash[:id])
       e.commands = []
@@ -75,11 +79,17 @@ class Entry
         e.commands << 'like'
       end
       e.commands << 'retweet' if e.from.id != e.service_user
+      e.to = []
+      e.thumbnails = []
+      e.files = []
+      e.comments = []
       e
     end
 
     def from_buzz(hash)
-      e = new(hash)
+      e = new()
+      e.service_source = hash['service_source']
+      e.service_user = hash['service_user']
       user_id = hash['actor']['id']
       e.id = from_service_id('buzz', [user_id, '@self', hash['id']].join('/'))
       e.date = hash['updated']
@@ -104,11 +114,12 @@ class Entry
       if hash['source']
         e.via = Via.new
         e.via.name = normalize_content_in_buzz(hash['source']['title'])
+        e.via.url = scan_link_from_html_content(hash['source']['title']).first
         if e.via.name == 'Twitter'
           e.body = e.raw_body = normalize_tweet_content_in_buzz(e.body)
           e.twitter_username = (hash['crosspostSource'] || '').match(%r{twitter.com/([^/]+)})[1]
           if /@([a-zA-Z0-9_]+)/ =~ hash['title']
-            e.twitter_reply_to = ''
+            e.twitter_reply_to = $1
           end
         end
       end
@@ -140,7 +151,6 @@ class Entry
         liked = liked.first
         if liked['count'] != e.likes.size
           l = Like.new
-          l.from = From.new
           l.placeholder = true 
           l.num = liked['count'] - e.likes.size
           l.entry = e
@@ -168,6 +178,118 @@ class Entry
           end
         end
       end
+      e.to = []
+      e
+    end
+
+    def from_graph(hash)
+      e = new()
+      e.service_source = hash['service_source']
+      e.service_user = hash['service_user']
+      e.id = from_service_id('graph', hash['id'])
+      e.date = hash['updated_time']
+      e.from = graph_from(hash['from'])
+      e.to = []
+      if hash['to']
+        hash['to']['data'].each do |u|
+          e.to << graph_from(u)
+        end
+      end
+      e.thumbnails = []
+      e.files = []
+      # TODO: location
+      case hash['type']
+      when 'album'
+        e.body = hash['description'] + "(#{hash['count']} photo(s))"
+        e.link = hash['link']
+      when 'event'
+        e.body = [hash['name'], hash['description'], hash['owner']['name']]
+      when 'group'
+        e.body = [hash['name'], hash['description'], hash['owner']['name']]
+        e.link = hash['link']
+      when 'link'
+        e.body = [hash['name'], hash['description'], hash['message']].compact
+        if hash['link'] != 'http://www.facebook.com/'
+          e.link = hash['link']
+        end
+      when 'note'
+        e.body = [hash['subject'], normalize_content_in_buzz(hash['message'])]
+      when 'page'
+        # TODO
+        e.body = hash['name']
+      when 'photo'
+        e.body = [hash['name'], hash['message']]
+        e.link = hash['link'] if hash['source']
+      when 'video'
+        e.body = normalize_content_in_buzz(hash['description'])
+      else
+        e.body = hash['message']
+      end
+      if hash['picture']
+        t = Thumbnail.new
+        t.link = hash['source'] || hash['link']
+        t.url = hash['picture']
+        t.title = hash['message'] || hash['description'] || hash['caption'] || e.body
+        t.height = hash['height']
+        t.width = hash['width']
+        e.thumbnails << t
+      end
+      if e.body.is_a?(Array)
+        e.body = e.body.compact.join(' - ')
+      end
+      e.raw_body = e.body
+      if hash['attribution']
+        e.via = Via.new
+        e.via.name = normalize_content_in_buzz(hash['attribution'])
+        # TODO: report
+        e.via.url = scan_link_from_html_content(hash['attribution']).first
+        e.via.url.sub!(/graph.facebook.com/, 'www.facebook.com') if e.via.url
+      end
+      e.commands = []
+      if hash['actions']
+        hash['actions'].each do |a|
+          case a['name']
+          when /@([a-zA-Z0-9_]+) on Twitter\z/
+            e.twitter_username = $1
+            if /@([a-zA-Z0-9_]+)/ =~ e.body
+              e.twitter_reply_to = $1
+            end
+          when 'Comment'
+            e.commands << 'comment'
+            e.url = a['link']
+          when 'Like'
+            e.url = a['link']
+          end
+        end
+      end
+      if hash['comments']
+        e.comments = graph_comments(hash['comments']['data'])
+        e.comments.each do |c|
+          c.entry = e
+        end
+      else
+        e.comments = []
+      end
+      e.likes = []
+      already_liked = false
+      if likes = hash['likes']
+        if likes.is_a?(Hash)
+          likes['data'].each do |like|
+            l = Like.new
+            l.date = e.date
+            l.from = graph_from(like)
+            l.entry = e
+            e.likes << l
+            already_liked = true if l.from.id == e.service_user
+          end
+        else
+          like = Like.new
+          like.placeholder = true
+          like.num = hash['likes']
+          e.likes << like
+        end
+      end
+      e.commands << 'like' unless already_liked
       e
     end
 
@@ -241,6 +363,26 @@ class Entry
       f
     end
 
+    def graph_comments(comments)
+      return [] unless comments
+      comments.map { |comment|
+        Comment.from_graph(comment)
+      }
+    end
+
+    def graph_from(hash)
+      f = From.new
+      f.id = hash['id']
+      f.name = hash['name']
+      f.type = 'user'
+      f.service_source = 'graph'
+      f.private = false
+      f.commands = ['subscribe']
+      f.profile_url = "http://www.facebook.com/#{f.id}"
+      f.profile_image_url = "http://graph.facebook.com/#{f.id}/picture"
+      f
+    end
+
     def create(opt)
       auth = opt[:auth]
       to = opt[:to]
@@ -260,6 +402,10 @@ class Entry
       when 'buzz'
         if entry = Buzz.create_note(opt[:token], body)
           Entry.from_buzz(entry)
+        end
+      when 'graph'
+        if entry = Graph.create_message(opt[:token], body)
+          Entry.from_graph(entry)
         end
       else # FriendFeed
         if entry = ff_client.post_entry(to, body, opt.merge(auth.new_cred))
@@ -296,11 +442,17 @@ class Entry
       auth = opt[:auth]
       id = opt[:eid]
       body = opt[:body]
+      sid = Entry.if_service_id(id)
       case opt[:service_source]
       when 'buzz'
         token = opt[:token]
-        if comment = Buzz.create_comment(token, Entry.if_service_id(id), body)
+        if comment = Buzz.create_comment(token, sid, body)
           Comment.from_buzz(comment)
+        end
+      when 'graph'
+        token = opt[:token]
+        if comment = Graph.create_comment(token, sid, body)
+          Comment.from_graph(comment)
         end
       else # FriendFeed
         if comment = ff_client.post_comment(id, body, auth.new_cred)
@@ -332,9 +484,10 @@ class Entry
     def add_like(opt)
       auth = opt[:auth]
       id = opt[:eid]
+      sid = Entry.if_service_id(id)
       case opt[:service_source]
       when 'twitter'
-        hash = Tweet.favorite(opt[:token], Entry.if_service_id(id))
+        hash = Tweet.favorite(opt[:token], sid)
         hash[:favorited] = true
         entry = Entry.from_tweet(hash)
         if pin = Pin.find_by_user_id_and_eid(auth.id, entry.id)
@@ -343,11 +496,20 @@ class Entry
         end
         entry
       when 'buzz'
-        Buzz.like(opt[:token], Entry.if_service_id(id))
-        hash = Buzz.show(opt[:token], Entry.if_service_id(id))
+        Buzz.like(opt[:token], sid)
+        hash = Buzz.show(opt[:token], sid)
         entry = Entry.from_buzz(hash)
         # TODO: since Buzz.show does not returns likes detail...
         entry.commands.delete('like')
+        if pin = Pin.find_by_user_id_and_eid(auth.id, entry.id)
+          pin.entry = hash
+          pin.save!
+        end
+        entry
+      when 'graph'
+        Graph.like(opt[:token], sid)
+        hash = Graph.show(opt[:token], sid)
+        entry = Entry.from_graph(hash)
         if pin = Pin.find_by_user_id_and_eid(auth.id, entry.id)
           pin.entry = hash
           pin.save!
@@ -362,9 +524,10 @@ class Entry
     def delete_like(opt)
       auth = opt[:auth]
       id = opt[:eid]
+      sid = Entry.if_service_id(id)
       case opt[:service_source]
       when 'twitter'
-        hash = Tweet.remove_favorite(opt[:token], Entry.if_service_id(id))
+        hash = Tweet.remove_favorite(opt[:token], sid)
         hash[:favorited] = false
         entry = Entry.from_tweet(hash)
         if pin = Pin.find_by_user_id_and_eid(auth.id, entry.id)
@@ -373,9 +536,18 @@ class Entry
         end
         entry
       when 'buzz'
-        Buzz.unlike(opt[:token], Entry.if_service_id(id))
-        hash = Buzz.show(opt[:token], Entry.if_service_id(id))
+        Buzz.unlike(opt[:token], sid)
+        hash = Buzz.show(opt[:token], sid)
         entry = Entry.from_buzz(hash)
+        if pin = Pin.find_by_user_id_and_eid(auth.id, entry.id)
+          pin.entry = hash
+          pin.save!
+        end
+        entry
+      when 'graph'
+        Graph.unlike(opt[:token], sid)
+        hash = Graph.show(opt[:token], sid)
+        entry = Entry.from_graph(hash)
         if pin = Pin.find_by_user_id_and_eid(auth.id, entry.id)
           pin.entry = hash
           pin.save!
@@ -448,6 +620,8 @@ class Entry
         't_' + id
       when 'buzz'
         'b_' + id
+      when 'graph'
+        'g_' + id
       end
     end
 
@@ -591,51 +765,53 @@ class Entry
   attr_accessor :view_medias
   attr_accessor :view_map
 
-  def initialize(hash)
-    initialize_with_hash(hash, 'id', 'url', 'date', 'commands', 'service_source', 'service_user')
+  def initialize(hash = nil)
+    initialize_with_hash(hash, 'id', 'url', 'date', 'commands', 'service_source', 'service_user') if hash
     @commands ||= EMPTY
     @twitter_username = nil
     @twitter_reply_to = nil
     @twitter_reply_to_status_id = nil
     @twitter_retweeted_by = nil
     @twitter_retweeted_by_status_id = nil
-    @orphan = hash['__f2p_orphan']
     @view_pinned = nil
     @view_nextid = nil
     @view_links = nil
     @view_medias = []
     @view_map = false
-    @body = hash['rawBody']
     @raw_body = @body
-    @link = hash['rawLink']
     if %r(\Ahttp://friendfeed.com/e/) =~ @link
       @link = nil
     end
-    @short_id = hash['shortId']
-    @short_url = hash['shortUrl']
-    @from = From[hash['from']]
-    @to = (hash['to'] || EMPTY).map { |e| From[e] }
-    @thumbnails = wrap_thumbnails(hash['thumbnails'] || EMPTY)
-    @files = (hash['files'] || EMPTY).map { |e| Attachment[e] }
-    @comments = wrap_comments(hash['comments'] || EMPTY)
-    @likes = wrap_likes(hash['likes'] || EMPTY)
-    @via = Via[hash['via']]
-    @geo = Geo[hash['geo']] || extract_geo_from_google_staticmap_url(@thumbnails)
-    if hash['fof']
-      @fof = From[hash['fof']['from']]
-      @fof_type = hash['fof']['type']
-    else
-      @fof = nil
-    end
     @checked_at = TIME_ZERO
-    @hidden = hash['hidden'] || false
-    if self.via and self.via.twitter?
-      @twitter_username = (self.via.url || '').match(%r{twitter.com/([^/]+)})[1]
-      if /@([a-zA-Z0-9_]+)/ =~ self.body
-        @twitter_reply_to = $1
+    @modified = nil
+    if hash
+      @orphan = hash['__f2p_orphan']
+      @body = hash['rawBody']
+      @link = hash['rawLink']
+      @short_id = hash['shortId']
+      @short_url = hash['shortUrl']
+      @from = From[hash['from']]
+      @to = (hash['to'] || EMPTY).map { |e| From[e] }
+      @thumbnails = wrap_thumbnails(hash['thumbnails'] || EMPTY)
+      @files = (hash['files'] || EMPTY).map { |e| Attachment[e] }
+      @comments = wrap_comments(hash['comments'] || EMPTY)
+      @likes = wrap_likes(hash['likes'] || EMPTY)
+      @via = Via[hash['via']]
+      @geo = Geo[hash['geo']] || extract_geo_from_google_staticmap_url(@thumbnails)
+      if hash['fof']
+        @fof = From[hash['fof']['from']]
+        @fof_type = hash['fof']['type']
+      else
+        @fof = nil
+      end
+      @hidden = hash['hidden'] || false
+      if self.via and self.via.twitter?
+        @twitter_username = (self.via.url || '').match(%r{twitter.com/([^/]+)})[1]
+        if /@([a-zA-Z0-9_]+)/ =~ self.body
+          @twitter_reply_to = $1
+        end
       end
     end
-    @modified = nil
   end
 
   def to_ids
@@ -770,6 +946,10 @@ class Entry
 
   def buzz?
     service_source == 'buzz'
+  end
+
+  def graph?
+    service_source == 'graph'
   end
 
   def twitter_in_reply_to_url

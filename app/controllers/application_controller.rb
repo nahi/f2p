@@ -65,6 +65,14 @@ class ApplicationController < ActionController::Base
     request.respond_to?(:mobile)
   end
 
+  def cell_phone?
+    jpmobile? and request.mobile?
+  end
+
+  def i_mode?
+    jpmobile? and request.mobile.is_a?(Jpmobile::Mobile::Docomo)
+  end
+
   def iphone?
     /(iPhone|iPod|iPad)/ =~ request.user_agent
   end

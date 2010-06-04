@@ -59,11 +59,11 @@ module ApplicationHelper
   end
 
   def cell_phone?
-    jpmobile? and @controller.request.mobile?
+    @controller.cell_phone?
   end
 
   def i_mode?
-    jpmobile? and @controller.request.mobile.is_a?(Jpmobile::Mobile::Docomo)
+    @controller.i_mode?
   end
 
   def iphone?
@@ -249,6 +249,7 @@ __EOS__
     links << link_to(friendfeed_icon_tag, { :controller => :entry, :action => :inbox }, accesskey('0').merge(:class => :tab))
     links << link_to(twitter_icon_tag, { :controller => :entry, :action => :tweets }, {:class => :tab})
     links << link_to(buzz_icon_tag, { :controller => :entry, :action => :buzz }, {:class => :tab})
+    links << link_to(facebook_icon_tag, { :controller => :entry, :action => :graph }, {:class => :tab})
     pin_label = inline_icon_tag(:pinned, 'Star')
     pin_label += "(#{@threads.pins})" if @threads
     links << link_to(pin_label, { :controller => :entry, :action => :list, :label => 'pin' })
@@ -333,6 +334,10 @@ __EOS__
     service_icon_tag('http://buzzusers.com/images/buzzicon.png', 'Twitter', 'Buzz')
   end
 
+  def facebook_icon_tag
+    service_icon_tag('http://friendfeed.com/static/images/icons/facebook.png', 'Facebook', 'Facebook')
+  end
+
   def profile_image_tag(url, alt, title)
     image_tag(url, :class => h('profile'), :alt => h(alt), :title => h(title), :size => '25x25')
   end
@@ -401,6 +406,8 @@ __EOS__
       return link_to(h(user.name), user.profile_url)
     when 'buzz'
       opt ||= { :controller => 'entry', :action => 'buzz', :feed => 'user', :user => u(user.id) }
+    when 'graph'
+      opt ||= { :controller => 'entry', :action => 'graph', :feed => 'user', :user => u(user.id) }
     else
       opt ||= { :controller => 'entry', :action => 'list', :user => u(user.id) }
     end
@@ -730,6 +737,17 @@ __EOS__
     links << link_to(h('You'), base.merge(:feed => :user))
     if @service_user
       links << menu_link(menu_label('sign out'), :controller => 'login', :action => 'unlink_buzz', :id => @service_user)
+    end
+    links.join(' ')
+  end
+
+  def graph_links
+    links = []
+    base = {:controller => :entry, :action => :graph, :id => @service_user}
+    links << link_to(h('Home'), base.merge(:feed => :home))
+    links << link_to(h('You'), base.merge(:feed => :user))
+    if @service_user
+      links << menu_link(menu_label('sign out'), :controller => 'login', :action => 'unlink_facebook', :id => @service_user)
     end
     links.join(' ')
   end

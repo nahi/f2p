@@ -15,6 +15,16 @@ class Comment
     c
   end
 
+  def self.from_graph(hash)
+    c = Comment.new
+    c.id = hash['id']
+    c.date = hash['created_time']
+    c.body = hash['message']
+    c.from = Entry.graph_from(hash['from']) if hash['from']
+    c.service_source = 'graph'
+    c
+  end
+
   attr_accessor :id
   attr_accessor :date
   attr_accessor :body
@@ -77,5 +87,9 @@ class Comment
 
   def buzz?
     @service_source == 'buzz' or (entry and entry.buzz?)
+  end
+
+  def graph?
+    @service_source == 'graph' or (entry and entry.graph?)
   end
 end

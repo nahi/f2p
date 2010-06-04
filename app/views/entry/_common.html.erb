@@ -13,6 +13,9 @@
 <%- if @service_source == 'buzz' -%>
 <p>Buzz: <%= buzz_links %></p>
 <%- end -%>
+<%- if @service_source == 'graph' -%>
+<p>Facebook: <%= graph_links %></p>
+<%- end -%>
 <%- unless @ctx.pin? -%>
   <%- form_tag(search_action) do -%>
     <p><%= search_form %></p>

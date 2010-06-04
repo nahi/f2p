@@ -9,6 +9,7 @@ Click one of the link from followings to start using 'm.ctor.org'. You can add o
 <li>#{ link_to(h('FriendFeed'), :controller => :login, :action => :initiate_oauth_login) }</li>
 <li>#{ link_to(h('Twitter'), :controller => :login, :action => :initiate_twitter_oauth_login) } [experimental]</li>
 <li>#{ link_to(h('Google buzz'), :controller => :login, :action => :initiate_buzz_oauth_login) } [experimental]</li>
+<li>#{ link_to(h('Facebook'), :controller => :login, :action => :initiate_facebook_oauth_login) } [experimental]</li>
 </ul>
 <p>
 Above links are for granting access to FriendFeed, Twitter or Google buzz by 'm.ctor.org'.

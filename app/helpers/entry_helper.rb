@@ -154,6 +154,8 @@ module EntryHelper
         ary << to_picture(to)
         if entry.tweet?
           ary << service_user_link('tweets', to)
+        elsif entry.graph?
+          ary << service_user_link('graph', to)
         else
           if to.id == auth.name
             name = self_feed_label
@@ -474,7 +476,6 @@ module EntryHelper
       entry.files.map { |file|
         case file.type
         when 'article'
-          str = "<br />" + link_to(inline_icon_tag(:url), file.url) + span(file.name, 'archived')
           str = "<br />" + link_to(inline_icon_tag(:url) + file.name, file.url)
         else
           label = file.type
@@ -696,7 +697,7 @@ module EntryHelper
 
   def via(entry_or_comment)
     label = 'from'
-    if !entry_or_comment.respond_to?(:comments) or entry_or_comment.tweet?
+    if !entry_or_comment.respond_to?(:comments) or entry_or_comment.tweet? or entry_or_comment.graph?
       label = 'via'
     end
     super(entry_or_comment.via, label)
@@ -851,7 +852,7 @@ module EntryHelper
         msg = '(more)'
         str += link_to(h(msg), link_show(comment.entry.id))
       end
-      if comment.entry.via and comment.entry.via.twitter?
+      if comment.entry and comment.entry.via and comment.entry.via.twitter?
         str = link_filter_twitter_username(str)
       end
     end
@@ -876,6 +877,8 @@ module EntryHelper
       action = 'tweets'
     elsif ctx.buzz?
       action = 'buzz'
+    elsif ctx.graph?
+      action = 'graph'
     end
     { :controller => :entry, :action => action }
   end
@@ -952,13 +955,15 @@ module EntryHelper
       end
     when 'buzz'
       ary << buzz_icon_tag
+    when 'graph'
+      ary << facebook_icon_tag
     else
       ary << friendfeed_icon_tag
     end
     ary << text_field_tag('body', body, :placeholder => 'post')
     ary << submit_tag('post')
     # TODO: we can support rich buzz posting in the future.
-    if !ctx.tweets? and !ctx.buzz?
+    if ctx.ff?
       ary << write_new_link
     end
     ary.join
@@ -1001,7 +1006,11 @@ module EntryHelper
   end
 
   def fold_comment_link(fold, remote_update_id = nil)
-    msg = "(#{fold.fold_entries} more comments)"
+    if fold.fold_entries > 0
+      msg = "(#{fold.fold_entries} more comments)"
+    else
+      msg = "(more comments)"
+    end
     if ajax? and remote_update_id
       link_to_remote(msg, :update => remote_update_id, :url => link_action('comments_remote', :eid => fold.entry_id))
     else
@@ -1158,6 +1167,8 @@ module EntryHelper
         links << menu_link(menu_label('show more...', '6'), {:action => 'tweets', :feed => ctx.feed, :user => ctx.user, :query => ctx.query, :num => num, :max_id => @threads.max_id}, key)
       elsif ctx.buzz?
         links << menu_link(menu_label('show more...', '6'), {:action => 'buzz', :feed => ctx.feed, :user => ctx.user, :num => num, :max_id => @buzz_c_tag}, key)
+      elsif ctx.graph?
+        links << menu_link(menu_label('show more...', '6'), {:action => 'graph', :feed => ctx.feed, :user => ctx.user, :num => num, :max_id => @threads.from_modified}, key)
       elsif ctx.pin?
         links << menu_link(menu_label('show more...', '6'), list_opt(ctx.link_opt(:start => @cont, :num => num)), key)
       elsif ctx.ff?

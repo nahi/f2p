@@ -45,6 +45,24 @@ class LoginController < ApplicationController
     redirect_to F2P::Config.buzz_api_oauth_authorize_url + "?oauth_token=#{token}&domain=#{F2P::Config.buzz_api_oauth_consumer_key}&scope=#{F2P::Config.buzz_api_oauth_scope}&btmpl=mobile"
   end
 
+  # OAuth 2.0 + FB scope extension
+  def initiate_facebook_oauth_login
+    if iphone? or android?
+      display = 'touch'
+    elsif cell_phone?
+      display = 'wap'
+    else
+      display = 'page'
+    end
+    query = {
+      :client_id => F2P::Config.facebook_api_oauth_consumer_key,
+      :redirect_uri => url_for(:action => 'facebook_oauth_callback'),
+      :scope => F2P::Config.facebook_api_oauth_scope,
+      :display => display
+    }
+    redirect_to F2P::Config.facebook_api_oauth_authorize_url + '?' + HTTP::Message.escape_query(query)
+  end
+
   def oauth_callback
     auth = ensure_login
     oauth_token = params[:oauth_token]
@@ -131,6 +149,47 @@ class LoginController < ApplicationController
     end
   end
 
+  def facebook_oauth_callback
+    auth = ensure_login
+    code = params[:code]
+    if code
+      query = {
+        # no :type required for Graph API?
+        :client_id => F2P::Config.facebook_api_oauth_consumer_key,
+        :client_secret => F2P::Config.facebook_api_oauth_consumer_secret,
+        :redirect_uri => url_for(:action => 'facebook_oauth_callback'),
+        :code => code
+      }
+      client = OAuthClient.new
+      client.www_auth.oauth.reset_challenge
+      if params = client.get_oauth_response(client.get(F2P::Config.facebook_api_oauth_access_token_url, query))
+        secret = params['access_token']
+        expires = params['expires']
+        param = { :expires => expires }
+        t = Token.new
+        t.token = ''
+        t.secret = secret
+        profile = Graph.profile(t)
+        if profile.id and profile.display_name
+          user_id = profile.id
+          token = profile.name # use name as a token; not used in OAuth 2.0
+          param[:screen_name] = profile.name
+          if auth
+            auth.set_token('graph', user_id, token, secret, YAML.dump(param))
+          elsif user = User.token_validate('graph', user_id, token, secret, YAML.dump(param))
+            set_user(user)
+          end
+        end
+      end
+    end
+    if back_to = session[:back_to]
+      session[:back_to] = nil
+      redirect_to back_to
+    else
+      redirect_to :controller => 'entry', :action => 'graph'
+    end
+  end
+
   def unlink_friendfeed
     if auth = ensure_login
       auth.clear_token('friendfeed')
@@ -150,6 +209,14 @@ class LoginController < ApplicationController
     id = params[:id]
     if auth = ensure_login
       auth.clear_token('buzz', id)
+    end
+    redirect_to :controller => 'setting'
+  end
+
+  def unlink_facebook
+    id = params[:id]
+    if auth = ensure_login
+      auth.clear_token('graph', id)
     end
     redirect_to :controller => 'setting'
   end

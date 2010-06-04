@@ -241,6 +241,71 @@ class EntryController < ApplicationController
     render :action => 'list'
   end
 
+  verify :only => :graph,
+          :method => [:get, :post],
+          :add_flash => {:error => 'verify failed'},
+          :redirect_to => {:action => 'inbox'}
+  def graph
+    pin_check
+    @ctx = restore_ctx { |ctx|
+      ctx.parse(params, @setting)
+    }
+    @ctx.service_source = 'graph'
+    @ctx.feed ||= 'home'
+    @ctx.home = false
+    id = params[:id]
+    unless token = auth.token('graph', id)
+      session[:back_to] = {:controller => 'entry', :action => 'graph'}
+      redirect_to :controller => 'login', :action => 'initiate_facebook_oauth_login'
+      return
+    end
+    @service_source = token.service
+    @service_user = token.service_user
+    opt = {:limit => @ctx.num}
+    opt[:until] = @ctx.max_id
+    case @ctx.feed
+    when 'user'
+      user = @ctx.user || 'me'
+      t = Task.run { @profile = Graph.profile(token, user) }
+      graph = Graph.connections(token, "#{user}/feed", opt)
+      t.result
+      feedname = @profile.name
+    else # home
+      if @ctx.query
+        opt[:q] = @ctx.query
+        graph = Graph.connections(token, 'search', opt)
+        feedname = @ctx.query
+      else
+        graph = Graph.connections(token, 'me/home', opt)
+        feedname = 'News feed'
+        last_checked = session[:graph_last_checked] || Time.at(0)
+        next_last_checked = session[:graph_next_last_checked] || Time.at(0)
+        if @ctx.max_id.nil? and updated_id_in_flash.nil?
+          last_checked = session[:graph_last_checked] = next_last_checked
+        end
+      end
+    end
+    File.open('/tmp/graph', 'w') { |f| f << graph.to_json }
+    feed_opt = find_opt.merge(
+      :graph => graph['data'],
+      :feedname => "Facebook(#{feedname})",
+      :service_user => token.service_user
+    )
+    @feed = find_entry_thread(feed_opt)
+    @threads = @feed.entries
+    if next_last_checked
+      max = next_last_checked
+      @threads.each do |t|
+        t.entries.each do |e|
+          e.checked_at = last_checked
+          max = [max, e.modified_at].max
+        end
+      end
+      session[:graph_next_last_checked] = max
+    end
+    render :action => 'list'
+  end
+
   verify :only => :show,
           :method => :get,
           :params => [:eid],
@@ -250,16 +315,27 @@ class EntryController < ApplicationController
   def show
     @ctx = EntryContext.new(auth)
     @ctx.eid = param(:eid)
-    buzz = nil
-    Entry.if_service_id(@ctx.eid) do |bid|
-      unless token = auth.token('buzz')
-        session[:back_to] = {:controller => 'entry', :action => 'buzz'}
-        redirect_to :controller => 'login', :action => 'initiate_buzz_oauth_login'
-        return
+    entry = nil
+    Entry.if_service_id(@ctx.eid) do |sid|
+      case @ctx.eid[0]
+      when ?b
+        unless token = auth.token('buzz')
+          session[:back_to] = {:controller => 'entry', :action => 'buzz'}
+          redirect_to :controller => 'login', :action => 'initiate_buzz_oauth_login'
+          return
+        end
+        entry = Buzz.show_all(token, sid)
+      when ?g
+        unless token = auth.token('graph')
+          session[:back_to] = {:controller => 'entry', :action => 'graph'}
+          redirect_to :controller => 'login', :action => 'initiate_facebook_oauth_login'
+          return
+        end
+        entry = Graph.show_all(token, sid)
+        File.open('/tmp/graph', 'w') { |f| f << entry.to_json } if entry
       end
-      buzz = Buzz.show_all(token, bid)
       if pin = Pin.find_by_user_id_and_eid(auth.id, @ctx.eid)
-        pin.entry = buzz
+        pin.entry = entry
         pin.save!
       end
       @service_source = token.service
@@ -267,10 +343,14 @@ class EntryController < ApplicationController
     end
     @ctx.comment = param(:comment)
     @ctx.moderate = param(:moderate)
+    @ctx.service_source = @service_source
     @ctx.home = false
     pin_check
-    if buzz
-      render_single_buzz_entry(buzz)
+    case @service_source
+    when 'buzz'
+      render_single_buzz_entry(entry)
+    when 'graph'
+      render_single_graph_entry(entry)
     else
       render_single_entry
     end
@@ -453,6 +533,12 @@ class EntryController < ApplicationController
           render :action => 'buzz'
           return
         end
+      when 'graph'
+        unless token
+          flash[:message] = 'Token not found'
+          render :action => 'graph'
+          return
+        end
       end
     end
     msg = nil
@@ -614,12 +700,8 @@ class EntryController < ApplicationController
     comment = param(:comment)
     body = param(:body)
     opt = {:body => body}
-    if param(:service_source) == 'buzz'
-      unless token = auth.token(param(:service_source), param(:service_user))
-        flash[:message] = 'Token not found'
-        render :action => 'buzz'
-        return
-      end
+    if param(:service_source)
+      token = auth.token(param(:service_source), param(:service_user))
       opt[:service_source] = param(:service_source)
       opt[:token] = token
     end
@@ -796,11 +878,19 @@ class EntryController < ApplicationController
   def comments_remote
     @ctx = session[:ctx] || EntryContext.new(auth)
     id = param(:eid)
-    Entry.if_service_id(id) do |bid|
-      token = auth.token('buzz')
-      buzz = Buzz.comments(token, bid)
-      comments = Entry.buzz_comments(buzz['items'])
-      last_checked = session[:buzz_last_checked]
+    Entry.if_service_id(id) do |sid|
+      case id[0]
+      when ?b
+        token = auth.token('buzz')
+        buzz = Buzz.comments(token, sid)
+        comments = Entry.buzz_comments(buzz['items'])
+        last_checked = session[:buzz_last_checked]
+      when ?g
+        token = auth.token('graph')
+        graph = Graph.comments(token, sid)
+        comments = Entry.graph_comments(graph['data'])
+        last_checked = session[:buzz_last_checked]
+      end
       comments.each do |c|
         c.checked_at = last_checked
       end
@@ -848,16 +938,18 @@ private
     if id
       entry = nil
       source = nil
-      Entry.if_service_id(id) do |tid|
-        tid, service_source, service_user = tid.split('_', 3)
-        id = Entry.from_service_id(service_source, tid)
+      Entry.if_service_id(id) do |sid|
+        sid, service_source, service_user = split_sid(sid)
+        id = Entry.from_service_id(service_source, sid)
         token = auth.token(service_source, service_user)
         if token
           case service_source
           when 'twitter'
-            entry = Tweet.show(token, tid)
+            entry = Tweet.show(token, sid)
           when 'buzz'
-            entry = Buzz.show_all(token, tid)
+            entry = Buzz.show_all(token, sid)
+          when 'graph'
+            entry = Graph.show_all(token, sid)
           end
           source = service_source
         end
@@ -868,10 +960,10 @@ private
 
   def unpin_entry(id)
     if id
-      Entry.if_service_id(id) do |tid|
-        tid, service_source, service_user = tid.split('_', 3)
+      Entry.if_service_id(id) do |sid|
+        sid, service_source, service_user = split_sid(sid)
         if service_source
-          id = Entry.from_service_id(service_source, tid)
+          id = Entry.from_service_id(service_source, sid)
         end
       end
       Entry.delete_pin(create_opt(:eid => id))
@@ -1038,6 +1130,19 @@ private
     render :action => 'list'
   end
 
+  def render_single_graph_entry(graph)
+    sess_ctx = session[:ctx]
+    opt = find_opt.merge(:graph => graph)
+    @feed = find_entry_thread(opt)
+    @threads = @feed.entries
+    @original_feed = nil # can we implement it? needed?
+    if sess_ctx
+      sess_ctx.eid = @ctx.eid
+    end
+    flash[:show_reload_detection] = @ctx.eid
+    render :action => 'list'
+  end
+
   def twitter_saved_searches(token)
     ss = session[:twitter_saved_search] ||= {}
     if updated_at = ss[:updated_at]
@@ -1049,5 +1154,12 @@ private
     ss[:entries] = Tweet.saved_searches(token).map { |e| Hash[e] }
     ss[:updated_at] = Time.now.to_i
     ss[:entries]
+  end
+
+  def split_sid(sid)
+    components = sid.split('_')
+    service_user = components.pop
+    service_source = components.pop
+    return components.join('_'), service_source, service_user
   end
 end

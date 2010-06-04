@@ -213,6 +213,10 @@ class EntryContext
     @service_source == 'buzz'
   end
 
+  def graph?
+    @service_source == 'graph'
+  end
+
   def link_opt(opt = {})
     opt.merge(:action => default_action, :eid => @eid)
   end
@@ -236,6 +240,8 @@ private
       'tweets'
     elsif buzz?
       'buzz'
+    elsif graph?
+      'graph'
     else
       'list'
     end

@@ -19,7 +19,7 @@ class Feed
       opt.delete(:auth)
       feed = fetch_entries(auth, opt)
       pins = check_inbox(auth, feed, false)
-      add_service_icon(feed.entries)
+      # add_service_icon(feed.entries)
       feed.entries = filter_hidden(feed.entries)
       entries = feed.entries
       if opt[:eids]
@@ -68,13 +68,13 @@ class Feed
     def fetch_entries(auth, opt)
       if opt[:eid]
         feed = fetch_single_entry_as_array(auth, opt)
-        if !opt[:buzz] and entry = feed.entries.first
+        if !opt[:buzz] and !opt[:graph] and entry = feed.entries.first
           update_cache_entry(auth, entry)
         end
         feed
       else
         feed = fetch_list_entries(auth, opt)
-        if !opt[:tweets] and !opt[:buzz] and (updated_id = opt[:updated_id])
+        if !opt[:tweets] and !opt[:buzz] and !opt[:graph] and (updated_id = opt[:updated_id])
           entry = wrap(Task.run { get_feed(auth, updated_id, opt) }.result).entries.first
           if entry
             update_cache_entry(auth, entry)
@@ -86,14 +86,18 @@ class Feed
           end
         elsif opt[:tweets] and opt[:feed] == 'direct'
           feed.entries = sort_by_modified(feed.entries)[0, opt[:num]]
+        elsif opt[:graph] and num = opt[:maxcomments]
+          feed.entries.each do |e|
+            trim_comments(e, num)
+          end
         end
         feed
       end
     end
 
     def fetch_single_entry_as_array(auth, opt)
-      if opt[:buzz]
-        return from_service([opt[:buzz]], opt)
+      if ext = opt[:buzz] || opt[:graph]
+        return from_service([ext], opt)
       end
       if opt[:allow_cache]
         if cache = get_cached_entries(auth)
@@ -107,10 +111,8 @@ class Feed
     end
 
     def fetch_list_entries(auth, opt)
-      if opt[:tweets]
-        return from_service(opt[:tweets], opt)
-      elsif opt[:buzz]
-        return from_service(opt[:buzz], opt)
+      if ext = opt[:tweets] || opt[:buzz] || opt[:graph]
+        return from_service(ext, opt)
       end
       cache_entries(auth, opt) {
         if opt[:inbox]
@@ -158,6 +160,7 @@ class Feed
     end
 
     def trim_comments(entry, num)
+      return trim_uncountable_comments(entry, num) if entry.graph?
       comments = entry.comments
       if comments.size > num
         head_size = (num > 1) ? 1 : 0
@@ -167,6 +170,19 @@ class Feed
         placeholder.num = comments.size - (head_size + tail_size)
         placeholder.entry = entry
         comments.replace(comments[0, head_size] + [placeholder] + comments[-tail_size, tail_size])
+      end
+    end
+
+    def trim_uncountable_comments(entry, num)
+      comments = entry.comments
+      if comments.size > num
+        head_size = 0 # no initial comment
+        tail_size = num - head_size
+        placeholder = Comment.new
+        placeholder.placeholder = true
+        placeholder.num = -1
+        placeholder.entry = entry
+        comments.replace([placeholder] + comments[-tail_size, tail_size])
       end
     end
 
@@ -180,6 +196,7 @@ class Feed
       opt.delete(:filter_except)
       opt.delete(:tweets)
       opt.delete(:buzz)
+      opt.delete(:graph)
       if allow_cache
         if cache = get_cached_entries(auth)
           if opt == cache.feed_opt
@@ -241,7 +258,7 @@ class Feed
         :limit => num
       )
       opt[:start] = pinned.last.created_at unless pinned.empty?
-      entries = pinned.find_all { |e| !['twitter', 'buzz'].include?(e.source) }
+      entries = pinned.find_all { |e| !['twitter', 'buzz', 'graph'].include?(e.source) }
       unless entries.empty?
         hash = get_entries(auth, opt.merge(:eids => entries.map { |e| e.eid }))
         map = (hash['entries'] || []).inject({}) { |r, e| r[e['id']] = e; r }
@@ -251,7 +268,7 @@ class Feed
       end
       maxcomments = opt[:maxcomments]
       hash['entries'] = pinned.map { |e|
-        if ['twitter', 'buzz'].include?(e.source)
+        if ['twitter', 'buzz', 'graph'].include?(e.source)
           YAML.load(e.entry)
         elsif map.key?(e.eid)
           map[e.eid]
