@@ -295,7 +295,7 @@ class Entry
 
     def normalize_content_in_buzz(body)
       if body
-        CGI.unescapeHTML(body).gsub(/<[^>]+>/, '')
+        CGI.unescapeHTML(body).gsub(/<br\s*\/?>/i, "\n").gsub(/<[^>]+>/, '')
       end
     end
 
