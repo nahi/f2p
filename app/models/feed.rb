@@ -147,7 +147,10 @@ class Feed
           feed = wrap(Task.run { pinned_entries(auth, opt) }.result)
           if num = opt[:maxcomments]
             feed.entries.each do |e|
-              trim_comments(e, num)
+              # FriendFeed API server handles placeholder.
+              # TODO: remove this condition when we cache FF entry as well as
+              # other services in the future.
+              trim_comments(e, num) unless e.ff?
             end
           end
           feed
