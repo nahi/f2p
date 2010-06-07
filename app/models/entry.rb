@@ -780,15 +780,15 @@ class Entry
     @view_medias = []
     @view_map = false
     @raw_body = @body
-    if %r(\Ahttp://friendfeed.com/e/) =~ @link
-      @link = nil
-    end
     @checked_at = TIME_ZERO
     @modified = nil
     if hash
       @orphan = hash['__f2p_orphan']
       @body = hash['rawBody']
       @link = hash['rawLink']
+      if %r(\Ahttp://friendfeed.com/e/) =~ @link
+        @link = nil
+      end
       @short_id = hash['shortId']
       @short_url = hash['shortUrl']
       @from = From[hash['from']]
