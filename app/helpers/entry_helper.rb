@@ -1447,7 +1447,7 @@ module EntryHelper
         link_opt[:service_source] = entry.service_source
         link_opt[:service_user] = entry.service_user
       end
-      menu_link(inline_menu_label(:reshare, 'RT'), link_action('retweet', link_opt))
+      menu_link(inline_menu_label(:reshare, 'RT'), link_action('retweet', link_opt), :confirm => 'Retweet?')
     end
   end
 
