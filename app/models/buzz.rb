@@ -12,18 +12,18 @@ class Buzz
         }
       }
       if res
-        hash = JSON.parse(res.content)['data']
-        profile.id = hash['id']
-        profile.name = profile.display_name = hash['displayName']
-        profile.profile_url = hash['profileUrl']
-        profile.profile_image_url = hash['thumbnailUrl']
-        profile.location = nil
-        profile.description = hash['aboutMe'] unless hash['aboutMe'].blank?
-        profile.private = false # ???
-        # TODO
-        profile.followings_count = nil
-        profile.followers_count = nil
-        profile.entries_count = nil
+        if hash = protect { JSON.parse(res.content)['data'] }
+          profile.id = hash['id']
+          profile.name = profile.display_name = hash['displayName']
+          profile.profile_url = hash['profileUrl']
+          profile.profile_image_url = hash['thumbnailUrl']
+          profile.location = nil
+          profile.description = hash['aboutMe'] unless hash['aboutMe'].blank?
+          profile.private = false # ???
+          profile.followings_count = nil
+          profile.followers_count = nil
+          profile.entries_count = nil
+        end
       end
       profile
     end
@@ -35,12 +35,17 @@ class Buzz
         }
       }
       if res
-        parsed = JSON.parse(res.content)
-        data = parsed['data']
-        data['items'] ||= []
-        su = token.service_user
-        data['items'] = data['items'].map { |e| wrap(su, e) }
-        data
+        if parsed = protect { JSON.parse(res.content) }
+          if data = parsed['data']
+            data['items'] ||= []
+            su = token.service_user
+            data['items'] = data['items'].map { |e| wrap(su, e) }
+            data
+          else
+            logger.warn("Unknown structure: " + res.content)
+            nil
+          end
+        end
       end
     end
 
@@ -166,7 +171,7 @@ class Buzz
     def get_element(token, path, opt)
       res = with_perf("[perf] start #{path} fetch") {
         protect {
-          client(token).get(path, opt.merge(:alt => :json))
+          res = client(token).get(path, opt.merge(:alt => :json))
         }
       }
       parse_element(token, res) if res
@@ -174,10 +179,15 @@ class Buzz
 
     def parse_element(token, res)
       if res
-        parsed = JSON.parse(res.content)
-        data = parsed['data']
-        su = token.service_user
-        wrap(su, data)
+        if parsed = protect { JSON.parse(res.content) }
+          if data = parsed['data']
+            su = token.service_user
+            wrap(su, data)
+          else
+            logger.warn("Unknown structure: " + res.content)
+            nil
+          end
+        end
       end
     end
 

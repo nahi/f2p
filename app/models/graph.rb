@@ -6,12 +6,7 @@ class Graph
 
     def profile(token, who = 'me')
       profile = Profile.new
-      res = with_perf('[perf] start profile fetch') {
-        protect {
-          get(token, id_path(who), :fields => 'id,name,link,picture,location')
-        }
-      }
-      if res
+      if res = get(token, id_path(who), :fields => 'id,name,link,picture,location')
         profile.id = res['id']
         profile.name = profile.display_name = res['name']
         profile.profile_url = res['link']
@@ -29,11 +24,7 @@ class Graph
     end
 
     def connections(token, feed = 'home', args = {})
-      res = with_perf('[perf] start connections fetch') {
-        protect {
-          get(token, id_path(feed), args)
-        }
-      }
+      res = get(token, id_path(feed), args)
       get_elements(token, res)
     end
 
@@ -49,67 +40,43 @@ class Graph
     end
 
     def show(token, id, args = {})
-      res = with_perf('[perf] start id fetch') {
-        protect {
-          get(token, id_path(id), args)
-        }
-      }
-      if res
+      if res = get(token, id_path(id), args)
         su = token.service_user
         wrap(su, res)
       end
     end
 
     def comments(token, id, args = {})
-      res = with_perf('[perf] start comments fetch') {
-        protect {
-          get(token, comments_path(id), args.merge(:limit => F2P::Config.max_friend_list_num))
-        }
-      }
+      res = get(token, comments_path(id), args.merge(:limit => F2P::Config.max_friend_list_num))
       get_elements(token, res)
     end
 
     def likes(token, id, args = {})
-      res = with_perf('[perf] start likes fetch') {
-        protect {
-          get(token, likes_path(id), args.merge(:limit => F2P::Config.max_friend_list_num))
-        }
-      }
+      res = get(token, likes_path(id), args.merge(:limit => F2P::Config.max_friend_list_num))
       get_elements(token, res)
     end
 
     def create_message(token, message, to = 'me')
-      res = with_perf("[perf] start creating a message") {
-        post(token, feed_id(to), :message => message)
-      }
-      if res
+      if res = post(token, feed_id(to), :message => message)
         su = token.service_user
         wrap(su, res)
       end
     end
 
     def like(token, id)
-      with_perf("[perf] start liking an node") {
-        post(token, likes_path(id))
-      }
+      post(token, likes_path(id))
     end
 
     def unlike(token, id)
-      with_perf("[perf] start unliking an node") {
-        delete(token, likes_path(id))
-      }
+      delete(token, likes_path(id))
     end
 
     def create_comment(token, id, content)
-      with_perf("[perf] start creating a comment") {
-        post(token, comments_path(id), :message => content)
-      }
+      post(token, comments_path(id), :message => content)
     end
 
     def delete_comment(token, id)
-      with_perf("[perf] start deleting a comment") {
-        delete(token, id)
-      }
+      delete(token, id)
     end
 
   private
@@ -131,28 +98,34 @@ class Graph
     end
 
     def get(token, path, query)
-      res = protect {
-        client.get(path, query.merge(:access_token => token.secret))
+      res = with_perf("perf] start getting #{path} fetch") {
+        protect {
+          client.get(path, query.merge(:access_token => token.secret))
+        }
       }
       parse(token, res)
     end
 
     def post(token, path, body = '')
-      res = protect {
-        client.request(:post, path, {:access_token => token.secret }, body)
+      res = with_perf("[perf] start posting to #{path}") {
+        protect {
+          client.request(:post, path, {:access_token => token.secret }, body)
+        }
       }
       parse(token, res)
     end
 
     def delete(token, path)
-      protect {
-        client.request(:delete, path, {:access_token => token.secret }, '')
+      with_perf("[perf] start deleting #{path}") {
+        protect {
+          client.request(:delete, path, {:access_token => token.secret }, '')
+        }
       }
     end
 
     def parse(token, res)
       if res
-        if res.content != 'false' and parsed = JSON.parse(res.content)
+        if parsed = protect { JSON.parse(res.content) }
           if parsed['error']
             raise parsed['error'].inspect
           end
