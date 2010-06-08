@@ -254,7 +254,7 @@ module EntryHelper
     return '' unless body
     fold, content, links = escape_text(body)
     entry.view_links = links
-    content = filter_twitter_username(content)
+    content = filter_twitter_username(content, entry)
     with_media = media_content(entry)
     with_geo = geo_content(entry)
     ext = [with_media, with_geo].join(' ')
@@ -398,9 +398,6 @@ module EntryHelper
     end
     ary << from
     ary << lock_icon(entry.from)
-    if link = twitter_reply_to(entry)
-      ary << link
-    end
     if link = twitter_retweeted_by(entry)
       ary << link
     end
@@ -602,10 +599,15 @@ module EntryHelper
     link_to(content, link_list(:eids => ids))
   end
 
-  def filter_twitter_username(common)
+  def filter_twitter_username(common, entry)
     common.gsub(/@([a-zA-Z0-9_]+)/) {
-      link = link_action('tweets', :feed => 'user', :user => $1)
-      '@' + link_to($1, link, :class => 'twname')
+      user = $1
+      if user == entry.twitter_reply_to
+        link = entry.twitter_in_reply_to_url
+      else
+        link = link_action('tweets', :feed => 'user', :user => user)
+      end
+      '@' + link_to(h(user), link, :class => 'twname')
     }
   end
 

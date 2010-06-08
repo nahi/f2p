@@ -45,7 +45,8 @@ class Entry
       e.date = hash[:created_at]
       e.body = hash[:text]
       e.from = tweet_from(user)
-      e.to = [tweet_from(hash[:recipient])] if hash[:recipient]
+      e.to = []
+      e.to << tweet_from(hash[:recipient]) if hash[:recipient]
       e.via = Via.new
       /<a href="([^"]+)" [^>]*>([^<]+)<\/a>/ =~ hash[:source]
       e.via.name = $2 || 'Twitter'
@@ -79,7 +80,6 @@ class Entry
         e.commands << 'like'
       end
       e.commands << 'retweet' if e.from.id != e.service_user
-      e.to = []
       e.thumbnails = []
       e.files = []
       e.comments = []
