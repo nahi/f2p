@@ -927,9 +927,9 @@ module EntryHelper
   end
 
   def post_entry_form
-    return if ctx.direct_message? and !@dm_to
+    return if ctx.direct_message? and !ctx.dm_to
     ary = []
-    body = ''
+    body = @body
     ary << hidden_field_tag('to_lines', '1')
     if ctx.user_for and ctx.user_for != auth.name
       if @feedinfo and @feedinfo.commands.include?('dm')
@@ -937,15 +937,15 @@ module EntryHelper
       elsif ctx.tweets? and !ctx.in_reply_to_screen_name and @profile and @profile.name != @service_user_screen_name
         ary << hidden_field_tag('to_0', @profile.name) + h(@profile.name) + ': '
       end
-    elsif @dm_to
-      ary << hidden_field_tag('to_0', @dm_to) + h(@dm_to) + ': '
+    elsif ctx.dm_to
+      ary << hidden_field_tag('to_0', ctx.dm_to) + h(ctx.dm_to) + ': '
     end
     ary << hidden_field_tag('service_source', @service_source) if @service_source
     ary << hidden_field_tag('service_user', @service_user) if @service_user
     if ctx.in_reply_to_screen_name
       ary << hidden_field_tag('in_reply_to_status_id', ctx.in_reply_to_status_id)
       ary << hidden_field_tag('in_reply_to_screen_name', ctx.in_reply_to_screen_name)
-      body = '@' + ctx.in_reply_to_screen_name + ' '
+      body ||= '@' + ctx.in_reply_to_screen_name + ' '
     end
     if ctx.room_for and @feedinfo.commands.include?('post')
       ary << hidden_field_tag('to_0', ctx.room_for) + h(feed_name) + ': '
@@ -954,7 +954,7 @@ module EntryHelper
     when 'twitter'
       ary << twitter_icon_tag
       if ctx.query and ctx.query[0] == ?#
-        body += ' ' + ctx.query
+        body ||= ' ' + ctx.query
       end
     when 'buzz'
       ary << buzz_icon_tag

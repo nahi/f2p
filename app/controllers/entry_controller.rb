@@ -108,6 +108,7 @@ class EntryController < ApplicationController
     @ctx.feed ||= 'home'
     @ctx.home = false
     id = params[:id]
+    @body = flash[:post_body]
     unless token = auth.token('twitter', id)
       session[:back_to] = {:controller => 'entry', :action => 'tweets'}
       redirect_to :controller => 'login', :action => 'initiate_twitter_oauth_login'
@@ -116,7 +117,6 @@ class EntryController < ApplicationController
     @service_source = token.service
     @service_user = token.service_user
     @service_user_screen_name = token.params
-    @dm_to = param(:dm_to)
     @saved_searches = twitter_saved_searches(token)
     opt = {:count => @ctx.num}
     opt[:max_id] = Entry.if_service_id(@ctx.max_id) if @ctx.max_id
@@ -124,6 +124,7 @@ class EntryController < ApplicationController
     when 'user'
       user = @ctx.user || @service_user_screen_name
       t = Task.run { @profile = Tweet.profile(token, user) }
+      t.result if $DEBUG
       tweets = Tweet.user_timeline(token, user, opt)
       t.result
       feedname = '@' + @profile.name
@@ -132,6 +133,7 @@ class EntryController < ApplicationController
       feedname = @ctx.feed
     when 'direct'
       t1 = Task.run { Tweet.direct_messages(token, opt) }
+      t1.result if $DEBUG
       tweets = Tweet.sent_direct_messages(token, opt) + t1.result
       feedname = @ctx.feed
     when 'favorites'
@@ -146,7 +148,7 @@ class EntryController < ApplicationController
         feedname = 'home'
         last_checked = session[:twitter_last_checked] || Time.at(0)
         next_last_checked = session[:twitter_next_last_checked] || Time.at(0)
-        if @ctx.max_id.nil? and updated_id_in_flash.nil?
+        if @ctx.max_id.nil? and updated_id_in_flash.nil? and @ctx.in_reply_to_status_id.nil?
           last_checked = session[:twitter_last_checked] = next_last_checked
         end
       end
@@ -558,6 +560,7 @@ class EntryController < ApplicationController
         msg += ' Unsupported media type?'
       end
       flash[:message] = msg
+      flash[:post_body] = @body
       if param(:service_source)
         redirect_to_list
       else

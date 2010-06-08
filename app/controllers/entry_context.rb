@@ -28,6 +28,7 @@ class EntryContext
   attr_accessor :in_reply_to_service_user
   attr_accessor :in_reply_to_screen_name
   attr_accessor :in_reply_to_status_id
+  attr_accessor :dm_to
 
   attr_accessor :viewname
 
@@ -41,7 +42,7 @@ class EntryContext
     @home = true
     @moderate = nil
     @param = nil
-    @in_reply_to_service_user = @in_reply_to_screen_name = @in_reply_to_status_id = nil
+    @in_reply_to_service_user = @in_reply_to_screen_name = @in_reply_to_status_id = @dm_to = nil
   end
 
   def parse(param, setting)
@@ -73,6 +74,7 @@ class EntryContext
     @in_reply_to_service_user = param(:in_reply_to_service_user)
     @in_reply_to_screen_name = param(:in_reply_to_screen_name)
     @in_reply_to_status_id = param(:in_reply_to_status_id)
+    @dm_to = param(:dm_to)
     @fold = param(:fold) != 'no'
     @inbox = false
     @home = !(@eid or @eids or @inbox or @query or @like or @comment or @user or @friends or @feed or @room or @link or @label)
