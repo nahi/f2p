@@ -608,7 +608,6 @@ class EntryController < ApplicationController
         msg = 'Retweet failure. ' + msg.to_s
         flash[:message] = msg
       end
-      unpin_entry(id)
     end
     if session[:ctx]
       session[:ctx].reset_for_new
