@@ -128,7 +128,7 @@ class EntryController < ApplicationController
       t.result if $DEBUG
       tweets = Tweet.user_timeline(token, user, opt)
       t.result
-      feedname = '@' + @profile.name
+      feedname = '@' + (@profile.name || @ctx.user)
     when 'mentions'
       tweets = Tweet.mentions(token, opt)
       feedname = @ctx.feed
@@ -139,6 +139,20 @@ class EntryController < ApplicationController
       feedname = @ctx.feed
     when 'favorites'
       tweets = Tweet.favorites(token, opt)
+      feedname = @ctx.feed
+    when 'followings'
+      opt[:cursor] = @ctx.max_id
+      opt.delete(:max_id)
+      res = Tweet.friends(token, token.service_user, opt)
+      tweets = twitter_users_to_statuses(res[:users])
+      max_id_override = res[:next_cursor]
+      feedname = @ctx.feed
+    when 'followers'
+      opt[:cursor] = @ctx.max_id
+      opt.delete(:max_id)
+      res = Tweet.followers(token, token.service_user, opt)
+      tweets = twitter_users_to_statuses(res[:users])
+      max_id_override = res[:next_cursor]
       feedname = @ctx.feed
     when /\A@([^\/]+)\/([^\/]+)\z/
       user, list = $1, $2
@@ -164,8 +178,10 @@ class EntryController < ApplicationController
       :service_user => token.service_user,
       :feed => @ctx.feed
     )
+    feed_opt[:merge_entry] = false if max_id_override
     @feed = find_entry_thread(feed_opt)
     @threads = @feed.entries
+    @threads.max_id = max_id_override if max_id_override
     if next_last_checked
       max = next_last_checked
       @threads.each do |t|
@@ -1183,5 +1199,17 @@ private
     else
       return components.join('_'), service_source, service_user
     end
+  end
+
+  def twitter_users_to_statuses(users)
+    users.map { |hash|
+      s = hash[:status] || {}
+      s[:id] ||= "0"
+      s[:user] = hash
+      s.delete(:retweeted_status)
+      s['service_source'] = hash['service_source']
+      s['service_user'] = hash['service_user']
+      s
+    }
   end
 end

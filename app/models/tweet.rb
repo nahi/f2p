@@ -153,6 +153,33 @@ class Tweet
       end
     end
 
+    def friends(token, user, args = {})
+      res = with_perf('[perf] start fetching friends') {
+        protect([]) {
+          client(token).friends(user, args)
+        }
+      }
+      if users = res[:users]
+        su = token.service_user
+        res[:users] = users.map { |e| wrap(su, e) }
+      end
+      res
+    end
+
+    def followers(token, user, args = {})
+      res = with_perf('[perf] start fetching followers') {
+        protect([]) {
+          client(token).followers(user, args)
+        }
+      }
+    File.open('/tmp/twitter', 'w') { |f| f << res.to_json }
+      if users = res[:users]
+        su = token.service_user
+        res[:users] = users.map { |e| wrap(su, e) }
+      end
+      res
+    end
+
     def profile(token, user, args = {})
       profile = Profile.new
       res = with_perf('[perf] start fetching profile') {
