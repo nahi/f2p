@@ -230,4 +230,16 @@ private
       task.result
     end
   end
+
+  def session_cache(key, &block)
+    ss = session[key] ||= {}
+    if updated_at = ss[:updated_at]
+      if ss[:entries] and (Time.now.to_i - updated_at < F2P::Config.twitter_api_cache)
+        return ss[:entries]
+      end
+    end
+    ss[:entries] = yield
+    ss[:updated_at] = Time.now.to_i
+    ss[:entries]
+  end
 end

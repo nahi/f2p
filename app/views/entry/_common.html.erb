@@ -1,12 +1,6 @@
 <%- if @ctx.ff? -%>
 <p>Filters: <%= special_feed_links %></p>
 <%- end -%>
-<%- if str = list_links -%>
-<p>Lists: <%= str %></p>
-<%- end -%>
-<%- if str = saved_search_links -%>
-<p>Searches: <%= str %></p>
-<%- end -%>
 <%- if @service_source == 'twitter' -%>
 <p>Tweets: <%= twitter_links %></p>
 <%- end -%>
@@ -15,6 +9,12 @@
 <%- end -%>
 <%- if @service_source == 'graph' -%>
 <p>Facebook: <%= graph_links %></p>
+<%- end -%>
+<%- if str = list_links -%>
+<p>Lists: <%= str %></p>
+<%- end -%>
+<%- if str = saved_search_links -%>
+<p>Searches: <%= str %></p>
 <%- end -%>
 <%- unless @ctx.pin? -%>
   <%- form_tag(search_action) do -%>

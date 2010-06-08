@@ -719,11 +719,6 @@ __EOS__
     links << link_to(h('Mentions'), base.merge(:feed => :mentions))
     links << link_to(h('Favorites'), base.merge(:feed => :favorites))
     links << link_to(h('DM'), base.merge(:feed => :direct))
-    if @saved_searches
-      @saved_searches.each do |ss|
-        links << link_to(h(ss[:name]), base.merge(:query => ss[:query]))
-      end
-    end
     if @service_user
       links << menu_link(menu_label('sign out'), :controller => 'login', :action => 'unlink_twitter', :id => @service_user)
     end
@@ -753,22 +748,35 @@ __EOS__
   end
 
   def list_links
-    return unless @feedlist
     links = []
-    links << link_to(h('Home'), :controller => 'entry', :action => 'list')
-    lists = @feedlist['lists'] || []
-    lists.each do |list|
-      links << link_to(h(list.name), :controller => :entry, :action => :list, :feed => list.id)
+    if @feedlist
+      links << link_to(h('Home'), :controller => 'entry', :action => 'list')
+      lists = @feedlist['lists'] || []
+      lists.each do |list|
+        links << link_to(h(list.name), :controller => :entry, :action => :list, :feed => list.id)
+      end
+    end
+    if @twitter_lists
+      @twitter_lists.each do |list|
+        links << link_to(h(list[:name]), :controller => :entry, :action => :tweets, :feed => list[:full_name])
+      end
     end
     links.join(' ')
   end
 
   def saved_search_links
-    return unless @feedlist
     links = []
-    lists = @feedlist['searches'] || []
-    lists.each do |search|
-      links << link_to(h(search.name), :controller => :entry, :action => :list, :feed => search.id)
+    if @feedlist
+      lists = @feedlist['searches'] || []
+      lists.each do |search|
+        links << link_to(h(search.name), :controller => :entry, :action => :list, :feed => search.id)
+      end
+    end
+    if @saved_searches
+      base = {:controller => :entry, :action => :tweets, :id => @service_user}
+      @saved_searches.each do |ss|
+        links << link_to(h(ss[:name]), base.merge(:query => ss[:query]))
+      end
     end
     links.join(' ')
   end

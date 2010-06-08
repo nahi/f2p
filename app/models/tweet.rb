@@ -35,6 +35,16 @@ class Tweet
       res.map { |e| wrap(su, e) }
     end
 
+    def list_statuses(token, user, list, args = {})
+      res = with_perf('[perf] start list statuses fetch') {
+        protect([]) {
+          client(token).list_statuses(user, list, args)
+        }
+      }
+      su = token.service_user
+      res.map { |e| wrap(su, e) }
+    end
+
     def sent_direct_messages(token, args = {})
       res = with_perf('[perf] start direct_messages/sent fetch') {
         protect([]) {
@@ -129,6 +139,18 @@ class Tweet
       }
       su = token.service_user
       res.map { |e| wrap(su, e) }
+    end
+
+    def lists(token, user, args = {})
+      res = with_perf('[perf] start fetching lists') {
+        protect([]) {
+          client(token).lists(user, args)
+        }
+      }
+      if lists = res[:lists]
+        su = token.service_user
+        lists.map { |e| wrap(su, e) }
+      end
     end
 
     def profile(token, user, args = {})
