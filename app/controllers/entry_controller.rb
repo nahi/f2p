@@ -937,7 +937,7 @@ private
   end
 
   def updated_id_in_flash
-    flash[:added_id] || flash[:updated_id] || flash[:deleted_id]
+    flash[:added_id] || flash[:updated_id] || flash[:deleted_id] || flash[:retweeted_id]
   end
 
   def pin_entry(id)
