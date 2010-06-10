@@ -1275,7 +1275,8 @@ module EntryHelper
   def post_comment_link(entry, opt = {})
     if entry.tweet?
       tid = Entry.if_service_id(entry.id)
-      if ctx.feed == 'direct' and entry.service_user != entry.from_id
+      if ctx.feed == 'direct'
+        return unless entry.service_user != entry.from_id
         str = inline_menu_label(:dm, 'DM')
         link = list_opt(
           :dm_to => entry.from.name
@@ -1457,7 +1458,7 @@ module EntryHelper
   end
 
   def retweet_link(entry)
-    if entry.commands.include?('retweet')
+    if ctx.feed != 'direct' and entry.commands.include?('retweet')
       link_opt = {:id => entry.id}
       unless entry.ff?
         link_opt[:service_source] = entry.service_source
