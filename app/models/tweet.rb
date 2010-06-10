@@ -117,6 +117,12 @@ class Tweet
       wrap(token.service_user, res)
     end
 
+    def remove_status(token, id, args = {})
+      with_perf('[perf] start deleting tweet') {
+        client(token).remove_status(id, args)
+      }
+    end
+
     def favorite(token, id, args = {})
       res = with_perf('[perf] start favorite post') {
         client(token).favorite(id, args)

@@ -68,8 +68,11 @@ class Entry
       end
       e.url = twitter_url(e.from.name, hash[:id])
       e.commands = []
-      e.likes = []
       e.commands << 'comment'
+      if e.from.id == e.service_user
+        e.commands << 'delete'
+      end
+      e.likes = []
       if hash[:favorited]
         like = Like.new
         like.date = e.date
@@ -427,9 +430,13 @@ class Entry
 
     def delete(opt)
       id = opt[:eid]
+      token = opt[:token]
+      sid = Entry.if_service_id(id)
       case opt[:service_source]
+      when 'twitter'
+        Tweet.remove_status(token, sid)
       when 'buzz'
-        Buzz.delete_activity(opt[:token], Entry.if_service_id(id))
+        Buzz.delete_activity(opt[:token], sid)
       else # FriendFeed
         auth = opt[:auth]
         undelete = !!opt[:undelete]
@@ -450,9 +457,7 @@ class Entry
       case opt[:service_source]
       when 'twitter'
         params = {}
-        if opt[:in_reply_to_status_id]
-          params[:in_reply_to_status_id] = opt[:in_reply_to_status_id]
-        end
+        params[:in_reply_to_status_id] = opt[:in_reply_to_status_id]
         if entry = Tweet.update_status(token, body, params)
           Entry.from_tweet(entry)
         end

@@ -1274,20 +1274,15 @@ module EntryHelper
 
   def post_comment_link(entry, opt = {})
     if entry.tweet?
-      return if entry.service_user == entry.from_id
       tid = Entry.if_service_id(entry.id)
-      if ctx.feed == 'direct'
+      if ctx.feed == 'direct' and entry.service_user != entry.from_id
         str = inline_menu_label(:dm, 'DM')
         link = list_opt(
           :dm_to => entry.from.name
         )
       else
-        str = inline_menu_label(:reply, 'reply')
-        link = list_opt(
-          :in_reply_to_service_user => entry.service_user,
-          :in_reply_to_screen_name => entry.from.name,
-          :in_reply_to_status_id => tid
-        )
+        str = h('>>>')
+        link = link_show(entry.id)
       end
     elsif !entry.comments.empty? and !comment_inline?(entry)
       if entry.comments_size == 1
@@ -1327,19 +1322,27 @@ module EntryHelper
   end
 
   def undo_delete_link(id, comment)
-    link_to(h('Deleted.  UNDO?'), link_action('undelete', :eid => id, :comment => comment), :confirm => 'Undo?')
+    if ctx.ff?
+      link_to(h('Deleted.  UNDO?'), link_action('undelete', :eid => id, :comment => comment), :confirm => 'Undo?')
+    else
+      h('Deleted.')
+    end
   end
 
   def undo_add_link(id)
-    if /\At_/ =~ id
-      h('Tweet added.')
-    else
+    if ctx.ff?
       link_to(h('Added.  UNDO?'), link_action('delete', :eid => id), :confirm => 'Undo?')
+    else
+      h('Added.')
     end
   end
 
   def undo_add_comment_link(id, comment)
-    link_to(h('Added.  UNDO?'), link_action('delete', :eid => id, :comment => comment), :confirm => 'Undo?')
+    if ctx.ff?
+      link_to(h('Added.  UNDO?'), link_action('delete', :eid => id, :comment => comment), :confirm => 'Undo?')
+    else
+      h('Added.')
+    end
   end
 
   def moderate_link(entry)
