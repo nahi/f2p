@@ -269,7 +269,6 @@ module EntryHelper
     return '' unless body
     fold, content, links = escape_text(body, ctx.fold ? setting.text_folding_size : nil)
     entry.view_links = links
-    content = link_filter_twitter_username(content)
     content.gsub!(/\n/, "<br />\n")
     if with_attachment = attachment_content(entry)
       content += with_attachment
