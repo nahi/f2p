@@ -763,7 +763,7 @@ __EOS__
         links << link_to(h(list[:name]), :controller => :entry, :action => :tweets, :feed => list[:full_name])
       end
     end
-    links.join(' ')
+    links.join(' ') unless links.empty?
   end
 
   def saved_search_links
@@ -780,6 +780,6 @@ __EOS__
         links << link_to(h(ss[:name]), base.merge(:query => ss[:query]))
       end
     end
-    links.join(' ')
+    links.join(' ') unless links.empty?
   end
 end

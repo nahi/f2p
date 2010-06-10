@@ -1,13 +1,13 @@
 <%- if @ctx.ff? -%>
 <p>Filters: <%= special_feed_links %></p>
 <%- end -%>
-<%- if @service_source == 'twitter' -%>
+<%- if @ctx.tweets? -%>
 <p>Tweets: <%= twitter_links %></p>
 <%- end -%>
-<%- if @service_source == 'buzz' -%>
+<%- if @ctx.buzz? -%>
 <p>Buzz: <%= buzz_links %></p>
 <%- end -%>
-<%- if @service_source == 'graph' -%>
+<%- if @ctx.graph? -%>
 <p>Facebook: <%= graph_links %></p>
 <%- end -%>
 <%- if str = list_links -%>
