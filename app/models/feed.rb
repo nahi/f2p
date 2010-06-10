@@ -271,8 +271,8 @@ class Feed
       end
       maxcomments = opt[:maxcomments]
       hash['entries'] = pinned.map { |e|
-        if ['twitter', 'buzz', 'graph'].include?(e.source)
-          YAML.load(e.entry)
+        if ['twitter', 'buzz', 'graph'].include?(e.source) and e.entry
+          YAML.load(e.entry) rescue nil
         elsif map.key?(e.eid)
           map[e.eid]
         else
