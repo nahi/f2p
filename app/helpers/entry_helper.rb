@@ -294,7 +294,7 @@ module EntryHelper
   end
 
   def geo_content(entry)
-    if entry.geo and !entry.view_map
+    if entry.geo and !entry.view_map and !media_disabled?
       point = GoogleMaps::Point.new(entry.body, entry.geo.lat, entry.geo.long)
       zoom = F2P::Config.google_maps_zoom
       width = F2P::Config.google_maps_width

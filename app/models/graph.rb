@@ -154,7 +154,7 @@ class Graph
 
     def client
       drv = HTTPClient.new(F2P::Config.http_proxy || ENV['http_proxy'])
-      drv.debug_dev = STDERR
+      drv.debug_dev = STDERR if $DEBUG
       drv
     end
   end
