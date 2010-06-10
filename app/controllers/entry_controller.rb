@@ -695,15 +695,10 @@ class EntryController < ApplicationController
   def delete
     id = param(:eid)
     comment = param(:comment)
-    if param(:service_source) == 'buzz'
+    if param(:service_source)
       opt = {:eid => id}
-      unless token = auth.token(param(:service_source), param(:service_user))
-        flash[:message] = 'Token not found'
-        render :action => 'buzz'
-        return
-      end
       opt[:service_source] = param(:service_source)
-      opt[:token] = token
+      opt[:token] = auth.token(param(:service_source), param(:service_user))
       Entry.delete(opt)
     else
       do_delete(id, comment, false)
