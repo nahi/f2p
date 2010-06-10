@@ -341,6 +341,13 @@ class EntryController < ApplicationController
     entry = nil
     Entry.if_service_id(@ctx.eid) do |sid|
       case @ctx.eid[0]
+      when ?t
+        unless token = auth.token('twitter')
+          session[:back_to] = {:controller => 'entry', :action => 'tweets'}
+          redirect_to :controller => 'login', :action => 'initiate_twitter_oauth_login'
+          return
+        end
+        entry = Tweet.show(token, sid)
       when ?b
         unless token = auth.token('buzz')
           session[:back_to] = {:controller => 'entry', :action => 'buzz'}
@@ -370,6 +377,8 @@ class EntryController < ApplicationController
     @ctx.home = false
     pin_check
     case @service_source
+    when 'twitter'
+      render_single_twitter_entry(entry)
     when 'buzz'
       render_single_buzz_entry(entry)
     when 'graph'
@@ -377,6 +386,12 @@ class EntryController < ApplicationController
     else
       render_single_entry
     end
+    @threads = @feed.entries
+    if sess_ctx = session[:ctx]
+      sess_ctx.eid = @ctx.eid
+    end
+    flash[:show_reload_detection] = @ctx.eid
+    render :action => 'list'
   end
 
   def new
@@ -726,11 +741,16 @@ class EntryController < ApplicationController
     id = param(:eid)
     comment = param(:comment)
     body = param(:body)
+    in_reply_to_screen_name = param(:in_reply_to_screen_name)
+    in_reply_to_status_id = param(:in_reply_to_status_id)
     opt = {:body => body}
     if param(:service_source)
       token = auth.token(param(:service_source), param(:service_user))
       opt[:service_source] = param(:service_source)
       opt[:token] = token
+    end
+    if in_reply_to_status_id
+      opt[:in_reply_to_status_id] = in_reply_to_status_id
     end
     if comment
       opt[:comment] = comment
@@ -746,6 +766,10 @@ class EntryController < ApplicationController
         flash[:added_comment] = c.id
         flash[:allow_cache] = true
       end
+    end
+    if param(:service_source) == 'twitter'
+      redirect_to_list
+      return
     end
     redirect_to_entry_or_list
   end
@@ -1123,7 +1147,6 @@ private
       opt.delete(:maxcomments)
       opt.delete(:maxlikes)
       @feed = find_entry_thread(opt)
-      @threads = @feed.entries
       if sess_ctx
         # pin/unpin redirect caused :eid set.
         ctx = sess_ctx.dup
@@ -1137,37 +1160,24 @@ private
         @original_feed = nil
       end
     end
-    if sess_ctx
-      sess_ctx.eid = @ctx.eid
-    end
-    flash[:show_reload_detection] = @ctx.eid
-    render :action => 'list'
+  end
+
+  def render_single_twitter_entry(tweet)
+    opt = find_opt.merge(:tweets => tweet)
+    @feed = find_entry_thread(opt)
+    @original_feed = nil # can we implement it? needed?
   end
 
   def render_single_buzz_entry(buzz)
-    sess_ctx = session[:ctx]
     opt = find_opt.merge(:buzz => buzz)
     @feed = find_entry_thread(opt)
-    @threads = @feed.entries
     @original_feed = nil # can we implement it? needed?
-    if sess_ctx
-      sess_ctx.eid = @ctx.eid
-    end
-    flash[:show_reload_detection] = @ctx.eid
-    render :action => 'list'
   end
 
   def render_single_graph_entry(graph)
-    sess_ctx = session[:ctx]
     opt = find_opt.merge(:graph => graph)
     @feed = find_entry_thread(opt)
-    @threads = @feed.entries
     @original_feed = nil # can we implement it? needed?
-    if sess_ctx
-      sess_ctx.eid = @ctx.eid
-    end
-    flash[:show_reload_detection] = @ctx.eid
-    render :action => 'list'
   end
 
   def twitter_saved_searches(token)

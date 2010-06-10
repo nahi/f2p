@@ -213,11 +213,36 @@ module EntryHelper
     end
     scan_media_from_link(entry)
     unless entry.view_medias.empty?
-      content += "<br />\n"
-      content += entry.view_medias.map { |uri| media_tag(entry, uri) }.join(' ')
-      content += "<br />\n"
+      ext = entry.view_medias.map { |uri| media_tag(entry, uri) }.join(' ')
+      if media_disabled?
+        content += " " + ext
+      else
+        content += "<br />\n" + ext + "<br />\n"
+      end
     end
     content
+  end
+
+  def flavors_content(entry)
+    ary = []
+    if link_entry?(entry)
+      link = entry.link
+      ary << ' - ' + link_to(h(summary_uri(link)), link)
+    end
+    if with_attachment = attachment_content(entry)
+      ary << with_attachment
+    end
+    with_media = media_content(entry)
+    with_geo = geo_content(entry)
+    ext = [with_media, with_geo].join(' ')
+    unless ext.strip.empty?
+      if media_disabled?
+        ary << " " + ext
+      else
+        ary << "<br />\n" + ext + "<br />\n"
+      end
+    end
+    ary.join
   end
 
   def friendfeed_content(entry)
@@ -232,35 +257,21 @@ module EntryHelper
       msg = '(more)'
       content += link_to(h(msg), link_show(entry.id))
     end
-    if link_entry?(entry)
-      link = entry.link
-      content += ' - ' + link_to(h(summary_uri(link)), link)
-    end
-    if with_attachment = attachment_content(entry)
-      content += with_attachment
-    end
-    # entries from Hatena contains 'enclosure' but no title and link for now.
-    with_media = media_content(entry)
-    with_geo = geo_content(entry)
-    ext = [with_media, with_geo].join(' ')
-    unless ext.strip.empty?
-      content += "<br />\n" + ext + "<br />\n"
-    end
+    content += flavors_content(entry)
     content
   end
 
   def twitter_content(entry)
     body = entry.body
     return '' unless body
-    fold, content, links = escape_text(body)
+    fold, content, links = escape_text(body, ctx.fold ? setting.text_folding_size : nil)
     entry.view_links = links
     content = filter_twitter_username(content, entry)
-    with_media = media_content(entry)
-    with_geo = geo_content(entry)
-    ext = [with_media, with_geo].join(' ')
-    unless ext.strip.empty?
-      content += "<br />\n" + ext + "<br />\n"
+    if fold
+      msg = '(more)'
+      content += link_to(h(msg), link_show(entry.id))
     end
+    content += flavors_content(entry)
     content
   end
 
@@ -269,23 +280,15 @@ module EntryHelper
     return '' unless body
     fold, content, links = escape_text(body, ctx.fold ? setting.text_folding_size : nil)
     entry.view_links = links
+    content.gsub!(/\n+/, "<br />\n")
     if entry.via and entry.via.twitter?
       content = link_filter_twitter_username(content)
     end
-    content.gsub!(/\n+/, "<br />\n")
-    if with_attachment = attachment_content(entry)
-      content += with_attachment
+    if fold
+      msg = '(more)'
+      content += link_to(h(msg), link_show(entry.id))
     end
-    if link_entry?(entry)
-      link = entry.link
-      content += ' - ' + link_to(h(summary_uri(link)), link)
-    end
-    with_media = media_content(entry)
-    with_geo = geo_content(entry)
-    ext = [with_media, with_geo].join(' ')
-    unless ext.strip.empty?
-      content += "<br />\n" + ext + "<br />\n"
-    end
+    content += flavors_content(entry)
     content
   end
 
@@ -296,7 +299,7 @@ module EntryHelper
   end
 
   def geo_content(entry)
-    if entry.geo and !entry.view_map and !media_disabled?
+    if entry.geo and !entry.view_map
       point = GoogleMaps::Point.new(entry.body, entry.geo.lat, entry.geo.long)
       zoom = F2P::Config.google_maps_zoom
       width = F2P::Config.google_maps_width
@@ -985,6 +988,11 @@ module EntryHelper
       ary = []
       ary << hidden_field_tag('service_source', @service_source) if @service_source
       ary << hidden_field_tag('service_user', @service_user) if @service_user
+      if entry.tweet?
+        ary << hidden_field_tag('in_reply_to_screen_name', entry.from.name)
+        ary << hidden_field_tag('in_reply_to_status_id', Entry.if_service_id(entry.id))
+        default = '@' + entry.from.name + ' '
+      end
       ary << text_field_tag('body', default, :placeholder => 'comment')
       ary << submit_tag('post')
       ary.join

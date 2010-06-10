@@ -68,7 +68,7 @@ class Feed
     def fetch_entries(auth, opt)
       if opt[:eid]
         feed = fetch_single_entry_as_array(auth, opt)
-        if !opt[:buzz] and !opt[:graph] and entry = feed.entries.first
+        if !opt[:tweets] and !opt[:buzz] and !opt[:graph] and entry = feed.entries.first
           update_cache_entry(auth, entry)
         end
         feed
@@ -96,7 +96,7 @@ class Feed
     end
 
     def fetch_single_entry_as_array(auth, opt)
-      if ext = opt[:buzz] || opt[:graph]
+      if ext = opt[:tweets] || opt[:buzz] || opt[:graph]
         return from_service([ext], opt)
       end
       if opt[:allow_cache]

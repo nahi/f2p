@@ -55,7 +55,7 @@ class Entry
         lat, long = hash[:geo][:coordinates]
         e.geo = Geo['lat' => lat, 'long' => long]
       end
-      e.twitter_username = e.from.id
+      e.twitter_username = e.from.name
       if hash[:in_reply_to_status_id]
         e.twitter_reply_to_status_id = hash[:in_reply_to_status_id].to_s
         e.twitter_reply_to = hash[:in_reply_to_screen_name]
@@ -69,6 +69,7 @@ class Entry
       e.url = twitter_url(e.from.name, hash[:id])
       e.commands = []
       e.likes = []
+      e.commands << 'comment'
       if hash[:favorited]
         like = Like.new
         like.date = e.date
@@ -388,6 +389,7 @@ class Entry
       auth = opt[:auth]
       to = opt[:to]
       body = opt[:body]
+      token = opt[:token]
       case opt[:service_source]
       when 'twitter'
         params = {}
@@ -395,17 +397,17 @@ class Entry
           params[:in_reply_to_status_id] = opt[:in_reply_to_status_id]
         end
         if opt[:to].empty?
-          entry = Tweet.update_status(opt[:token], body, params)
+          entry = Tweet.update_status(token, body, params)
         else # DM
-          entry = Tweet.send_direct_message(opt[:token], opt[:to].first, body, params)
+          entry = Tweet.send_direct_message(token, opt[:to].first, body, params)
         end
         Entry.from_tweet(entry) if entry
       when 'buzz'
-        if entry = Buzz.create_note(opt[:token], body)
+        if entry = Buzz.create_note(token, body)
           Entry.from_buzz(entry)
         end
       when 'graph'
-        if entry = Graph.create_message(opt[:token], body)
+        if entry = Graph.create_message(token, body)
           Entry.from_graph(entry)
         end
       else # FriendFeed
@@ -444,14 +446,21 @@ class Entry
       id = opt[:eid]
       body = opt[:body]
       sid = Entry.if_service_id(id)
+      token = opt[:token]
       case opt[:service_source]
+      when 'twitter'
+        params = {}
+        if opt[:in_reply_to_status_id]
+          params[:in_reply_to_status_id] = opt[:in_reply_to_status_id]
+        end
+        if entry = Tweet.update_status(token, body, params)
+          Entry.from_tweet(entry)
+        end
       when 'buzz'
-        token = opt[:token]
         if comment = Buzz.create_comment(token, sid, body)
           Comment.from_buzz(comment)
         end
       when 'graph'
-        token = opt[:token]
         if comment = Graph.create_comment(token, sid, body)
           Comment.from_graph(comment)
         end
