@@ -22,14 +22,6 @@
 <%- end -%>
 <div class="listings">
   <p><%= h(viewname) %></p>
-  <%- if link = geo_markers_link(@threads) -%>
-    <div class="entry">
-      <p>
-        Following list includes geo entries:<br />
-        &nbsp;&nbsp;&nbsp;<%= link %>
-      </p>
-    </div>
-  <%- end -%>
   <%- @threads.each do |thread| -%>
     <hr class="separator" />
     <div class="<%= cycle('thread1', 'thread2') %>">
