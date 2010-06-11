@@ -608,7 +608,7 @@ module EntryHelper
     common.gsub(/@([a-zA-Z0-9_]+)/) {
       user = $1
       if user == entry.twitter_reply_to
-        link = link_show(entry.id)
+        link = link_show(Entry.from_service_id('twitter', entry.twitter_reply_to_status_id))
       else
         link = link_action('tweets', :feed => 'user', :user => user)
       end
