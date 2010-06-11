@@ -737,7 +737,7 @@ module EntryHelper
         ary << h(m[0])
       end
       if WC2010_TAGS.include?(m[0].downcase)
-        tag = m[0][1, 3]
+        tag = m[0].slice(1..-1).downcase
         link = sprintf(WC2010_LINK_URL, tag)
         img_src = sprintf(WC2010_IMG_URL, tag)
         ary << ' '
