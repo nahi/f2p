@@ -57,16 +57,16 @@ class Entry
       end
       e.twitter_username = e.from.name
       if hash[:in_reply_to_status_id]
-        e.twitter_reply_to_status_id = hash[:in_reply_to_status_id].to_s
+        e.twitter_reply_to_status_id = Entry.from_service_id('twitter', hash[:in_reply_to_status_id].to_s)
         e.twitter_reply_to = hash[:in_reply_to_screen_name]
       end
       if base
-        e.twitter_retweeted_by_status_id = base[:id].to_s
+        e.twitter_retweeted_by_status_id = Entry.from_service_id('twitter', base[:id].to_s)
         e.twitter_retweeted_by = base[:user][:screen_name]
         # just use retweeted date.
         e.date = base[:created_at]
       end
-      e.url = twitter_url(e.from.name, hash[:id])
+      e.url = twitter_url(e.from.name, e.id)
       e.commands = []
       e.commands << 'comment'
       if e.from.id == e.service_user
@@ -641,7 +641,7 @@ class Entry
     end
 
     def twitter_url(screen_name, status_id)
-      "http://twitter.com/#{screen_name}/status/#{status_id}"
+      "http://twitter.com/#{screen_name}/status/#{Entry.if_service_id(status_id)}"
     end
 
   private
