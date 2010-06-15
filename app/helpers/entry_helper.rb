@@ -332,9 +332,11 @@ module EntryHelper
   end
 
   def filter_buzz_comment(content)
-    content.
-      gsub(%r|<br\s*/>\s*(?:<br\s*/>\s*)+|m, '<br />'). # compact <br/>
-      gsub(%r|</?b>|, '') # remove <b>
+    markup_sentence(
+      content.
+        gsub(%r|<br\s*/>\s*(?:<br\s*/>\s*)+|m, '<br />'). # compact <br/>
+        gsub(%r|</?b>|, '') # remove <b>
+    )
   end
 
   def geo_content(entry)
