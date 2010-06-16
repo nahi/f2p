@@ -3,7 +3,6 @@ require 'hash_utils'
 
 class From
   include HashUtils
-  EMPTY = [].freeze
 
   attr_accessor :id
   attr_accessor :name
@@ -18,7 +17,7 @@ class From
   def initialize(hash = nil)
     initialize_with_hash(hash, 'id', 'name', 'type', 'commands') if hash
     @private = hash && hash['private'] == true
-    @commands ||= EMPTY
+    @commands ||= Array::EMPTY
     @profile_url = nil
     @profile_image_url = nil
   end

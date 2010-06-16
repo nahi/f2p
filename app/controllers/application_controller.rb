@@ -4,6 +4,7 @@
 require 'ff_daemon'
 require 'stringio'
 require 'zlib'
+require 'ext'
 
 
 class ApplicationController < ActionController::Base
@@ -238,7 +239,9 @@ private
         return ss[:entries]
       end
     end
-    ss[:entries] = yield
+    if new_value = yield
+      ss[:entries] = new_value
+    end
     ss[:updated_at] = Time.now.to_i
     ss[:entries]
   end

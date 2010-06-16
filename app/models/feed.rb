@@ -5,7 +5,6 @@ require 'entry'
 
 class Feed
   include HashUtils
-  EMPTY = [].freeze
 
   class << self
     def find(opt = {})
@@ -569,7 +568,7 @@ class Feed
   def initialize(hash = nil)
     if hash
       initialize_with_hash(hash, 'id', 'name', 'type')
-      @entries = (hash['entries'] || EMPTY).map { |e| Entry[e] }
+      @entries = (hash['entries'] || Array::EMPTY).map { |e| Entry[e] }
     end
     @feed_opt = nil
   end

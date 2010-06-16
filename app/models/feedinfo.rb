@@ -3,7 +3,6 @@ require 'hash_utils'
 
 class Feedinfo
   include HashUtils
-  EMPTY = [].freeze
 
   def self.opt_exclude(*arg)
     {
@@ -25,10 +24,10 @@ class Feedinfo
 
   def initialize(hash)
     initialize_with_hash(hash, 'id', 'name', 'type', 'private', 'description', 'commands', 'sup_id')
-    @subscriptions = sort_by_name((hash['subscriptions'] || EMPTY).map { |e| From[e] })
-    @subscribers = sort_by_name((hash['subscribers'] || EMPTY).map { |e| From[e] })
-    @feeds = sort_by_name((hash['feeds'] || EMPTY).map { |e| From[e] })
-    @services = sort_by_name((hash['services'] || EMPTY).map { |e| From[e] })
+    @subscriptions = sort_by_name((hash['subscriptions'] || Array::EMPTY).map { |e| From[e] })
+    @subscribers = sort_by_name((hash['subscribers'] || Array::EMPTY).map { |e| From[e] })
+    @feeds = sort_by_name((hash['feeds'] || Array::EMPTY).map { |e| From[e] })
+    @services = sort_by_name((hash['services'] || Array::EMPTY).map { |e| From[e] })
     @commands ||= []
   end
 

@@ -72,8 +72,8 @@ class EntryController < ApplicationController
       @feed = find_entry_thread(find_opt)
       @threads = @feed.entries
     end
-    last_checked = session[:friendfeed_last_checked] || Time.at(0)
-    next_last_checked = session[:friendfeed_next_last_checked] || Time.at(0)
+    last_checked = session[:friendfeed_last_checked] || Time::ZERO
+    next_last_checked = session[:friendfeed_next_last_checked] || Time::ZERO
     if @ctx.start == 0 and updated_id_in_flash.nil?
       last_checked = session[:friendfeed_last_checked] = next_last_checked
     end
@@ -165,8 +165,8 @@ class EntryController < ApplicationController
       else
         tweets = Tweet.home_timeline(token, opt)
         feedname = 'home'
-        last_checked = session[:twitter_last_checked] || Time.at(0)
-        next_last_checked = session[:twitter_next_last_checked] || Time.at(0)
+        last_checked = session[:twitter_last_checked] || Time::ZERO
+        next_last_checked = session[:twitter_next_last_checked] || Time::ZERO
         if @ctx.max_id.nil? and updated_id_in_flash.nil? and @ctx.in_reply_to_status_id.nil?
           last_checked = session[:twitter_last_checked] = next_last_checked
         end
@@ -235,12 +235,13 @@ class EntryController < ApplicationController
       else
         buzz = Buzz.activities(token, '@me/@consumption', opt)
         feedname = 'home'
-        last_checked = session[:buzz_last_checked] || Time.at(0)
-        next_last_checked = session[:buzz_next_last_checked] || Time.at(0)
+        last_checked = session[:buzz_last_checked] || Time::ZERO
+        next_last_checked = session[:buzz_next_last_checked] || Time::ZERO
         if @ctx.max_id.nil? and updated_id_in_flash.nil?
           last_checked = session[:buzz_last_checked] = next_last_checked
         end
       end
+      File.open("/tmp/buzz", "wb") { |f| f << buzz.to_json }
     end
     if nxt = buzz['links']['next']
       @buzz_c_tag = nxt.first['href'].match(/c=([^&]*)/)[1]
@@ -302,8 +303,8 @@ class EntryController < ApplicationController
       else
         graph = Graph.connections(token, 'me/home', opt)
         feedname = 'News feed'
-        last_checked = session[:graph_last_checked] || Time.at(0)
-        next_last_checked = session[:graph_next_last_checked] || Time.at(0)
+        last_checked = session[:graph_last_checked] || Time::ZERO
+        next_last_checked = session[:graph_next_last_checked] || Time::ZERO
         if @ctx.max_id.nil? and updated_id_in_flash.nil?
           last_checked = session[:graph_last_checked] = next_last_checked
         end

@@ -153,7 +153,7 @@ class Tweet
           client(token).lists(user, args)
         }
       }
-      if lists = res[:lists]
+      if res.is_a?(Hash) and lists = res[:lists]
         su = token.service_user
         lists.map { |e| wrap(su, e) }
       end
@@ -165,7 +165,7 @@ class Tweet
           client(token).friends(user, args)
         }
       }
-      if users = res[:users]
+      if res.is_a?(Hash) and users = res[:users]
         su = token.service_user
         res[:users] = users.map { |e| wrap(su, e) }
       end
@@ -178,8 +178,7 @@ class Tweet
           client(token).followers(user, args)
         }
       }
-    File.open('/tmp/twitter', 'w') { |f| f << res.to_json }
-      if users = res[:users]
+      if res.is_a?(Hash) and users = res[:users]
         su = token.service_user
         res[:users] = users.map { |e| wrap(su, e) }
       end

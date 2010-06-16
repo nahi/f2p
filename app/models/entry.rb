@@ -11,8 +11,6 @@ require 'cgi'
 
 class Entry
   include HashUtils
-  EMPTY = [].freeze
-  TIME_ZERO = Time.at(0).freeze
 
   class << self
     def [](hash)
@@ -782,7 +780,7 @@ class Entry
 
   def initialize(hash = nil)
     initialize_with_hash(hash, 'id', 'url', 'date', 'commands', 'service_source', 'service_user') if hash
-    @commands ||= EMPTY
+    @commands ||= Array::EMPTY
     @twitter_username = nil
     @twitter_reply_to = nil
     @twitter_reply_to_status_id = nil
@@ -794,7 +792,7 @@ class Entry
     @view_medias = []
     @view_map = false
     @raw_body = @body
-    @checked_at = TIME_ZERO
+    @checked_at = Time::ZERO
     @modified = nil
     if hash
       @orphan = hash['__f2p_orphan']
@@ -806,11 +804,11 @@ class Entry
       @short_id = hash['shortId']
       @short_url = hash['shortUrl']
       @from = From[hash['from']]
-      @to = (hash['to'] || EMPTY).map { |e| From[e] }
-      @thumbnails = wrap_thumbnails(hash['thumbnails'] || EMPTY)
-      @files = (hash['files'] || EMPTY).map { |e| Attachment[e] }
-      @comments = wrap_comments(hash['comments'] || EMPTY)
-      @likes = wrap_likes(hash['likes'] || EMPTY)
+      @to = (hash['to'] || Array::EMPTY).map { |e| From[e] }
+      @thumbnails = wrap_thumbnails(hash['thumbnails'] || Array::EMPTY)
+      @files = (hash['files'] || Array::EMPTY).map { |e| Attachment[e] }
+      @comments = wrap_comments(hash['comments'] || Array::EMPTY)
+      @likes = wrap_likes(hash['likes'] || Array::EMPTY)
       @via = Via[hash['via']]
       @geo = Geo[hash['geo']] || extract_geo_from_google_staticmap_url(@thumbnails)
       if hash['fof']

@@ -3,7 +3,6 @@ require 'hash_utils'
 
 class Comment
   include HashUtils
-  EMPTY = [].freeze
 
   def self.from_buzz(hash)
     c = Comment.new
@@ -44,7 +43,7 @@ class Comment
   def initialize(hash = nil)
     initialize_with_hash(hash, 'id', 'date', 'commands', 'clipped', 'placeholder', 'num') if hash
     @body = hash && hash['rawBody']
-    @commands ||= EMPTY
+    @commands ||= Array::EMPTY
     @from = hash && From[hash['from']]
     @via = hash && Via[hash['via']]
     @index = nil
@@ -74,7 +73,7 @@ class Comment
   end
 
   def checked_at
-    @checked_at || (entry ? entry.checked_at : Entry::TIME_ZERO)
+    @checked_at || (entry ? entry.checked_at : Time::ZERO)
   end
 
   def unread?
