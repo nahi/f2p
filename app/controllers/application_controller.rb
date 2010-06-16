@@ -232,9 +232,9 @@ private
     end
   end
 
-  def session_cache(key, &block)
+  def session_cache(key, force = false, &block)
     ss = session[key] ||= {}
-    if updated_at = ss[:updated_at]
+    if !force and updated_at = ss[:updated_at]
       if ss[:entries] and (Time.now.to_i - updated_at < F2P::Config.twitter_api_cache)
         return ss[:entries]
       end

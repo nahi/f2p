@@ -132,11 +132,27 @@ class EntryController < ApplicationController
     when 'mentions'
       tweets = Tweet.mentions(token, opt)
       feedname = @ctx.feed
+      if tweets
+        unless tweets.empty?
+          session[:twitter_mentions_last_checked] = tweets.first[:created_at]
+          session_cache(:twitter_latest_mention, true) {
+            session[:twitter_mentions_last_checked]
+          }
+        end
+      end
     when 'direct'
       t1 = Task.run { Tweet.direct_messages(token, opt) }
       t1.result if $DEBUG
       tweets = Tweet.sent_direct_messages(token, opt) + t1.result
       feedname = @ctx.feed
+      if sent = t1.result
+        unless sent.empty?
+          session[:twitter_direct_last_checked] = sent.first[:created_at]
+          session_cache(:twitter_latest_dn, true) {
+            session[:twitter_direct_last_checked]
+          }
+        end
+      end
     when 'favorites'
       tweets = Tweet.favorites(token, opt)
       feedname = @ctx.feed
@@ -192,6 +208,8 @@ class EntryController < ApplicationController
       end
       session[:twitter_next_last_checked] = max
     end
+    @twitter_mentions_updated = session[:twitter_mentions_last_checked] != twitter_latest_mention(token)
+    @twitter_direct_updated = session[:twitter_direct_last_checked] != twitter_latest_direct(token)
     render :action => 'list'
   end
 
@@ -1175,6 +1193,28 @@ private
     opt = find_opt.merge(:graph => graph)
     @feed = find_entry_thread(opt)
     @original_feed = nil # can we implement it? needed?
+  end
+
+  def twitter_latest_mention(token)
+    session_cache(:twitter_latest_mention) {
+      if tweets = Tweet.mentions(token, :count => 1)
+        unless tweets.empty?
+          tweets.first[:created_at]
+        end
+      end
+    }
+  end
+
+  def twitter_latest_direct(token)
+    session_cache(:twitter_latest_direct) {
+      if tweets = Tweet.direct_messages(token, :count => 1)
+        if tweets.empty?
+          'N/A'
+        else
+          tweets.first[:created_at]
+        end
+      end
+    }
   end
 
   def twitter_saved_searches(token)

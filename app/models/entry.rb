@@ -791,12 +791,13 @@ class Entry
     @view_links = nil
     @view_medias = []
     @view_map = false
-    @raw_body = @body
+    @raw_body = @body = nil
     @checked_at = Time::ZERO
     @modified = nil
+    @hidden = false
     if hash
       @orphan = hash['__f2p_orphan']
-      @body = hash['rawBody']
+      @raw_body = @body = hash['rawBody']
       @link = hash['rawLink']
       if %r(\Ahttp://friendfeed.com/e/) =~ @link
         @link = nil

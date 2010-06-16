@@ -716,9 +716,13 @@ __EOS__
     base = {:controller => :entry, :action => :tweets, :id => @service_user}
     links << link_to(h('Home'), base.merge(:feed => :home))
     links << link_to(h('You'), base.merge(:feed => :user))
-    links << link_to(h('Mentions'), base.merge(:feed => :mentions))
+    label = h('Mentions')
+    label = emphasize_as_unread(label) if @twitter_mentions_updated
+    links << link_to(label, base.merge(:feed => :mentions))
+    label = h('DM')
+    label = emphasize_as_unread(label) if @twitter_direct_updated
+    links << link_to(label, base.merge(:feed => :direct))
     links << link_to(h('Favorites'), base.merge(:feed => :favorites))
-    links << link_to(h('DM'), base.merge(:feed => :direct))
     links << link_to(h('following'), base.merge(:feed => :followings, :max_id => -1))
     links << link_to(h('followers'), base.merge(:feed => :followers, :max_id => -1))
     if @service_user
