@@ -319,7 +319,7 @@ module EntryHelper
     return '' unless body
     fold, content, links = escape_text(body, ctx.fold ? setting.text_folding_size : nil)
     entry.view_links = links
-    content.gsub!(/\n+/, "<br />\n")
+    content.gsub!(/[\r\n]+/, "<br />\n")
     if entry.via and entry.via.twitter?
       content = link_filter_twitter_username(content)
     end
@@ -329,14 +329,6 @@ module EntryHelper
     end
     content += flavors_content(entry)
     content
-  end
-
-  def filter_buzz_comment(content)
-    markup_sentence(
-      content.
-        gsub(%r|<br\s*/>\s*(?:<br\s*/>\s*)+|m, '<br />'). # compact <br/>
-        gsub(%r|</?b>|, '') # remove <b>
-    )
   end
 
   def geo_content(entry)
@@ -899,19 +891,14 @@ module EntryHelper
   end
 
   def comment(comment)
-    # TODO: already marked up in buzz...
-    if comment.buzz?
-      str = filter_buzz_comment(comment.body)
-    else
-      fold, str, links = escape_text(comment.body, ctx.fold ? setting.text_folding_size : nil)
-      comment.view_links = links
-      if fold
-        msg = '(more)'
-        str += link_to(h(msg), link_show(comment.entry.id))
-      end
-      if comment.entry and comment.entry.via and comment.entry.via.twitter?
-        str = link_filter_twitter_username(str)
-      end
+    fold, str, links = escape_text(comment.body, ctx.fold ? setting.text_folding_size : nil)
+    comment.view_links = links
+    if fold
+      msg = '(more)'
+      str += link_to(h(msg), link_show(comment.entry.id))
+    end
+    if comment.entry and comment.entry.via and comment.entry.via.twitter?
+      str = link_filter_twitter_username(str)
     end
     if need_unread_mgmt? and !comment.unread?
       str = span(str, 'archived')

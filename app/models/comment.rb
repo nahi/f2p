@@ -9,7 +9,7 @@ class Comment
     c = Comment.new
     c.id = hash['id']
     c.date = hash['published']
-    c.body = hash['content']
+    c.body = Entry.normalize_content_in_buzz(hash['content'])
     c.from = Entry.buzz_from(hash['actor']) if hash['actor']
     c.service_source = 'buzz'
     c

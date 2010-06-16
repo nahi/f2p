@@ -223,6 +223,7 @@ class EntryController < ApplicationController
     when 'user'
       user = @ctx.user || '@me'
       t = Task.run { @profile = Buzz.profile(token, user) }
+      t.result if $DEBUG
       buzz = Buzz.activities(token, "#{user}/@self", opt)
       t.result
       feedname = @profile.name
