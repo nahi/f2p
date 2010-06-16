@@ -1220,19 +1220,23 @@ private
   def twitter_saved_searches(token)
     session_cache(:twitter_saved_search) {
       # Hash[] needed for session Marshalling to avoid singleton. JSON issue?
-      Tweet.saved_searches(token).map { |e| Hash[e] }
+      if tweets = Tweet.saved_searches(token)
+        tweets.map { |e| Hash[e] }
+      end
     }
   end
 
   def twitter_lists(token)
     session_cache(:twitter_lists) {
-      Tweet.lists(token, token.service_user).map { |e|
-        {
-          :id => e[:id],
-          :name => e[:name],
-          :full_name => e[:full_name]
+      if tweets = Tweet.lists(token, token.service_user)
+        tweets.map { |e|
+          {
+            :id => e[:id],
+            :name => e[:name],
+            :full_name => e[:full_name]
+          }
         }
-      }
+      end
     }
   end
 
