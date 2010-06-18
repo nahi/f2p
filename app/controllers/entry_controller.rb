@@ -188,6 +188,7 @@ class EntryController < ApplicationController
         end
       end
     end
+    File.open("/tmp/twitter", "wb") { |f| f << tweets.to_json } if $DEBUG and tweets
     feed_opt = find_opt.merge(
       :tweets => tweets,
       :feedname => "Tweets(#{feedname})",
@@ -259,7 +260,7 @@ class EntryController < ApplicationController
           last_checked = session[:buzz_last_checked] = next_last_checked
         end
       end
-      File.open("/tmp/buzz", "wb") { |f| f << buzz.to_json }
+      File.open("/tmp/buzz", "wb") { |f| f << buzz.to_json } if $DEBUG and buzz
     end
     if nxt = buzz['links']['next']
       @buzz_c_tag = nxt.first['href'].match(/c=([^&]*)/)[1]
@@ -328,7 +329,7 @@ class EntryController < ApplicationController
         end
       end
     end
-    File.open('/tmp/graph', 'w') { |f| f << graph.to_json }
+    File.open('/tmp/graph', 'w') { |f| f << graph.to_json } if $DEBUG and graph
     feed_opt = find_opt.merge(
       :graph => graph['data'],
       :feedname => "Facebook(#{feedname})",
@@ -382,7 +383,7 @@ class EntryController < ApplicationController
           return
         end
         entry = Graph.show_all(token, sid)
-        File.open('/tmp/graph', 'w') { |f| f << entry.to_json } if entry
+        File.open('/tmp/graph', 'w') { |f| f << entry.to_json } if $DEBUG and entry
       end
       if pin = Pin.find_by_user_id_and_eid(auth.id, @ctx.eid)
         pin.entry = entry

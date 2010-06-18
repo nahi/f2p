@@ -82,7 +82,7 @@ class Tweet
         }
       }
       su = token.service_user
-      res.map { |e| wrap(su, e) }
+      res.map { |e| wrap_search(su, e) }
     end
 
     def show(token, id, args = {})
@@ -240,6 +240,15 @@ class Tweet
       hash['service_source'] = 'twitter'
       hash['service_user'] = service_user
       hash
+    end
+
+    # handles 'Warning' in Twitter Search API.
+    def wrap_search(service_user, hash)
+      return nil unless hash
+      if user = hash[:user]
+        user[:id] = user[:screen_name]
+      end
+      wrap(service_user, hash)
     end
 
     def client(token)
