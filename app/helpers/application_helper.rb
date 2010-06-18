@@ -227,22 +227,17 @@ __EOS__
     font-size: #{menu_size}pt;
   }
   a.tab {
-    /* based on .button in iPhoneButtons */
     display: block;
     float: left;
     line-height: 32px;
-    width: 45px;
+    width: 50px;
     font-size: 12px;
     font-weight: bold;
     font-family: Helvetica, sans-serif;
     text-decoration: none;
     text-align: center;
-    /* based on .white in iPhoneButtons */
-    margin: 1px;
-    border-width: 0px 14px 0px 14px;
     color: #000;
     text-shadow: #fff 0px 1px 1px;
-    -webkit-border-image: url(images/whiteButton.png) 0 14 0 14;
   }
   .tabclear { clear: left; }
 __EOS__
@@ -265,8 +260,8 @@ __EOS__
     links << link_to(h('FF'), { :controller => :entry, :action => :inbox }, accesskey('0').merge(:class => :tab))
     links << link_to(h('Twitter'), { :controller => :entry, :action => :tweets }, {:class => :tab})
     links << link_to(h('Buzz'), { :controller => :entry, :action => :buzz }, {:class => :tab})
-    links << link_to(h('FB'), { :controller => :entry, :action => :graph }, {:class => :tab})
-    pin_label = h('Star') #inline_icon_tag(:pinned, 'Star')
+    links << link_to(h('Facebook'), { :controller => :entry, :action => :graph }, {:class => :tab})
+    pin_label = h('Star')
     pin_label += "(#{@threads.pins})" if @threads
     links << link_to(pin_label, { :controller => :entry, :action => :list, :label => 'pin' }, {:class => :tab})
     #links << menu_link(menu_label('menu', '8'), '#bottom', accesskey('8').merge(:class => :tab))
