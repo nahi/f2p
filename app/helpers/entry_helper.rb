@@ -275,7 +275,7 @@ module EntryHelper
     with_geo = geo_content(entry)
     ext = [with_media, with_geo].join(' ')
     unless ext.strip.empty?
-      if media_disabled?
+      if media_disabled? or (with_geo and !with_media and ctx.list?)
         ary << " " + ext
       else
         ary << "<br />\n" + ext + "<br />\n"
@@ -612,10 +612,10 @@ module EntryHelper
     address = point.address
     tb = generator.staticmap_url(F2P::Config.google_maps_maptype, lat, long, :zoom => zoom, :width => width, :height => height)
     link = generator.link_url(lat, long, address)
-    content = media_tag(entry, tb, :alt => h(address), :title => h(address), :size => image_size(width, height))
-    if media_disabled?
-      content
+    if ctx.list? or media_disabled?
+      link_to(inline_icon_tag(:map, address), link)
     else
+      content = media_tag(entry, tb, :alt => h(address), :title => h(address), :size => image_size(width, height))
       link_to(content, link)
     end
   end
