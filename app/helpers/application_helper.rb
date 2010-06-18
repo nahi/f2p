@@ -729,10 +729,10 @@ __EOS__
     links << link_to(h('Home'), base.merge(:feed => :home))
     links << link_to(h('You'), base.merge(:feed => :user))
     label = h('Mentions')
-    label = emphasize_as_unread(label) if @twitter_mentions_updated
+    label = span(label, "inbox latest1") if @twitter_mentions_updated
     links << link_to(label, base.merge(:feed => :mentions))
     label = h('DM')
-    label = emphasize_as_unread(label) if @twitter_direct_updated
+    label = span(label, "inbox latest1") if @twitter_direct_updated
     links << link_to(label, base.merge(:feed => :direct))
     links << link_to(h('Favorites'), base.merge(:feed => :favorites))
     links << link_to(h('following'), base.merge(:feed => :followings, :max_id => -1))
