@@ -99,7 +99,6 @@ module ApplicationHelper
   def inline_stylesheet
     return if i_mode?
     content = <<__EOS__
-  a.tab { margin-right: 0.5ex; }
   img.inline  { vertical-align: text-top; }
   img.profile {
     border: 1px solid #ccc;
@@ -196,10 +195,8 @@ module ApplicationHelper
   #{ inline_stylesheet_iphone }
 __EOS__
     if setting and setting.font_size
-      h1_size = setting.font_size
       body_size = setting.font_size
       content += <<__EOS__
-  p.header { font-size: #{h1_size}pt; }
   body { font-size: #{body_size}pt; }
 __EOS__
     end
@@ -229,6 +226,25 @@ __EOS__
   .menu-links {
     font-size: #{menu_size}pt;
   }
+  a.tab {
+    /* based on .button in iPhoneButtons */
+    display: block;
+    float: left;
+    line-height: 32px;
+    width: 45px;
+    font-size: 12px;
+    font-weight: bold;
+    font-family: Helvetica, sans-serif;
+    text-decoration: none;
+    text-align: center;
+    /* based on .white in iPhoneButtons */
+    margin: 1px;
+    border-width: 0px 14px 0px 14px;
+    color: #000;
+    text-shadow: #fff 0px 1px 1px;
+    -webkit-border-image: url(images/whiteButton.png) 0 14 0 14;
+  }
+  .tabclear { clear: left; }
 __EOS__
     end
   end
@@ -246,14 +262,15 @@ __EOS__
 
   def top_menu
     links = []
-    links << link_to(friendfeed_icon_tag, { :controller => :entry, :action => :inbox }, accesskey('0').merge(:class => :tab))
-    links << link_to(twitter_icon_tag, { :controller => :entry, :action => :tweets }, {:class => :tab})
-    links << link_to(buzz_icon_tag, { :controller => :entry, :action => :buzz }, {:class => :tab})
-    links << link_to(facebook_icon_tag, { :controller => :entry, :action => :graph }, {:class => :tab})
-    pin_label = inline_icon_tag(:pinned, 'Star')
+    links << link_to(h('FF'), { :controller => :entry, :action => :inbox }, accesskey('0').merge(:class => :tab))
+    links << link_to(h('Twitter'), { :controller => :entry, :action => :tweets }, {:class => :tab})
+    links << link_to(h('Buzz'), { :controller => :entry, :action => :buzz }, {:class => :tab})
+    links << link_to(h('FB'), { :controller => :entry, :action => :graph }, {:class => :tab})
+    pin_label = h('Star') #inline_icon_tag(:pinned, 'Star')
     pin_label += "(#{@threads.pins})" if @threads
-    links << link_to(pin_label, { :controller => :entry, :action => :list, :label => 'pin' })
-    links << menu_link(menu_label('menu', '8'), '#bottom', accesskey('8'))
+    links << link_to(pin_label, { :controller => :entry, :action => :list, :label => 'pin' }, {:class => :tab})
+    #links << menu_link(menu_label('menu', '8'), '#bottom', accesskey('8').merge(:class => :tab))
+    links << link_to(h('[menu]'), '#bottom', accesskey('8').merge(:class => :tab))
     links.join(' ')
   end
 
