@@ -260,8 +260,8 @@ class EntryController < ApplicationController
           last_checked = session[:buzz_last_checked] = next_last_checked
         end
       end
-      File.open("/tmp/buzz", "wb") { |f| f << buzz.to_json } if $DEBUG and buzz
     end
+    File.open("/tmp/buzz", "wb") { |f| f << buzz.to_json } if $DEBUG and buzz
     if nxt = buzz['links']['next']
       @buzz_c_tag = nxt.first['href'].match(/c=([^&]*)/)[1]
     end

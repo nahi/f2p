@@ -289,6 +289,7 @@ module EntryHelper
     return '' unless body
     fold, content, links = escape_text(body, ctx.fold ? setting.text_folding_size : nil)
     entry.view_links = links
+    content.gsub!(/[\r\n]+/, "<br />\n")
     if entry.via and entry.via.twitter?
       content = link_filter_twitter_username(content)
     end
@@ -305,6 +306,7 @@ module EntryHelper
     return '' unless body
     fold, content, links = escape_text(body, ctx.fold ? setting.text_folding_size : nil)
     entry.view_links = links
+    content.gsub!(/[\r\n]+/, "<br />\n")
     content = filter_twitter_username(content, entry)
     if fold
       msg = '(more)'
@@ -893,6 +895,7 @@ module EntryHelper
   def comment(comment)
     fold, str, links = escape_text(comment.body, ctx.fold ? setting.text_folding_size : nil)
     comment.view_links = links
+    str.gsub!(/[\r\n]+/, "<br />\n")
     if fold
       msg = '(more)'
       str += link_to(h(msg), link_show(comment.entry.id))
