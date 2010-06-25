@@ -117,6 +117,7 @@ module EntryHelper
 
   def author_picture(entry)
     return if ctx.ff? and ctx.user_only?
+    return if ctx.delicious?
     if setting.list_view_profile_picture
       if entry.from.profile_image_url
         name = entry.from.name

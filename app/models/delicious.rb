@@ -18,34 +18,33 @@ class Delicious
   private
 
     def token_protect(token)
-      begin
-        res = yield(token)
-        if res.status == 401
-          params = YAML.load(token.params)
-          handle = params[:oauth_session_handle]
-          res = create_delicious_oauth_consumer(handle).get_access_token(F2P::Config.delicious_api_oauth_access_token_url, token.token, token.secret)
-          if res.status == 200
-            new_token = res.oauth_params["oauth_token"]
-            new_secret = res.oauth_params["oauth_token_secret"]
-            # OAuth Session 1.0: http://oauth.googlecode.com/svn/spec/ext/session/1.0/drafts/1/spec.html
-            oauth_session_handle = res.oauth_params["oauth_session_handle"]
-            oauth_expires_in = res.oauth_params["oauth_expires_in"]
-            oauth_authorization_expires_in = res.oauth_params["oauth_authorization_expires_in"]
-            # proprietary extension
-            xoauth_yahoo_guid = res.oauth_params["xoauth_yahoo_guid"]
-            token.token = new_token
-            token.secret = new_secret
-            param = {
-              :oauth_session_handle => oauth_session_handle,
-              :oauth_expires_in => oauth_expires_in,
-              :oauth_authorization_expires_in => oauth_authorization_expires_in
-            }
-            token.params = YAML.dump(param)
-            token.save!
-            yield(token)
-          end
+      res = yield(token)
+      if res.status == 401
+        params = YAML.load(token.params)
+        handle = params[:oauth_session_handle]
+        res = create_delicious_oauth_consumer(handle).get_access_token(F2P::Config.delicious_api_oauth_access_token_url, token.token, token.secret)
+        if res.status == 200
+          new_token = res.oauth_params["oauth_token"]
+          new_secret = res.oauth_params["oauth_token_secret"]
+          # OAuth Session 1.0: http://oauth.googlecode.com/svn/spec/ext/session/1.0/drafts/1/spec.html
+          oauth_session_handle = res.oauth_params["oauth_session_handle"]
+          oauth_expires_in = res.oauth_params["oauth_expires_in"]
+          oauth_authorization_expires_in = res.oauth_params["oauth_authorization_expires_in"]
+          # proprietary extension
+          xoauth_yahoo_guid = res.oauth_params["xoauth_yahoo_guid"]
+          token.token = new_token
+          token.secret = new_secret
+          param = {
+            :oauth_session_handle => oauth_session_handle,
+            :oauth_expires_in => oauth_expires_in,
+            :oauth_authorization_expires_in => oauth_authorization_expires_in
+          }
+          token.params = YAML.dump(param)
+          token.save!
+          res = yield(token)
         end
       end
+      res
     end
 
     def post_path(name)
