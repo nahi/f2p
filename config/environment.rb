@@ -60,6 +60,16 @@ module F2P
       attr_accessor :facebook_api_oauth_access_token_url
       attr_accessor :facebook_api_oauth_scope
 
+      attr_accessor :delicious_api_oauth_consumer_key
+      attr_accessor :delicious_api_oauth_consumer_secret
+      attr_accessor :delicious_api_oauth_application_id
+      attr_accessor :delicious_api_oauth_request_token_url
+      attr_accessor :delicious_api_oauth_authorize_url
+      attr_accessor :delicious_api_oauth_access_token_url
+      attr_accessor :delicious_api_oauth_scheme
+      attr_accessor :delicious_api_oauth_signature_method
+      attr_accessor :delicious_api_oauth_http_method
+
       attr_accessor :json_parse_size_limit
 
       attr_accessor :google_maps_maptype
@@ -211,6 +221,16 @@ Rails::Initializer.run do |config|
   # We need 'offline_access' for getting non expiry access token.
   F2P::Config.facebook_api_oauth_scope = 'publish_stream,read_stream,user_about_me,user_activities,user_events,user_groups,user_likes,user_notes,user_photos,user_videos,offline_access'
 
+  F2P::Config.delicious_api_oauth_consumer_key = nil
+  F2P::Config.delicious_api_oauth_consumer_secret = nil
+  F2P::Config.delicious_api_oauth_application_id = nil
+  F2P::Config.delicious_api_oauth_request_token_url = 'https://api.login.yahoo.com/oauth/v2/get_request_token'
+  F2P::Config.delicious_api_oauth_authorize_url = 'https://api.login.yahoo.com/oauth/v2/request_auth'
+  F2P::Config.delicious_api_oauth_access_token_url = 'https://api.login.yahoo.com/oauth/v2/get_token'
+  F2P::Config.delicious_api_oauth_scheme = :header
+  F2P::Config.delicious_api_oauth_signature_method = 'HMAC-SHA1'
+  F2P::Config.delicious_api_oauth_http_method = :get
+
   F2P::Config.json_parse_size_limit = 1.5 * 1024 * 1024
 
   F2P::Config.google_maps_maptype = 'mobile'
@@ -240,5 +260,5 @@ Rails::Initializer.run do |config|
   F2P::Config.max_select_num = 150
   F2P::Config.reload_list_in_minutes = nil
   F2P::Config.use_ajax = false
-  F2P::Config.twitter_api_cache = 60*60 # 1.hour
+  F2P::Config.twitter_api_cache = 10*60 # 10 minutes
 end

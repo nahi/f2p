@@ -972,6 +972,7 @@ module EntryHelper
 
   def post_entry_form
     return if ctx.direct_message? and !ctx.dm_to
+    return if ctx.delicious?
     ary = []
     body = @body
     ary << hidden_field_tag('to_lines', '1')

@@ -219,6 +219,10 @@ class EntryContext
     @service_source == 'graph'
   end
 
+  def delicious?
+    @service_source == 'delicious'
+  end
+
   def link_opt(opt = {})
     opt.merge(:action => default_action, :eid => @eid)
   end

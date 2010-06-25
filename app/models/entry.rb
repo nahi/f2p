@@ -22,6 +22,8 @@ class Entry
           from_buzz(hash)
         when 'graph'
           from_graph(hash)
+        when 'delicious'
+          from_delicious(hash)
         else
           new(hash)
         end
@@ -295,6 +297,25 @@ class Entry
       e
     end
 
+    def from_delicious(hash)
+      e = new()
+      e.service_source = hash['service_source']
+      e.service_user = hash['service_user']
+      e.id = hash.xmlattr_hash
+      e.date = hash.xmlattr_time
+      e.body = e.raw_body = hash.xmlattr_description
+      e.link = hash.xmlattr_href
+      # TODO: hash.tag
+      e.from = delicious_from(hash)
+      e.to = Array::EMPTY
+      e.thumbnails = Array::EMPTY
+      e.files = Array::EMPTY
+      e.commands = Array::EMPTY
+      e.comments = Array::EMPTY
+      e.likes = Array::EMPTY
+      e
+    end
+
     def normalize_content_in_buzz(body)
       if body
         CGI.unescapeHTML(body.gsub(/<br\s*\/?>/i, "\n").gsub(/<[^>]+>/, ''))
@@ -383,6 +404,18 @@ class Entry
       f.commands = ['subscribe']
       f.profile_url = "http://www.facebook.com/#{f.id}"
       f.profile_image_url = "http://graph.facebook.com/#{f.id}/picture"
+      f
+    end
+
+    def delicious_from(hash)
+      return nil unless hash
+      f = From.new
+      f.id = hash['service_user']
+      f.name = 'You'
+      f.type = 'user'
+      f.service_source = 'delicious'
+      f.private = false
+      f.commands = Array::EMPTY
       f
     end
 
@@ -964,6 +997,10 @@ class Entry
 
   def graph?
     service_source == 'graph'
+  end
+
+  def delicious?
+    service_source == 'delicious'
   end
 
   def twitter_in_reply_to_url

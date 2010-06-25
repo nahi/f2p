@@ -230,7 +230,8 @@ __EOS__
     display: block;
     float: left;
     line-height: 32px;
-    width: 50px;
+    padding-left: 3px;
+    padding-right: 3px;
     font-size: 12px;
     font-weight: bold;
     font-family: Helvetica, sans-serif;
@@ -260,11 +261,11 @@ __EOS__
     links << link_to(h('FF'), { :controller => :entry, :action => :inbox }, accesskey('0').merge(:class => :tab))
     links << link_to(h('Twitter'), { :controller => :entry, :action => :tweets }, {:class => :tab})
     links << link_to(h('Buzz'), { :controller => :entry, :action => :buzz }, {:class => :tab})
-    links << link_to(h('Facebook'), { :controller => :entry, :action => :graph }, {:class => :tab})
+    links << link_to(h('FB'), { :controller => :entry, :action => :graph }, {:class => :tab})
+    #links << link_to(h('Delicious'), { :controller => :entry, :action => :delicious }, {:class => :tab})
     pin_label = h('Star')
     pin_label += "(#{@threads.pins})" if @threads
     links << link_to(pin_label, { :controller => :entry, :action => :list, :label => 'pin' }, {:class => :tab})
-    #links << menu_link(menu_label('menu', '8'), '#bottom', accesskey('8').merge(:class => :tab))
     links << link_to(h('[menu]'), '#bottom', accesskey('8').merge(:class => :tab))
     links.join(' ')
   end
@@ -348,6 +349,10 @@ __EOS__
 
   def facebook_icon_tag
     service_icon_tag('http://friendfeed.com/static/images/icons/facebook.png', 'Facebook', 'Facebook')
+  end
+
+  def delicious_icon_tag
+    service_icon_tag('http://friendfeed.com/static/images/icons/delicious.png', 'Delicious', 'Delicious')
   end
 
   def profile_image_tag(url, alt, title)

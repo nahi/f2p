@@ -64,16 +64,20 @@ class Feed
       ActiveRecord::Base.logger
     end
 
+    def ext_entries(opt)
+      opt[:tweets] || opt[:buzz] || opt[:graph] || opt[:delicious]
+    end
+
     def fetch_entries(auth, opt)
       if opt[:eid]
         feed = fetch_single_entry_as_array(auth, opt)
-        if !opt[:tweets] and !opt[:buzz] and !opt[:graph] and entry = feed.entries.first
+        if ext_entries(opt).nil? and entry = feed.entries.first
           update_cache_entry(auth, entry)
         end
         feed
       else
         feed = fetch_list_entries(auth, opt)
-        if !opt[:tweets] and !opt[:buzz] and !opt[:graph] and (updated_id = opt[:updated_id])
+        if ext_entries(opt).nil? and (updated_id = opt[:updated_id])
           entry = wrap(Task.run { get_feed(auth, updated_id, opt) }.result).entries.first
           if entry
             update_cache_entry(auth, entry)
@@ -95,7 +99,7 @@ class Feed
     end
 
     def fetch_single_entry_as_array(auth, opt)
-      if ext = opt[:tweets] || opt[:buzz] || opt[:graph]
+      if ext = ext_entries(opt)
         return from_service([ext], opt)
       end
       if opt[:allow_cache]
@@ -110,7 +114,7 @@ class Feed
     end
 
     def fetch_list_entries(auth, opt)
-      if ext = opt[:tweets] || opt[:buzz] || opt[:graph]
+      if ext = ext_entries(opt)
         return from_service(ext, opt)
       end
       cache_entries(auth, opt) {

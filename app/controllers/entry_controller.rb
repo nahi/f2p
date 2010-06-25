@@ -350,6 +350,39 @@ class EntryController < ApplicationController
     render :action => 'list'
   end
 
+  verify :only => :delicious,
+          :method => [:get, :post],
+          :add_flash => {:error => 'verify failed'},
+          :redirect_to => {:action => 'inbox'}
+  def delicious
+    pin_check
+    @ctx = restore_ctx { |ctx|
+      ctx.parse(params, @setting)
+    }
+    @ctx.service_source = 'delicious'
+    @ctx.feed ||= 'home'
+    @ctx.home = false
+    unless token = auth.token('delicious')
+      session[:back_to] = {:controller => 'entry', :action => 'delicious'}
+      redirect_to :controller => 'login', :action => 'initiate_delicious_oauth_login'
+      return
+    end
+    @service_source = token.service
+    @service_user = token.service_user
+    opt = {:results => @ctx.num, :start => @ctx.start}
+    posts = Delicious.all(token, opt)
+    feedname = 'all'
+    File.open('/tmp/delicious', 'w') { |f| f << posts.to_json } if $DEBUG and posts
+    feed_opt = find_opt.merge(
+      :delicious => posts.post,
+      :feedname => "Delicious(#{feedname})",
+      :service_user => token.service_user
+    )
+    @feed = find_entry_thread(feed_opt)
+    @threads = @feed.entries
+    render :action => 'list'
+  end
+
   verify :only => :show,
           :method => :get,
           :params => [:eid],
