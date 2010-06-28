@@ -100,10 +100,7 @@ class Entry
       body, raw_body, link, thumbnails, files = parse_buzz_object(hash)
       e.body = body
       e.raw_body = raw_body
-      # imported link from FriendFeed does not have a link to the original site.
-      if /www.google.com\/buzz/ !~ link or (hash['source'] and hash['source']['title'] == 'FriendFeed')
-        e.link = link
-      end
+      e.link = link
       e.thumbnails = thumbnails
       # Tumblr feed treats a link as an attachment.
       if files.size == 1 and files.first.type == 'article' and e.link.nil?
@@ -697,7 +694,11 @@ class Entry
             raw_body = normalize_content_in_buzz(body)
           end
         end
-        link = extract_buzz_link_href(obj['links'])
+        l = extract_buzz_link_href(obj['links'])
+        # imported link from FriendFeed does not have a link to the original site.
+        if /www.google.com\/buzz/ !~ l or (hash['source'] and hash['source']['title'] == 'FriendFeed')
+          link = l
+        end
         thumbnails, files = parse_buzz_attachment(obj)
       end
       if source = hash['crosspostSource']
@@ -735,18 +736,12 @@ class Entry
             t.title = e['title']
           when 'article'
             ref = extract_buzz_link(e['links'])
-            if /^image/ =~ ref['type']
-              t = Thumbnail.new
-              t.url = ref['href']
-              t.title = e['content'] || t.url
-            else
-              f = Attachment.new
-              f.type = 'article'
-              f.url = ref['href']
-              f.name = e['content'] || f.url
-            end
+            f = Attachment.new
+            f.type = ref['type']
+            f.url = ref['href']
+            f.name = e['content'] || f.url
           end
-          if t.nil? and link = extract_buzz_link(e['links'])
+          if t.nil? and f.nil? and link = extract_buzz_link(e['links'])
             if /^image/ =~ link['type']
               t = Thumbnail.new
               t.url = link['href']

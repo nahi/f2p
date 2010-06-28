@@ -513,17 +513,18 @@ module EntryHelper
   def attachment_content(entry)
     if !entry.files.empty?
       entry.files.map { |file|
-        case file.type
-        when 'article'
-          str = "<br />" + link_to(inline_icon_tag(:url) + file.name, file.url)
-        else
+        if file.icon
           label = file.type
           icon = image_tag(file.icon, :alt => h(label), :title => h(label), :size => '16x16')
           str = "<br />\n" + link_to(icon + h(file.name), file.url)
           str += h(" (#{file.size} bytes)") if file.size
+        elsif /^image/ =~ file.type
+          str = link_to(inline_icon_tag(:media_disabled), entry.link || entry.url)
+        else
+          str = "<br />" + link_to(inline_icon_tag(:url) + file.name, file.url)
         end
         str
-      }.join(', ')
+      }.join
     end
   end
 
