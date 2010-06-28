@@ -246,6 +246,11 @@ class EntryController < ApplicationController
       buzz = Buzz.activities(token, "#{user}/@self", opt)
       t.result
       feedname = @profile.name
+    when 'discussions'
+      user = @ctx.user || token.params
+      opt[:q] = "commenter:#{user}"
+      buzz = Buzz.activities(token, 'search', opt)
+      feedname = 'discussions'
     else # home
       if @ctx.query
         opt[:q] = @ctx.query

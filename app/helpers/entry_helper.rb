@@ -793,13 +793,14 @@ module EntryHelper
   end
 
   def friends_likes(entry)
+    ary = []
     if !entry.likes.empty?
       likes = entry.likes.find_all { |e| e.from and e.from.friend? }
-      icon = inline_icon_tag(:liked)
+      ary << inline_icon_tag(:liked)
       unless entry.tweet?
         size = entry.likes_size
         if size != likes.size
-          icon += link_to(h(size.to_s), link_show(entry.id))
+          ary << link_to(h(size.to_s), link_show(entry.id))
         end
         if !likes.empty?
           members = likes.collect { |like|
@@ -809,15 +810,13 @@ module EntryHelper
               user(like)
             end
           }.join(' ')
-          icon += '(' + members + ')'
+          ary << '(' + members + ')'
         end
       end
-      icon += ' '
-    else
-      icon = ''
+      ary << ' '
     end
     span_id = 'like_' + entry.id
-    content = icon + like_link(entry)
+    content = ary.join + like_link(entry)
     content_tag('span', content, :id => span_id)
   end
 

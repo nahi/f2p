@@ -753,6 +753,7 @@ __EOS__
     base = {:controller => :entry, :action => :buzz, :id => @service_user}
     links << link_to(h('Home'), base.merge(:feed => :home))
     links << link_to(h('You'), base.merge(:feed => :user))
+    links << link_to(h('Discussions'), base.merge(:feed => :discussions))
     if @service_user
       links << menu_link(menu_label('sign out'), :controller => 'login', :action => 'unlink_buzz', :id => @service_user)
     end
