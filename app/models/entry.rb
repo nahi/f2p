@@ -100,7 +100,8 @@ class Entry
       body, raw_body, link, thumbnails, files = parse_buzz_object(hash)
       e.body = body
       e.raw_body = raw_body
-      if /www.google.com\/buzz/ !~ link
+      # imported link from FriendFeed does not have a link to the original site.
+      if /www.google.com\/buzz/ !~ link or (hash['source'] and hash['source']['title'] == 'FriendFeed')
         e.link = link
       end
       e.thumbnails = thumbnails
