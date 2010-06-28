@@ -230,8 +230,8 @@ __EOS__
     display: block;
     float: left;
     line-height: 32px;
-    padding-left: 3px;
-    padding-right: 3px;
+    padding-left: 4px;
+    padding-right: 4px;
     font-size: 12px;
     font-weight: bold;
     font-family: Helvetica, sans-serif;
@@ -262,7 +262,7 @@ __EOS__
     links << link_to(h('Twitter'), { :controller => :entry, :action => :tweets }, {:class => :tab})
     links << link_to(h('Buzz'), { :controller => :entry, :action => :buzz }, {:class => :tab})
     links << link_to(h('FB'), { :controller => :entry, :action => :graph }, {:class => :tab})
-    #links << link_to(h('Delicious'), { :controller => :entry, :action => :delicious }, {:class => :tab})
+    links << link_to(h('Delicious'), { :controller => :entry, :action => :delicious }, {:class => :tab})
     pin_label = h('Star')
     pin_label += "(#{@threads.pins})" if @threads
     links << link_to(pin_label, { :controller => :entry, :action => :list, :label => 'pin' }, {:class => :tab})
@@ -704,7 +704,7 @@ __EOS__
   end
 
   def timezone_select_tag(varname, default)
-    candidates = ActiveSupport::TimeZone::ZONES.sort { |a, b|
+    candidates = ActiveSupport::TimeZone.all.sort { |a, b|
       a.utc_offset <=> b.utc_offset
     }.map { |z|
       tz = z.utc_offset

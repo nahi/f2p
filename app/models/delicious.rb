@@ -20,6 +20,7 @@ class Delicious
     def token_protect(token)
       res = yield(token)
       if res.status == 401
+        logger.warn("Received 401 error. trying to renew access_token")
         params = YAML.load(token.params)
         handle = params[:oauth_session_handle]
         res = create_delicious_oauth_consumer(handle).get_access_token(F2P::Config.delicious_api_oauth_access_token_url, token.token, token.secret)

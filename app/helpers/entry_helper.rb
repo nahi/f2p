@@ -653,9 +653,17 @@ module EntryHelper
   end
 
   def link_filter_twitter_username(common)
-    common.gsub(/@([a-zA-Z0-9_]+)/) {
-      '@' + link_to($1, "http://twitter.com/#{$1}", :class => 'twname')
-    }
+    if token = auth.token('twitter')
+      common.gsub(/@([a-zA-Z0-9_]+)/) {
+        user = $1
+        link = link_action('tweets', :feed => 'user', :user => user)
+        '@' + link_to(h(user), link, :class => 'twname')
+      }
+    else
+      common.gsub(/@([a-zA-Z0-9_]+)/) {
+        '@' + link_to($1, "http://twitter.com/#{$1}", :class => 'twname')
+      }
+    end
   end
 
   URI_REGEXP = URI.regexp(['http', 'https'])

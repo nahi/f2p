@@ -153,11 +153,32 @@ class User < ActiveRecord::Base
     end
   end
 
+  def all_tokens
+    unless @all_tokens
+      # fetch tokens
+      @all_tokens = self.tokens.to_a
+      # Add FF token as a token: TODO: merge it
+      t = Token.new
+      t.service = 'friendfeed'
+      t.service_user = self.name
+      t.token = self.oauth_access_token
+      t.secret = self.oauth_access_token_secret
+      t.user = self
+      t.updated_at = self.oauth_access_token_generated
+      @all_tokens << t
+    end
+    @all_tokens
+  end
+
   def token(service, service_user = nil)
     if service_user
-      tokens.find_by_service_and_service_user(service, service_user)
+      all_tokens.find { |e|
+        e.service == service and e.service_user == service_user
+      }
     else
-      tokens.find_by_service(service)
+      all_tokens.find { |e|
+        e.service == service
+      }
     end
   end
 
