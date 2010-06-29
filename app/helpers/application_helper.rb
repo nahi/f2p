@@ -740,7 +740,7 @@ __EOS__
     label = span(label, "inbox latest1") if @twitter_direct_updated
     links << link_to(label, base.merge(:feed => :direct))
     links << link_to(h('Favorites'), base.merge(:feed => :favorites))
-    links << link_to(h('following'), base.merge(:feed => :followings, :max_id => -1))
+    links << link_to(h('following'), base.merge(:feed => :following, :max_id => -1))
     links << link_to(h('followers'), base.merge(:feed => :followers, :max_id => -1))
     if @service_user
       links << menu_link(menu_label('sign out'), :controller => 'login', :action => 'unlink_twitter', :id => @service_user)
@@ -754,6 +754,8 @@ __EOS__
     links << link_to(h('Home'), base.merge(:feed => :home))
     links << link_to(h('You'), base.merge(:feed => :user))
     links << link_to(h('Discussions'), base.merge(:feed => :discussions))
+    links << link_to(h('following'), base.merge(:feed => :following))
+    links << link_to(h('followers'), base.merge(:feed => :followers))
     if @service_user
       links << menu_link(menu_label('sign out'), :controller => 'login', :action => 'unlink_buzz', :id => @service_user)
     end

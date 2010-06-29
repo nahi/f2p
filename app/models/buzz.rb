@@ -28,6 +28,27 @@ class Buzz
       profile
     end
 
+    def groups(token, user, group, args = {})
+      res = with_perf('[perf] start group fetch') {
+        protect {
+          client(token).get(group_path(user, group), args.merge(:alt => :json))
+        }
+      }
+      if res
+        if parsed = protect { JSON.parse(res.content) }
+          if data = parsed['data']
+            data['entry'] ||= []
+            su = token.service_user
+            data['entry'] = data['entry'].map { |e| wrap(su, e) }
+            data
+          else
+            logger.warn("Unknown structure: " + res.content)
+            nil
+          end
+        end
+      end
+    end
+
     def activities(token, feed = '@me/@consumption', args = {})
       res = with_perf('[perf] start activities fetch') {
         protect {
@@ -144,8 +165,16 @@ class Buzz
       }
     end
 
+    def people_path(user, *rest)
+      path(BUZZ_API_BASE, "people/#{user}", *rest)
+    end
+
     def profile_path(user)
-      path(BUZZ_API_BASE, "people/#{user}/@self")
+      people_path(user, '@self')
+    end
+
+    def group_path(user, group)
+      people_path(user, '@groups', group)
     end
 
     def activity_path(feed)
@@ -218,6 +247,7 @@ class Buzz
       config.http_method = F2P::Config.buzz_api_oauth_http_method
       client.www_auth.oauth.set_config(site, config)
       client.www_auth.oauth.challenge(site)
+      client.debug_dev = STDERR if $DEBUG
       client
     end
   end

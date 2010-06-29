@@ -98,7 +98,7 @@ class Delicious
       client.www_auth.oauth.set_config(site, config)
       client.www_auth.oauth.challenge(site)
       client.protocol_retry_count = 1 # for 401 response.
-      client.debug_dev = STDERR
+      client.debug_dev = STDERR if $DEBUG
       client
     end
 

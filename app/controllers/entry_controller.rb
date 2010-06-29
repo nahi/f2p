@@ -156,18 +156,18 @@ class EntryController < ApplicationController
     when 'favorites'
       tweets = Tweet.favorites(token, opt)
       feedname = @ctx.feed
-    when 'followings'
+    when 'following'
       opt[:cursor] = @ctx.max_id
       opt.delete(:max_id)
       res = Tweet.friends(token, token.service_user, opt)
-      tweets = twitter_users_to_statuses(res[:users])
+      tweets = twitter_users_to_statuses(res)
       max_id_override = res[:next_cursor]
       feedname = @ctx.feed
     when 'followers'
       opt[:cursor] = @ctx.max_id
       opt.delete(:max_id)
       res = Tweet.followers(token, token.service_user, opt)
-      tweets = twitter_users_to_statuses(res[:users])
+      tweets = twitter_users_to_statuses(res)
       max_id_override = res[:next_cursor]
       feedname = @ctx.feed
     when /\A@([^\/]+)\/([^\/]+)\z/
@@ -250,7 +250,19 @@ class EntryController < ApplicationController
       user = @ctx.user || token.params
       opt[:q] = "commenter:#{user}"
       buzz = Buzz.activities(token, 'search', opt)
-      feedname = 'discussions'
+      feedname = @ctx.feed
+    when 'following'
+      user = @ctx.user || token.service_user
+      @ctx.fold = false
+      res = Buzz.groups(token, user, '@following', opt)
+      buzz = buzz_users_to_statuses(res)
+      feedname = @ctx.feed
+    when 'followers'
+      user = @ctx.user || token.service_user
+      @ctx.fold = false
+      res = Buzz.groups(token, user, '@followers', opt)
+      buzz = buzz_users_to_statuses(res)
+      feedname = @ctx.feed
     else # home
       if @ctx.query
         opt[:q] = @ctx.query
@@ -267,7 +279,7 @@ class EntryController < ApplicationController
       end
     end
     File.open("/tmp/buzz", "wb") { |f| f << buzz.to_json } if $DEBUG and buzz
-    if nxt = buzz['links']['next']
+    if buzz['links'] and (nxt = buzz['links']['next'])
       @buzz_c_tag = nxt.first['href'].match(/c=([^&]*)/)[1]
     end
     feed_opt = find_opt.merge(
@@ -275,6 +287,7 @@ class EntryController < ApplicationController
       :feedname => "Buzz(#{feedname})",
       :service_user => token.service_user
     )
+    feed_opt[:merge_entry] = false
     @feed = find_entry_thread(feed_opt)
     @threads = @feed.entries
     if next_last_checked
@@ -1292,14 +1305,33 @@ private
   end
 
   def twitter_users_to_statuses(users)
+    users = res[:users] || Array::EMPTY
     users.map { |hash|
       s = hash[:status] || {}
       s[:id] ||= "0"
       s[:user] = hash
+      hash[:status] = nil
       s.delete(:retweeted_status)
       s['service_source'] = hash['service_source']
       s['service_user'] = hash['service_user']
       s
+    }
+  end
+
+  def buzz_users_to_statuses(res)
+    users = res['entry'] || Array::EMPTY
+    {
+      'items' =>
+        users.map { |hash|
+          s = {}
+          s['id'] = hash['id']
+          s['title'] = Entry.normalize_content_in_buzz(hash['aboutMe']) || ''
+          s['actor'] = hash
+          s['crosspostSource'] = hash['profileUrl']
+          s['service_source'] = hash['service_source']
+          s['service_user'] = hash['service_user']
+          s
+        }
     }
   end
 end

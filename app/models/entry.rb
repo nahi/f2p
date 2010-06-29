@@ -98,17 +98,15 @@ class Entry
       e.id = from_service_id('buzz', [user_id, '@self', hash['id']].join('/'))
       e.date = hash['updated']
       body, raw_body, link, thumbnails, files = parse_buzz_object(hash)
-      e.body = body
+      e.body = body || ''
       e.raw_body = raw_body
       e.link = link
-      e.thumbnails = thumbnails
+      e.thumbnails = thumbnails || Array::EMPTY
       # Tumblr feed treats a link as an attachment.
-      if files.size == 1 and files.first.type == 'article' and e.link.nil?
+      if files and files.size == 1 and files.first.type == 'article' and e.link.nil?
         e.link = files.first.url
-        e.files = []
-      else
-        e.files = files
       end
+      e.files = files || Array::EMPTY
       e.view_links = scan_link_from_html_content(e.body)
       e.link ||= e.view_links.shift
       e.url = extract_buzz_link_href(hash['links'])
@@ -129,14 +127,14 @@ class Entry
         lat, long = hash['geocode'].split
         e.geo = Geo['lat' => lat, 'long' => long]
       end
-      e.commands = hash['verbs']
+      e.commands = hash['verbs'] || []
       if e.from.id == e.service_user
         e.commands << 'delete'
       end
       # TODO: AFAIK, we cannot know whether comment is disabled of not.
       e.commands << 'comment'
       already_liked = false
-      if liked = hash['object']['liked']
+      if hash['object'] and liked = hash['object']['liked']
         e.likes = liked.map { |like|
           l = Like.new
           l.date = e.date
@@ -148,8 +146,8 @@ class Entry
       else
         e.likes = []
       end
-      e.commands << 'like' unless already_liked
-      if liked = hash['links']['liked']
+      e.commands << 'like' if !already_liked
+      if hash['links'] and liked = hash['links']['liked']
         liked = liked.first
         if liked['count'] != e.likes.size
           l = Like.new
@@ -159,11 +157,15 @@ class Entry
           e.likes.unshift(l)
         end
       end
-      e.comments = buzz_comments(hash['object']['comments'])
-      e.comments.each do |c|
-        c.entry = e
+      if hash['object']
+        e.comments = buzz_comments(hash['object']['comments'])
+        e.comments.each do |c|
+          c.entry = e
+        end
+      else
+        e.comments = Array::EMPTY
       end
-      if replies = hash['links']['replies']
+      if hash['links'] and replies = hash['links']['replies']
         replies = replies.first
         if replies['count'] != e.comments.size
           c = Comment.new
@@ -1009,6 +1011,11 @@ class Entry
     if twitter_retweeted_by
       Entry.twitter_url(twitter_retweeted_by, twitter_retweeted_by_status_id)
     end
+  end
+
+  # return true if it's dummy entry, person entry of followings for example.
+  def dummy?
+    @date.nil?
   end
 
 private

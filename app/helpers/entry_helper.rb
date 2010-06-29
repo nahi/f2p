@@ -147,6 +147,9 @@ module EntryHelper
   end
 
   def pin_link(entry)
+    if entry.dummy?
+      return inline_icon_tag(:pin, 'star')
+    end
     if ajax?
       eid = entry.id
       if entry.service_source
@@ -849,6 +852,7 @@ module EntryHelper
   end
 
   def published(entry, compact = false)
+    return if entry.dummy?
     str = date(entry.date_at, compact)
     if need_unread_mgmt? and entry.unread?
       str = emphasize_as_unread(str)
@@ -1322,6 +1326,7 @@ module EntryHelper
   end
 
   def post_comment_link(entry, opt = {})
+    return if entry.dummy?
     if entry.tweet?
       tid = Entry.if_service_id(entry.id)
       if ctx.feed == 'direct'
@@ -1437,6 +1442,7 @@ module EntryHelper
   end
 
   def like_link(entry)
+    return '' if entry.dummy?
     if ctx.list? and ajax?
       like_link_remote(entry)
     else
