@@ -388,7 +388,10 @@ class EntryController < ApplicationController
     @service_source = token.service
     @service_user = token.service_user
     opt = {:results => @ctx.num, :start => @ctx.start}
-    if @ctx.label
+    if @ctx.query
+      opt[:tag] = @ctx.query
+      feedname = @ctx.query
+    elsif @ctx.label
       opt[:tag] = @ctx.label
       feedname = @ctx.label
     else
@@ -399,6 +402,7 @@ class EntryController < ApplicationController
     feed_opt = find_opt.merge(
       :delicious => posts ? posts['post'] : Array::EMPTY,
       :feedname => "Delicious(#{feedname})",
+      :merge_entry => false,
       :service_user => token.service_user
     )
     @feed = find_entry_thread(feed_opt)

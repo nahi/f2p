@@ -2,6 +2,12 @@
 <%= pin_link(entry) -%>
 <%= published(entry) -%>
   (Entry not found; deleted?)
+<%- elsif entry.delicious? -%>
+  <div class="body">
+    <%= pin_link(entry) -%>
+    <%= content(entry) %>
+    <%= published(entry, true) -%>
+  </div>
 <%- else -%>
   <div class="header">
     <%= author_link(entry) %> <%= to(entry) %>

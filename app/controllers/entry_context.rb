@@ -227,16 +227,6 @@ class EntryContext
     opt.merge(:action => default_action, :eid => @eid)
   end
 
-private
-
-  def param(key)
-    ApplicationController.param(@param, key)
-  end
-
-  def intparam(key)
-    ApplicationController.intparam(@param, key)
-  end
-
   def default_action
     if @eid
       'show'
@@ -253,5 +243,15 @@ private
     else
       'list'
     end
+  end
+
+private
+
+  def param(key)
+    ApplicationController.param(@param, key)
+  end
+
+  def intparam(key)
+    ApplicationController.intparam(@param, key)
   end
 end

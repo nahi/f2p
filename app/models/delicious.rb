@@ -18,7 +18,7 @@ class Delicious
     def get(token, hashid, args = {})
       res = get_posts(token, post_path('get'), args.merge(:hashes => hashid))
       if res
-        res.post.first
+        res['post'].first
       end
     end
 

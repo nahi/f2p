@@ -934,16 +934,7 @@ module EntryHelper
   end
 
   def search_action
-    if ctx.ff?
-      action = 'list'
-    elsif ctx.tweets?
-      action = 'tweets'
-    elsif ctx.buzz?
-      action = 'buzz'
-    elsif ctx.graph?
-      action = 'graph'
-    end
-    { :controller => :entry, :action => action }
+    { :controller => :entry, :action => ctx.default_action }
   end
 
   def search_form(opt = {})
