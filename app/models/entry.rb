@@ -301,11 +301,10 @@ class Entry
       e = new()
       e.service_source = hash['service_source']
       e.service_user = hash['service_user']
-      e.id = hash.xmlattr_hash
-      e.date = hash.xmlattr_time
-      e.body = e.raw_body = hash.xmlattr_description
-      e.link = hash.xmlattr_href
-      # TODO: hash.tag
+      e.id = from_service_id('delicious', hash['hash'])
+      e.date = hash['time']
+      e.body = e.raw_body = (hash['description'] || '') + delicious_tag(hash['tag'])
+      e.link = hash['href']
       e.from = delicious_from(hash)
       e.to = Array::EMPTY
       e.thumbnails = Array::EMPTY
@@ -668,6 +667,8 @@ class Entry
         'b_' + id
       when 'graph'
         'g_' + id
+      when 'delicious'
+        'd_' + id
       end
     end
 
@@ -768,6 +769,10 @@ class Entry
         alt = links[type]
         alt.first if alt
       end
+    end
+
+    def delicious_tag(tag)
+      (tag || '').split.map { |e| ' #' + e }.join
     end
   end
 

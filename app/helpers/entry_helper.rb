@@ -117,7 +117,7 @@ module EntryHelper
 
   def author_picture(entry)
     return if ctx.ff? and ctx.user_only?
-    return if ctx.delicious?
+    return if entry.delicious?
     if setting.list_view_profile_picture
       if entry.from.profile_image_url
         name = entry.from.name
@@ -291,7 +291,7 @@ module EntryHelper
   def friendfeed_content(entry)
     body = entry.body
     return '' unless body
-    fold, content, links = escape_text(body, ctx.fold ? setting.text_folding_size : nil)
+    fold, content, links = escape_text(body, ctx.fold ? setting.text_folding_size : nil, entry.service_source)
     entry.view_links = links
     content.gsub!(/[\r\n]+/, "<br />\n")
     if entry.via and entry.via.twitter?
@@ -308,7 +308,7 @@ module EntryHelper
   def twitter_content(entry)
     body = entry.body
     return '' unless body
-    fold, content, links = escape_text(body, ctx.fold ? setting.text_folding_size : nil)
+    fold, content, links = escape_text(body, ctx.fold ? setting.text_folding_size : nil, entry.service_source)
     entry.view_links = links
     content.gsub!(/[\r\n]+/, "<br />\n")
     content = filter_twitter_username(content, entry)
@@ -323,7 +323,7 @@ module EntryHelper
   def buzz_content(entry)
     body = entry.raw_body
     return '' unless body
-    fold, content, links = escape_text(body, ctx.fold ? setting.text_folding_size : nil)
+    fold, content, links = escape_text(body, ctx.fold ? setting.text_folding_size : nil, entry.service_source)
     entry.view_links = links
     content.gsub!(/[\r\n]+/, "<br />\n")
     if entry.via and entry.via.twitter?
@@ -671,7 +671,7 @@ module EntryHelper
   end
 
   URI_REGEXP = URI.regexp(['http', 'https'])
-  def escape_text(content, fold_size = nil)
+  def escape_text(content, fold_size = nil, type = nil)
     str = ''
     fold_size ||= content.length
     org_size = 0
@@ -680,7 +680,7 @@ module EntryHelper
     while content.match(URI_REGEXP)
       m = $~
       added, part = fold_concat(m.pre_match, fold_size - org_size)
-      str += markup_sentence(part)
+      str += markup_sentence(part, type)
       if added
         org_size += added
       else
@@ -695,7 +695,7 @@ module EntryHelper
       uri = uri(target)
       added, part = fold_concat(target, fold_size - org_size)
       if uri.nil? or !uri.is_a?(URI::HTTP)
-        str += markup_sentence(part)
+        str += markup_sentence(part, type)
         if added
           org_size += added
         else
@@ -704,16 +704,16 @@ module EntryHelper
       else
         links << target
         if added
-          str += link_to(markup_sentence(target), target)
+          str += link_to(markup_sentence(target, type), target)
           org_size += added
         else
-          str += link_to(markup_sentence(part), target)
+          str += link_to(markup_sentence(part, type), target)
           return true, str, links
         end
       end
     end
     added, part = fold_concat(content, fold_size - org_size)
-    str += markup_sentence(part)
+    str += markup_sentence(part, type)
     unless added
       return true, str, links
     end
@@ -730,14 +730,17 @@ module EntryHelper
     end
   end
 
-  def markup_sentence(str)
+  def markup_sentence(str, type = nil)
     ary = []
     while str.match(/#[a-zA-Z0-9\-_\.+:=]{2,}/)
       m = $~
       ary << h(m.pre_match)
       if m.pre_match.empty? or /\s\z/ =~ m.pre_match
-        if ctx.tweets?
+        case type
+        when 'twitter'
           link = link_to(h(m[0]), :action => :tweets, :query => m[0])
+        when 'delicious'
+          link = link_to(h(m[0]), :action => :delicious, :label => m[0].slice(1..-1))
         else
           link = link_to(h(m[0]), search_opt(:action => :list, :query => m[0]))
         end
@@ -906,7 +909,7 @@ module EntryHelper
   end
 
   def comment(comment)
-    fold, str, links = escape_text(comment.body, ctx.fold ? setting.text_folding_size : nil)
+    fold, str, links = escape_text(comment.body, ctx.fold ? setting.text_folding_size : nil, comment.service_source)
     comment.view_links = links
     str.gsub!(/[\r\n]+/, "<br />\n")
     if fold
@@ -1235,6 +1238,8 @@ module EntryHelper
         links << menu_link(menu_label('show more...', '6'), {:action => 'buzz', :feed => ctx.feed, :user => ctx.user, :num => num, :max_id => @buzz_c_tag}, key)
       elsif ctx.graph?
         links << menu_link(menu_label('show more...', '6'), {:action => 'graph', :feed => ctx.feed, :user => ctx.user, :num => num, :max_id => @threads.from_modified}, key)
+      elsif ctx.delicious?
+        links << menu_link(menu_label('show more...', '6'), {:action => 'delicious', :feed => ctx.feed, :start => start + num, :num => num, :label => @ctx.label}, key)
       elsif ctx.pin?
         links << menu_link(menu_label('show more...', '6'), list_opt(ctx.link_opt(:start => @cont, :num => num)), key)
       elsif ctx.ff?
@@ -1326,7 +1331,7 @@ module EntryHelper
   end
 
   def post_comment_link(entry, opt = {})
-    return if entry.dummy?
+    return if entry.dummy? or entry.delicious?
     if entry.tweet?
       tid = Entry.if_service_id(entry.id)
       if ctx.feed == 'direct'
@@ -1442,7 +1447,7 @@ module EntryHelper
   end
 
   def like_link(entry)
-    return '' if entry.dummy?
+    return '' if entry.dummy? or entry.delicious?
     if ctx.list? and ajax?
       like_link_remote(entry)
     else

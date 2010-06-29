@@ -773,6 +773,16 @@ __EOS__
     links.join(' ')
   end
 
+  def delicious_links
+    links = []
+    base = {:controller => :entry, :action => :delicious, :id => @service_user}
+    links << link_to(h('Home'), base.merge(:feed => :home))
+    if @service_user
+      links << menu_link(menu_label('sign out'), :controller => 'login', :action => 'unlink_delicious', :id => @service_user)
+    end
+    links.join(' ')
+  end
+
   def list_links
     links = []
     if @feedlist

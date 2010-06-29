@@ -248,6 +248,8 @@ private
       'buzz'
     elsif graph?
       'graph'
+    elsif delicious?
+      'delicious'
     else
       'list'
     end

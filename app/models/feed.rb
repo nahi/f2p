@@ -264,7 +264,7 @@ class Feed
         :limit => num
       )
       opt[:start] = pinned.last.created_at unless pinned.empty?
-      entries = pinned.find_all { |e| !['twitter', 'buzz', 'graph'].include?(e.source) }
+      entries = pinned.find_all { |e| !['twitter', 'buzz', 'graph', 'delicious'].include?(e.source) }
       unless entries.empty?
         hash = get_entries(auth, opt.merge(:eids => entries.map { |e| e.eid }))
         map = (hash['entries'] || []).inject({}) { |r, e| r[e['id']] = e; r }
@@ -274,7 +274,7 @@ class Feed
       end
       maxcomments = opt[:maxcomments]
       hash['entries'] = pinned.map { |e|
-        if ['twitter', 'buzz', 'graph'].include?(e.source) and e.entry
+        if ['twitter', 'buzz', 'graph', 'delicious'].include?(e.source) and e.entry
           YAML.load(e.entry) rescue nil
         elsif map.key?(e.eid)
           map[e.eid]

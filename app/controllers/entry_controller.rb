@@ -388,11 +388,16 @@ class EntryController < ApplicationController
     @service_source = token.service
     @service_user = token.service_user
     opt = {:results => @ctx.num, :start => @ctx.start}
+    if @ctx.label
+      opt[:tag] = @ctx.label
+      feedname = @ctx.label
+    else
+      feedname = 'all'
+    end
     posts = Delicious.all(token, opt)
-    feedname = 'all'
     File.open('/tmp/delicious', 'w') { |f| f << posts.to_json } if $DEBUG and posts
     feed_opt = find_opt.merge(
-      :delicious => posts.post,
+      :delicious => posts ? posts['post'] : Array::EMPTY,
       :feedname => "Delicious(#{feedname})",
       :service_user => token.service_user
     )
@@ -1068,6 +1073,8 @@ private
             entry = Buzz.show_all(token, sid)
           when 'graph'
             entry = Graph.show_all(token, sid)
+          when 'delicious'
+            entry = Delicious.get(token, sid)
           end
           source = service_source
         end

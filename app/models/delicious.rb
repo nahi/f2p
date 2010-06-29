@@ -15,6 +15,13 @@ class Delicious
       get_posts(token, post_path('all'), args)
     end
 
+    def get(token, hashid, args = {})
+      res = get_posts(token, post_path('get'), args.merge(:hashes => hashid))
+      if res
+        res.post.first
+      end
+    end
+
   private
 
     def token_protect(token)
@@ -67,9 +74,11 @@ class Delicious
       if res
         if parsed = protect { XSD::Mapping.xml2obj(res.content) }
           su = token.service_user
-          if data = parsed.post
-            parsed.post = data.map { |e| wrap(su, e) }
-            parsed
+          if data = parsed['post']
+            unless data.is_a?(Array)
+              data = [data]
+            end
+            { 'post' => data.map { |e| wrap(su, e) } }
           end
         else
           logger.warn("Unknown structure: " + res.content)
@@ -78,10 +87,17 @@ class Delicious
       end
     end
 
-    def wrap(service_user, hash)
-      return nil unless hash
+    def wrap(service_user, obj)
+      return nil unless obj
+      hash = {}
       hash['service_source'] = 'delicious'
       hash['service_user'] = service_user
+      hash['href'] = obj.xmlattr_href
+      hash['description'] = obj.xmlattr_description
+      hash['extended'] = obj.xmlattr_extended
+      hash['hash'] = obj.xmlattr_hash
+      hash['tag'] = obj.xmlattr_tag
+      hash['time'] = obj.xmlattr_time
       hash
     end
 

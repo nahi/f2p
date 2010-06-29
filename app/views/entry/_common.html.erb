@@ -10,6 +10,9 @@
 <%- if @ctx.graph? -%>
 <p>Facebook: <%= graph_links %></p>
 <%- end -%>
+<%- if @ctx.delicious? -%>
+<p>Delicious: <%= delicious_links %></p>
+<%- end -%>
 <%- if str = list_links -%>
 <p>Lists: <%= str %></p>
 <%- end -%>
