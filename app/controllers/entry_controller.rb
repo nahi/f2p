@@ -1315,7 +1315,7 @@ private
     end
   end
 
-  def twitter_users_to_statuses(users)
+  def twitter_users_to_statuses(res)
     users = res[:users] || Array::EMPTY
     users.map { |hash|
       s = hash[:status] || {}
