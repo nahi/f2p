@@ -11,8 +11,10 @@ class Tweet
           client(token).home_timeline(args)
         }
       }
-      su = token.service_user
-      res.map { |e| wrap(su, e) }
+      with_header_ext(res) {
+        su = token.service_user
+        res.map { |e| wrap(su, e) }
+      }
     end
 
     def user_timeline(token, user, args = {})
@@ -21,8 +23,10 @@ class Tweet
           client(token).user_timeline(user, args)
         }
       }
-      su = token.service_user
-      res.map { |e| wrap(su, e) }
+      with_header_ext(res) {
+        su = token.service_user
+        res.map { |e| wrap(su, e) }
+      }
     end
 
     def mentions(token, args = {})
@@ -31,8 +35,10 @@ class Tweet
           client(token).mentions(args)
         }
       }
-      su = token.service_user
-      res.map { |e| wrap(su, e) }
+      with_header_ext(res) {
+        su = token.service_user
+        res.map { |e| wrap(su, e) }
+      }
     end
 
     def list_statuses(token, user, list, args = {})
@@ -41,8 +47,10 @@ class Tweet
           client(token).list_statuses(user, list, args)
         }
       }
-      su = token.service_user
-      res.map { |e| wrap(su, e) }
+      with_header_ext(res) {
+        su = token.service_user
+        res.map { |e| wrap(su, e) }
+      }
     end
 
     def sent_direct_messages(token, args = {})
@@ -51,8 +59,10 @@ class Tweet
           client(token).sent_direct_messages(args)
         }
       }
-      su = token.service_user
-      res.map { |e| wrap(su, e) }
+      with_header_ext(res) {
+        su = token.service_user
+        res.map { |e| wrap(su, e) }
+      }
     end
 
     def direct_messages(token, args = {})
@@ -61,8 +71,10 @@ class Tweet
           client(token).direct_messages(args)
         }
       }
-      su = token.service_user
-      res.map { |e| wrap(su, e) }
+      with_header_ext(res) {
+        su = token.service_user
+        res.map { |e| wrap(su, e) }
+      }
     end
 
     def favorites(token, args = {})
@@ -71,8 +83,10 @@ class Tweet
           client(token).favorites(token.service_user, args)
         }
       }
-      su = token.service_user
-      res.map { |e| wrap(su, e) }
+      with_header_ext(res) {
+        su = token.service_user
+        res.map { |e| wrap(su, e) }
+      }
     end
 
     def search(token, query, args = {})
@@ -81,8 +95,10 @@ class Tweet
           client(token).search(query, args)
         }
       }
-      su = token.service_user
-      res.map { |e| wrap_search(su, e) }
+      with_header_ext(res) {
+        su = token.service_user
+        res.map { |e| wrap_search(su, e) }
+      }
     end
 
     def show(token, id, args = {})
@@ -91,7 +107,9 @@ class Tweet
           client(token).show(id, args)
         }
       }
-      wrap(token.service_user, res)
+      with_header_ext(res) {
+        wrap(token.service_user, res)
+      }
     end
 
     # raises exception
@@ -99,14 +117,18 @@ class Tweet
       res = with_perf('[perf] start tweet post') {
         client(token).update_status(args.merge(:status => status))
       }
-      wrap(token.service_user, res)
+      with_header_ext(res) {
+        wrap(token.service_user, res)
+      }
     end
 
     def send_direct_message(token, user, text, args = {})
       res = with_perf('[perf] start DM post') {
         client(token).send_direct_message(args.merge(:user => user, :text => text))
       }
-      wrap(token.service_user, res)
+      with_header_ext(res) {
+        wrap(token.service_user, res)
+      }
     end
 
     # raises exception
@@ -114,7 +136,9 @@ class Tweet
       res = with_perf('[perf] start retweet post') {
         client(token).retweet(id, args)
       }
-      wrap(token.service_user, res)
+      with_header_ext(res) {
+        wrap(token.service_user, res)
+      }
     end
 
     def remove_status(token, id, args = {})
@@ -127,14 +151,18 @@ class Tweet
       res = with_perf('[perf] start favorite post') {
         client(token).favorite(id, args)
       }
-      wrap(token.service_user, res)
+      with_header_ext(res) {
+        wrap(token.service_user, res)
+      }
     end
 
     def remove_favorite(token, id, args = {})
       res = with_perf('[perf] start removing favorite post') {
         client(token).remove_favorite(id, args)
       }
-      wrap(token.service_user, res)
+      with_header_ext(res) {
+        wrap(token.service_user, res)
+      }
     end
 
     def saved_searches(token, args = {})
@@ -143,8 +171,10 @@ class Tweet
           client(token).saved_searches(args)
         }
       }
-      su = token.service_user
-      res.map { |e| wrap(su, e) }
+      with_header_ext(res) {
+        su = token.service_user
+        res.map { |e| wrap(su, e) }
+      }
     end
 
     def lists(token, user, args = {})
@@ -154,8 +184,10 @@ class Tweet
         }
       }
       if res.is_a?(Hash) and lists = res[:lists]
-        su = token.service_user
-        lists.map { |e| wrap(su, e) }
+        with_header_ext(res) {
+          su = token.service_user
+          lists.map { |e| wrap(su, e) }
+        }
       end
     end
 
@@ -166,8 +198,10 @@ class Tweet
         }
       }
       if res.is_a?(Hash) and users = res[:users]
-        su = token.service_user
-        res[:users] = users.map { |e| wrap(su, e) }
+        with_header_ext(res) {
+          su = token.service_user
+          res[:users] = users.map { |e| wrap(su, e) }
+        }
       end
       res
     end
@@ -179,8 +213,10 @@ class Tweet
         }
       }
       if res.is_a?(Hash) and users = res[:users]
-        su = token.service_user
-        res[:users] = users.map { |e| wrap(su, e) }
+        with_header_ext(res) {
+          su = token.service_user
+          res[:users] = users.map { |e| wrap(su, e) }
+        }
       end
       res
     end
@@ -205,7 +241,9 @@ class Tweet
         profile.followers_count = res[:followers_count]
         profile.entries_count = res[:statuses_count]
       end
-      profile
+      with_header_ext(res) {
+        profile
+      }
     end
 
   private
@@ -233,6 +271,19 @@ class Tweet
       ensure
         logger.info("elapsed: #{((Time.now - start) * 1000).to_i}ms")
       end
+    end
+
+    def with_header_ext(res)
+      obj = yield(res)
+      obj.extend(Rubytter::ResponseHeaderExtension)
+      if res.respond_to?(:headers)
+        obj.headers = res.headers
+        obj.headers.each do |k, v|
+          msg = k.downcase.sub(/\Ax-/, '').tr('-', '_') + '='
+          obj.send(msg, v) if obj.respond_to?(msg)
+        end
+      end
+      obj
     end
 
     def wrap(service_user, hash)

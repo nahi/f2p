@@ -127,10 +127,12 @@ class EntryController < ApplicationController
       t = Task.run { @profile = Tweet.profile(token, user) }
       t.result if $DEBUG
       tweets = Tweet.user_timeline(token, user, opt)
+      twitter_api_initialize(tweets)
       t.result
       feedname = '@' + (@profile.name || @ctx.user)
     when 'mentions'
       tweets = Tweet.mentions(token, opt)
+      twitter_api_initialize(tweets)
       feedname = @ctx.feed
       if tweets
         unless tweets.empty?
@@ -144,6 +146,7 @@ class EntryController < ApplicationController
       t1 = Task.run { Tweet.direct_messages(token, opt) }
       t1.result if $DEBUG
       tweets = Tweet.sent_direct_messages(token, opt) + t1.result
+      twitter_api_initialize(t1.result)
       feedname = @ctx.feed
       if sent = t1.result
         unless sent.empty?
@@ -155,11 +158,13 @@ class EntryController < ApplicationController
       end
     when 'favorites'
       tweets = Tweet.favorites(token, opt)
+      twitter_api_initialize(tweets)
       feedname = @ctx.feed
     when 'following'
       opt[:cursor] = @ctx.max_id
       opt.delete(:max_id)
       res = Tweet.friends(token, token.service_user, opt)
+      twitter_api_initialize(res)
       tweets = twitter_users_to_statuses(res)
       max_id_override = res[:next_cursor]
       feedname = @ctx.feed
@@ -167,19 +172,23 @@ class EntryController < ApplicationController
       opt[:cursor] = @ctx.max_id
       opt.delete(:max_id)
       res = Tweet.followers(token, token.service_user, opt)
+      twitter_api_initialize(res)
       tweets = twitter_users_to_statuses(res)
       max_id_override = res[:next_cursor]
       feedname = @ctx.feed
     when /\A@([^\/]+)\/([^\/]+)\z/
       user, list = $1, $2
       tweets = Tweet.list_statuses(token, user, list, opt)
+      twitter_api_initialize(tweets)
       feedname = @ctx.feed
     else
       if @ctx.query
         tweets = Tweet.search(token, @ctx.query, opt)
+        twitter_api_initialize(tweets)
         feedname = @ctx.query
       else
         tweets = Tweet.home_timeline(token, opt)
+        twitter_api_initialize(tweets)
         feedname = 'home'
         last_checked = session[:twitter_last_checked] || Time::ZERO
         next_last_checked = session[:twitter_next_last_checked] || Time::ZERO
@@ -284,7 +293,7 @@ class EntryController < ApplicationController
       @buzz_c_tag = nxt.first['href'].match(/c=([^&]*)/)[1]
     end
     feed_opt = find_opt.merge(
-      :buzz => buzz['items'],
+      :buzz => buzz['items'] || [],
       :feedname => "Buzz(#{feedname})",
       :service_user => token.service_user
     )
@@ -430,6 +439,7 @@ class EntryController < ApplicationController
           return
         end
         entry = Tweet.show(token, sid)
+        twitter_api_initialize(entry)
       when ?b
         unless token = auth.token('buzz')
           session[:back_to] = {:controller => 'entry', :action => 'buzz'}
@@ -1314,6 +1324,12 @@ private
     else
       return components.join('_'), service_source, service_user
     end
+  end
+
+  def twitter_api_initialize(res)
+    @api_remaining = res.ratelimit_remaining.to_i
+    @api_limit = res.ratelimit_limit.to_i
+    @api_to_reset = res.ratelimit_reset.to_i - Time.now.to_i
   end
 
   def twitter_users_to_statuses(res)
