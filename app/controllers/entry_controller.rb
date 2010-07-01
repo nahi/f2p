@@ -278,7 +278,8 @@ class EntryController < ApplicationController
         end
       end
     end
-    File.open("/tmp/buzz", "wb") { |f| f << buzz.to_json } if $DEBUG and buzz
+    buzz ||= Hash::EMPTY
+    File.open("/tmp/buzz", "wb") { |f| f << buzz.to_json } if $DEBUG
     if buzz['links'] and (nxt = buzz['links']['next'])
       @buzz_c_tag = nxt.first['href'].match(/c=([^&]*)/)[1]
     end

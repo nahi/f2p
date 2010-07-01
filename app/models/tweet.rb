@@ -262,7 +262,7 @@ class Tweet
           }
         },
         {
-          #:wiredump => '/tmp/rubytter.log'
+          :wiredump => '/tmp/rubytter.log'
         }
       )
     end
