@@ -24,6 +24,6 @@
     <p><%= search_form %></p>
   <%- end -%>
 <%- end -%>
-<%- if @api_to_reset -%>
+<%- if @api_to_reset and @api_to_reset > 0 -%>
   (API limit: <%= @api_remaining %>/<%= @api_limit %> in <%= @api_to_reset / 60 + 1 %> min)
 <%- end -%>
