@@ -376,6 +376,14 @@ module EntryHelper
             uri.path = "/show/mini#{uri.path}"
             entry.view_medias << uri.to_s
           end
+        # http://groups.google.com/group/tweetphoto/web/fetch-image-from-tweetphoto-url?pli=1
+        when /\btweetphoto.com\b/
+          uri = 'http://TweetPhotoAPI.com/api/TPAPI.svc/imagefromurl?size=thumbnail&url=' + link
+          entry.view_medias << uri
+        # http://twitgoo.com/docs/TwitgooHelp.htm
+        when /\btwitgoo.com\b/
+          uri = link + '/thumb'
+          entry.view_medias << uri
         # via gotoken
         when /\bmovapic.com\/pic\/([a-z0-9]+)/
           uri = "http://image.movapic.com/pic/t_#{$1}.jpeg"
