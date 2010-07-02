@@ -742,6 +742,11 @@ __EOS__
     links << link_to(h('Favorites'), base.merge(:feed => :favorites))
     links << link_to(h('following'), base.merge(:feed => :following, :max_id => -1))
     links << link_to(h('followers'), base.merge(:feed => :followers, :max_id => -1))
+    sub = []
+    sub << link_to(h('by friends'), base.merge(:feed => :retweeted_to_me))
+    sub << link_to(h('by you'), base.merge(:feed => :retweeted_by_me))
+    sub << link_to(h('yours'), base.merge(:feed => :retweets_of_me))
+    links << 'RT(' + sub.join(' ') + ')'
     if @service_user
       links << menu_link(menu_label('sign out'), :controller => 'login', :action => 'unlink_twitter', :id => @service_user)
     end

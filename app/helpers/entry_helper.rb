@@ -778,6 +778,21 @@ module EntryHelper
     super(entry_or_comment.via, label)
   end
 
+  def retweets(entry)
+    if rts = entry.twitter_retweets
+      "Retweeted by #{rts.size} person: <br />" +
+        rts.map { |from|
+          retweet_user_link(from)
+        }.join(' ')
+    end
+  end
+
+  def retweet_user_link(from)
+    name = from.name
+    img = profile_image_tag(from.profile_image_url, name, name)
+    link_to(img, link_action('tweets', :feed => 'user', :user => from.id))
+  end
+
   def likes(entry)
     me = []
     friends = []
@@ -1341,7 +1356,7 @@ module EntryHelper
         )
       else
         str = h('>>>')
-        link = link_show(entry.id)
+        link = link_show(entry.id, :rt => /\Aretweet/ =~ ctx.feed)
       end
     elsif !entry.comments.empty? and !comment_inline?(entry)
       if entry.comments_size == 1

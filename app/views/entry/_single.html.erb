@@ -26,6 +26,9 @@
 <br /><span class="comment"><%= str %></span>
 <%- end -%>
       <%- end -%>
+<%- if str = retweets(entry) -%>
+<p><%= str %></p>
+<%- end -%>
     </div>
     <%- form_tag({:action => 'add_comment', :eid => entry.id, :comment => ctx.comment ? ctx.comment : nil}, {:name => 'post'}) do -%>
       <%- entry.comments.each do |comment| -%>
@@ -57,6 +60,7 @@
         <%= reshare_link(entry) %>
         <%= hide_link(entry) %>
         <%= delete_link(entry) %>
+        <%= retweet_link(entry) -%>
       </div>
     <%- end -%>
     <p>

@@ -176,6 +176,18 @@ class EntryController < ApplicationController
       tweets = twitter_users_to_statuses(res)
       max_id_override = res[:next_cursor]
       feedname = @ctx.feed
+    when 'retweeted_to_me'
+      tweets = Tweet.send(@ctx.feed, token, opt)
+      twitter_api_initialize(tweets)
+      feedname = 'RT by friends'
+    when 'retweeted_by_me'
+      tweets = Tweet.send(@ctx.feed, token, opt)
+      twitter_api_initialize(tweets)
+      feedname = 'RT by you'
+    when 'retweets_of_me'
+      tweets = Tweet.send(@ctx.feed, token, opt)
+      twitter_api_initialize(tweets)
+      feedname = 'RT of yours'
     when /\A@([^\/]+)\/([^\/]+)\z/
       user, list = $1, $2
       tweets = Tweet.list_statuses(token, user, list, opt)
@@ -438,8 +450,15 @@ class EntryController < ApplicationController
           redirect_to :controller => 'login', :action => 'initiate_twitter_oauth_login'
           return
         end
+        if param(:rt)
+          t = Task.run { Tweet.retweets(token, sid, :count => F2P::Config.max_friend_list_num) }
+          t.result if $DEBUG
+        end
         entry = Tweet.show(token, sid)
         twitter_api_initialize(entry)
+        if param(:rt)
+          entry[:retweets] = t.result
+        end
       when ?b
         unless token = auth.token('buzz')
           session[:back_to] = {:controller => 'entry', :action => 'buzz'}

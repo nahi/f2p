@@ -89,6 +89,42 @@ class Tweet
       }
     end
 
+    def retweeted_by_me(token, args = {})
+      res = with_perf('[perf] start retweeted_by_me fetch') {
+        protect([]) {
+          client(token).retweeted_by_me(args)
+        }
+      }
+      with_header_ext(res) {
+        su = token.service_user
+        res.map { |e| wrap(su, e) }
+      }
+    end
+
+    def retweeted_to_me(token, args = {})
+      res = with_perf('[perf] start retweeted_to_me fetch') {
+        protect([]) {
+          client(token).retweeted_to_me(args)
+        }
+      }
+      with_header_ext(res) {
+        su = token.service_user
+        res.map { |e| wrap(su, e) }
+      }
+    end
+
+    def retweets_of_me(token, args = {})
+      res = with_perf('[perf] start retweets_of_me fetch') {
+        protect([]) {
+          client(token).retweets_of_me(args)
+        }
+      }
+      with_header_ext(res) {
+        su = token.service_user
+        res.map { |e| wrap(su, e) }
+      }
+    end
+
     def search(token, query, args = {})
       res = with_perf('[perf] start favorites fetch') {
         protect([]) {
@@ -109,6 +145,18 @@ class Tweet
       }
       with_header_ext(res) {
         wrap(token.service_user, res)
+      }
+    end
+
+    def retweets(token, id, args = {})
+      res = with_perf('[perf] start retweets fetch') {
+        protect([]) {
+          client(token).retweets(id, args)
+        }
+      }
+      with_header_ext(res) {
+        su = token.service_user
+        res.map { |e| wrap(su, e) }
       }
     end
 

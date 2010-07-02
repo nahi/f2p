@@ -87,6 +87,11 @@ class Entry
       e.thumbnails = []
       e.files = []
       e.comments = []
+      if rts = hash[:retweets]
+        e.twitter_retweets = rts.map { |s|
+          tweet_from(s[:user])
+        }
+      end
       e
     end
 
@@ -806,6 +811,7 @@ class Entry
   attr_accessor :twitter_reply_to_status_id
   attr_accessor :twitter_retweeted_by
   attr_accessor :twitter_retweeted_by_status_id
+  attr_accessor :twitter_retweets
 
   attr_accessor :orphan
   attr_accessor :view_pinned
@@ -822,6 +828,7 @@ class Entry
     @twitter_reply_to_status_id = nil
     @twitter_retweeted_by = nil
     @twitter_retweeted_by_status_id = nil
+    @twitter_retweets = nil
     @view_pinned = nil
     @view_nextid = nil
     @view_links = nil
