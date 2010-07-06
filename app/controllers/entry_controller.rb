@@ -106,6 +106,10 @@ class EntryController < ApplicationController
     }
     @ctx.service_source = 'twitter'
     @ctx.feed ||= 'home'
+    if @ctx.query
+      @ctx.feed = 'home'
+      @ctx.user = nil
+    end
     @ctx.home = false
     id = params[:id]
     @body = flash[:post_body]
@@ -247,6 +251,10 @@ class EntryController < ApplicationController
     }
     @ctx.service_source = 'buzz'
     @ctx.feed ||= 'home'
+    if @ctx.query
+      @ctx.feed = 'home'
+      @ctx.user = nil
+    end
     @ctx.home = false
     id = params[:id]
     unless token = auth.token('buzz', id)

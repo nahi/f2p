@@ -1132,6 +1132,7 @@ module EntryHelper
   end
 
   def profile_text(profile)
+    return unless profile
     ary = []
     ary << link_to(profile_picture(profile), profile.profile_url)
     if ctx.tweets?
