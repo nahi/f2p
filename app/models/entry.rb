@@ -116,6 +116,14 @@ class Entry
       e.link ||= e.view_links.shift
       e.url = extract_buzz_link_href(hash['links'])
       e.from = buzz_from(hash['actor'])
+      if re = hash['reshare']
+        e.buzz_reshared_by = buzz_from(re['sharedBy']['author'])
+        e.buzz_reshared_of = buzz_from(re['original']['author'])
+        link = extract_buzz_link_href(re['original']['links'], 'via')
+        if %r|/(tag:[^/?]+)| =~ link
+          e.buzz_reshared_id = from_service_id('buzz', [user_id, '@self', $1].join('/'))
+        end
+      end
       if hash['source']
         e.via = Via.new
         e.via.name = normalize_content_in_buzz(hash['source']['title'])
@@ -372,6 +380,7 @@ class Entry
     end
 
     def buzz_from(hash)
+      return nil unless hash
       f = From.new
       f.id = hash['id']
       f.name = hash['name'] || hash['displayName']
@@ -812,6 +821,9 @@ class Entry
   attr_accessor :twitter_retweeted_by
   attr_accessor :twitter_retweeted_by_status_id
   attr_accessor :twitter_retweets
+  attr_accessor :buzz_reshared_by
+  attr_accessor :buzz_reshared_of
+  attr_accessor :buzz_reshared_id
 
   attr_accessor :orphan
   attr_accessor :view_pinned
@@ -829,6 +841,9 @@ class Entry
     @twitter_retweeted_by = nil
     @twitter_retweeted_by_status_id = nil
     @twitter_retweets = nil
+    @buzz_reshared_by = nil
+    @buzz_reshared_of = nil
+    @buzz_reshared_id = nil
     @view_pinned = nil
     @view_nextid = nil
     @view_links = nil

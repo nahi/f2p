@@ -450,7 +450,7 @@ module EntryHelper
     end
     ary << from
     ary << lock_icon(entry.from)
-    if link = twitter_retweeted_by(entry)
+    if link = retweet_rel_link(entry)
       ary << link
     end
     ary.join
@@ -462,9 +462,15 @@ module EntryHelper
     end
   end
 
-  def twitter_retweeted_by(entry)
-    if url = entry.twitter_retweeted_by_url
-      link_to(h(' retweeted by ' + entry.twitter_retweeted_by), url, :class => 'hlink')
+  def retweet_rel_link(entry)
+    if id = entry.twitter_retweeted_by_status_id
+      opt = link_show(id)
+      name = entry.twitter_retweeted_by
+      h(' RT by ') + link_to(h(name), opt, :class => 'hlink')
+    elsif id = entry.buzz_reshared_id
+      opt = link_show(id)
+      name = entry.buzz_reshared_of.name
+      h(' Reshared from ') + link_to(h(name), opt, :class => 'hlink')
     end
   end
 
@@ -816,7 +822,7 @@ module EntryHelper
       else
         members = likes.collect { |like| user(like) }.join(' ')
       end
-      icon + '(' + members + ') ' + like_link(entry)
+      [icon, '(' + members + ') ' + like_link(entry)].join
     else
       like_link(entry)
     end
