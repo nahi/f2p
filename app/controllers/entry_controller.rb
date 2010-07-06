@@ -126,6 +126,7 @@ class EntryController < ApplicationController
       user = @ctx.user || @service_user_screen_name
       t = Task.run { @profile = Tweet.profile(token, user) }
       t.result if $DEBUG
+      opt[:include_rts] = 'true'
       tweets = Tweet.user_timeline(token, user, opt)
       twitter_api_initialize(tweets)
       t.result
