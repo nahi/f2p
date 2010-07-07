@@ -1044,7 +1044,7 @@ module EntryHelper
     else
       ary << friendfeed_icon_tag
     end
-    ary << text_field_tag('body', body, :placeholder => 'post')
+    ary << text_area_tag('body', body, :placeholder => 'post')
     ary << submit_tag('post')
     # TODO: we can support rich buzz posting in the future.
     if ctx.ff?
@@ -1069,7 +1069,7 @@ module EntryHelper
         ary << hidden_field_tag('in_reply_to_status_id', Entry.if_service_id(entry.id))
         default = '@' + entry.from.name + ' '
       end
-      ary << text_field_tag('body', default, :placeholder => 'comment')
+      ary << text_area_tag('body', default, :placeholder => 'comment')
       ary << submit_tag('post')
       ary.join
     else
@@ -1080,13 +1080,13 @@ module EntryHelper
   def edit_entry_form(entry, body = nil)
     if entry.commands.include?('edit')
       default = body || entry.body
-      text_field_tag('body', default) + submit_tag('post')
+      text_area_tag('body', default) + submit_tag('post')
     end
   end
 
   def edit_comment_form(comment)
     default = comment.body
-    text_field_tag('body', default) + submit_tag('post')
+    text_area_tag('body', default) + submit_tag('post')
   end
 
   def fold_link(entry)
