@@ -718,7 +718,6 @@ __EOS__
   def special_feed_links
     links = []
     links << link_to(h('Inbox'), { :controller => :entry, :action => :inbox }, accesskey('0'))
-    links << pinned_link
     links << link_to(h('You'), :controller => :entry, :action => :list, :user => auth.name)
     feedid = 'filter/discussions'
     links << link_to(h('Discussions'), :controller => :entry, :action => :list, :feed => feedid)
