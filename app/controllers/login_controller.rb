@@ -85,7 +85,9 @@ class LoginController < ApplicationController
         token = res.oauth_params["oauth_token"]
         secret = res.oauth_params["oauth_token_secret"]
         if auth
+          name = User.name_from_token(token, secret)
           auth.store_access_token(token, secret)
+          auth.name = name
           auth.save!
         elsif user = User.oauth_validate(token, secret)
           login_successful(user)

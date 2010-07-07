@@ -97,8 +97,6 @@ class User < ActiveRecord::Base
       ff_client.unsubscribe(feed, opt)
     end
 
-  private
-
     def name_from_token(token, secret)
       cred = {
         :oauth_token => token,
@@ -108,6 +106,8 @@ class User < ActiveRecord::Base
         id['id']
       end
     end
+
+  private
 
     def convert_feedlist(feedlist)
       feedlist = feedlist.dup
