@@ -219,7 +219,7 @@ private
 
   def fetch_feedinfo(id = nil)
     return unless auth
-    id ||= auth.name
+    id ||= 'me'
     tasks = []
     tasks << Task.run {
       @feedinfo = User.ff_feedinfo(auth, id)
