@@ -13,7 +13,8 @@ class ProfileController < ApplicationController
 
   def show
     @id = param(:id)
-    fetch_feedinfo(@id)
+    id = auth.name == @id ? 'me' : @id
+    fetch_feedinfo(id)
   end
 
   verify :only => :edit,

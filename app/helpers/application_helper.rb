@@ -569,9 +569,10 @@ __EOS__
     else
       ary = enum.collect { |v| yield(v) }
     end
-    str = ary.join(' ')
-    str = h(label) + str unless str.empty?
-    str
+    unless ary.empty?
+      ary.unshift(h(label))
+      ary.join(' ')
+    end
   end
 
   def menu_link(label, opt, html_opt = nil, &block)
@@ -718,7 +719,7 @@ __EOS__
   def special_feed_links
     links = []
     links << link_to(h('Inbox'), { :controller => :entry, :action => :inbox }, accesskey('0'))
-    links << link_to(h('You'), :controller => :entry, :action => :list, :user => auth.name)
+    links << link_to(h('You'), :controller => :entry, :action => :list, :user => 'me')
     feedid = 'filter/discussions'
     links << link_to(h('Discussions'), :controller => :entry, :action => :list, :feed => feedid)
     feedid = 'filter/direct'
