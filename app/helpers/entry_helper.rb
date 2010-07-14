@@ -409,6 +409,13 @@ module EntryHelper
           date = full_date[0, 8]
           uri = "http://img.f.hatena.ne.jp/images/fotolife/#{tag}/#{service}/#{date}/#{full_date}_120.jpg"
           entry.view_medias << uri
+        # http://twipple.jp/menseki.html at 2010-07-14 does not mention any restriction about the service usage.
+        # /foobar -> /data/f/o/o/b/a/r_[sm].jpg
+        when /\bp.twipple.jp\/([a-zA-Z0-9]+)/
+          components = $1.split(//)
+          components.last << '_s.jpg'
+          uri = 'http://p.twipple.jp/data/' + components.join('/')
+          entry.view_medias << uri
         end
       end
     end
