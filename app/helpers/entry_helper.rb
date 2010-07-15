@@ -122,7 +122,7 @@ module EntryHelper
       if entry.from.profile_image_url
         name = entry.from.name
         profile_image_tag(entry.from.profile_image_url, name, name)
-      elsif id = entry.origin_id
+      elsif ctx.ff? and id = entry.origin_id
         picture(id)
       end
     end
@@ -141,7 +141,7 @@ module EntryHelper
   def profile_picture(user)
     if user.profile_image_url
       profile_image_tag(user.profile_image_url, user.name, user.name)
-    else
+    elsif ctx.ff?
       picture(user.id)
     end
   end
@@ -243,7 +243,7 @@ module EntryHelper
       if ctx.tweets? and !entry.unread?
         content = span(content, 'archived')
       end
-    elsif entry.buzz?
+    elsif entry.buzz? or entry.tumblr?
       content = buzz_content(entry)
       if ctx.buzz? and !entry.unread?
         content = span(content, 'archived')
@@ -840,7 +840,7 @@ module EntryHelper
     if !entry.likes.empty?
       likes = entry.likes.find_all { |e| e.from and e.from.friend? }
       ary << inline_icon_tag(:liked)
-      unless entry.tweet?
+      if !entry.tweet? and !entry.tumblr?
         size = entry.likes_size
         if size != likes.size
           ary << link_to(h(size.to_s), link_show(entry.id))
@@ -974,6 +974,7 @@ module EntryHelper
   end
 
   def search_form(opt = {})
+    return if ctx.tumblr? and !ctx.user
     search_opt.map { |key, value|
       if key != :query
         hidden_field_tag(key.to_s, value.to_s)
@@ -1015,7 +1016,7 @@ module EntryHelper
 
   def post_entry_form
     return if ctx.direct_message? and !ctx.dm_to
-    return if ctx.delicious?
+    return if ctx.delicious? or ctx.tumblr?
     ary = []
     body = @body
     ary << hidden_field_tag('to_lines', '1')
@@ -1141,11 +1142,8 @@ module EntryHelper
   def profile_text(profile)
     return unless profile
     ary = []
-    ary << link_to(profile_picture(profile), profile.profile_url)
-    if ctx.tweets?
-      ary << link_to(h(profile.name), link_action('tweets', :feed => 'user', :user => profile.name))
-    elsif ctx.buzz?
-      ary << link_to(h(profile.name), link_action('buzz', :feed => 'user', :user => profile.id))
+    if pic = profile_picture(profile)
+      ary << link_to(pic, profile.profile_url)
     end
     ary << lock_icon(profile)
     ary << ' '
@@ -1268,6 +1266,8 @@ module EntryHelper
         links << menu_link(menu_label('show more...', '6'), {:action => 'graph', :feed => ctx.feed, :user => ctx.user, :num => num, :max_id => @threads.from_modified}, key)
       elsif ctx.delicious?
         links << menu_link(menu_label('show more...', '6'), {:action => 'delicious', :feed => ctx.feed, :start => start + num, :num => num, :label => @ctx.label}, key)
+      elsif ctx.tumblr?
+        links << menu_link(menu_label('show more...', '6'), {:action => 'tumblr', :feed => ctx.feed, :start => start + num, :num => num}, key)
       elsif ctx.pin?
         links << menu_link(menu_label('show more...', '6'), list_opt(ctx.link_opt(:start => @cont, :num => num)), key)
       elsif ctx.ff?
@@ -1476,6 +1476,7 @@ module EntryHelper
 
   def like_link(entry)
     return '' if entry.dummy? or entry.delicious?
+    return '' if entry.tumblr? and ctx.user
     if ctx.list? and ajax?
       like_link_remote(entry)
     else
@@ -1490,6 +1491,9 @@ module EntryHelper
     unless entry.ff?
       link_opt[:service_source] = entry.service_source
       link_opt[:service_user] = entry.service_user
+    end
+    if entry.tumblr?
+      link_opt[:reblog_key] = entry.tumblr_reblog_key
     end
     span_id = 'like_' + eid
     if entry.commands.include?('like')
@@ -1517,6 +1521,9 @@ module EntryHelper
     unless entry.ff?
       link_opt[:service_source] = entry.service_source
       link_opt[:service_user] = entry.service_user
+    end
+    if entry.tumblr?
+      link_opt[:reblog_key] = entry.tumblr_reblog_key
     end
     if entry.commands.include?('like')
       menu_link(inline_menu_label(:like, label), link_action('like', link_opt))

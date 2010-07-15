@@ -65,7 +65,7 @@ class Feed
     end
 
     def ext_entries(opt)
-      opt[:tweets] || opt[:buzz] || opt[:graph] || opt[:delicious]
+      opt[:tweets] || opt[:buzz] || opt[:graph] || opt[:delicious] || opt[:tumblr]
     end
 
     def fetch_entries(auth, opt)
@@ -203,6 +203,8 @@ class Feed
       opt.delete(:tweets)
       opt.delete(:buzz)
       opt.delete(:graph)
+      opt.delete(:delicious)
+      opt.delete(:tumblr)
       if allow_cache
         if cache = get_cached_entries(auth)
           if opt == cache.feed_opt
@@ -264,7 +266,7 @@ class Feed
         :limit => num
       )
       opt[:start] = pinned.last.created_at unless pinned.empty?
-      entries = pinned.find_all { |e| !['twitter', 'buzz', 'graph', 'delicious'].include?(e.source) }
+      entries = pinned.find_all { |e| !['twitter', 'buzz', 'graph', 'delicious', 'tumblr'].include?(e.source) }
       unless entries.empty?
         hash = get_entries(auth, opt.merge(:eids => entries.map { |e| e.eid }))
         map = (hash['entries'] || []).inject({}) { |r, e| r[e['id']] = e; r }
@@ -274,7 +276,7 @@ class Feed
       end
       maxcomments = opt[:maxcomments]
       hash['entries'] = pinned.map { |e|
-        if ['twitter', 'buzz', 'graph', 'delicious'].include?(e.source) and e.entry
+        if ['twitter', 'buzz', 'graph', 'delicious', 'tumblr'].include?(e.source) and e.entry
           YAML.load(e.entry) rescue nil
         elsif map.key?(e.eid)
           map[e.eid]

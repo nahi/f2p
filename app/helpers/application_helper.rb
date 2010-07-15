@@ -262,7 +262,8 @@ __EOS__
     links << link_to(h('Twitter'), { :controller => :entry, :action => :tweets }, {:class => :tab})
     links << link_to(h('Buzz'), { :controller => :entry, :action => :buzz }, {:class => :tab})
     links << link_to(h('FB'), { :controller => :entry, :action => :graph }, {:class => :tab})
-    links << link_to(h('Delicious'), { :controller => :entry, :action => :delicious }, {:class => :tab})
+    #links << link_to(h('Delicious'), { :controller => :entry, :action => :delicious }, {:class => :tab})
+    links << link_to(h('Tumblr'), { :controller => :entry, :action => :tumblr }, {:class => :tab})
     pin_label = h('Star')
     pin_label += "(#{@threads.pins})" if @threads
     links << link_to(pin_label, { :controller => :entry, :action => :list, :label => 'pin' }, {:class => :tab})
@@ -355,6 +356,10 @@ __EOS__
     service_icon_tag('http://friendfeed.com/static/images/icons/delicious.png', 'Delicious', 'Delicious')
   end
 
+  def tumblr_icon_tag
+    service_icon_tag('http://friendfeed.com/static/images/icons/tumblr.png', 'Tumblr', 'Tumblr')
+  end
+
   def profile_image_tag(url, alt, title)
     image_tag(url, :class => h('profile'), :alt => h(alt), :title => h(title), :size => '25x25')
   end
@@ -425,6 +430,8 @@ __EOS__
       opt ||= { :controller => 'entry', :action => 'buzz', :feed => 'user', :user => u(user.id) }
     when 'graph'
       opt ||= { :controller => 'entry', :action => 'graph', :feed => 'user', :user => u(user.id) }
+    when 'tumblr'
+      opt ||= { :controller => 'entry', :action => 'tumblr', :feed => 'user', :user => u(user.id) }
     else
       opt ||= { :controller => 'entry', :action => 'list', :user => u(user.id) }
     end
@@ -784,6 +791,17 @@ __EOS__
     links << link_to(h('Home'), base.merge(:feed => :home))
     if @service_user
       links << menu_link(menu_label('sign out'), :controller => 'login', :action => 'unlink_delicious', :id => @service_user)
+    end
+    links.join(' ')
+  end
+
+  def tumblr_links
+    links = []
+    base = {:controller => :entry, :action => :tumblr}
+    links << link_to(h('Home'), base.merge(:feed => :home))
+    links << link_to(h('You'), base.merge(:feed => :user, :user => @service_user))
+    if @service_user
+      links << menu_link(menu_label('sign out'), :controller => 'login', :action => 'unlink_tumblr', :id => @service_user)
     end
     links.join(' ')
   end

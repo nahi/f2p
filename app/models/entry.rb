@@ -24,6 +24,8 @@ class Entry
           from_graph(hash)
         when 'delicious'
           from_delicious(hash)
+        when 'tumblr'
+          from_tumblr(hash)
         else
           new(hash)
         end
@@ -328,6 +330,96 @@ class Entry
       e
     end
 
+    def from_tumblr(hash)
+      e = new()
+      e.service_source = hash['service_source']
+      e.service_user = hash['service_user']
+      e.from = tumblr_from(hash['tumblelog'])
+      e.id = from_service_id('tumblr', [e.from.id, hash['id'].to_s].join('/'))
+      e.date = Time.at(hash['unix-timestamp']).xmlschema
+      e.url = hash['url']
+      case hash['type']
+      when 'regular'
+        e.raw_body = hash['regular-title']
+        c = Comment.new
+        c.id = e.id
+        c.date = e.date
+        c.body = normalize_content_in_tumblr(hash['regular-body'])
+        c.from = e.from
+        c.service_source = 'tumblr'
+        c.entry = e
+        e.comments = [c]
+        e.view_links = scan_link_from_html_content(hash['regular-body'])
+        e.link = e.view_links.shift
+      when 'photo'
+        e.raw_body = normalize_content_in_tumblr(hash['photo-caption'])
+        e.view_links = scan_link_from_html_content(hash['photo-caption'])
+        e.link = e.view_links.shift
+        t = Thumbnail.new
+        t.link = hash['photo-link-url']
+        t.url = hash['photo-url-100']
+        t.title = hash['reblogged-from-title'] || normalize_content_in_tumblr(e.raw_body)
+        e.thumbnails = [t]
+      when 'quote'
+        # remove single new-line for AA alignment.
+        quoted = hash['quote-text'].gsub(/\n(?!\n)/, '')
+        e.raw_body = '"' + normalize_content_in_tumblr(quoted) + '"'
+        f = Attachment.new
+        f.type = 'article'
+        f.name = normalize_content_in_tumblr(hash['quote-source'])
+        e.view_links = scan_link_from_html_content(hash['quote-source'])
+        f.url = e.view_links.shift
+        e.files = [f]
+      when 'link'
+        e.raw_body = normalize_content_in_tumblr(hash['link-text'])
+        e.link = hash['link-url']
+        unless hash['link-description'].blank?
+          c = Comment.new
+          c.id = e.id
+          c.date = e.date
+          c.body = normalize_content_in_tumblr(hash['link-description'])
+          c.from = e.from
+          c.service_source = 'tumblr'
+          c.entry = e
+          e.comments = [c]
+        end
+      when 'conversation'
+        e.raw_body = hash['conversation-title'] + "\n"
+        hash['conversation'].each do |c|
+          e.raw_body += [c['name'], c['phrase']].join(': ') + "\n"
+        end
+      when 'video'
+        e.raw_body = normalize_content_in_tumblr(hash['video-caption'])
+        e.view_links = scan_link_from_html_content(hash['video-caption'])
+        e.link = e.view_links.shift || hash['video-source']
+      when 'audio'
+        e.raw_body = normalize_content_in_tumblr(hash['audio-caption'])
+        e.view_links = scan_link_from_html_content(hash['audio-caption'])
+        e.link = e.view_links.shift || hash['audio-source']
+      when 'answer'
+        e.raw_body = normalize_content_in_tumblr([hash['question'], hash['answer']].join(' - '))
+      end
+      e.body = normalize_content_in_tumblr(e.raw_body)
+      e.likes = []
+      e.commands = []
+      if hash['liked']
+        like = Like.new
+        like.date = e.date
+        like.from = From.new
+        like.from.name = 'You'
+        like.entry = e
+        e.likes << like
+      else
+        e.commands << 'like'
+      end
+      e.tumblr_reblog_key = hash['reblog-key']
+      e.to = Array::EMPTY
+      e.thumbnails ||= Array::EMPTY
+      e.files ||= Array::EMPTY
+      e.comments ||= Array::EMPTY
+      e
+    end
+
     def normalize_content_in_buzz(body)
       if body
         CGI.unescapeHTML(body.gsub(/<br\s*\/?>/i, "\n").gsub(/<[^>]+>/, ''))
@@ -336,6 +428,13 @@ class Entry
 
     def normalize_tweet_content_in_buzz(body)
       normalize_content_in_buzz(body).sub(/[^:]+: /, '')
+    end
+
+    def normalize_content_in_tumblr(body)
+      if body
+        # &#160; = 0xa0 : No-Break Space
+        normalize_content_in_buzz(body.gsub(/&#160;/, ' '))
+      end
     end
 
     HTML_URI_REGEXP = /href=(?:'([^']+)'|"([^"]+)")/i
@@ -429,6 +528,19 @@ class Entry
       f.service_source = 'delicious'
       f.private = false
       f.commands = Array::EMPTY
+      f
+    end
+
+    def tumblr_from(hash)
+      return nil unless hash
+      f = From.new
+      f.id = f.name = hash['name']
+      f.type = 'user'
+      f.service_source = 'tumblr'
+      f.private = false
+      f.commands = ['subscribe']
+      f.profile_url = hash['url']
+      f.profile_image_url = hash['avatar_url_48']
       f
     end
 
@@ -574,6 +686,15 @@ class Entry
           pin.save!
         end
         entry
+      when 'tumblr'
+        Tumblr.like(opt[:token], sid, opt[:tumblr_reblog_key])
+        hash = Tumblr.show(opt[:token], sid)
+        entry = Entry.from_tumblr(hash)
+        if pin = Pin.find_by_user_id_and_eid(auth.id, entry.id)
+          pin.entry = hash
+          pin.save!
+        end
+        entry
       else
         hash = ff_client.like(id, auth.new_cred)
         Entry[hash]
@@ -607,6 +728,17 @@ class Entry
         Graph.unlike(opt[:token], sid)
         hash = Graph.show(opt[:token], sid)
         entry = Entry.from_graph(hash)
+        if pin = Pin.find_by_user_id_and_eid(auth.id, entry.id)
+          pin.entry = hash
+          pin.save!
+        end
+        entry
+      when 'tumblr'
+        Tumblr.unlike(opt[:token], sid, opt[:tumblr_reblog_key])
+        hash = Tumblr.show(opt[:token], sid)
+        p hash
+        entry = Entry.from_tumblr(hash)
+        p entry
         if pin = Pin.find_by_user_id_and_eid(auth.id, entry.id)
           pin.entry = hash
           pin.save!
@@ -683,6 +815,8 @@ class Entry
         'g_' + id
       when 'delicious'
         'd_' + id
+      when 'tumblr'
+        'm_' + id
       end
     end
 
@@ -824,6 +958,7 @@ class Entry
   attr_accessor :buzz_reshared_by
   attr_accessor :buzz_reshared_of
   attr_accessor :buzz_reshared_id
+  attr_accessor :tumblr_reblog_key
 
   attr_accessor :orphan
   attr_accessor :view_pinned
@@ -844,6 +979,7 @@ class Entry
     @buzz_reshared_by = nil
     @buzz_reshared_of = nil
     @buzz_reshared_id = nil
+    @tumblr_reblog_key = nil
     @view_pinned = nil
     @view_nextid = nil
     @view_links = nil
@@ -1026,6 +1162,10 @@ class Entry
 
   def delicious?
     service_source == 'delicious'
+  end
+
+  def tumblr?
+    service_source == 'tumblr'
   end
 
   def twitter_in_reply_to_url

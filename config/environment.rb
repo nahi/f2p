@@ -70,6 +70,16 @@ module F2P
       attr_accessor :delicious_api_oauth_signature_method
       attr_accessor :delicious_api_oauth_http_method
 
+      attr_accessor :tumblr_api_oauth_consumer_key
+      attr_accessor :tumblr_api_oauth_consumer_secret
+      attr_accessor :tumblr_api_oauth_site
+      attr_accessor :tumblr_api_oauth_request_token_url
+      attr_accessor :tumblr_api_oauth_authorize_url
+      attr_accessor :tumblr_api_oauth_access_token_url
+      attr_accessor :tumblr_api_oauth_scheme
+      attr_accessor :tumblr_api_oauth_signature_method
+      attr_accessor :tumblr_api_oauth_http_method
+
       attr_accessor :json_parse_size_limit
 
       attr_accessor :google_maps_maptype
@@ -122,7 +132,7 @@ Rails::Initializer.run do |config|
   # config.gem "sqlite3-ruby", :lib => "sqlite3"
   # config.gem "aws-s3", :lib => "aws/s3"
   config.gem 'json'
-  config.gem 'rubytter' # requires http://github.com/nahi/rubytter for now.
+  config.gem 'rubytter', :version => '1.2.2.2' # requires http://github.com/nahi/rubytter
 
   # Only load the plugins named here, in the order given. By default, all plugins 
   # in vendor/plugins are loaded in alphabetical order.
@@ -230,6 +240,16 @@ Rails::Initializer.run do |config|
   F2P::Config.delicious_api_oauth_scheme = :header
   F2P::Config.delicious_api_oauth_signature_method = 'HMAC-SHA1'
   F2P::Config.delicious_api_oauth_http_method = :get
+
+  F2P::Config.tumblr_api_oauth_consumer_key = nil
+  F2P::Config.tumblr_api_oauth_consumer_secret = nil
+  F2P::Config.tumblr_api_oauth_site = 'unused'
+  F2P::Config.tumblr_api_oauth_request_token_url = 'https://www.tumblr.com/oauth/request_token'
+  F2P::Config.tumblr_api_oauth_authorize_url = 'https://www.tumblr.com/oauth/authorize'
+  F2P::Config.tumblr_api_oauth_access_token_url = 'https://www.tumblr.com/oauth/access_token'
+  F2P::Config.tumblr_api_oauth_scheme = :header
+  F2P::Config.tumblr_api_oauth_signature_method = 'HMAC-SHA1'
+  F2P::Config.tumblr_api_oauth_http_method = :get
 
   F2P::Config.json_parse_size_limit = 1.5 * 1024 * 1024
 

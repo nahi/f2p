@@ -75,6 +75,11 @@ class LoginController < ApplicationController
       HTTP::Message.escape_query(:oauth_token => token)
   end
 
+  def initiate_tumblr_oauth_login
+    token = tumblr_request_token()
+    redirect_to F2P::Config.tumblr_api_oauth_authorize_url + '?' + HTTP::Message.escape_query(:oauth_token => token)
+  end
+
   def oauth_callback
     auth = ensure_login
     oauth_token = params[:oauth_token]
@@ -244,6 +249,38 @@ class LoginController < ApplicationController
     end
   end
 
+  def tumblr_oauth_callback
+    auth = ensure_login
+    oauth_token = params[:oauth_token]
+    oauth_verifier = params[:oauth_verifier]
+    session_token = session[:request_token]
+    if oauth_token == session_token
+      res = create_tumblr_oauth_consumer.get_access_token(F2P::Config.tumblr_api_oauth_access_token_url, oauth_token, session[:request_token_secret], oauth_verifier)
+      if res.status == 200
+        token = res.oauth_params["oauth_token"]
+        secret = res.oauth_params["oauth_token_secret"]
+        t = Token.new
+        t.token = token
+        t.secret = secret
+        profile = Tumblr.profile(t)
+        if profile.id
+          user_id = profile.id
+          params = nil
+          if auth
+            auth.set_token('tumblr', user_id, token, secret, params)
+          elsif user = User.token_validate('tumblr', user_id, token, secret, params)
+            set_user(user)
+          end
+        end
+      end
+    end
+    if back_to = session[:back_to]
+      session[:back_to] = nil
+      redirect_to back_to
+    else
+      redirect_to :controller => 'entry', :action => 'tumblr'
+    end
+  end
 
   def unlink_friendfeed
     if auth = ensure_login
@@ -284,6 +321,14 @@ class LoginController < ApplicationController
     redirect_to :controller => 'setting'
   end
 
+  def unlink_tumblr
+    id = params[:id]
+    if auth = ensure_login
+      auth.clear_token('tumblr', id)
+    end
+    redirect_to :controller => 'setting'
+  end
+
 private
 
   def friendfeed_request_token
@@ -310,6 +355,13 @@ private
     consumer = create_delicious_oauth_consumer()
     url = F2P::Config.delicious_api_oauth_request_token_url
     callback = 'delicious_oauth_callback'
+    get_request_token(consumer, url, callback)
+  end
+
+  def tumblr_request_token
+    consumer = create_tumblr_oauth_consumer()
+    url = F2P::Config.tumblr_api_oauth_request_token_url
+    callback = 'tumblr_oauth_callback'
     get_request_token(consumer, url, callback)
   end
 
@@ -356,6 +408,15 @@ private
     client.oauth_config.consumer_secret = F2P::Config.delicious_api_oauth_consumer_secret
     client.oauth_config.signature_method = F2P::Config.delicious_api_oauth_signature_method
     client.oauth_config.http_method = F2P::Config.delicious_api_oauth_http_method
+    client
+  end
+
+  def create_tumblr_oauth_consumer
+    client = OAuthClient.new
+    client.oauth_config.consumer_key = F2P::Config.tumblr_api_oauth_consumer_key
+    client.oauth_config.consumer_secret = F2P::Config.tumblr_api_oauth_consumer_secret
+    client.oauth_config.signature_method = F2P::Config.tumblr_api_oauth_signature_method
+    client.oauth_config.http_method = F2P::Config.tumblr_api_oauth_http_method
     client
   end
 

@@ -223,6 +223,10 @@ class EntryContext
     @service_source == 'delicious'
   end
 
+  def tumblr?
+    @service_source == 'tumblr'
+  end
+
   def link_opt(opt = {})
     opt.merge(:action => default_action, :eid => @eid)
   end
@@ -240,6 +244,8 @@ class EntryContext
       'graph'
     elsif delicious?
       'delicious'
+    elsif tumblr?
+      'tumblr'
     else
       'list'
     end

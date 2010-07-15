@@ -441,6 +441,73 @@ class EntryController < ApplicationController
     render :action => 'list'
   end
 
+  verify :only => :tumblr,
+          :method => [:get, :post],
+          :add_flash => {:error => 'verify failed'},
+          :redirect_to => {:action => 'inbox'}
+  def tumblr
+    pin_check
+    @ctx = restore_ctx { |ctx|
+      ctx.parse(params, @setting)
+    }
+    @ctx.service_source = 'tumblr'
+    @ctx.feed ||= 'home'
+    if @ctx.query
+      @ctx.feed = 'home'
+    end
+    @ctx.home = false
+    id = params[:id]
+    unless token = auth.token('tumblr', id)
+      session[:back_to] = {:controller => 'entry', :action => 'tumblr'}
+      redirect_to :controller => 'login', :action => 'initiate_tumblr_oauth_login'
+      return
+    end
+    @service_source = token.service
+    @service_user = token.service_user
+    opt = {:start => @ctx.start, :num => @ctx.num}
+    case @ctx.feed
+    when 'user'
+      user = @ctx.user || @service_user
+      tumblr = Tumblr.read(token, user, opt)
+      @profile = tumblr['profile']
+      feedname = user
+    else
+      if @ctx.query and @ctx.user
+        tumblr = Tumblr.search(token, @ctx.user, @ctx.query, opt)
+        @profile = tumblr['profile']
+        feedname = @ctx.query
+      else
+        tumblr = Tumblr.dashboard(token, opt)
+        feedname = 'home'
+        last_checked = session[:tumblr_last_checked] || Time::ZERO
+        next_last_checked = session[:tumblr_next_last_checked] || Time::ZERO
+        if @ctx.start == 0 and updated_id_in_flash.nil?
+          last_checked = session[:tumblr_last_checked] = next_last_checked
+        end
+      end
+    end
+    File.open("/tmp/tumblr", "wb") { |f| f << tumblr.to_json } if $DEBUG
+    feed_opt = find_opt.merge(
+      :tumblr => tumblr ? tumblr['posts'] : Array::EMPTY,
+      :feedname => "Tumblr(#{feedname})",
+      :service_user => token.service_user,
+      :feed => @ctx.feed
+    )
+    @feed = find_entry_thread(feed_opt)
+    @threads = @feed.entries
+    if next_last_checked
+      max = next_last_checked
+      @threads.each do |t|
+        t.entries.each do |e|
+          e.checked_at = last_checked
+          max = [max, e.modified_at].max
+        end
+      end
+      session[:tumblr_next_last_checked] = max
+    end
+    render :action => 'list'
+  end
+
   verify :only => :show,
           :method => :get,
           :params => [:eid],
@@ -483,6 +550,14 @@ class EntryController < ApplicationController
         end
         entry = Graph.show_all(token, sid)
         File.open('/tmp/graph', 'w') { |f| f << entry.to_json } if $DEBUG and entry
+      when ?m
+        unless token = auth.token('tumblr')
+          session[:back_to] = {:controller => 'entry', :action => 'tumblr'}
+          redirect_to :controller => 'login', :action => 'initiate_tumblr_oauth_login'
+          return
+        end
+        entry = Tumblr.show(token, sid)
+        File.open('/tmp/tumblr', 'w') { |f| f << entry.to_json } if $DEBUG and entry
       end
       if pin = Pin.find_by_user_id_and_eid(auth.id, @ctx.eid)
         pin.entry = entry
@@ -503,6 +578,8 @@ class EntryController < ApplicationController
       render_single_buzz_entry(entry)
     when 'graph'
       render_single_graph_entry(entry)
+    when 'tumblr'
+      render_single_tumblr_entry(entry)
     else
       render_single_entry
     end
@@ -904,6 +981,7 @@ class EntryController < ApplicationController
         opt[:token] = token
         opt[:service_source] = service_source
         opt[:service_user] = service_user
+        opt[:tumblr_reblog_key] = param(:reblog_key) if param(:reblog_key)
       end
       begin
         Entry.add_like(opt)
@@ -933,6 +1011,7 @@ class EntryController < ApplicationController
         opt[:token] = token
         opt[:service_source] = service_source
         opt[:service_user] = service_user
+        opt[:tumblr_reblog_key] = param(:reblog_key) if param(:reblog_key)
       end
       begin
         Entry.delete_like(opt)
@@ -957,6 +1036,7 @@ class EntryController < ApplicationController
       opt[:token] = token
       opt[:service_source] = service_source
       opt[:service_user] = service_user
+      opt[:tumblr_reblog_key] = param(:reblog_key) if param(:reblog_key)
     end
     begin
       if !!param(:liked)
@@ -1118,6 +1198,8 @@ private
             entry = Graph.show_all(token, sid)
           when 'delicious'
             entry = Delicious.get(token, sid)
+          when 'tumblr'
+            entry = Tumblr.show(token, sid)
           end
           source = service_source
         end
@@ -1293,6 +1375,12 @@ private
 
   def render_single_graph_entry(graph)
     opt = find_opt.merge(:graph => graph)
+    @feed = find_entry_thread(opt)
+    @original_feed = nil # can we implement it? needed?
+  end
+
+  def render_single_tumblr_entry(post)
+    opt = find_opt.merge(:tumblr => post)
     @feed = find_entry_thread(opt)
     @original_feed = nil # can we implement it? needed?
   end

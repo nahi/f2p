@@ -30,6 +30,7 @@
 <p><%= str %></p>
 <%- end -%>
     </div>
+    <%- unless entry.tumblr? -%>
     <%- form_tag({:action => 'add_comment', :eid => entry.id, :comment => ctx.comment ? ctx.comment : nil}, {:name => 'post'}) do -%>
       <%- entry.comments.each do |comment| -%>
         <div class="comment comment-body">
@@ -52,6 +53,7 @@
       <div class="likes">
         <%= likes(entry) -%>
       </div>
+    <%- end -%>
     <%- end -%>
     <%- if ctx.comment.nil? -%>
       <div class="menu-links">
