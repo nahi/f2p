@@ -1329,6 +1329,17 @@ module EntryHelper
     end
   end
 
+  def user_profile_links(user)
+    if ctx.buzz?
+      links = []
+      base = {:controller => :entry, :action => :buzz, :id => @service_user}
+      links << link_to(h('All'), base.merge(:feed => :user, :user => user))
+      links << link_to(h('Comments'), base.merge(:feed => :comments, :user => user))
+      links << link_to(h('Likes'), base.merge(:feed => :likes, :user => user))
+      links.join(' ')
+    end
+  end
+
   def best_of_links(listid)
     if listid == 'home' or %r(\Asummary/) =~ listid
       listid = 'home'

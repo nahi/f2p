@@ -1,17 +1,22 @@
 <%- if ctx.ff? -%>
-<p><%= picture_link(ctx.profile_for) %> <%= feed_name_with_icon %> <%= h(subscribe_status) %> <%= profile_link(ctx.profile_for) %></p>
+  <p><%= picture_link(ctx.profile_for) %> <%= feed_name_with_icon %> <%= h(subscribe_status) %> <%= profile_link(ctx.profile_for) %></p>
 <%- else -%>
-<p><%= profile_text(profile) %></p>
-<%- if profile.description -%>
-<p><%= profile.description %></p>
-<%- end -%>
-<%- if ctx.tweets? -%>
-  <ul>
-    <%- if profile.location -%>
-      <li>Location: <%= h(profile.location) %></li>
+  <%- if profile -%>
+    <p><%= profile_text(profile) %></p>
+    <%- if body = profile.description -%>
+      <p><%= body %></p>
     <%- end -%>
-    <li>following/followers: <%= h(profile.followings_count) %>/<%= h(profile.followers_count) %></li>
-    <li>entries: <%= h(profile.entries_count) %></li>
-  </ul>
-<%- end -%>
+  <%- end -%>
+  <%- if body = user_profile_links(ctx.profile_for) -%>
+    <p><%= body %></p>
+  <%- end -%>
+  <%- if profile && ctx.tweets? -%>
+    <ul>
+      <%- if profile.location -%>
+        <li>Location: <%= h(profile.location) %></li>
+      <%- end -%>
+      <li>following/followers: <%= h(profile.followings_count) %>/<%= h(profile.followers_count) %></li>
+      <li>entries: <%= h(profile.entries_count) %></li>
+    </ul>
+  <%- end -%>
 <%- end -%>

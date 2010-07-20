@@ -765,7 +765,9 @@ __EOS__
     base = {:controller => :entry, :action => :buzz, :id => @service_user}
     links << link_to(h('Home'), base.merge(:feed => :home))
     links << link_to(h('You'), base.merge(:feed => :user))
-    links << link_to(h('Discussions'), base.merge(:feed => :discussions))
+    #links << link_to(h('Discussions'), base.merge(:feed => :discussions))
+    links << link_to(h('Comments'), base.merge(:feed => :comments))
+    links << link_to(h('Likes'), base.merge(:feed => :likes))
     links << link_to(h('following'), base.merge(:feed => :following))
     links << link_to(h('followers'), base.merge(:feed => :followers))
     if @service_user

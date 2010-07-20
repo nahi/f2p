@@ -34,19 +34,7 @@ class Buzz
           client(token).get(group_path(user, group), args.merge(:alt => :json))
         }
       }
-      if res
-        if parsed = protect { JSON.parse(res.content) }
-          if data = parsed['data']
-            data['entry'] ||= []
-            su = token.service_user
-            data['entry'] = data['entry'].map { |e| wrap(su, e) }
-            data
-          else
-            logger.warn("Unknown structure: " + res.content)
-            nil
-          end
-        end
-      end
+      parse_elements(token, res, 'entry')
     end
 
     def activities(token, feed = '@me/@consumption', args = {})
@@ -55,19 +43,7 @@ class Buzz
           client(token).get(activity_path(feed), args.merge(:alt => :json))
         }
       }
-      if res
-        if parsed = protect { JSON.parse(res.content) }
-          if data = parsed['data']
-            data['items'] ||= []
-            su = token.service_user
-            data['items'] = data['items'].map { |e| wrap(su, e) }
-            data
-          else
-            logger.warn("Unknown structure: " + res.content)
-            nil
-          end
-        end
-      end
+      parse_elements(token, res, 'items')
     end
 
     def show_all(token, feed)
@@ -204,6 +180,22 @@ class Buzz
         }
       }
       parse_element(token, res) if res
+    end
+
+    def parse_elements(token, res, elements_key)
+      if res
+        if parsed = protect { JSON.parse(res.content) }
+          if data = parsed['data']
+            data[elements_key] ||= []
+            su = token.service_user
+            data[elements_key] = data[elements_key].map { |e| wrap(su, e) }
+            data
+          else
+            logger.warn("Unknown structure: " + res.content)
+            nil
+          end
+        end
+      end
     end
 
     def parse_element(token, res)

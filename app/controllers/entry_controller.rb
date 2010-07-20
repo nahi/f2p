@@ -276,6 +276,14 @@ class EntryController < ApplicationController
       buzz = Buzz.activities(token, "#{user}/@self", opt)
       t.result
       feedname = @profile.name
+    when 'comments'
+      user = @ctx.user || '@me'
+      buzz = Buzz.activities(token, [user, '@comments'].join('/'), opt)
+      feedname = @ctx.feed
+    when 'likes'
+      user = @ctx.user || '@me'
+      buzz = Buzz.activities(token, [user, '@liked'].join('/'), opt)
+      feedname = @ctx.feed
     when 'discussions'
       user = @ctx.user || token.params
       opt[:q] = "commenter:#{user}"
