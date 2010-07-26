@@ -1185,6 +1185,10 @@ class Entry
     @date.nil?
   end
 
+  def id_for_max
+    twitter_retweeted_by_status_id || id
+  end
+
 private
 
   def wrap_likes(likes)

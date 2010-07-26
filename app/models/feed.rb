@@ -51,7 +51,7 @@ class Feed
       unless feed.entries.empty?
         threads.from_modified = feed.entries.last.modified
         threads.to_modified = feed.entries.first.modified
-        threads.max_id = feed.entries.last.id
+        threads.max_id = feed.entries.last.id_for_max
       end
       threads.pins = pins
       feed.entries = threads
