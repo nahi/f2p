@@ -70,22 +70,13 @@ class Feed
 
     def fetch_entries(auth, opt)
       if opt[:eid]
-        feed = fetch_single_entry_as_array(auth, opt)
-        if ext_entries(opt).nil? and entry = feed.entries.first
-          update_cache_entry(auth, entry)
-        end
-        feed
+        fetch_single_entry_as_array(auth, opt)
       else
         feed = fetch_list_entries(auth, opt)
         if ext_entries(opt).nil? and (updated_id = opt[:updated_id])
           entry = wrap(Task.run { get_feed(auth, updated_id, opt) }.result).entries.first
           if entry
-            update_cache_entry(auth, entry)
-            if feed.entries.find { |e| e.id == updated_id }
-              replace_entry(feed, entry)
-            else
-              feed.entries = [entry] + feed.entries
-            end
+            feed.entries = [entry] + feed.entries
           end
         elsif opt[:tweets] and opt[:feed] == 'direct'
           feed.entries = sort_by_modified(feed.entries)[0, opt[:num]]
@@ -102,14 +93,6 @@ class Feed
       if ext = ext_entries(opt)
         return from_service([ext], opt)
       end
-      if opt[:allow_cache]
-        if cache = get_cached_entries(auth)
-          if found = cache.entries.find { |e| e.id == opt[:eid] && e.id != opt[:updated_id] }
-            logger.info("[cache] entry cache found for #{opt[:eid]}")
-            return [found]
-          end
-        end
-      end
       wrap(Task.run { get_feed(auth, opt[:eid], opt) }.result)
     end
 
@@ -117,52 +100,50 @@ class Feed
       if ext = ext_entries(opt)
         return from_service(ext, opt)
       end
-      cache_entries(auth, opt) {
-        if opt[:inbox]
-          wrap(Task.run { get_feed(auth, 'home', opt) }.result)
-        elsif opt[:eids]
-          wrap(Task.run { get_entries(auth, opt) }.result)
-        elsif opt[:link]
-          if opt[:query]
-            start = opt[:start] / 2
-            num = opt[:num] / 2
-            opt = opt.merge(:start => start, :num => num)
-            search_task = Task.run { search_entries(auth, opt) }
-          end
-          link_task = Task.run { get_link_entries(auth, opt) }
-          merged = wrap(link_task.result)
-          if opt[:query]
-            merged.entries += wrap(search_task.result).entries
-            merged.entries = merged.entries.inject({}) { |r, e| r[e.id] = e; r }.values
-          end
-          merged
-        elsif opt[:feed]
-          wrap(Task.run { get_feed(auth, opt[:feed], opt) }.result)
-        elsif opt[:query] or opt[:service]
-          wrap(Task.run { search_entries(auth, opt) }.result)
-        elsif opt[:like] == 'liked'
-          wrap(Task.run { get_liked(auth, opt) }.result)
-        elsif opt[:user]
-          wrap(Task.run { get_feed(auth, opt[:user], opt) }.result)
-        elsif opt[:list]
-          wrap(Task.run { get_feed(auth, opt[:list], opt) }.result)
-        elsif opt[:label] == 'pin'
-          feed = wrap(Task.run { pinned_entries(auth, opt) }.result)
-          if num = opt[:maxcomments]
-            feed.entries.each do |e|
-              # FriendFeed API server handles placeholder.
-              # TODO: remove this condition when we cache FF entry as well as
-              # other services in the future.
-              trim_comments(e, num) unless e.ff?
-            end
-          end
-          feed
-        elsif opt[:room]
-          wrap(Task.run { get_feed(auth, opt[:room], opt) }.result)
-        else
-          wrap(Task.run { get_feed(auth, 'home', opt) }.result)
+      if opt[:inbox]
+        wrap(Task.run { get_feed(auth, 'home', opt) }.result)
+      elsif opt[:eids]
+        wrap(Task.run { get_entries(auth, opt) }.result)
+      elsif opt[:link]
+        if opt[:query]
+          start = opt[:start] / 2
+          num = opt[:num] / 2
+          opt = opt.merge(:start => start, :num => num)
+          search_task = Task.run { search_entries(auth, opt) }
         end
-      }
+        link_task = Task.run { get_link_entries(auth, opt) }
+        merged = wrap(link_task.result)
+        if opt[:query]
+          merged.entries += wrap(search_task.result).entries
+          merged.entries = merged.entries.inject({}) { |r, e| r[e.id] = e; r }.values
+        end
+        merged
+      elsif opt[:feed]
+        wrap(Task.run { get_feed(auth, opt[:feed], opt) }.result)
+      elsif opt[:query] or opt[:service]
+        wrap(Task.run { search_entries(auth, opt) }.result)
+      elsif opt[:like] == 'liked'
+        wrap(Task.run { get_liked(auth, opt) }.result)
+      elsif opt[:user]
+        wrap(Task.run { get_feed(auth, opt[:user], opt) }.result)
+      elsif opt[:list]
+        wrap(Task.run { get_feed(auth, opt[:list], opt) }.result)
+      elsif opt[:label] == 'pin'
+        feed = wrap(Task.run { pinned_entries(auth, opt) }.result)
+        if num = opt[:maxcomments]
+          feed.entries.each do |e|
+            # FriendFeed API server handles placeholder.
+            # TODO: remove this condition when we cache FF entry as well as
+            # other services in the future.
+            trim_comments(e, num) unless e.ff?
+          end
+        end
+        feed
+      elsif opt[:room]
+        wrap(Task.run { get_feed(auth, opt[:room], opt) }.result)
+      else
+        wrap(Task.run { get_feed(auth, 'home', opt) }.result)
+      end
     end
 
     def trim_comments(entry, num)
@@ -190,49 +171,6 @@ class Feed
         placeholder.entry = entry
         comments.replace([placeholder] + comments[-tail_size, tail_size])
       end
-    end
-
-    def cache_entries(auth, opt, &block)
-      allow_cache = opt[:allow_cache]
-      opt = opt.dup
-      opt.delete(:allow_cache)
-      opt.delete(:updated_id)
-      opt.delete(:merge_entry)
-      opt.delete(:merge_service)
-      opt.delete(:filter_except)
-      opt.delete(:tweets)
-      opt.delete(:buzz)
-      opt.delete(:graph)
-      opt.delete(:delicious)
-      opt.delete(:tumblr)
-      if allow_cache
-        if cache = get_cached_entries(auth)
-          if opt == cache.feed_opt
-            logger.info("[cache] entries cache found for #{opt.inspect}")
-            return cache
-          end
-        end
-      end
-      cache = yield
-      cache.feed_opt = opt
-      set_cached_entries(auth, cache)
-      cache
-    end
-
-    def update_cache_entry(auth, entry)
-      if cache = get_cached_entries(auth)
-        replace_entry(cache, entry)
-        set_cached_entries(auth, cache)
-      end
-    end
-
-    def get_cached_entries(auth)
-      cache = ff_client.get_cached_entries(auth.name)
-      cache
-    end
-
-    def set_cached_entries(auth, cache)
-      ff_client.set_cached_entries(auth.name, cache)
     end
 
     def check_inbox(auth, feed, update_unread = true)

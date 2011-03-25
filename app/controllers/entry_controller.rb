@@ -886,7 +886,6 @@ class EntryController < ApplicationController
     end
     if entry = Entry.update(opt)
       flash[:updated_id] = entry.id
-      flash[:allow_cache] = true
     end
     redirect_to_entry_or_list
   end
@@ -964,7 +963,6 @@ class EntryController < ApplicationController
         unpin_entry(id)
         flash[:added_id] = id
         flash[:added_comment] = c.id
-        flash[:allow_cache] = true
       end
     end
     if param(:service_source) == 'twitter'
@@ -999,7 +997,6 @@ class EntryController < ApplicationController
     end
     unless param(:service_source)
       flash[:updated_id] = id
-      flash[:allow_cache] = true
     end
     redirect_to_entry_or_list
   end
@@ -1029,7 +1026,6 @@ class EntryController < ApplicationController
     end
     unless param(:service_user)
       flash[:updated_id] = id
-      flash[:allow_cache] = true
     end
     redirect_to_entry_or_list
   end
@@ -1100,7 +1096,6 @@ class EntryController < ApplicationController
     if id = param(:eid)
       pin_entry(id)
     end
-    flash[:allow_cache] = true
     redirect_to_entry_or_list
   end
 
@@ -1114,7 +1109,6 @@ class EntryController < ApplicationController
     if id = param(:eid)
       unpin_entry(id)
     end
-    flash[:allow_cache] = true
     redirect_to_entry_or_list
   end
 
@@ -1177,7 +1171,6 @@ private
       max_comments = 1
     end
     ctx.find_opt.merge(
-      :allow_cache => flash[:allow_cache],
       :updated_id => updated_id,
       :fof => (@setting.disable_fof ? nil : 1),
       :maxcomments => max_comments
@@ -1350,7 +1343,6 @@ private
     with_feedinfo(@ctx) do
       opt = find_opt()
       # We might not yet fetched comments.
-      opt.delete(:allow_cache)
       opt.delete(:maxcomments)
       opt.delete(:maxlikes)
       @feed = find_entry_thread(opt)
@@ -1359,7 +1351,6 @@ private
         ctx = sess_ctx.dup
         ctx.eid = nil
         opt = find_opt(ctx)
-        opt[:allow_cache] = true
         opt.delete(:updated_id)
         opt[:filter_except] = @ctx.eid
         @original_feed = find_entry_thread(opt)

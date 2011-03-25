@@ -58,7 +58,15 @@ class ApplicationController < ActionController::Base
   private
 
     def create_ff_client(logger)
-      FriendFeed::APIV2ClientProxy.new
+      client = FriendFeed::APIV2Client.new(logger)
+      client.http_proxy = F2P::Config.http_proxy
+      client.oauth_consumer_key = F2P::Config.friendfeed_api_oauth_consumer_key
+      client.oauth_consumer_secret = F2P::Config.friendfeed_api_oauth_consumer_secret
+      client.oauth_site = F2P::Config.friendfeed_api_oauth_site
+      client.oauth_scheme = F2P::Config.friendfeed_api_oauth_scheme
+      client.oauth_signature_method = F2P::Config.friendfeed_api_oauth_signature_method
+      client.json_parse_size_limit = F2P::Config.json_parse_size_limit
+      client
     end
   end
 
