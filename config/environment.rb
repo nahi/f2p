@@ -161,8 +161,8 @@ Rails::Initializer.run do |config|
   # Make sure the secret is at least 30 characters and all random, 
   # no regular words or you'll be exposed to dictionary attacks.
   config.action_controller.session = {
-    :session_key => '_ff1_session',
-    :secret      => 'cb8724bb405f34efcaea391cce2380850d80455f8d01de24a0d385a2452a8772ec7a71d765c85c321d17a1f6705d9cfc642c62c39b9be9594f05b49e8e22e6ae',
+    :key => '_f2p_sess',
+    :secret => nil,
     :expire_after => 2 * 7 * 24 * 60 * 60 
   }
 
