@@ -1,4 +1,6 @@
 require 'xsd/mapping'
+require 'httpclient'
+require 'oauthclient'
 
 
 class Delicious

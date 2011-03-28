@@ -1,4 +1,5 @@
 require 'httpclient'
+require 'oauthclient'
 
 
 class LoginController < ApplicationController
