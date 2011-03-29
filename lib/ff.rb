@@ -651,6 +651,8 @@ module FriendFeed
     def post_and_parse(uri, cred, query = {}, ext = {})
       case cred.first
       when :basicauth
+        # TODO: FF uses wrong certificate for wrong server.
+        uri = ff_ssl_hack(uri)
         name, remote_key = cred[1]
         query = add_appid_for_basicauth(query)
         res = client_sync(uri, name, remote_key) { |client|
