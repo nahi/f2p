@@ -22,9 +22,9 @@
         //--></script>
       <%- else -%>
 <%= content(entry) -%>
-<%- if str = via(entry) -%>
-<br /><span class="comment"><%= str %></span>
-<%- end -%>
+<br />
+<span class="comment"><%= via(entry) %><%= twitter_reply_to(entry) %><%= retweet_rel_link(entry) %></span>
+
       <%- end -%>
 <%- if str = retweets(entry) -%>
 <p><%= str %></p>

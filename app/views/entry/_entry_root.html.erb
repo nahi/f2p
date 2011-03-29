@@ -12,7 +12,7 @@
   <div class="header">
     <%= author_link(entry) %> <%= to(entry) %>
     <%= published(entry, true) -%><%= friend_of(entry) -%>
-    <span class="comment"><%= via(entry) %></span>
+    <span class="comment"><%= via(entry) %><%= twitter_reply_to(entry) %><%= retweet_rel_link(entry) %></span>
     <%= service_icon(entry) -%>
   </div>
   <div class="body">

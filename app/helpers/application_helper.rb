@@ -115,7 +115,9 @@ module ApplicationHelper
     text-decoration: none;
     color: black;
   }
-  a.hlink { text-decoration: none; }
+  a.hlink {
+    color: #999;
+  }
   p {
     margin-top: 1ex;
     margin-bottom: 1ex;
@@ -143,6 +145,10 @@ module ApplicationHelper
     border-bottom: 1px solid #aaf;
     padding-top: 0.6ex;
     padding-bottom: 0.6ex;
+  }
+  .footnote {
+    font-size: 85%;
+    color: #999;
   }
   div.single a.menu-link {
     border: outset 1px;
@@ -445,9 +451,12 @@ __EOS__
   def via(via, label = 'via')
     if via
       if via.url
-        %Q[#{label} #{link_to(h(via.name), via.url)}]
+        str = %Q[#{label} #{link_to(h(via.name), via.url, :class => 'hlink')}]
       elsif via.name
-        %Q[#{label} #{h(via.name)}]
+        str = %Q[#{label} #{h(via.name)}]
+      end
+      if str
+        span(str, :footnote)
       end
     end
   end

@@ -457,15 +457,14 @@ module EntryHelper
     end
     ary << from
     ary << lock_icon(entry.from)
-    if link = retweet_rel_link(entry)
-      ary << link
-    end
     ary.join
   end
 
   def twitter_reply_to(entry)
     if url = entry.twitter_in_reply_to_url
-      link_to(h(' reply to ' + entry.twitter_reply_to), url, :class => 'hlink')
+      opt = link_show(entry.twitter_reply_to_status_id)
+      name = entry.twitter_reply_to
+      span(h(' in reply to ') + link_to(h(name), opt, :class => 'hlink'), :footnote)
     end
   end
 
@@ -473,11 +472,11 @@ module EntryHelper
     if id = entry.twitter_retweeted_by_status_id
       opt = link_show(entry.twitter_retweeted_by_status_id)
       name = entry.twitter_retweeted_by
-      h(' RT by ') + link_to(h(name), opt, :class => 'hlink')
+      span(h(' retweeted by ') + link_to(h(name), opt, :class => 'hlink'), :footnote)
     elsif id = entry.buzz_reshared_id
       opt = link_show(id)
       name = entry.buzz_reshared_of.name
-      h(' Reshared from ') + link_to(h(name), opt, :class => 'hlink')
+      span(h(' Reshared from ') + link_to(h(name), opt, :class => 'hlink'), :footnote)
     end
   end
 
@@ -668,11 +667,7 @@ module EntryHelper
   def filter_twitter_username(common, entry)
     common.gsub(/@([a-zA-Z0-9_]+)/) {
       user = $1
-      if user == entry.twitter_reply_to
-        link = link_show(entry.twitter_reply_to_status_id)
-      else
-        link = link_action('tweets', :feed => 'user', :user => user)
-      end
+      link = link_action('tweets', :feed => 'user', :user => user)
       '@' + link_to(h(user), link, :class => 'twname')
     }
   end
