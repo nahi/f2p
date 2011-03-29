@@ -525,6 +525,7 @@ class EntryController < ApplicationController
   def show
     @ctx = EntryContext.new(auth)
     @ctx.eid = param(:eid)
+    @body = flash[:post_body]
     entry = nil
     Entry.if_service_id(@ctx.eid) do |sid|
       case @ctx.eid[0]
@@ -796,12 +797,7 @@ class EntryController < ApplicationController
       msg = e.message
     end
     unless entry
-      msg = 'Posting failure. ' + msg.to_s
-      if opt[:file]
-        msg += ' Unsupported media type?'
-      end
-      flash[:message] = msg
-      flash[:post_body] = @body
+      set_post_error(msg, @body)
       if param(:service_source)
         redirect_to_list
       else
@@ -959,11 +955,25 @@ class EntryController < ApplicationController
       end
     else
       opt[:eid] = id
-      if c = Entry.add_comment(create_opt(opt))
-        unpin_entry(id)
-        flash[:added_id] = id
-        flash[:added_comment] = c.id
+      msg = nil
+      begin
+        c = Entry.add_comment(create_opt(opt))
+      rescue Exception => e
+        logger.warn(e)
+        msg = e.message
       end
+      unless c
+        set_post_error(msg, body)
+        if param(:service_source) == 'twitter'
+          redirect_to(:action => :show, :eid => id)
+        else
+          redirect_to_entry_or_list
+        end
+        return
+      end
+      unpin_entry(id)
+      flash[:added_id] = id
+      flash[:added_comment] = c.id
     end
     if param(:service_source) == 'twitter'
       redirect_to_list
@@ -1162,6 +1172,13 @@ class EntryController < ApplicationController
   end
 
 private
+
+  def set_post_error(msg, body)
+    msg = 'Posting failure. ' + msg.to_s
+    msg += " (Posted #{body.to_s.split(//u).size} chars)"
+    flash[:message] = msg
+    flash[:post_body] = @body
+  end
 
   def find_opt(ctx = @ctx)
     updated_id = updated_id_in_flash()
