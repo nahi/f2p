@@ -28,7 +28,7 @@ class ApplicationController < ActionController::Base
 
   class << self
     def ff_client
-      @@ff ||= create_ff_client(logger)
+      @@ff ||= create_ff_client(ActiveRecord::Base.logger)
     end
 
     def ff_client=(ff_client)

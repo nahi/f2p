@@ -1,10 +1,13 @@
 require 'rubytter'
 require 'cgi'
+require 'api'
 
 
 class Tweet
 
   class << self
+    include API
+
     def home_timeline(token, args = {})
       res = with_perf('[perf] start home_timeline fetch') {
         protect([]) {
@@ -295,31 +298,6 @@ class Tweet
     end
 
   private
-
-    def logger
-      ActiveRecord::Base.logger
-    end
-
-    def protect(default = nil)
-      begin
-        yield
-      rescue
-        default
-      end
-    end
-
-    def with_perf(msg)
-      logger.info(msg)
-      begin
-        start = Time.now
-        yield
-      rescue
-        logger.warn($!)
-        raise
-      ensure
-        logger.info("elapsed: #{((Time.now - start) * 1000).to_i}ms")
-      end
-    end
 
     def with_header_ext(res)
       obj = yield(res)

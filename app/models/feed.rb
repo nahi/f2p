@@ -74,7 +74,7 @@ class Feed
       else
         feed = fetch_list_entries(auth, opt)
         if ext_entries(opt).nil? and (updated_id = opt[:updated_id])
-          entry = wrap(Task.run { get_feed(auth, updated_id, opt) }.result).entries.first
+          entry = wrap(get_feed(auth, updated_id, opt)).entries.first
           if entry
             feed.entries = [entry] + feed.entries
           end
@@ -93,7 +93,7 @@ class Feed
       if ext = ext_entries(opt)
         return from_service([ext], opt)
       end
-      wrap(Task.run { get_feed(auth, opt[:eid], opt) }.result)
+      wrap(get_feed(auth, opt[:eid], opt))
     end
 
     def fetch_list_entries(auth, opt)
@@ -101,35 +101,31 @@ class Feed
         return from_service(ext, opt)
       end
       if opt[:inbox]
-        wrap(Task.run { get_feed(auth, 'home', opt) }.result)
+        wrap(get_feed(auth, 'home', opt))
       elsif opt[:eids]
-        wrap(Task.run { get_entries(auth, opt) }.result)
+        wrap(get_entries(auth, opt))
       elsif opt[:link]
+        merged = get_link_entries(auth, opt)
         if opt[:query]
           start = opt[:start] / 2
           num = opt[:num] / 2
           opt = opt.merge(:start => start, :num => num)
-          search_task = Task.run { search_entries(auth, opt) }
-        end
-        link_task = Task.run { get_link_entries(auth, opt) }
-        merged = wrap(link_task.result)
-        if opt[:query]
-          merged.entries += wrap(search_task.result).entries
+          merged.entries += wrap(search_entries(auth, opt)).entries
           merged.entries = merged.entries.inject({}) { |r, e| r[e.id] = e; r }.values
         end
         merged
       elsif opt[:feed]
-        wrap(Task.run { get_feed(auth, opt[:feed], opt) }.result)
+        wrap(get_feed(auth, opt[:feed], opt))
       elsif opt[:query] or opt[:service]
-        wrap(Task.run { search_entries(auth, opt) }.result)
+        wrap(search_entries(auth, opt))
       elsif opt[:like] == 'liked'
-        wrap(Task.run { get_liked(auth, opt) }.result)
+        wrap(get_liked(auth, opt))
       elsif opt[:user]
-        wrap(Task.run { get_feed(auth, opt[:user], opt) }.result)
+        wrap(get_feed(auth, opt[:user], opt))
       elsif opt[:list]
-        wrap(Task.run { get_feed(auth, opt[:list], opt) }.result)
+        wrap(get_feed(auth, opt[:list], opt))
       elsif opt[:label] == 'pin'
-        feed = wrap(Task.run { pinned_entries(auth, opt) }.result)
+        feed = wrap(pinned_entries(auth, opt))
         if num = opt[:maxcomments]
           feed.entries.each do |e|
             # FriendFeed API server handles placeholder.
@@ -140,9 +136,9 @@ class Feed
         end
         feed
       elsif opt[:room]
-        wrap(Task.run { get_feed(auth, opt[:room], opt) }.result)
+        wrap(get_feed(auth, opt[:room], opt))
       else
-        wrap(Task.run { get_feed(auth, 'home', opt) }.result)
+        wrap(get_feed(auth, 'home', opt))
       end
     end
 
