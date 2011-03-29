@@ -68,10 +68,8 @@ class EntryController < ApplicationController
       redirect_to :controller => 'login', :action => 'initiate_oauth_login'
       return
     end
-    with_feedinfo(@ctx) do
-      @feed = find_entry_thread(find_opt)
-      @threads = @feed.entries
-    end
+    @feed = find_entry_thread(find_opt)
+    @threads = @feed.entries
     last_checked = session[:friendfeed_last_checked] || Time::ZERO
     next_last_checked = session[:friendfeed_next_last_checked] || Time::ZERO
     if @ctx.start == 0 and updated_id_in_flash.nil?
@@ -1357,23 +1355,21 @@ private
 
   def render_single_entry
     sess_ctx = session[:ctx]
-    with_feedinfo(@ctx) do
-      opt = find_opt()
-      # We might not yet fetched comments.
-      opt.delete(:maxcomments)
-      opt.delete(:maxlikes)
-      @feed = find_entry_thread(opt)
-      if sess_ctx
-        # pin/unpin redirect caused :eid set.
-        ctx = sess_ctx.dup
-        ctx.eid = nil
-        opt = find_opt(ctx)
-        opt.delete(:updated_id)
-        opt[:filter_except] = @ctx.eid
-        @original_feed = find_entry_thread(opt)
-      else
-        @original_feed = nil
-      end
+    opt = find_opt()
+    # We might not yet fetched comments.
+    opt.delete(:maxcomments)
+    opt.delete(:maxlikes)
+    @feed = find_entry_thread(opt)
+    if sess_ctx
+      # pin/unpin redirect caused :eid set.
+      ctx = sess_ctx.dup
+      ctx.eid = nil
+      opt = find_opt(ctx)
+      opt.delete(:updated_id)
+      opt[:filter_except] = @ctx.eid
+      @original_feed = find_entry_thread(opt)
+    else
+      @original_feed = nil
     end
   end
 
