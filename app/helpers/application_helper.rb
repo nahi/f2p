@@ -116,6 +116,8 @@ module ApplicationHelper
     color: black;
   }
   a.hlink {
+    font-size: 85%;
+    text-decoration: none;
     color: #999;
   }
   p {
@@ -456,7 +458,7 @@ __EOS__
         str = %Q[#{label} #{h(via.name)}]
       end
       if str
-        span(str, :footnote)
+        span(str, 'footnote')
       end
     end
   end
@@ -467,10 +469,6 @@ __EOS__
 
   def image_max_style(width = IMG_MAX_WIDTH, height = IMG_MAX_HEIGHT)
     "max-width:#{width}px;max-height:#{height}px"
-  end
-
-  def title_date
-    h(now.strftime("%H:%M"))
   end
 
   def date(time, compact = true)
@@ -496,6 +494,7 @@ __EOS__
       end
     end
     body = time.in_time_zone(timezone).strftime(format)
+    span(h(body), 'footnote')
     latest(time, body)
   end
 
@@ -510,7 +509,7 @@ __EOS__
     else
       klass = 'older'
     end
-    span(h(body), klass)
+    span(h(body), 'date ' + klass)
   end
 
   def ago(time)
