@@ -287,8 +287,7 @@ __EOS__
     [
       settings_link,
       logout_link,
-      help_link,
-      to_top_menu
+      help_link
     ].compact.join(' ')
   end
 
@@ -739,7 +738,7 @@ __EOS__
     links << link_to(h('Discussions'), :controller => :entry, :action => :list, :feed => feedid)
     feedid = 'filter/direct'
     links << link_to(h('DM'), :controller => :entry, :action => :list, :feed => feedid)
-    links << menu_link(menu_label('sign out'), :controller => 'login', :action => 'unlink_friendfeed')
+    #links << menu_link(menu_label('sign out'), :controller => 'login', :action => 'unlink_friendfeed')
     links.join(' ')
   end
 
@@ -761,10 +760,10 @@ __EOS__
     sub << link_to(h('by friends'), base.merge(:feed => :retweeted_to_me))
     sub << link_to(h('by you'), base.merge(:feed => :retweeted_by_me))
     sub << link_to(h('yours'), base.merge(:feed => :retweets_of_me))
-    links << 'RT(' + sub.join(' ') + ')'
-    if @service_user
-      links << menu_link(menu_label('sign out'), :controller => 'login', :action => 'unlink_twitter', :id => @service_user)
-    end
+    links << 'Retweets: ' + sub.join(' ')
+    #if @service_user
+    #  links << menu_link(menu_label('sign out'), :controller => 'login', :action => 'unlink_twitter', :id => @service_user)
+    #end
     links.join(' ')
   end
 
@@ -778,9 +777,9 @@ __EOS__
     links << link_to(h('Likes'), base.merge(:feed => :likes))
     links << link_to(h('following'), base.merge(:feed => :following))
     links << link_to(h('followers'), base.merge(:feed => :followers))
-    if @service_user
-      links << menu_link(menu_label('sign out'), :controller => 'login', :action => 'unlink_buzz', :id => @service_user)
-    end
+    #if @service_user
+    #  links << menu_link(menu_label('sign out'), :controller => 'login', :action => 'unlink_buzz', :id => @service_user)
+    #end
     links.join(' ')
   end
 
@@ -789,9 +788,9 @@ __EOS__
     base = {:controller => :entry, :action => :graph, :id => @service_user}
     links << link_to(h('Home'), base.merge(:feed => :home))
     links << link_to(h('You'), base.merge(:feed => :user))
-    if @service_user
-      links << menu_link(menu_label('sign out'), :controller => 'login', :action => 'unlink_facebook', :id => @service_user)
-    end
+    #if @service_user
+    #  links << menu_link(menu_label('sign out'), :controller => 'login', :action => 'unlink_facebook', :id => @service_user)
+    #end
     links.join(' ')
   end
 
@@ -799,9 +798,9 @@ __EOS__
     links = []
     base = {:controller => :entry, :action => :delicious, :id => @service_user}
     links << link_to(h('Home'), base.merge(:feed => :home))
-    if @service_user
-      links << menu_link(menu_label('sign out'), :controller => 'login', :action => 'unlink_delicious', :id => @service_user)
-    end
+    #if @service_user
+    #  links << menu_link(menu_label('sign out'), :controller => 'login', :action => 'unlink_delicious', :id => @service_user)
+    #end
     links.join(' ')
   end
 
@@ -810,9 +809,9 @@ __EOS__
     base = {:controller => :entry, :action => :tumblr}
     links << link_to(h('Home'), base.merge(:feed => :home))
     links << link_to(h('You'), base.merge(:feed => :user, :user => @service_user))
-    if @service_user
-      links << menu_link(menu_label('sign out'), :controller => 'login', :action => 'unlink_tumblr', :id => @service_user)
-    end
+    #if @service_user
+    #  links << menu_link(menu_label('sign out'), :controller => 'login', :action => 'unlink_tumblr', :id => @service_user)
+    #end
     links.join(' ')
   end
 

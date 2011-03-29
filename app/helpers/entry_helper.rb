@@ -1129,8 +1129,7 @@ module EntryHelper
       search_link,
       settings_link,
       logout_link,
-      help_link,
-      to_top_menu
+      help_link
     ].compact.join(' ')
   end
 
