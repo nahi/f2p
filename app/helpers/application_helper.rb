@@ -126,9 +126,7 @@ module ApplicationHelper
   }
   p.message { color: red; }
   textarea { vertical-align: text-top; }
-  .latest1 { color: #F00; }
-  .latest2 { color: #C00; }
-  .latest3 { color: #900; }
+  .em { color: #F00; }
   .older { color: #008; }
   .archived { color: #558; }
   .inbox { font-weight: bold; }
@@ -485,11 +483,11 @@ __EOS__
       end
     else
       if elapsed > YEAR_THRESHOLD
-        format = "(%y/%m/%d)"
+        format = "%y/%m/%d"
       elsif elapsed > DATE_THRESHOLD
-        format = "(%m/%d)"
+        format = "%m/%d"
       else
-        format = "(%H:%M)"
+        format = "%H:%M"
       end
     end
     body = time.in_time_zone(timezone).strftime(format)
@@ -498,17 +496,15 @@ __EOS__
   end
 
   def latest(time, body)
+    klass = 'footnote'
     case elapsed(time)
     when (-1.hour)..(1.hour) # may have a time lag
-      klass = 'latest1'
+      klass += ' inbox'
     when 0..3.hour
-      klass = 'latest2'
     when 0..6.hour
-      klass = 'latest3'
     else
-      klass = 'older'
     end
-    span(h(body), 'date ' + klass)
+    span(h(body), klass)
   end
 
   def ago(time)
@@ -748,10 +744,10 @@ __EOS__
     links << link_to(h('Home'), base.merge(:feed => :home))
     links << link_to(h('You'), base.merge(:feed => :user))
     label = h('Mentions')
-    label = span(label, "inbox latest1") if @twitter_mentions_updated
+    label = span(label, "em") if @twitter_mentions_updated
     links << link_to(label, base.merge(:feed => :mentions))
     label = h('DM')
-    label = span(label, "inbox latest1") if @twitter_direct_updated
+    label = span(label, "em") if @twitter_direct_updated
     links << link_to(label, base.merge(:feed => :direct))
     links << link_to(h('Favorites'), base.merge(:feed => :favorites))
     links << link_to(h('following'), base.merge(:feed => :following, :max_id => -1))
