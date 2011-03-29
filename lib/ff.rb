@@ -305,11 +305,9 @@ module FriendFeed
 
     # wrapper method for V1 compatibility
     def validate(name, remote_key)
-      # uri = uri("validate")
-      # FF uses wrong certificate for wrong server. It is sleeping service...
-      temp_base = 'https://friendfeed.com/api/v2/'
-      uri = URI.parse(File.join(temp_base, 'validate'))
-      return false unless uri
+      uri = uri("validate")
+      # TODO: FF uses wrong certificate for wrong server.
+      uri = ff_ssl_hack(uri)
       res = client_sync(uri, name, remote_key) { |client|
         get_request(client, uri)
       }
@@ -622,9 +620,15 @@ module FriendFeed
       URL_BASE
     end
 
+    def ff_ssl_hack(uri)
+      URI.parse('https://friendfeed.com/api' + uri.path)
+    end
+
     def get_and_parse(uri, cred, query = {})
       case cred.first
       when :basicauth
+        # TODO: FF uses wrong certificate for wrong server.
+        uri = ff_ssl_hack(uri)
         name, remote_key = cred[1]
         query = add_appid_for_basicauth(query)
         res = client_sync(uri, name, remote_key) { |client|
