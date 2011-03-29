@@ -329,7 +329,7 @@ class Tweet
     end
 
     def client(token)
-      OAuthRubytter.new(
+      client = OAuthRubytter.new(
         {
           :token => token.token,
           :secret => token.secret,
@@ -342,6 +342,56 @@ class Tweet
           :wiredump => '/tmp/rubytter.log'
         }
       )
+      client.connection.client.transparent_gzip_decompression = true
+      client
     end
   end
 end
+
+
+# TODO: JRuby's Zlib does not support wbits. I'll fix JRuby.
+require 'httpclient/session'
+class HTTPClient
+  class Session
+    def get_body(&block)
+      begin
+        read_header if @state == :META
+        return nil if @state != :DATA
+        if @gzipped and @transparent_gzip_decompression
+          buf = ''
+          original_block = block
+          block = Proc.new { |str|
+            buf << str
+          }
+        end
+        if @chunked
+          read_body_chunked(&block)
+        elsif @content_length
+          read_body_length(&block)
+        else
+          read_body_rest(&block)
+        end
+        if original_block and buf
+          begin
+            gz = Zlib::GzipReader.new(StringIO.new(buf))
+            original_block.call(gz.read)
+          ensure
+            gz.close
+          end
+        end
+      rescue
+        close
+        raise
+      end
+      if eof?
+        if @next_connection
+          @state = :WAIT
+        else
+          close
+        end
+      end
+      nil
+    end
+  end
+end
+
