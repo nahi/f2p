@@ -305,7 +305,10 @@ module FriendFeed
 
     # wrapper method for V1 compatibility
     def validate(name, remote_key)
-      uri = uri("validate")
+      # uri = uri("validate")
+      # FF uses wrong certificate for wrong server. It is sleeping service...
+      temp_base = 'https://friendfeed.com/api/v2/'
+      uri = URI.parse(File.join(temp_base, 'validate'))
       return false unless uri
       res = client_sync(uri, name, remote_key) { |client|
         get_request(client, uri)
