@@ -269,7 +269,7 @@ __EOS__
     links << link_to(h('Buzz'), { :controller => :entry, :action => :buzz }, {:class => :tab})
     links << link_to(h('FB'), { :controller => :entry, :action => :graph }, {:class => :tab})
     #links << link_to(h('Delicious'), { :controller => :entry, :action => :delicious }, {:class => :tab})
-    links << link_to(h('Tumblr'), { :controller => :entry, :action => :tumblr }, {:class => :tab})
+    #links << link_to(h('Tumblr'), { :controller => :entry, :action => :tumblr }, {:class => :tab})
     pin_label = h('Star')
     pin_label += "(#{@threads.pins})" if @threads
     links << link_to(pin_label, { :controller => :entry, :action => :list, :label => 'pin' }, {:class => :tab})
