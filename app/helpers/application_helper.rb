@@ -119,10 +119,10 @@ module ApplicationHelper
     text-decoration: none;
     color: black;
     font-weight: bold;
-    font-size: 85%;
+    font-size: smaller;
   }
   a.hlink {
-    font-size: 85%;
+    font-size: smaller;
     text-decoration: none;
     color: #999;
   }
@@ -153,7 +153,7 @@ module ApplicationHelper
     padding-bottom: 0.6ex;
   }
   .footnote {
-    font-size: 85%;
+    font-size: smaller;
     color: #999;
   }
   div.single a.menu-link {
@@ -458,7 +458,7 @@ __EOS__
       if via.url
         link_to(safe_label, via.url, :class => 'hlink')
       else
-        safe_label
+        span(safe_label, :footnote)
       end
     end
   end
