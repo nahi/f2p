@@ -131,7 +131,7 @@ class User < ActiveRecord::Base
   end
 
   def authenticated_in_ff?
-    oauth? or !self.remote_key.empty?
+    oauth? or (self.remote_key and !self.remote_key.empty?)
   end
 
   def oauth?

@@ -15,7 +15,7 @@
       <%- if profile.location -%>
         <li>Location: <%= h(profile.location) %></li>
       <%- end -%>
-      <li>following/followers: <%= h(profile.followings_count) %>/<%= h(profile.followers_count) %></li>
+      <li>following/followers: <%= link_followings(ctx.user, profile.followings_count) %>/<%= link_followers(ctx.user, profile.followers_count) %></li>
       <li>entries: <%= h(profile.entries_count) %></li>
     </ul>
   <%- end -%>

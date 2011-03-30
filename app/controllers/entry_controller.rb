@@ -125,10 +125,10 @@ class EntryController < ApplicationController
     opt[:max_id] = Entry.if_service_id(@ctx.max_id) if @ctx.max_id
     case @ctx.feed
     when 'user'
-      user = @ctx.user || @service_user_screen_name
-      @profile = Tweet.profile(token, user)
+      @ctx.user ||= @service_user_screen_name
+      @profile = Tweet.profile(token, @ctx.user)
       opt[:include_rts] = 'true'
-      tweets = Tweet.user_timeline(token, user, opt)
+      tweets = Tweet.user_timeline(token, @ctx.user, opt)
       twitter_api_initialize(tweets)
       feedname = '@' + (@profile.name || @ctx.user)
     when 'mentions'
@@ -164,7 +164,7 @@ class EntryController < ApplicationController
     when 'following'
       opt[:cursor] = @ctx.max_id
       opt.delete(:max_id)
-      res = Tweet.friends(token, token.service_user, opt)
+      res = Tweet.friends(token, @ctx.user, opt)
       twitter_api_initialize(res)
       tweets = twitter_users_to_statuses(res)
       max_id_override = res[:next_cursor]
@@ -172,7 +172,7 @@ class EntryController < ApplicationController
     when 'followers'
       opt[:cursor] = @ctx.max_id
       opt.delete(:max_id)
-      res = Tweet.followers(token, token.service_user, opt)
+      res = Tweet.followers(token, @ctx.user, opt)
       twitter_api_initialize(res)
       tweets = twitter_users_to_statuses(res)
       max_id_override = res[:next_cursor]

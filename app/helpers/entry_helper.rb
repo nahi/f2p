@@ -97,6 +97,16 @@ module EntryHelper
     link_list(opt.merge(:feed => feedid))
   end
 
+  def link_followings(user, label)
+    opt = {:controller => :entry, :action => :tweets, :feed => :following, :user => user, :id => @service_user, :max_id => -1}
+    link_to(h(label), opt)
+  end
+
+  def link_followers(user, label)
+    opt = {:controller => :entry, :action => :tweets, :feed => :followers, :user => user, :id => @service_user, :max_id => -1}
+    link_to(h(label), opt)
+  end
+
   def link_back(label, opt = {})
     list_ctx = session[:ctx]
     if list_ctx and list_ctx.inbox
@@ -464,7 +474,7 @@ module EntryHelper
     if url = entry.twitter_in_reply_to_url
       opt = link_show(entry.twitter_reply_to_status_id)
       name = entry.twitter_reply_to
-      span(h(' in reply to ') + link_to(h(name), opt, :class => 'hlink'), :footnote)
+      ' ' + link_to(h('in reply to ' + name), opt, :class => 'hlink')
     end
   end
 
@@ -472,11 +482,11 @@ module EntryHelper
     if id = entry.twitter_retweeted_by_status_id
       opt = link_show(entry.twitter_retweeted_by_status_id)
       name = entry.twitter_retweeted_by
-      span(h(' retweeted by ') + link_to(h(name), opt, :class => 'hlink'), :footnote)
+      ' ' + link_to(h('retweeted by ' + name), opt, :class => 'hlink')
     elsif id = entry.buzz_reshared_id
       opt = link_show(id)
       name = entry.buzz_reshared_of.name
-      span(h(' Reshared from ') + link_to(h(name), opt, :class => 'hlink'), :footnote)
+      ' ' + link_to(h('reshared from ' + name), opt, :class => 'hlink')
     end
   end
 
