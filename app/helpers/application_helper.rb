@@ -284,8 +284,7 @@ __EOS__
   def common_menu(*arg)
     [
       settings_link,
-      logout_link,
-      help_link
+      logout_link
     ].compact.join(' ')
   end
 
@@ -753,7 +752,7 @@ __EOS__
     sub << link_to(h('by friends'), base.merge(:feed => :retweeted_to_me))
     sub << link_to(h('by you'), base.merge(:feed => :retweeted_by_me))
     sub << link_to(h('yours'), base.merge(:feed => :retweets_of_me))
-    links << 'Retweets: ' + sub.join(' ')
+    links << ' / Retweets: ' + sub.join(' ')
     #if @service_user
     #  links << menu_link(menu_label('sign out'), :controller => 'login', :action => 'unlink_twitter', :id => @service_user)
     #end

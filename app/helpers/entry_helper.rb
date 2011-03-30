@@ -1128,8 +1128,7 @@ module EntryHelper
       profile_link(auth.name),
       search_link,
       settings_link,
-      logout_link,
-      help_link
+      logout_link
     ].compact.join(' ')
   end
 
