@@ -225,7 +225,7 @@ module EntryHelper
       end
     }.compact
     unless links.empty?
-      'to ' + links.join(', ')
+      span('to ' + links.join(', '), :footnote)
     end
   end
 
@@ -441,12 +441,12 @@ module EntryHelper
       else
         action = ''
       end
-      h(" (#{entry.fof.name} #{action})")
+      span(h(" (#{entry.fof.name} #{action})"), :footnote)
     end
   end
 
   def service_user_link(action, user)
-    link_to(h(user.name), link_action(action, :feed => 'user', :user => user.id))
+    link_to(h(user.name), link_action(action, :feed => 'user', :user => user.id), :class => :user)
   end
 
   def author_link(entry, with_picture = true)
@@ -504,7 +504,7 @@ module EntryHelper
 
   def comment_author_link(comment)
     unless comment.posted_with_entry?
-      h('by ') + user(comment)
+      span(h('by ') + user(comment), :footnote)
     end
   end
 
@@ -932,7 +932,7 @@ module EntryHelper
             name = self_label
           end
           name += "(#{tw_name})"
-          return link_to(h(name), opt || link_user(id))
+          return link_to(h(name), opt || link_user(id), :class => :user)
         end
       end
     end
