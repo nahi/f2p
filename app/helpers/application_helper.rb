@@ -500,9 +500,6 @@ __EOS__
     case elapsed(time)
     when (-1.hour)..(1.hour) # may have a time lag
       klass += ' inbox'
-    when 0..3.hour
-    when 0..6.hour
-    else
     end
     span(h(body), klass)
   end

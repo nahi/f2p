@@ -12,9 +12,9 @@
       <%= to(entry) %>
     <%- end -%>
 <%= content(entry) %>
-<span class="comment"><%= via(entry) %><%= twitter_reply_to(entry) %><%= retweet_rel_link(entry) %></span>
-<%= published(entry, true) -%>
-  <%= service_icon(entry) if entry.service_id != root.service_id -%>
+    <%= published(entry, true) -%>
+    <span class="comment"><%= via(entry) %><%= twitter_reply_to(entry) %><%= retweet_rel_link(entry) %></span>
+    <%= service_icon(entry) if entry.service_id != root.service_id -%>
 <%- if comment_inline?(entry) -%>
   -- <span class="comment"><%= inline_comment(entry.comments.first) %></span>
 <%- end -%>
