@@ -2,6 +2,12 @@
 <%= pin_link(entry) -%>
 <%= published(entry) -%>
   (Entry not found; deleted?)
+<%- elsif entry.delicious? -%>
+  <div class="body">
+    <%= pin_link(entry) -%>
+    <%= content(entry) %>
+    <%= published(entry, true) -%>
+  </div>
 <%- else -%>
   <div class="body">
     <%= pin_link(entry) -%>
@@ -12,17 +18,19 @@
       <%= to(entry) %>
     <%- end -%>
 <%= content(entry) %>
-    <%= published(entry, true) -%>
-    <span class="comment"><%= via(entry) %><%= twitter_reply_to(entry) %><%= retweet_rel_link(entry) %></span>
 <%- if comment_inline?(entry) -%>
   -- <span class="comment"><%= inline_comment(entry.comments.first) %></span>
 <%- end -%>
-  <%= friends_likes(entry) -%>
-  <%= reshare_link(entry) -%>
-  <%- comments = fold_comments(entry.comments) -%>
-  <%- if comments.empty? or comment_inline?(entry) or (comments.size == 1 and fold_item?(comments.first))-%>
-  <%= retweet_link(entry) -%>
-  <%= post_comment_link(entry) %>
+    <%= published(entry, true) -%><%= friend_of(entry) -%>
+    <%- if entry != thread.root -%>
+      <span class="comment"><%= via(entry) if thread.twitter_thread %><%= twitter_reply_to(entry) %><%= retweet_rel_link(entry) %></span>
+    <%- end -%>
+    <%= friends_likes(entry) -%>
+    <%= reshare_link(entry) -%>
+    <%- comments = fold_comments(entry.comments) -%>
+    <%- if comments.empty? or comment_inline?(entry) or (comments.size == 1 and fold_item?(comments.first))-%>
+      <%= retweet_link(entry) -%>
+      <%= post_comment_link(entry) %>
     </div>
   <%- else -%>
     </div>

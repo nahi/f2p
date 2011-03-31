@@ -26,11 +26,15 @@
     <hr class="separator" />
     <div class="<%= cycle('thread1', 'thread2') %>">
       <div class="entry">
-        <%- if thread.twitter_thread -%>
-          <%= render :partial => 'entry', :locals => {:entry => thread.root, :thread => thread } %>
-        <%- else -%>
-          <%= render :partial => 'entry_root', :locals => {:entry => thread.root } %>
-        <%- end -%>
+        <div class="header">
+          <%- if thread.twitter_thread -%>
+            <%= span('thread', :footnote) %>
+          <%- else -%>
+            <%= author_link(thread.root) %> <%= to(thread.root) %>
+            <span class="comment"><%= via(thread.root) %><%= twitter_reply_to(thread.root) %><%= retweet_rel_link(thread.root) %></span>
+          <%- end -%>
+        </div>
+        <%= render :partial => 'entry', :locals => {:entry => thread.root, :thread => thread } %>
       </div>
       <%- unless thread.related_entries.empty? -%>
         <% thread.related_entries.each do |entry| -%>
@@ -38,7 +42,7 @@
             <%- if fold_item?(entry) -%>
               <%= fold_link(entry) %>
             <%- else -%>
-            <%= render :partial => 'entry', :locals => {:entry => entry, :thread => thread } %>
+              <%= render :partial => 'entry', :locals => {:entry => entry, :thread => thread } %>
             <%- end -%>
           </div>
         <%- end -%>
