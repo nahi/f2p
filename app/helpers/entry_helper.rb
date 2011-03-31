@@ -491,9 +491,7 @@ module EntryHelper
   end
 
   def comment_author_link(comment)
-    unless comment.posted_with_entry?
-      span(h('by '), :footnote) + user(comment)
-    end
+    span(h('by '), :footnote) + user(comment)
   end
 
   def original_link(entry)
