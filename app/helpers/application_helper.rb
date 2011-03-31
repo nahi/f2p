@@ -747,7 +747,7 @@ __EOS__
     base = {:controller => :entry, :action => :tweets, :id => @service_user}
     links << link_to(h('Home'), base.merge(:feed => :home))
     links << link_to(h('You'), base.merge(:feed => :user))
-    label = h('@')
+    label = '&nbsp;@&nbsp;'
     label = span(label, "em") if @twitter_mentions_updated
     links << link_to(label, base.merge(:feed => :mentions))
     label = h('DM')
