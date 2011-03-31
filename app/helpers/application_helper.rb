@@ -83,7 +83,7 @@ module ApplicationHelper
   end
 
   def inline_meta(opt = {})
-    if iphone? or android?
+    if iphone?
       str = content_tag('meta', nil, :name => 'viewport', :content => 'width=device-width; initial-scale=1.0')
     else
       str = content_tag('meta', nil, :name => 'viewport', :content => 'width=device-width, height=device-height')
@@ -228,8 +228,6 @@ __EOS__
       end
       <<__EOS__
   body {
-    -webkit-user-select: none;
-    -webkit-text-size-adjust: none;
     font-family: Arial,Helvetica,sans-serif;
   }
   input.text {
