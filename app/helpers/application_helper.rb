@@ -115,7 +115,11 @@ module ApplicationHelper
     text-decoration: none;
     color: black;
   }
-  a.user {
+  .username {
+    color: black;
+    font-weight: bold;
+  }
+  a.username {
     text-decoration: none;
     color: black;
     font-weight: bold;
@@ -435,7 +439,7 @@ __EOS__
     return unless user
     case user.service_source
     when 'twitter'
-      return link_to(h(user.name), user.profile_url, :class => :user)
+      return link_to(h(user.name), user.profile_url, :class => :username)
     when 'buzz'
       opt ||= { :controller => 'entry', :action => 'buzz', :feed => 'user', :user => u(user.id) }
     when 'graph'
@@ -449,7 +453,7 @@ __EOS__
     if user.id == auth.name
       name = self_label
     end
-    link_to(h(name), opt, :class => :user)
+    link_to(h(name), opt, :class => :username)
   end
 
   def via(via, label = 'via')

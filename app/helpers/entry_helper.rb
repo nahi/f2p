@@ -446,7 +446,7 @@ module EntryHelper
   end
 
   def service_user_link(action, user)
-    link_to(h(user.name), link_action(action, :feed => 'user', :user => user.id), :class => :user)
+    link_to(h(user.name), link_action(action, :feed => 'user', :user => user.id), :class => :username)
   end
 
   def author_link(entry, with_picture = true)
@@ -474,7 +474,7 @@ module EntryHelper
     if url = entry.twitter_in_reply_to_url
       opt = link_show(entry.twitter_reply_to_status_id)
       name = entry.twitter_reply_to
-      ' ' + link_to(h('in reply to ' + name), opt, :class => 'hlink')
+      ' ' + link_to(h('in reply to ' + name), opt, :class => 'username hlink')
     end
   end
 
@@ -482,11 +482,11 @@ module EntryHelper
     if id = entry.twitter_retweeted_by_status_id
       opt = link_show(entry.twitter_retweeted_by_status_id)
       name = entry.twitter_retweeted_by
-      ' ' + link_to(h('retweeted by ' + name), opt, :class => 'hlink')
+      ' ' + link_to('retweeted by ' + span(h(name), :username), opt, :class => :hlink)
     elsif id = entry.buzz_reshared_id
       opt = link_show(id)
       name = entry.buzz_reshared_of.name
-      ' ' + link_to(h('reshared from ' + name), opt, :class => 'hlink')
+      ' ' + link_to('reshared from ' + span(h(name), :username), opt, :class => :hlink)
     end
   end
 
@@ -932,7 +932,7 @@ module EntryHelper
             name = self_label
           end
           name += "(#{tw_name})"
-          return link_to(h(name), opt || link_user(id), :class => :user)
+          return link_to(h(name), opt || link_user(id), :class => :username)
         end
       end
     end
