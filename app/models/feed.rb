@@ -18,7 +18,6 @@ class Feed
       opt.delete(:auth)
       feed = fetch_entries(auth, opt)
       pins = check_inbox(auth, feed, false)
-      # add_service_icon(feed.entries)
       feed.entries = filter_hidden(feed.entries)
       entries = feed.entries
       if opt[:eids]
@@ -468,18 +467,6 @@ class Feed
           feed.entries[idx] = entry
           entry.view_nextid = e.view_nextid
           return
-        end
-      end
-    end
-
-    # ugly but needed for V2 API.
-    def add_service_icon(entries)
-      entries.each do |e|
-        if e.via and e.via.name and !e.via.service_id
-          if s = Service.find_by_name(e.via.name)
-            e.via.service_id = s.service_id
-            e.via.service_icon_url = s.icon_url
-          end
         end
       end
     end

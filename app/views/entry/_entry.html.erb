@@ -5,16 +5,15 @@
 <%- else -%>
   <div class="body">
     <%= pin_link(entry) -%>
-    <%- if twitter_thread or entry.from_id != root.from_id -%>
+    <%- if thread.twitter_thread or entry.from_id != thread.root.from_id -%>
 <%= author_link(entry, false) %>
     <%- end -%>
-    <%- if entry.to_ids != root.to_ids -%>
+    <%- if thread.twitter_thread or entry.to_ids != thread.root.to_ids -%>
       <%= to(entry) %>
     <%- end -%>
 <%= content(entry) %>
     <%= published(entry, true) -%>
     <span class="comment"><%= via(entry) %><%= twitter_reply_to(entry) %><%= retweet_rel_link(entry) %></span>
-    <%= service_icon(entry) if entry.service_id != root.service_id -%>
 <%- if comment_inline?(entry) -%>
   -- <span class="comment"><%= inline_comment(entry.comments.first) %></span>
 <%- end -%>

@@ -8,11 +8,10 @@ class Via
   attr_accessor :url
 
   attr_accessor :service_id
-  attr_accessor :service_icon_url
 
   def initialize(hash = nil)
     initialize_with_hash(hash, 'name', 'url') if hash
-    @service_id = @service_icon_url = nil
+    @service_id = nil
   end
 
   def twitter?

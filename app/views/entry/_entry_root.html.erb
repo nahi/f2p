@@ -13,13 +13,9 @@
     <%= author_link(entry) %> <%= to(entry) %>
     <%= published(entry, true) -%><%= friend_of(entry) -%>
     <span class="comment"><%= via(entry) %><%= twitter_reply_to(entry) %><%= retweet_rel_link(entry) %></span>
-    <%= service_icon(entry) -%>
   </div>
   <div class="body">
     <%= pin_link(entry) -%>
-    <%- if twitter_thread -%>
-<%= author_link(entry, false) %>
-    <%- end -%>
 <%= content(entry) %>
 <%- if comment_inline?(entry) -%>
   -- <span class="comment"><%= inline_comment(entry.comments.first) %></span>

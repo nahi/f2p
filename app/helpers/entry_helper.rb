@@ -474,7 +474,7 @@ module EntryHelper
     if url = entry.twitter_in_reply_to_url
       opt = link_show(entry.twitter_reply_to_status_id)
       name = entry.twitter_reply_to
-      ' ' + link_to(h('in reply to ' + name), opt, :class => 'username hlink')
+      ' ' + link_to('in reply to ' + span(h(name), :username), opt, :class => :hlink)
     end
   end
 
@@ -487,18 +487,6 @@ module EntryHelper
       opt = link_show(id)
       name = entry.buzz_reshared_of.name
       ' ' + link_to('reshared from ' + span(h(name), :username), opt, :class => :hlink)
-    end
-  end
-
-  def service_icon(entry)
-    return unless entry.ff?
-    if via = entry.via
-      if via.service_icon_url
-        if ctx.ff?
-          link_to(service_icon_tag(via.service_icon_url, via.name, via.name),
-                  search_opt(:action => :list, :query => '', :service => via.service_id))
-        end
-      end
     end
   end
 
