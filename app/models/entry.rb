@@ -488,7 +488,7 @@ class Entry
       f.service_source = 'buzz'
       # ad hoc conversion. We cannot these from activities stream.
       f.private = false
-      f.commands = []
+      f.commands = ['subscribe']
       profile_image_url = hash['thumbnailUrl']
       if profile_image_url.blank?
         f.profile_image_url = 'http://mail.google.com/mail/images/blue_ghost.jpg'
