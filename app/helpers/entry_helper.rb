@@ -480,9 +480,9 @@ module EntryHelper
 
   def retweet_rel_link(entry)
     if id = entry.twitter_retweeted_by_status_id
-      opt = link_show(entry.twitter_retweeted_by_status_id)
       name = entry.twitter_retweeted_by
-      ' ' + link_to('retweeted by ' + span(h(name), :username), opt, :class => :hlink)
+      link = link_action('tweets', :feed => 'user', :user => name)
+      ' ' + link_to('retweeted by ' + span(h(name), :username), link, :class => :hlink)
     elsif id = entry.buzz_reshared_id
       opt = link_show(id)
       name = entry.buzz_reshared_of.name
