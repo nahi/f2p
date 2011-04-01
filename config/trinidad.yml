@@ -1,0 +1,11 @@
+---
+  address: localhost
+  port: 3000  # port where trinidad is running
+  ajp:            # ajp configuration section
+    port: 8009
+  environment: production  # environment for rails applications
+  jruby_min_runtimes: 1 # min number of runtimes
+  jruby_max_runtimes: 1 # max number of runtimes
+  context_path: / # default context path
+  public: public # system path where your public files are located
+  log: INFO
