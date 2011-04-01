@@ -132,6 +132,8 @@ Rails::Initializer.run do |config|
   # config.gem "sqlite3-ruby", :lib => "sqlite3"
   # config.gem "aws-s3", :lib => "aws/s3"
   config.gem 'json'
+  config.gem 'geoip'
+  config.gem 'httpclient'
   config.gem 'rubytter', :version => '1.2.2.2' # requires http://github.com/nahi/rubytter
 
   # Only load the plugins named here, in the order given. By default, all plugins 
