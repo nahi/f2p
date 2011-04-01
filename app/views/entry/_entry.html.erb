@@ -22,7 +22,7 @@
   -- <span class="comment"><%= inline_comment(entry.comments.first) %></span>
 <%- end -%>
     <%= published(entry, true) -%><%= friend_of(entry) -%>
-    <%- if entry != thread.root -%>
+    <%- if thread.twitter_thread or entry != thread.root -%>
       <span class="comment"><%= via(entry) if thread.twitter_thread %><%= twitter_reply_to(entry) %><%= retweet_rel_link(entry) %></span>
     <%- end -%>
     <%= friends_likes(entry) -%>
