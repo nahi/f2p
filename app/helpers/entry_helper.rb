@@ -3,45 +3,6 @@ module EntryHelper
   BRIGHTKITE_MAP_WIDTH = 120
   BRIGHTKITE_MAP_HEIGHT = 80
 
-  WC2010_IMG_URL = "http://twitter.com/images/worldcup/16/%s.png"
-  WC2010_IMG_SIZE = '16x16'
-  WC2010_LINK_URL = "http://twitter.com/worldcup/%s"
-  WC2010_TAGS = %w(
-#worldcup
-#jpn
-#alg
-#arg
-#aus
-#bra
-#chi
-#civ
-#cmr
-#den
-#eng
-#esp
-#fra
-#ger
-#gha
-#gre
-#hon
-#ita
-#kor
-#mex
-#ned
-#nga
-#nzl
-#par
-#por
-#prk
-#rsa
-#srb
-#sui
-#svk
-#svn
-#uru
-#usa
-  )
-
   def viewname
     if ctx.service
       viewname_base + "(#{ctx.service})"
@@ -759,14 +720,6 @@ module EntryHelper
         ary << span(link, 'hashtag')
       else
         ary << h(m[0])
-      end
-      if WC2010_TAGS.include?(m[0].downcase)
-        tag = m[0].slice(1..-1).downcase
-        link = sprintf(WC2010_LINK_URL, tag)
-        img_src = sprintf(WC2010_IMG_URL, tag)
-        ary << ' '
-        ary << link_to(image_tag(img_src, :class => h('inline'), :alt => h(tag), :title => h(tag), :size => WC2010_IMG_SIZE), link)
-        ary << ' '
       end
       str = m.post_match
     end
