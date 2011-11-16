@@ -164,7 +164,7 @@ class Entry
       e.commands << 'like' if !already_liked
       if hash['links'] and liked = hash['links']['liked']
         liked = liked.first
-        if liked['count'] != e.likes.size
+        if liked['count'] && liked['count'] != e.likes.size
           l = Like.new
           l.placeholder = true 
           l.num = liked['count'] - e.likes.size
@@ -736,9 +736,7 @@ class Entry
       when 'tumblr'
         Tumblr.unlike(opt[:token], sid, opt[:tumblr_reblog_key])
         hash = Tumblr.show(opt[:token], sid)
-        p hash
         entry = Entry.from_tumblr(hash)
-        p entry
         if pin = Pin.find_by_user_id_and_eid(auth.id, entry.id)
           pin.entry = hash
           pin.save!
