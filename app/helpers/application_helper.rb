@@ -274,7 +274,7 @@ __EOS__
     links = []
     links << link_to(h('FF'), { :controller => :entry, :action => :inbox }, accesskey('0').merge(:class => :tab))
     links << link_to(h('Twitter'), { :controller => :entry, :action => :tweets }, {:class => :tab})
-    links << link_to(h('Buzz'), { :controller => :entry, :action => :buzz }, {:class => :tab})
+    #links << link_to(h('Buzz'), { :controller => :entry, :action => :buzz }, {:class => :tab})
     links << link_to(h('FB'), { :controller => :entry, :action => :graph }, {:class => :tab})
     #links << link_to(h('Delicious'), { :controller => :entry, :action => :delicious }, {:class => :tab})
     #links << link_to(h('Tumblr'), { :controller => :entry, :action => :tumblr }, {:class => :tab})
