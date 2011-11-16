@@ -18,5 +18,5 @@ test:
 production:
   adapter: jdbcsqlite3
   database: db/production.sqlite3
-  pool: 5
+  pool: 10
   timeout: 5000
