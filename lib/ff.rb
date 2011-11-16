@@ -236,7 +236,7 @@ module FriendFeed
       enc = res.header['content-encoding']
       if enc and enc[0] and enc[0].downcase == 'gzip'
         c = Zlib::GzipReader.wrap(StringIO.new(res.content)) { |gz| gz.read }
-        res.body.init_response(c)
+        res.http_body.init_response(c)
       end
       res
     end
